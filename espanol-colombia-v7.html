@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Español"/>
+<title>Español · Colombia</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+html{font-size:18px;width:100%;height:100%;-webkit-text-size-adjust:none;text-size-adjust:none;}
+:root{
+  --teal:#4aa8a0;--pink:#e85d75;--gold:#e8b44a;--purple:#a78bfa;--green:#34d399;
+  --bg:#0a0f14;--card:rgba(255,255,255,0.06);--border:rgba(255,255,255,0.1);
+  --text:rgba(255,255,255,0.92);--muted:rgba(255,255,255,0.42);
+  --safe-top:env(safe-area-inset-top,54px);
+  --safe-bottom:env(safe-area-inset-bottom,34px);
+  --tab-h:90px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{
+  font-family:'Nunito',sans-serif;background:var(--bg);color:#fff;
+  position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;
+  background-image:
+    radial-gradient(ellipse at 10% 15%,rgba(74,168,160,0.15) 0%,transparent 55%),
+    radial-gradient(ellipse at 90% 85%,rgba(232,93,117,0.11) 0%,transparent 50%);
+}
+button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
+
+/* ── Shell ── */
+#app{display:flex;flex-direction:column;width:100%;height:100%;}
+.scroll{
+  flex:1;overflow-y:scroll;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  padding:calc(var(--safe-top) + 16px) 18px calc(var(--tab-h) + var(--safe-bottom) + 20px);
+}
+.page{display:none;}.page.active{display:block;animation:fadein 0.2s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{from{transform:scale(0.92);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes bounce{0%,100%{transform:scale(1)}40%{transform:scale(1.18)}70%{transform:scale(0.95)}}
+
+/* ── BIG Tab Bar ── */
+.tab-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  height:calc(var(--tab-h) + var(--safe-bottom));
+  padding-bottom:var(--safe-bottom);
+  background:rgba(8,12,18,0.98);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:2px solid rgba(255,255,255,0.1);
+  display:flex;z-index:999;
+}
+.tab-item{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:6px;background:transparent;
+  color:rgba(255,255,255,0.3);
+  font-size:0.72rem;font-weight:800;
+  letter-spacing:0.02em;
+  transition:all 0.2s;
+}
+.tab-item .ti{
+  font-size:2.2rem;line-height:1;
+  transition:transform 0.2s;
+}
+.tab-item span:last-child{font-size:0.7rem;}
+.tab-item.active{color:var(--teal);}
+.tab-item.active .ti{transform:scale(1.15);}
+.tab-item.tquiz.active{color:var(--gold);}
+.tab-item.tsaludos.active{color:var(--pink);}
+
+/* ── Headers ── */
+.ph{text-align:center;margin-bottom:22px;}
+.ph-label{font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.ph-title{font-size:2.4rem;font-weight:900;letter-spacing:-0.02em;line-height:1.05;}
+.ph-sub{font-size:0.85rem;color:var(--muted);margin-top:7px;}
+.sl{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;font-weight:800;margin-bottom:12px;}
+
+/* ── Voice Bar ── */
+.voice-bar{
+  display:flex;align-items:center;gap:10px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:12px 16px;margin-bottom:20px;
+}
+.voice-label{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);font-weight:700;white-space:nowrap;}
+.voice-select{flex:1;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.14);border-radius:10px;padding:9px 10px;color:#fff;font-family:'Nunito',sans-serif;font-size:0.8rem;font-weight:700;-webkit-appearance:none;appearance:none;min-width:0;}
+.voice-select option{background:#1a2030;color:#fff;}
+.voice-test{background:var(--teal);border-radius:10px;padding:10px 16px;color:#fff;font-weight:800;font-size:0.82rem;white-space:nowrap;flex-shrink:0;min-height:44px;}
+
+/* ── Grids ── */
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:22px;}
+.g7{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:22px;}
+.g5c{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;}
+
+/* ── Letter Cards ── */
+.lc{
+  width:100%;aspect-ratio:1;border-radius:14px;
+  border:2px solid var(--border);background:var(--card);
+  color:rgba(255,255,255,0.55);
+  font-size:1.3rem;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+}
+.lc.av{border-color:var(--pink);background:rgba(232,93,117,0.22);color:var(--pink);}
+.lc.ac{border-color:var(--teal);background:rgba(74,168,160,0.22);color:var(--teal);}
+
+/* ── Detail Card ── */
+.dc{background:var(--card);border-radius:20px;padding:26px 20px;text-align:center;animation:pop 0.2s ease;margin-bottom:10px;}
+.dc-big{font-size:5.5rem;font-weight:900;line-height:1;margin-bottom:8px;}
+.dc-sub{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.dc-name{font-size:1.7rem;font-weight:800;color:var(--text);margin-bottom:4px;}
+.dc-phon{font-size:0.95rem;font-weight:600;color:rgba(255,255,255,0.38);margin-bottom:14px;font-style:italic;}
+.dc-badge{font-size:0.75rem;color:var(--muted);background:rgba(255,255,255,0.06);border-radius:10px;padding:7px 16px;display:inline-block;margin-bottom:14px;}
+.spk-btn{border-radius:12px;padding:14px 32px;color:#fff;font-weight:800;font-size:0.95rem;min-height:52px;}
+
+/* ── Sílabas ── */
+.vbar{display:flex;margin-bottom:18px;background:var(--card);border:1px solid rgba(232,93,117,0.22);border-radius:14px;overflow:hidden;}
+.vbi{flex:1;text-align:center;padding:13px 4px;border-right:1px solid var(--border);}
+.vbi:last-child{border-right:none;}
+.vbl{font-size:1.3rem;font-weight:900;color:var(--pink);}
+.vbs{font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:2px;}
+
+.fw{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px;}
+.fb{padding:8px 13px;border-radius:22px;border:1px solid rgba(255,255,255,0.11);background:transparent;color:rgba(255,255,255,0.4);font-weight:800;font-size:0.78rem;transition:all 0.15s;min-height:38px;}
+.fb.active{border-color:var(--teal);background:rgba(74,168,160,0.2);color:var(--teal);}
+
+/* ── Combo Chips ── */
+.cc{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px 4px;transition:all 0.15s;min-height:90px;justify-content:center;}
+.cc:active{background:rgba(74,168,160,0.16);border-color:rgba(74,168,160,0.42);}
+.cc-big{font-weight:900;font-size:1.55rem;line-height:1;}
+.cc-ph{font-size:0.68rem;color:rgba(255,255,255,0.4);}
+.cc-note{font-size:0.52rem;color:var(--gold);background:rgba(232,180,74,0.13);border-radius:4px;padding:2px 5px;text-align:center;max-width:64px;line-height:1.4;}
+.cg{margin-bottom:22px;}
+.cg-hdr{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.cg-badge{width:46px;height:46px;border-radius:12px;background:rgba(74,168,160,0.15);border:1px solid rgba(74,168,160,0.35);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;color:var(--teal);flex-shrink:0;}
+.cg-title{font-size:0.9rem;font-weight:800;color:rgba(255,255,255,0.78);}
+.cg-sub{font-size:0.68rem;color:var(--muted);margin-top:2px;}
+
+.rb{background:rgba(232,180,74,0.07);border:1px solid rgba(232,180,74,0.2);border-radius:16px;padding:16px;margin-top:10px;}
+.rt{font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;font-weight:800;}
+.rr{display:flex;gap:10px;margin-bottom:9px;align-items:flex-start;}
+.rtag{flex-shrink:0;font-size:0.72rem;font-weight:800;color:var(--gold);background:rgba(232,180,74,0.15);border-radius:6px;padding:4px 9px;}
+.rdesc{font-size:0.78rem;color:rgba(255,255,255,0.45);line-height:1.55;}
+
+/* ── Vocab ── */
+.cat-wrap{display:flex;gap:8px;overflow-x:auto;margin-bottom:20px;padding-bottom:4px;scrollbar-width:none;}
+.cat-wrap::-webkit-scrollbar{display:none;}
+.cat-pill{padding:11px 18px;border-radius:24px;font-weight:800;font-size:0.82rem;border:1px solid rgba(255,255,255,0.11);background:transparent;color:rgba(255,255,255,0.42);white-space:nowrap;transition:all 0.15s;flex-shrink:0;min-height:46px;}
+.cat-pill.active{background:rgba(74,168,160,0.22);border-color:var(--teal);color:var(--teal);}
+
+/* ── BIG Vocab Cards ── */
+.vc{
+  display:flex;align-items:center;gap:18px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:20px 18px;
+  margin-bottom:14px;cursor:pointer;transition:all 0.15s;min-height:96px;
+}
+.vc:active{transform:scale(0.985);background:rgba(74,168,160,0.09);}
+.vc-icon{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2.1rem;flex-shrink:0;}
+.vc-num{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:900;flex-shrink:0;}
+.vc-info{flex:1;min-width:0;}
+.vc-word{font-size:1.3rem;font-weight:900;color:#fff;line-height:1.1;}
+.vc-en{font-size:0.88rem;color:var(--muted);margin-top:4px;font-style:italic;}
+.vc-ph{font-size:0.78rem;color:var(--teal);margin-top:5px;font-weight:700;}
+.vc-spk{font-size:1.5rem;flex-shrink:0;}
+
+/* ── Numbers ── */
+.num-section{margin-bottom:22px;}
+.num-section-title{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;font-weight:800;margin-bottom:12px;padding:8px 14px;border-radius:10px;display:inline-block;}
+.num-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:8px;}
+.num-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.15s;min-height:70px;}
+.num-card:active{transform:scale(0.97);}
+.num-digit{font-size:1.5rem;font-weight:900;min-width:48px;text-align:right;flex-shrink:0;}
+.num-word{font-size:1rem;font-weight:800;color:#fff;line-height:1.2;}
+.num-ph{font-size:0.7rem;color:var(--muted);font-style:italic;margin-top:3px;}
+
+.money-box{background:rgba(52,211,153,0.07);border:1px solid rgba(52,211,153,0.22);border-radius:18px;padding:18px;margin-bottom:18px;}
+.money-title{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--green);margin-bottom:14px;font-weight:800;}
+.money-row{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.035);border-radius:13px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all 0.15s;min-height:60px;}
+.money-row:active{background:rgba(52,211,153,0.11);}
+.money-cop{font-size:1rem;font-weight:900;color:var(--green);min-width:110px;}
+.money-info{flex:1;}
+.money-es{font-size:0.95rem;font-weight:800;color:#fff;}
+.money-en{font-size:0.72rem;color:var(--muted);font-style:italic;margin-top:3px;}
+
+.counting-rules{background:rgba(74,168,160,0.07);border:1px solid rgba(74,168,160,0.2);border-radius:16px;padding:16px;margin-bottom:18px;}
+.cr-title{font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--teal);margin-bottom:12px;font-weight:800;}
+.cr-row{margin-bottom:10px;}
+.cr-ex{font-size:0.95rem;font-weight:800;color:#fff;}
+.cr-rule{font-size:0.78rem;color:var(--muted);margin-top:3px;}
+
+/* ── Preguntas ── */
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:13px;cursor:pointer;transition:all 0.15s;display:flex;align-items:flex-start;gap:14px;min-height:90px;}
+.q-card:active{transform:scale(0.985);}
+.q-mark{font-size:1.9rem;font-weight:900;min-width:54px;text-align:center;flex-shrink:0;padding-top:2px;}
+.q-info{flex:1;}
+.q-word{font-size:1.25rem;font-weight:900;color:#fff;}
+.q-en{font-size:0.85rem;color:var(--muted);margin-top:3px;font-style:italic;}
+.q-ph{font-size:0.76rem;color:var(--purple);margin-top:5px;font-weight:700;}
+.q-example{font-size:0.76rem;color:rgba(255,255,255,0.45);margin-top:6px;line-height:1.55;}
+.q-spk{font-size:1.4rem;flex-shrink:0;}
+
+/* ── BIG Greeting Cards ── */
+.gs{margin-bottom:22px;}
+.gs-title{font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;font-weight:800;margin-bottom:12px;padding:8px 14px;border-radius:10px;display:inline-block;}
+.gcard{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:20px 18px;margin-bottom:12px;
+  display:flex;align-items:center;gap:14px;
+  cursor:pointer;transition:all 0.15s;min-height:80px;
+}
+.gcard:active{transform:scale(0.985);}
+.gcard-txt{flex:1;}
+.g-es{font-size:1.1rem;font-weight:800;color:#fff;line-height:1.35;}
+.g-en{font-size:0.82rem;color:var(--muted);margin-top:5px;font-style:italic;}
+.g-spk{font-size:1.5rem;flex-shrink:0;}
+
+/* ── Dialogue ── */
+.dialogue{background:rgba(255,255,255,0.035);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:22px;}
+.dlg-title{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;font-weight:800;}
+.dlg-line{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start;}
+.dlg-line.right{flex-direction:row-reverse;}
+.dlg-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.dlg-bubble{border-radius:16px;padding:13px 16px;cursor:pointer;transition:all 0.15s;flex:1;max-width:85%;}
+.dlg-bubble:active{opacity:0.8;}
+.dlg-line:not(.right) .dlg-bubble{background:rgba(255,255,255,0.07);}
+.dlg-line.right .dlg-bubble{background:rgba(74,168,160,0.14);border:1px solid rgba(74,168,160,0.24);}
+.dlg-es{font-size:0.95rem;font-weight:700;color:#fff;line-height:1.4;}
+.dlg-en{font-size:0.72rem;color:var(--muted);margin-top:4px;font-style:italic;}
+
+.titles-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;}
+.title-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;text-align:center;cursor:pointer;transition:all 0.15s;min-height:110px;}
+.title-card:active{transform:scale(0.97);}
+.title-abbr{font-size:2.3rem;font-weight:900;color:var(--teal);margin-bottom:6px;}
+.title-full{font-size:0.95rem;font-weight:700;color:#fff;}
+.title-en{font-size:0.76rem;color:var(--muted);font-style:italic;margin-top:4px;}
+
+/* ── BIG Quiz ── */
+.quiz-score-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px 24px;margin-bottom:20px;}
+.qs-item{text-align:center;}
+.qs-num{font-size:2rem;font-weight:900;}
+.qs-label{font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-top:3px;}
+
+.quiz-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:32px 20px;text-align:center;margin-bottom:18px;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+.qc-label{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);}
+.qc-word{font-size:2.4rem;font-weight:900;color:#fff;line-height:1.1;}
+.qc-hear{background:rgba(74,168,160,0.15);border:1px solid rgba(74,168,160,0.3);border-radius:12px;padding:11px 24px;color:var(--teal);font-weight:800;font-size:0.9rem;margin-top:6px;min-height:48px;}
+
+/* ── BIG Quiz Options ── */
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.qopt{
+  background:var(--card);border:2px solid var(--border);
+  border-radius:18px;padding:20px 14px;
+  font-size:1rem;font-weight:700;color:var(--text);
+  text-align:center;transition:all 0.18s;
+  line-height:1.3;min-height:72px;
+  display:flex;align-items:center;justify-content:center;
+}
+.qopt:active{transform:scale(0.97);}
+.qopt.correct{border-color:var(--teal);background:rgba(74,168,160,0.22);color:var(--teal);animation:bounce 0.35s ease;}
+.qopt.wrong{border-color:var(--pink);background:rgba(232,93,117,0.17);color:var(--pink);}
+.qopt.reveal{border-color:var(--teal);background:rgba(74,168,160,0.12);color:var(--teal);}
+.quiz-feedback{text-align:center;font-size:1.2rem;font-weight:800;height:32px;margin-bottom:10px;}
+.quiz-next{width:100%;padding:18px;border-radius:18px;background:var(--teal);color:#fff;font-weight:800;font-size:1rem;display:none;min-height:58px;}
+.quiz-cat-wrap{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;padding-bottom:4px;scrollbar-width:none;}
+.quiz-cat-wrap::-webkit-scrollbar{display:none;}
+.qcat{padding:9px 16px;border-radius:22px;font-weight:700;font-size:0.78rem;border:1px solid rgba(255,255,255,0.11);background:transparent;color:rgba(255,255,255,0.4);white-space:nowrap;transition:all 0.15s;flex-shrink:0;min-height:42px;}
+.qcat.active{background:rgba(232,180,74,0.2);border-color:var(--gold);color:var(--gold);}
+
+.intro-note{background:rgba(167,139,250,0.07);border:1px solid rgba(167,139,250,0.18);border-radius:16px;padding:15px 17px;margin-bottom:18px;}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="scroll">
+
+<!-- LETRAS -->
+<div class="page active" id="page-letras">
+  <div class="ph">
+    <div class="ph-label">Español Colombiano</div>
+    <div class="ph-title"><span style="color:var(--teal)">El </span><span style="color:var(--text)">Alfabeto</span></div>
+    <div class="ph-sub">Toca cada letra para escuchar</div>
+  </div>
+  <div id="voice-bar-letras"></div>
+  <div class="sl" style="color:var(--pink)">Vocales</div>
+  <div class="g5" id="vowel-grid"></div>
+  <div class="sl" style="color:var(--teal)">Consonantes</div>
+  <div class="g7" id="cons-grid"></div>
+  <div id="detail-card"></div>
+</div>
+
+<!-- SÍLABAS -->
+<div class="page" id="page-silabas">
+  <div class="ph">
+    <div class="ph-label">Español Colombiano</div>
+    <div class="ph-title" style="color:var(--pink)">Sílabas</div>
+    <div class="ph-sub">Consonante + Vocal · Toca para escuchar</div>
+  </div>
+  <div class="vbar">
+    <div class="vbi"><div class="vbl">A</div><div class="vbs">ah</div></div>
+    <div class="vbi"><div class="vbl">E</div><div class="vbs">eh</div></div>
+    <div class="vbi"><div class="vbl">I</div><div class="vbs">ee</div></div>
+    <div class="vbi"><div class="vbl">O</div><div class="vbs">oh</div></div>
+    <div class="vbi"><div class="vbl">U</div><div class="vbs">oo</div></div>
+  </div>
+  <div class="sl" style="color:var(--muted)">Filtrar por consonante</div>
+  <div class="fw" id="filter-wrap"></div>
+  <div id="combo-groups"></div>
+  <div class="rb">
+    <div class="rt">⚡ Reglas especiales (Colombia)</div>
+    <div class="rr"><span class="rtag">C+e/i</span><span class="rdesc">Suena 's'. Ej: cena, ciudad</span></div>
+    <div class="rr"><span class="rtag">G+e/i</span><span class="rdesc">Suena 'j'. Ej: gente, girasol</span></div>
+    <div class="rr"><span class="rtag">H</span><span class="rdesc">Siempre muda. Ej: hola, huevo</span></div>
+    <div class="rr"><span class="rtag">Ñ</span><span class="rdesc">Sonido 'ny'. Ej: niño, mañana</span></div>
+    <div class="rr"><span class="rtag">QU</span><span class="rdesc">U no suena — solo 'K'. Ej: queso</span></div>
+    <div class="rr"><span class="rtag">V</span><span class="rdesc">Igual que B. Ej: vaca</span></div>
+    <div class="rr"><span class="rtag">Z</span><span class="rdesc">Suena 's'. Ej: zapato</span></div>
+  </div>
+</div>
+
+<!-- VOCAB -->
+<div class="page" id="page-vocab">
+  <div class="ph">
+    <div class="ph-label">Español Colombiano</div>
+    <div class="ph-title" style="color:var(--teal)">Vocabulario</div>
+    <div class="ph-sub">Toca cada palabra para escuchar</div>
+  </div>
+  <div class="cat-wrap" id="cat-wrap"></div>
+  <div id="vocab-list"></div>
+</div>
+
+<!-- SALUDOS -->
+<div class="page" id="page-saludos">
+  <div class="ph">
+    <div class="ph-label">Español Colombiano</div>
+    <div class="ph-title" style="color:var(--pink)">Saludos</div>
+    <div class="ph-sub">Toca cualquier frase para escuchar</div>
+  </div>
+  <div id="saludos-list"></div>
+</div>
+
+<!-- QUIZ -->
+<div class="page" id="page-quiz">
+  <div class="ph">
+    <div class="ph-label">Practica</div>
+    <div class="ph-title"><span style="color:var(--gold)">Quiz</span></div>
+    <div class="ph-sub">¿Cuánto recuerdas?</div>
+  </div>
+  <div class="quiz-score-bar">
+    <div class="qs-item"><div class="qs-num" id="q-correct" style="color:var(--teal)">0</div><div class="qs-label">Correctas</div></div>
+    <div class="qs-item"><div class="qs-num" id="q-streak" style="color:var(--gold)">🔥 0</div><div class="qs-label">Racha</div></div>
+    <div class="qs-item"><div class="qs-num" id="q-total" style="color:var(--muted)">0</div><div class="qs-label">Total</div></div>
+  </div>
+  <div class="quiz-cat-wrap" id="qcat-wrap"></div>
+  <div class="quiz-card">
+    <div class="qc-label">Traducir al inglés</div>
+    <div class="qc-word" id="qc-word">—</div>
+    <button class="qc-hear" onclick="quizHear()">🔊 Escuchar</button>
+  </div>
+  <div class="quiz-feedback" id="quiz-fb"></div>
+  <div class="quiz-opts" id="quiz-opts"></div>
+  <button class="quiz-next" id="quiz-next" onclick="nQ()">Siguiente →</button>
+</div>
+
+</div>
+
+<!-- BIG Tab Bar -->
+<div class="tab-bar">
+  <button class="tab-item active" id="tb-letras" onclick="showPage('letras')">
+    <span class="ti">🔤</span><span>Letras</span>
+  </button>
+  <button class="tab-item" id="tb-silabas" onclick="showPage('silabas')">
+    <span class="ti">🔡</span><span>Sílabas</span>
+  </button>
+  <button class="tab-item" id="tb-vocab" onclick="showPage('vocab')">
+    <span class="ti">📚</span><span>Vocab</span>
+  </button>
+  <button class="tab-item tsaludos" id="tb-saludos" onclick="showPage('saludos')">
+    <span class="ti">👋</span><span>Saludos</span>
+  </button>
+  <button class="tab-item tquiz" id="tb-quiz" onclick="showPage('quiz')">
+    <span class="ti">🧪</span><span>Quiz</span>
+  </button>
+</div>
+</div>
+
+<script>
+// ── Voice ─────────────────────────────────────────────────────────────────────
+let voices=[],selV=null;
+function loadV(){
+  voices=window.speechSynthesis.getVoices();
+  const sp=voices.filter(v=>v.lang.startsWith("es"));
+  for(const p of["es-CO","es-MX","es-US","es-419","es-AR"]){const v=sp.find(x=>x.lang.startsWith(p));if(v){selV=v;break;}}
+  if(!selV&&sp.length)selV=sp[0];buildVB();
+}
+function buildVB(){
+  const sp=voices.filter(v=>v.lang.startsWith("es"));if(!sp.length)return;
+  document.getElementById("voice-bar-letras").innerHTML=`<div class="voice-bar">
+    <span class="voice-label">🎙️ Voz</span>
+    <select class="voice-select" onchange="chV(this.value)">
+      ${sp.map((v,i)=>`<option value="${i}" ${selV&&v.name===selV.name?"selected":""}>${v.lang} · ${v.name.replace("com.apple.","").replace("voice.","")}</option>`).join("")}
+    </select>
+    <button class="voice-test" onclick="speak('Hola, buenos días',0.8)">Probar</button>
+  </div>`;
+}
+function chV(i){const sp=voices.filter(v=>v.lang.startsWith("es"));selV=sp[i]||null;}
+function speak(t,r){
+  if(!window.speechSynthesis)return;speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);
+  if(selV)u.voice=selV;u.lang=selV?selV.lang:"es-CO";u.rate=r||0.8;
+  speechSynthesis.speak(u);
+}
+if(window.speechSynthesis){loadV();window.speechSynthesis.onvoiceschanged=loadV;}
+
+// ── Data ──────────────────────────────────────────────────────────────────────
+const VW=["a","e","i","o","u"],VL=["A","E","I","O","U"];
+const AL=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","Ñ","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
+const CN=AL.filter(l=>!VL.includes(l));
+const LI={A:{name:"a",phonetic:"ah",tts:"a"},B:{name:"be",phonetic:"beh",tts:"be"},C:{name:"ce",phonetic:"seh",tts:"ce"},D:{name:"de",phonetic:"deh",tts:"de"},E:{name:"e",phonetic:"eh",tts:"e"},F:{name:"efe",phonetic:"EH-feh",tts:"efe"},G:{name:"ge",phonetic:"heh",tts:"ge"},H:{name:"hache",phonetic:"AH-cheh",tts:"hache"},I:{name:"i",phonetic:"ee",tts:"i"},J:{name:"jota",phonetic:"HOH-tah",tts:"jota"},K:{name:"ka",phonetic:"kah",tts:"ka"},L:{name:"ele",phonetic:"EH-leh",tts:"ele"},M:{name:"eme",phonetic:"EH-meh",tts:"eme"},N:{name:"ene",phonetic:"EH-neh",tts:"ene"},Ñ:{name:"eñe",phonetic:"EH-nyeh",tts:"eñe"},O:{name:"o",phonetic:"oh",tts:"o"},P:{name:"pe",phonetic:"peh",tts:"pe"},Q:{name:"cu",phonetic:"koo",tts:"cu"},R:{name:"erre",phonetic:"EH-rreh",tts:"erre"},S:{name:"ese",phonetic:"EH-seh",tts:"ese"},T:{name:"te",phonetic:"teh",tts:"te"},U:{name:"u",phonetic:"oo",tts:"u"},V:{name:"uve",phonetic:"OO-beh",tts:"uve"},W:{name:"doble ve",phonetic:"DOH-bleh beh",tts:"doble ve"},X:{name:"equis",phonetic:"EH-kees",tts:"equis"},Y:{name:"ye",phonetic:"yeh",tts:"ye"},Z:{name:"zeta",phonetic:"SEH-tah",tts:"zeta"}};
+const VS={a:"ah",e:"eh",i:"ee",o:"oh",u:"oo"};
+function gc(l,v){
+  const pv={C:{a:{p:"kah",t:"ca",n:null},e:{p:"seh",t:"ce",n:"suena 's'"},i:{p:"see",t:"ci",n:"suena 's'"},o:{p:"koh",t:"co",n:null},u:{p:"koo",t:"cu",n:null}},G:{a:{p:"gah",t:"ga",n:null},e:{p:"heh",t:"ge",n:"suena 'j'"},i:{p:"hee",t:"gi",n:"suena 'j'"},o:{p:"goh",t:"go",n:null},u:{p:"goo",t:"gu",n:null}},H:{a:{p:"ah",t:"ha",n:"H muda"},e:{p:"eh",t:"he",n:"H muda"},i:{p:"ee",t:"hi",n:"H muda"},o:{p:"oh",t:"ho",n:"H muda"},u:{p:"oo",t:"hu",n:"H muda"}},Q:{a:{p:"kah",t:"qa",n:"usa QU"},e:{p:"keh",t:"que",n:"QUE='keh'"},i:{p:"kee",t:"qui",n:"QUI='kee'"},o:{p:"koh",t:"qo",n:"usa QU"},u:{p:"koo",t:"qu",n:"con U"}}};
+  if(pv[l])return pv[l][v];
+  const s={B:"b",D:"d",F:"f",J:"j",K:"k",L:"l",M:"m",N:"n",Ñ:"ny",P:"p",R:"r",S:"s",T:"t",V:"b",W:"w",X:"ks",Y:"y",Z:"s"};
+  const n={J:"suena 'j'",V:"igual que B",X:"'ks' o 'j'",Z:"suena 's'",Ñ:"sonido 'ny'"};
+  return{p:(s[l]||l.toLowerCase())+VS[v],t:(l==="Ñ"?"ñ":l.toLowerCase())+v,n:n[l]||null};
+}
+const N130=[{n:1,w:"Uno",ph:"OO-noh"},{n:2,w:"Dos",ph:"dohs"},{n:3,w:"Tres",ph:"trehs"},{n:4,w:"Cuatro",ph:"KWAH-troh"},{n:5,w:"Cinco",ph:"SEEN-koh"},{n:6,w:"Seis",ph:"seh-ees"},{n:7,w:"Siete",ph:"SYEH-teh"},{n:8,w:"Ocho",ph:"OH-choh"},{n:9,w:"Nueve",ph:"NWEH-beh"},{n:10,w:"Diez",ph:"dyehs"},{n:11,w:"Once",ph:"ON-seh"},{n:12,w:"Doce",ph:"DOH-seh"},{n:13,w:"Trece",ph:"TREH-seh"},{n:14,w:"Catorce",ph:"kah-TOR-seh"},{n:15,w:"Quince",ph:"KEEN-seh"},{n:16,w:"Dieciséis",ph:"dyeh-see-SEYS"},{n:17,w:"Diecisiete",ph:"dyeh-see-SYEH-teh"},{n:18,w:"Dieciocho",ph:"dyeh-see-OH-choh"},{n:19,w:"Diecinueve",ph:"dyeh-see-NWEH-beh"},{n:20,w:"Veinte",ph:"BEYN-teh"},{n:21,w:"Veintiuno",ph:"beyn-tee-OO-noh"},{n:22,w:"Veintidós",ph:"beyn-tee-DOHS"},{n:23,w:"Veintitrés",ph:"beyn-tee-TREHS"},{n:24,w:"Veinticuatro",ph:"beyn-tee-KWAH-troh"},{n:25,w:"Veinticinco",ph:"beyn-tee-SEEN-koh"},{n:26,w:"Veintiséis",ph:"beyn-tee-SEYS"},{n:27,w:"Veintisiete",ph:"beyn-tee-SYEH-teh"},{n:28,w:"Veintiocho",ph:"beyn-tee-OH-choh"},{n:29,w:"Veintinueve",ph:"beyn-tee-NWEH-beh"},{n:30,w:"Treinta",ph:"TREYN-tah"}];
+const NT=[{n:40,w:"Cuarenta",ph:"kwah-REN-tah"},{n:50,w:"Cincuenta",ph:"seen-KWEN-tah"},{n:60,w:"Sesenta",ph:"seh-SEN-tah"},{n:70,w:"Setenta",ph:"seh-TEN-tah"},{n:80,w:"Ochenta",ph:"oh-CHEN-tah"},{n:90,w:"Noventa",ph:"noh-BEN-tah"},{n:100,w:"Cien",ph:"syen"},{n:200,w:"Doscientos",ph:"dohs-SYEN-tohs"},{n:300,w:"Trescientos",ph:"trehs-SYEN-tohs"},{n:400,w:"Cuatrocientos",ph:"kwah-troh-SYEN-tohs"},{n:500,w:"Quinientos",ph:"kee-NYEN-tohs"}];
+const VC=[
+  {id:"vocales",label:"🐝 Vocales",type:"basic",items:[{word:"Abeja",en:"Bee",ph:"ah-BEH-hah",tts:"abeja",icon:"🐝",color:"#f59e0b"},{word:"Elefante",en:"Elephant",ph:"eh-leh-FAN-teh",tts:"elefante",icon:"🐘",color:"#8b5cf6"},{word:"Iguana",en:"Iguana",ph:"ee-GWAH-nah",tts:"iguana",icon:"🦎",color:"#10b981"},{word:"Oveja",en:"Sheep",ph:"oh-BEH-hah",tts:"oveja",icon:"🐑",color:"#6366f1"},{word:"Urraca",en:"Magpie",ph:"oo-RRAH-kah",tts:"urraca",icon:"🐦",color:"#64748b"}]},
+  {id:"numeros",label:"🔢 Números",type:"numeros"},
+  {id:"colores",label:"🎨 Colores",type:"basic",items:[{word:"Rojo",en:"Red",ph:"RROH-hoh",tts:"rojo",icon:"🔴",color:"#ef4444"},{word:"Azul",en:"Blue",ph:"ah-SOOL",tts:"azul",icon:"🔵",color:"#3b82f6"},{word:"Verde",en:"Green",ph:"BER-deh",tts:"verde",icon:"🟢",color:"#10b981"},{word:"Amarillo",en:"Yellow",ph:"ah-mah-REE-yoh",tts:"amarillo",icon:"🟡",color:"#f59e0b"},{word:"Naranja",en:"Orange",ph:"nah-RAN-hah",tts:"naranja",icon:"🟠",color:"#f97316"},{word:"Rosado",en:"Pink",ph:"roh-SAH-doh",tts:"rosado",icon:"🩷",color:"#ec4899"},{word:"Morado",en:"Purple",ph:"moh-RAH-doh",tts:"morado",icon:"🟣",color:"#8b5cf6"},{word:"Blanco",en:"White",ph:"BLAN-koh",tts:"blanco",icon:"⬜",color:"#94a3b8"},{word:"Negro",en:"Black",ph:"NEH-groh",tts:"negro",icon:"⬛",color:"#475569"},{word:"Café",en:"Brown",ph:"kah-FEH",tts:"café",icon:"🟫",color:"#92400e"},{word:"Gris",en:"Gray",ph:"grees",tts:"gris",icon:"🩶",color:"#64748b"}]},
+  {id:"dias",label:"📅 Los Días",type:"basic",items:[{word:"Lunes",en:"Monday",ph:"LOO-nehs",tts:"lunes",icon:"1️⃣",color:"#4aa8a0"},{word:"Martes",en:"Tuesday",ph:"MAR-tehs",tts:"martes",icon:"2️⃣",color:"#4aa8a0"},{word:"Miércoles",en:"Wednesday",ph:"MYER-koh-lehs",tts:"miércoles",icon:"3️⃣",color:"#4aa8a0"},{word:"Jueves",en:"Thursday",ph:"HWEH-behs",tts:"jueves",icon:"4️⃣",color:"#4aa8a0"},{word:"Viernes",en:"Friday",ph:"BYER-nehs",tts:"viernes",icon:"5️⃣",color:"#4aa8a0"},{word:"Sábado",en:"Saturday",ph:"SAH-bah-doh",tts:"sábado",icon:"6️⃣",color:"#e8b44a"},{word:"Domingo",en:"Sunday",ph:"doh-MEEN-goh",tts:"domingo",icon:"7️⃣",color:"#e8b44a"}]},
+  {id:"familia",label:"👨‍👩‍👧 Familia",type:"basic",items:[{word:"Mamá",en:"Mom",ph:"mah-MAH",tts:"mamá",icon:"👩",color:"#ec4899"},{word:"Papá",en:"Dad",ph:"pah-PAH",tts:"papá",icon:"👨",color:"#3b82f6"},{word:"Hermano",en:"Brother",ph:"er-MAH-noh",tts:"hermano",icon:"👦",color:"#10b981"},{word:"Hermana",en:"Sister",ph:"er-MAH-nah",tts:"hermana",icon:"👧",color:"#f59e0b"},{word:"Abuelo",en:"Grandfather",ph:"ah-BWEH-loh",tts:"abuelo",icon:"👴",color:"#8b5cf6"},{word:"Abuela",en:"Grandmother",ph:"ah-BWEH-lah",tts:"abuela",icon:"👵",color:"#e85d75"},{word:"Tío",en:"Uncle",ph:"TEE-oh",tts:"tío",icon:"🧑",color:"#4aa8a0"},{word:"Tía",en:"Aunt",ph:"TEE-ah",tts:"tía",icon:"👩",color:"#a78bfa"},{word:"Primo",en:"Cousin (m.)",ph:"PREE-moh",tts:"primo",icon:"🧒",color:"#06b6d4"},{word:"Prima",en:"Cousin (f.)",ph:"PREE-mah",tts:"prima",icon:"👧",color:"#f43f5e"}]},
+  {id:"preguntas",label:"❓ Preguntas",type:"preguntas"},
+];
+const PQ=[{word:"¿Quién?",en:"Who?",ph:"kyen",tts:"¿Quién?",example:"¿Quién es? — Who is it?"},{word:"¿Qué?",en:"What?",ph:"keh",tts:"¿Qué?",example:"¿Qué es esto? — What is this?"},{word:"¿Cuándo?",en:"When?",ph:"KWAN-doh",tts:"¿Cuándo?",example:"¿Cuándo es? — When is it?"},{word:"¿Dónde?",en:"Where?",ph:"DON-deh",tts:"¿Dónde?",example:"¿Dónde está? — Where is it?"},{word:"¿Cómo?",en:"How?",ph:"KOH-moh",tts:"¿Cómo?",example:"¿Cómo se dice? — How do you say it?"},{word:"¿Por qué?",en:"Why?",ph:"por KEH",tts:"¿Por qué?",example:"¿Por qué? — Why?"},{word:"¿Cuánto?",en:"How much?",ph:"KWAN-toh",tts:"¿Cuánto?",example:"¿Cuánto cuesta? — How much?"},{word:"¿Cuántos?",en:"How many?",ph:"KWAN-tohs",tts:"¿Cuántos?",example:"¿Cuántos son? — How many?"},{word:"¿Cuál?",en:"Which?",ph:"kwal",tts:"¿Cuál?",example:"¿Cuál quiere? — Which one?"},{word:"¿A qué hora?",en:"What time?",ph:"ah keh OH-rah",tts:"¿A qué hora?",example:"¿A qué hora es? — What time?"}];
+const SL=[{section:"Saludo informal",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[{es:"Hola, ¿cómo estás?",en:"Hi, how are you?"},{es:"¿Cómo te va?",en:"How are you doing?"},{es:"¿Qué has hecho?",en:"What have you been up to?"},{es:"¿Qué tal?",en:"How are things?"},{es:"¿Qué te cuentas?",en:"What's up?"}]},{section:"Respuestas",cls:"color:var(--pink);background:rgba(232,93,117,0.1);border:1px solid rgba(232,93,117,0.2)",items:[{es:"Estoy bien, gracias.",en:"I'm fine, thank you."},{es:"Muy bien, ¿y tú?",en:"Very well, and you?"},{es:"Más o menos.",en:"More or less."},{es:"Mal.",en:"Bad."},{es:"No muy bien.",en:"Not very well."}]},{section:"Saludo formal",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[{es:"Buenos días.",en:"Good morning."},{es:"Buenas tardes.",en:"Good afternoon."},{es:"Buenas noches.",en:"Good evening."},{es:"¿Cómo le va a usted?",en:"How are you? (formal)"},{es:"Buenos días, señora Paola.",en:"Good morning, Mrs. Paola."}]},{section:"Presentaciones",cls:"color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)",items:[{es:"Hola, ¿cómo está?",en:"Hi, how are you? (formal)"},{es:"Soy [tu nombre].",en:"I am [your name]."},{es:"¡Gusto en conocerle!",en:"Nice to meet you! (formal)"},{es:"¡Gusto en conocerte!",en:"Nice to meet you! (informal)"},{es:"¡El gusto es mío!",en:"The pleasure is mine!"},{es:"Mucho gusto.",en:"Nice to meet you."},{es:"Encantado / Encantada.",en:"Delighted to meet you."},{es:"Igualmente.",en:"Likewise."}]},{section:"Despedidas",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[{es:"Adiós.",en:"Goodbye."},{es:"Hasta luego.",en:"See you later."},{es:"Hasta mañana.",en:"See you tomorrow."},{es:"Chao.",en:"Bye! (very Colombian)"},{es:"Cuídate.",en:"Take care."}]}];
+const DL=[{who:"A",es:"Hola, ¿cómo está?",en:"Hi, how are you? (formal)"},{who:"B",es:"Hola, estoy bien, gracias.",en:"Hi, I'm fine, thank you."},{who:"A",es:"Soy David. ¡Gusto en conocerle!",en:"I'm David. Nice to meet you!"},{who:"B",es:"Soy Roberto. ¡El gusto es mío!",en:"I'm Roberto. The pleasure is mine!"},{who:"A",es:"Mucho gusto, señor Roberto.",en:"Nice to meet you, Mr. Roberto."},{who:"B",es:"Igualmente, señor David.",en:"Likewise, Mr. David."}];
+
+// ── Letras ────────────────────────────────────────────────────────────────────
+const vg=document.getElementById("vowel-grid");
+VL.forEach(l=>{const b=document.createElement("button");b.className="lc";b.id="lc-"+l;b.textContent=l;b.onclick=()=>sel(l);vg.appendChild(b);});
+const cg=document.getElementById("cons-grid");
+CN.forEach(l=>{const b=document.createElement("button");b.className="lc";b.id="lc-"+l;b.textContent=l;b.onclick=()=>sel(l);cg.appendChild(b);});
+let aL=null;
+function sel(l){
+  if(aL){const p=document.getElementById("lc-"+aL);if(p)p.className="lc";}
+  aL=l;const iv=VL.includes(l);
+  document.getElementById("lc-"+l).className="lc "+(iv?"av":"ac");
+  speak(LI[l].tts,0.7);
+  const c=iv?"var(--pink)":"var(--teal)";const i=LI[l];
+  document.getElementById("detail-card").innerHTML=`<div class="dc" style="border:1px solid ${iv?"rgba(232,93,117,0.25)":"rgba(74,168,160,0.25)"}">
+    <div class="dc-big" style="color:${c}">${l}</div>
+    <div class="dc-sub">Se llama</div><div class="dc-name">"${i.name}"</div>
+    <div class="dc-phon">[${i.phonetic}]</div>
+    <div class="dc-badge">${iv?"🔴 Vocal — el alma de cada sílaba":"🔵 Consonante — se combina con vocales"}</div><br/>
+    <button class="spk-btn" style="background:${c}" onclick="speak('${i.tts}',0.65)">🔊 Escuchar otra vez</button></div>`;
+}
+
+// ── Sílabas ───────────────────────────────────────────────────────────────────
+let aF=null;const fw=document.getElementById("filter-wrap");
+const fab=document.createElement("button");fab.className="fb active";fab.id="fb-all";fab.textContent="Todas";fab.onclick=()=>sF(null);fw.appendChild(fab);
+CN.forEach(l=>{const b=document.createElement("button");b.className="fb";b.id="fb-"+l;b.textContent=l;b.onclick=()=>sF(l);fw.appendChild(b);});
+function sF(l){document.getElementById(aF?"fb-"+aF:"fb-all").classList.remove("active");aF=l;document.getElementById(l?"fb-"+l:"fb-all").classList.add("active");rC();}
+function rC(){
+  const c=document.getElementById("combo-groups");c.innerHTML="";
+  (aF?[aF]:CN).forEach(con=>{
+    const ch=con==="Ñ"?"ñ":con.toLowerCase();const g=document.createElement("div");g.className="cg";
+    g.innerHTML=`<div class="cg-hdr"><button class="cg-badge" onclick="speak('${LI[con].tts}',0.7)">${con}</button>
+      <div><div class="cg-title">${con} + vocal</div><div class="cg-sub">Toca para escuchar</div></div></div>
+      <div class="g5c" id="cg-${con}"></div>`;
+    c.appendChild(g);const gr=g.querySelector(".g5c");
+    VW.forEach(v=>{const inf=gc(con,v);const d=ch+v;
+      const chip=document.createElement("button");chip.className="cc";
+      chip.innerHTML=`<span class="cc-big"><span style="color:var(--teal)">${d[0].toUpperCase()}</span><span style="color:var(--pink)">${d[1]}</span></span>
+        <span class="cc-ph">${inf.p}</span>${inf.n?`<span class="cc-note">${inf.n}</span>`:""}
+        <span style="font-size:0.85rem">🔊</span>`;
+      chip.onclick=()=>speak(inf.t,0.75);gr.appendChild(chip);});
+  });
+}
+rC();
+
+// ── Vocab ─────────────────────────────────────────────────────────────────────
+let aC="vocales";const cw=document.getElementById("cat-wrap");
+VC.forEach(cat=>{const p=document.createElement("button");p.className="cat-pill"+(cat.id===aC?" active":"");p.textContent=cat.label;p.onclick=()=>sCat(cat.id);cw.appendChild(p);});
+function sCat(id){document.querySelectorAll(".cat-pill").forEach((p,i)=>p.classList.toggle("active",VC[i].id===id));aC=id;rV();}
+function rV(){
+  const cat=VC.find(c=>c.id===aC);const list=document.getElementById("vocab-list");list.innerHTML="";
+  if(cat.type==="numeros"){rN(list);return;}
+  if(cat.type==="preguntas"){rP(list);return;}
+  cat.items.forEach(item=>{const card=document.createElement("div");card.className="vc";
+    card.innerHTML=`<div class="vc-icon" style="background:${item.color}22;color:${item.color}">${item.icon}</div>
+      <div class="vc-info"><div class="vc-word">${item.word}</div><div class="vc-en">${item.en}</div><div class="vc-ph">${item.ph}</div></div>
+      <span class="vc-spk">🔊</span>`;card.onclick=()=>speak(item.tts,0.75);list.appendChild(card);});
+}
+function rN(list){
+  const cr=document.createElement("div");cr.className="counting-rules";
+  cr.innerHTML=`<div class="cr-title">📖 Reglas para contar</div>
+    <div class="cr-row"><div class="cr-ex">31 = treinta y uno</div><div class="cr-rule">30–90: [decena] + y + [unidad]</div></div>
+    <div class="cr-row"><div class="cr-ex">101 = ciento uno</div><div class="cr-rule">After 100: ciento + [número]</div></div>
+    <div class="cr-row"><div class="cr-ex">245 = doscientos cuarenta y cinco</div><div class="cr-rule">Hundreds + tens + units</div></div>`;
+  list.appendChild(cr);
+  const mb=document.createElement("div");mb.className="money-box";mb.innerHTML=`<div class="money-title">💰 Dinero Colombiano (COP)</div>`;
+  [{cop:"$1.000",es:"Mil pesos",en:"~$0.25 USD",tts:"mil pesos"},{cop:"$2.000",es:"Dos mil pesos",en:"~$0.50 USD",tts:"dos mil pesos"},{cop:"$5.000",es:"Cinco mil pesos",en:"~$1.25 USD",tts:"cinco mil pesos"},{cop:"$10.000",es:"Diez mil pesos",en:"~$2.50 USD",tts:"diez mil pesos"},{cop:"$20.000",es:"Veinte mil pesos",en:"~$5 USD",tts:"veinte mil pesos"},{cop:"$50.000",es:"Cincuenta mil pesos",en:"~$12 USD",tts:"cincuenta mil pesos"},{cop:"$100.000",es:"Cien mil pesos",en:"~$25 USD",tts:"cien mil pesos"},{cop:"$500.000",es:"Quinientos mil pesos",en:"~$125 USD",tts:"quinientos mil pesos"},{cop:"$1.000.000",es:"Un millón de pesos",en:"~$250 USD",tts:"un millón de pesos"},{cop:"$2.000.000",es:"Dos millones de pesos",en:"~$500 USD",tts:"dos millones de pesos"}].forEach(m=>{
+    const row=document.createElement("div");row.className="money-row";
+    row.innerHTML=`<div class="money-cop">${m.cop}</div><div class="money-info"><div class="money-es">${m.es}</div><div class="money-en">${m.en}</div></div><span style="font-size:1.3rem">🔊</span>`;
+    row.onclick=()=>speak(m.tts,0.75);mb.appendChild(row);});
+  list.appendChild(mb);
+  [[N130,"1 – 30","var(--pink)","rgba(232,93,117,0.1)","rgba(232,93,117,0.2)"],[NT,"40 – 500","var(--teal)","rgba(74,168,160,0.1)","rgba(74,168,160,0.2)"]].forEach(([data,title,col,bg,bdr])=>{
+    const s=document.createElement("div");s.className="num-section";
+    s.innerHTML=`<div class="num-section-title" style="color:${col};background:${bg};border:1px solid ${bdr}">${title}</div>`;
+    const g=document.createElement("div");g.className="num-grid";
+    data.forEach(n=>{const card=document.createElement("div");card.className="num-card";
+      const nc=["#e85d75","#f59e0b","#10b981","#3b82f6","#8b5cf6"][typeof n.n==="number"?n.n%5:0];
+      card.innerHTML=`<div class="num-digit" style="color:${nc}">${n.n}</div><div><div class="num-word">${n.w}</div><div class="num-ph">${n.ph}</div></div>`;
+      card.onclick=()=>speak(n.w,0.75);g.appendChild(card);});s.appendChild(g);list.appendChild(s);});
+  const s3=document.createElement("div");s3.className="num-section";
+  s3.innerHTML=`<div class="num-section-title" style="color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)">Miles y Millones</div>`;
+  const g3=document.createElement("div");g3.className="num-grid";
+  [{n:"1.000",w:"Mil",ph:"meel"},{n:"2.000",w:"Dos mil",ph:"dohs meel"},{n:"10.000",w:"Diez mil",ph:"dyehs meel"},{n:"100.000",w:"Cien mil",ph:"syen meel"},{n:"500.000",w:"Quinientos mil",ph:"kee-NYEN-tohs meel"},{n:"1.000.000",w:"Un millón",ph:"oon mee-LYON"},{n:"2.000.000",w:"Dos millones",ph:"dohs mee-YOH-nehs"},{n:"10.000.000",w:"Diez millones",ph:"dyehs mee-YOH-nehs"}].forEach(n=>{
+    const card=document.createElement("div");card.className="num-card";
+    card.innerHTML=`<div style="font-size:0.85rem;font-weight:900;color:var(--gold);min-width:60px;text-align:right;flex-shrink:0">${n.n}</div><div><div class="num-word">${n.w}</div><div class="num-ph">${n.ph}</div></div>`;
+    card.onclick=()=>speak(n.w,0.75);g3.appendChild(card);});s3.appendChild(g3);list.appendChild(s3);
+}
+function rP(list){
+  const intro=document.createElement("div");intro.className="intro-note";
+  intro.innerHTML=`<div style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--purple);margin-bottom:7px;font-weight:800">❓ Palabras interrogativas</div>
+    <div style="font-size:0.85rem;color:var(--muted);line-height:1.6">Question words always carry accent marks. Tap each card to hear it.</div>`;
+  list.appendChild(intro);
+  PQ.forEach(item=>{const card=document.createElement("div");card.className="q-card";
+    card.innerHTML=`<div class="q-mark" style="color:var(--purple)">${item.word.replace("¿","").replace("?","")}</div>
+      <div class="q-info"><div class="q-word">${item.word}</div><div class="q-en">${item.en}</div>
+      <div class="q-ph">[${item.ph}]</div><div class="q-example">💬 ${item.example}</div></div>
+      <span class="q-spk">🔊</span>`;card.onclick=()=>speak(item.tts,0.75);list.appendChild(card);});
+}
+rV();
+
+// ── Saludos ───────────────────────────────────────────────────────────────────
+const sle=document.getElementById("saludos-list");
+const dd=document.createElement("div");dd.className="dialogue";
+dd.innerHTML=`<div class="dlg-title">💬 Diálogo — Presentaciones formales</div>`+
+  DL.map(l=>`<div class="dlg-line ${l.who==="B"?"right":""}">
+    <div class="dlg-avatar" style="background:${l.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${l.who==="A"?"🧑":"👤"}</div>
+    <div class="dlg-bubble" onclick="speak('${l.es.replace(/'/g,"\\'")}',0.75)">
+      <div class="dlg-es">${l.es}</div><div class="dlg-en">${l.en}</div></div></div>`).join("");
+sle.appendChild(dd);
+const td=document.createElement("div");td.className="gs";
+const ttl=document.createElement("div");ttl.className="gs-title";
+ttl.style.cssText="color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)";
+ttl.textContent="Títulos · Titles";td.appendChild(ttl);
+const tg=document.createElement("div");tg.className="titles-grid";
+[{abbr:"Sr.",full:"Señor",en:"Mr."},{abbr:"Sra.",full:"Señora",en:"Mrs. / Ms."}].forEach(t=>{
+  const tc=document.createElement("div");tc.className="title-card";
+  tc.innerHTML=`<div class="title-abbr">${t.abbr}</div><div class="title-full">${t.full}</div><div class="title-en">${t.en}</div>`;
+  tc.onclick=()=>speak(t.full,0.75);tg.appendChild(tc);});
+td.appendChild(tg);sle.appendChild(td);
+SL.forEach(sec=>{const wrap=document.createElement("div");wrap.className="gs";
+  const st=document.createElement("div");st.className="gs-title";st.style.cssText=sec.cls;st.textContent=sec.section;wrap.appendChild(st);
+  sec.items.forEach(item=>{const card=document.createElement("div");card.className="gcard";
+    card.innerHTML=`<div class="gcard-txt"><div class="g-es">${item.es}</div><div class="g-en">${item.en}</div></div><span class="g-spk">🔊</span>`;
+    card.onclick=()=>speak(item.es,0.75);wrap.appendChild(card);});sle.appendChild(wrap);});
+
+// ── Quiz ──────────────────────────────────────────────────────────────────────
+let aQ=[];
+VC.forEach(cat=>{
+  if(cat.type==="basic")cat.items.forEach(i=>aQ.push({es:i.word,en:i.en,tts:i.tts,cat:cat.id}));
+  if(cat.type==="numeros"){[...N130,...NT].forEach(n=>aQ.push({es:n.w,en:String(n.n),tts:n.w,cat:"numeros"}));}
+  if(cat.type==="preguntas")PQ.forEach(p=>aQ.push({es:p.word,en:p.en,tts:p.tts,cat:"preguntas"}));
+});
+SL.forEach(sec=>{if(sec.items)sec.items.forEach(i=>aQ.push({es:i.es,en:i.en,tts:i.es,cat:"saludos"}));});
+const QC=[{id:"all",label:"Todo"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"preguntas",label:"Preguntas"},{id:"saludos",label:"Saludos"}];
+let qCat="all",qC=0,qT=0,qS=0,cQ=null,an=false;
+const qcw=document.getElementById("qcat-wrap");
+QC.forEach(c=>{const b=document.createElement("button");b.className="qcat"+(c.id==="all"?" active":"");b.textContent=c.label;
+  b.onclick=()=>{document.querySelectorAll(".qcat").forEach((x,i)=>x.classList.toggle("active",QC[i].id===c.id));qCat=c.id;nQ();};qcw.appendChild(b);});
+function nQ(){
+  an=false;document.getElementById("quiz-next").style.display="none";document.getElementById("quiz-fb").textContent="";
+  const pool=qCat==="all"?aQ:aQ.filter(q=>q.cat===qCat);if(!pool.length)return;
+  cQ=pool[Math.floor(Math.random()*pool.length)];document.getElementById("qc-word").textContent=cQ.es;
+  const wrong=pool.filter(q=>q.en!==cQ.en).sort(()=>Math.random()-0.5).slice(0,3);
+  const opts=[cQ,...wrong].sort(()=>Math.random()-0.5);
+  const ow=document.getElementById("quiz-opts");ow.innerHTML="";
+  opts.forEach(opt=>{const b=document.createElement("button");b.className="qopt";b.textContent=opt.en;
+    b.onclick=()=>{if(an)return;an=true;qT++;document.getElementById("q-total").textContent=qT;
+      const fb=document.getElementById("quiz-fb");
+      if(opt.en===cQ.en){b.classList.add("correct");qC++;qS++;document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.textContent="✅ ¡Correcto!";fb.style.color="var(--teal)";speak(cQ.tts,0.75);}
+      else{b.classList.add("wrong");qS=0;document.getElementById("q-streak").textContent="🔥 0";fb.textContent="❌ Incorrecto";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(x.textContent===cQ.en)x.classList.add("reveal");});}
+      document.getElementById("quiz-next").style.display="block";};ow.appendChild(b);});
+}
+function quizHear(){if(cQ)speak(cQ.tts,0.7);}
+setTimeout(nQ,400);
+
+// ── Nav ───────────────────────────────────────────────────────────────────────
+const PG=["letras","silabas","vocab","saludos","quiz"];
+function showPage(id){
+  PG.forEach(p=>{document.getElementById("page-"+p).classList.toggle("active",p===id);document.getElementById("tb-"+p).classList.toggle("active",p===id);});
+  document.querySelector(".scroll").scrollTop=0;
+}
+</script>
+</body>
+</html>
