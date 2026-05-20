@@ -5,269 +5,331 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="Español"/>
+<meta name="apple-mobile-web-app-title" content="Español CO"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
 html{font-size:18px;width:100%;height:100%;-webkit-text-size-adjust:none;text-size-adjust:none;}
 :root{
-  --teal:#4aa8a0;--pink:#e85d75;--gold:#e8b44a;--purple:#a78bfa;--green:#34d399;
+  --teal:#4aa8a0;--pink:#e85d75;--gold:#e8b44a;--purple:#a78bfa;--green:#34d399;--blue:#60a5fa;
   --bg:#0a0f14;--card:rgba(255,255,255,0.06);--border:rgba(255,255,255,0.1);
   --text:rgba(255,255,255,0.92);--muted:rgba(255,255,255,0.42);
-  --safe-top:env(safe-area-inset-top,54px);
-  --safe-bottom:env(safe-area-inset-bottom,34px);
-  --tab-h:90px;
+  --safe-top:env(safe-area-inset-top,54px);--safe-bottom:env(safe-area-inset-bottom,34px);--tab-h:80px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{
-  font-family:'Nunito',sans-serif;background:var(--bg);color:#fff;
-  position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;
-  background-image:
-    radial-gradient(ellipse at 10% 15%,rgba(74,168,160,0.15) 0%,transparent 55%),
-    radial-gradient(ellipse at 90% 85%,rgba(232,93,117,0.11) 0%,transparent 50%);
-}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:#fff;position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;
+  background-image:radial-gradient(ellipse at 10% 15%,rgba(74,168,160,0.14) 0%,transparent 55%),radial-gradient(ellipse at 90% 85%,rgba(232,93,117,0.1) 0%,transparent 50%);}
 button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
-
-/* ── Shell ── */
 #app{display:flex;flex-direction:column;width:100%;height:100%;}
-.scroll{
-  flex:1;overflow-y:scroll;overflow-x:hidden;
-  -webkit-overflow-scrolling:touch;
-  padding:calc(var(--safe-top) + 16px) 18px calc(var(--tab-h) + var(--safe-bottom) + 20px);
-}
+.scroll{flex:1;overflow-y:scroll;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:calc(var(--safe-top) + 14px) 16px calc(var(--tab-h) + var(--safe-bottom) + 20px);}
 .page{display:none;}.page.active{display:block;animation:fadein 0.2s ease;}
 @keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pop{from{transform:scale(0.92);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes bounce{0%,100%{transform:scale(1)}40%{transform:scale(1.18)}70%{transform:scale(0.95)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
 
-/* ── BIG Tab Bar ── */
-.tab-bar{
-  position:fixed;bottom:0;left:0;right:0;
-  height:calc(var(--tab-h) + var(--safe-bottom));
-  padding-bottom:var(--safe-bottom);
-  background:rgba(8,12,18,0.98);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-top:2px solid rgba(255,255,255,0.1);
-  display:flex;z-index:999;
-}
-.tab-item{
-  flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  gap:6px;background:transparent;
-  color:rgba(255,255,255,0.3);
-  font-size:0.72rem;font-weight:800;
-  letter-spacing:0.02em;
-  transition:all 0.2s;
-}
-.tab-item .ti{
-  font-size:2.2rem;line-height:1;
-  transition:transform 0.2s;
-}
-.tab-item span:last-child{font-size:0.7rem;}
-.tab-item.active{color:var(--teal);}
-.tab-item.active .ti{transform:scale(1.15);}
-.tab-item.tquiz.active{color:var(--gold);}
-.tab-item.tsaludos.active{color:var(--pink);}
+/* 6-tab bar */
+.tab-bar{position:fixed;bottom:0;left:0;right:0;height:calc(var(--tab-h) + var(--safe-bottom));padding-bottom:var(--safe-bottom);
+  background:rgba(8,12,18,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid rgba(255,255,255,0.1);display:flex;z-index:999;}
+.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;color:rgba(255,255,255,0.28);font-size:0.58rem;font-weight:800;transition:all 0.2s;}
+.tab-item .ti{font-size:1.7rem;line-height:1;transition:transform 0.2s;}
+.tab-item.active{color:var(--teal);}.tab-item.active .ti{transform:scale(1.15);}
+.tab-item.tfrases.active{color:var(--pink);}.tab-item.tgram.active{color:var(--purple);}.tab-item.tquiz.active{color:var(--gold);}
 
-/* ── Headers ── */
-.ph{text-align:center;margin-bottom:22px;}
-.ph-label{font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
-.ph-title{font-size:2.4rem;font-weight:900;letter-spacing:-0.02em;line-height:1.05;}
-.ph-sub{font-size:0.85rem;color:var(--muted);margin-top:7px;}
-.sl{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;font-weight:800;margin-bottom:12px;}
+/* Headers */
+.ph{text-align:center;margin-bottom:20px;}
+.ph-label{font-size:0.56rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.ph-title{font-size:2.5rem;font-weight:900;letter-spacing:-0.02em;line-height:1.05;}
+.ph-sub{font-size:0.82rem;color:var(--muted);margin-top:7px;}
+.sl{font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;font-weight:800;margin-bottom:11px;}
 
-/* ── Voice Bar ── */
-.voice-bar{
-  display:flex;align-items:center;gap:10px;
-  background:var(--card);border:1px solid var(--border);
-  border-radius:14px;padding:12px 16px;margin-bottom:20px;
-}
-.voice-label{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);font-weight:700;white-space:nowrap;}
-.voice-select{flex:1;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.14);border-radius:10px;padding:9px 10px;color:#fff;font-family:'Nunito',sans-serif;font-size:0.8rem;font-weight:700;-webkit-appearance:none;appearance:none;min-width:0;}
+/* Voice */
+.voice-bar{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:11px 14px;margin-bottom:18px;}
+.voice-label{font-size:0.56rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);font-weight:700;white-space:nowrap;}
+.voice-select{flex:1;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.14);border-radius:9px;padding:8px 10px;color:#fff;font-family:'Nunito',sans-serif;font-size:0.76rem;font-weight:700;-webkit-appearance:none;appearance:none;min-width:0;}
 .voice-select option{background:#1a2030;color:#fff;}
-.voice-test{background:var(--teal);border-radius:10px;padding:10px 16px;color:#fff;font-weight:800;font-size:0.82rem;white-space:nowrap;flex-shrink:0;min-height:44px;}
+.voice-test{background:var(--teal);border-radius:9px;padding:9px 14px;color:#fff;font-weight:800;font-size:0.76rem;white-space:nowrap;flex-shrink:0;min-height:40px;}
 
-/* ── Grids ── */
-.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:22px;}
-.g7{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:22px;}
-.g5c{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;}
-
-/* ── Letter Cards ── */
-.lc{
-  width:100%;aspect-ratio:1;border-radius:14px;
-  border:2px solid var(--border);background:var(--card);
-  color:rgba(255,255,255,0.55);
-  font-size:1.3rem;font-weight:900;
-  display:flex;align-items:center;justify-content:center;
-  transition:all 0.15s;
-}
+/* Grids */
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-bottom:20px;}
+.g7{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-bottom:20px;}
+.g5c{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.lc{width:100%;aspect-ratio:1;border-radius:12px;border:2px solid var(--border);background:var(--card);color:rgba(255,255,255,0.55);font-size:1.25rem;font-weight:900;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
 .lc.av{border-color:var(--pink);background:rgba(232,93,117,0.22);color:var(--pink);}
 .lc.ac{border-color:var(--teal);background:rgba(74,168,160,0.22);color:var(--teal);}
 
-/* ── Detail Card ── */
-.dc{background:var(--card);border-radius:20px;padding:26px 20px;text-align:center;animation:pop 0.2s ease;margin-bottom:10px;}
-.dc-big{font-size:5.5rem;font-weight:900;line-height:1;margin-bottom:8px;}
-.dc-sub{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
-.dc-name{font-size:1.7rem;font-weight:800;color:var(--text);margin-bottom:4px;}
-.dc-phon{font-size:0.95rem;font-weight:600;color:rgba(255,255,255,0.38);margin-bottom:14px;font-style:italic;}
-.dc-badge{font-size:0.75rem;color:var(--muted);background:rgba(255,255,255,0.06);border-radius:10px;padding:7px 16px;display:inline-block;margin-bottom:14px;}
-.spk-btn{border-radius:12px;padding:14px 32px;color:#fff;font-weight:800;font-size:0.95rem;min-height:52px;}
+/* Detail card */
+.dc{background:var(--card);border-radius:18px;padding:24px 18px;text-align:center;animation:pop 0.2s ease;margin-bottom:10px;}
+.dc-big{font-size:5rem;font-weight:900;line-height:1;margin-bottom:8px;}
+.dc-sub{font-size:0.56rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.dc-name{font-size:1.6rem;font-weight:800;color:var(--text);margin-bottom:4px;}
+.dc-phon{font-size:0.9rem;font-weight:600;color:rgba(255,255,255,0.38);margin-bottom:12px;font-style:italic;}
+.dc-badge{font-size:0.7rem;color:var(--muted);background:rgba(255,255,255,0.06);border-radius:9px;padding:6px 14px;display:inline-block;margin-bottom:12px;}
+.spk-btn{border-radius:11px;padding:12px 28px;color:#fff;font-weight:800;font-size:0.9rem;min-height:46px;}
 
-/* ── Sílabas ── */
-.vbar{display:flex;margin-bottom:18px;background:var(--card);border:1px solid rgba(232,93,117,0.22);border-radius:14px;overflow:hidden;}
-.vbi{flex:1;text-align:center;padding:13px 4px;border-right:1px solid var(--border);}
+/* Sílabas */
+.vbar{display:flex;margin-bottom:16px;background:var(--card);border:1px solid rgba(232,93,117,0.22);border-radius:13px;overflow:hidden;}
+.vbi{flex:1;text-align:center;padding:11px 4px;border-right:1px solid var(--border);}
 .vbi:last-child{border-right:none;}
-.vbl{font-size:1.3rem;font-weight:900;color:var(--pink);}
-.vbs{font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:2px;}
-
-.fw{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px;}
-.fb{padding:8px 13px;border-radius:22px;border:1px solid rgba(255,255,255,0.11);background:transparent;color:rgba(255,255,255,0.4);font-weight:800;font-size:0.78rem;transition:all 0.15s;min-height:38px;}
+.vbl{font-size:1.2rem;font-weight:900;color:var(--pink);}
+.vbs{font-size:0.6rem;color:var(--muted);font-weight:700;margin-top:2px;}
+.fw{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.fb{padding:6px 11px;border-radius:20px;border:1px solid rgba(255,255,255,0.11);background:transparent;color:rgba(255,255,255,0.4);font-weight:800;font-size:0.72rem;transition:all 0.15s;min-height:34px;}
 .fb.active{border-color:var(--teal);background:rgba(74,168,160,0.2);color:var(--teal);}
+.cc{display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:10px 3px;transition:all 0.15s;min-height:80px;justify-content:center;}
+.cc:active{background:rgba(74,168,160,0.16);}
+.cc-big{font-weight:900;font-size:1.4rem;line-height:1;}
+.cc-ph{font-size:0.62rem;color:rgba(255,255,255,0.4);}
+.cc-note{font-size:0.48rem;color:var(--gold);background:rgba(232,180,74,0.13);border-radius:3px;padding:1px 4px;text-align:center;max-width:58px;line-height:1.4;}
+.cg{margin-bottom:20px;}
+.cg-hdr{display:flex;align-items:center;gap:11px;margin-bottom:9px;}
+.cg-badge{width:42px;height:42px;border-radius:10px;background:rgba(74,168,160,0.15);border:1px solid rgba(74,168,160,0.35);display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:900;color:var(--teal);flex-shrink:0;}
+.cg-title{font-size:0.85rem;font-weight:800;color:rgba(255,255,255,0.78);}
+.cg-sub{font-size:0.62rem;color:var(--muted);margin-top:2px;}
+.rb{background:rgba(232,180,74,0.07);border:1px solid rgba(232,180,74,0.2);border-radius:14px;padding:14px;margin-top:8px;}
+.rt{font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-weight:800;}
+.rr{display:flex;gap:9px;margin-bottom:8px;align-items:flex-start;}
+.rtag{flex-shrink:0;font-size:0.66rem;font-weight:800;color:var(--gold);background:rgba(232,180,74,0.15);border-radius:5px;padding:3px 8px;}
+.rdesc{font-size:0.74rem;color:rgba(255,255,255,0.45);line-height:1.55;}
 
-/* ── Combo Chips ── */
-.cc{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px 4px;transition:all 0.15s;min-height:90px;justify-content:center;}
-.cc:active{background:rgba(74,168,160,0.16);border-color:rgba(74,168,160,0.42);}
-.cc-big{font-weight:900;font-size:1.55rem;line-height:1;}
-.cc-ph{font-size:0.68rem;color:rgba(255,255,255,0.4);}
-.cc-note{font-size:0.52rem;color:var(--gold);background:rgba(232,180,74,0.13);border-radius:4px;padding:2px 5px;text-align:center;max-width:64px;line-height:1.4;}
-.cg{margin-bottom:22px;}
-.cg-hdr{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
-.cg-badge{width:46px;height:46px;border-radius:12px;background:rgba(74,168,160,0.15);border:1px solid rgba(74,168,160,0.35);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;color:var(--teal);flex-shrink:0;}
-.cg-title{font-size:0.9rem;font-weight:800;color:rgba(255,255,255,0.78);}
-.cg-sub{font-size:0.68rem;color:var(--muted);margin-top:2px;}
-
-.rb{background:rgba(232,180,74,0.07);border:1px solid rgba(232,180,74,0.2);border-radius:16px;padding:16px;margin-top:10px;}
-.rt{font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;font-weight:800;}
-.rr{display:flex;gap:10px;margin-bottom:9px;align-items:flex-start;}
-.rtag{flex-shrink:0;font-size:0.72rem;font-weight:800;color:var(--gold);background:rgba(232,180,74,0.15);border-radius:6px;padding:4px 9px;}
-.rdesc{font-size:0.78rem;color:rgba(255,255,255,0.45);line-height:1.55;}
-
-/* ── Vocab ── */
-.cat-wrap{display:flex;gap:8px;overflow-x:auto;margin-bottom:20px;padding-bottom:4px;scrollbar-width:none;}
+/* Vocab */
+.cat-wrap{display:flex;gap:7px;overflow-x:auto;margin-bottom:18px;padding-bottom:4px;scrollbar-width:none;}
 .cat-wrap::-webkit-scrollbar{display:none;}
-.cat-pill{padding:11px 18px;border-radius:24px;font-weight:800;font-size:0.82rem;border:1px solid rgba(255,255,255,0.11);background:transparent;color:rgba(255,255,255,0.42);white-space:nowrap;transition:all 0.15s;flex-shrink:0;min-height:46px;}
+.cat-pill{padding:9px 15px;border-radius:22px;font-weight:800;font-size:0.76rem;border:1px solid rgba(255,255,255,0.11);background:transparent;color:rgba(255,255,255,0.42);white-space:nowrap;transition:all 0.15s;flex-shrink:0;min-height:40px;}
 .cat-pill.active{background:rgba(74,168,160,0.22);border-color:var(--teal);color:var(--teal);}
 
-/* ── BIG Vocab Cards ── */
-.vc{
-  display:flex;align-items:center;gap:18px;
-  background:var(--card);border:1px solid var(--border);
-  border-radius:20px;padding:20px 18px;
-  margin-bottom:14px;cursor:pointer;transition:all 0.15s;min-height:96px;
-}
-.vc:active{transform:scale(0.985);background:rgba(74,168,160,0.09);}
-.vc-icon{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2.1rem;flex-shrink:0;}
-.vc-num{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:900;flex-shrink:0;}
+/* Standard vocab card */
+.vc{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:15px;margin-bottom:11px;cursor:pointer;transition:all 0.15s;min-height:82px;}
+.vc:active{transform:scale(0.985);}
+.vc-icon{width:56px;height:56px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.85rem;flex-shrink:0;}
+.vc-num{width:56px;height:56px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.65rem;font-weight:900;flex-shrink:0;}
 .vc-info{flex:1;min-width:0;}
-.vc-word{font-size:1.3rem;font-weight:900;color:#fff;line-height:1.1;}
-.vc-en{font-size:0.88rem;color:var(--muted);margin-top:4px;font-style:italic;}
-.vc-ph{font-size:0.78rem;color:var(--teal);margin-top:5px;font-weight:700;}
-.vc-spk{font-size:1.5rem;flex-shrink:0;}
+.vc-word{font-size:1.15rem;font-weight:900;color:#fff;line-height:1.1;}
+.vc-en{font-size:0.82rem;color:var(--muted);margin-top:3px;font-style:italic;}
+.vc-ph{font-size:0.72rem;color:var(--teal);margin-top:4px;font-weight:700;}
+.vc-spk{font-size:1.3rem;flex-shrink:0;}
+.vc-arrow{font-size:1.1rem;flex-shrink:0;color:var(--muted);}
 
-/* ── Numbers ── */
-.num-section{margin-bottom:22px;}
-.num-section-title{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;font-weight:800;margin-bottom:12px;padding:8px 14px;border-radius:10px;display:inline-block;}
-.num-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:8px;}
-.num-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.15s;min-height:70px;}
+/* ── VERB DETAIL VIEW ── */
+.verb-detail{display:none;animation:slideIn 0.25s ease;}
+.verb-detail.active{display:block;}
+.vd-back{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;padding:11px 16px;margin-bottom:18px;cursor:pointer;transition:all 0.15s;min-height:46px;}
+.vd-back:active{background:rgba(255,255,255,0.1);}
+.vd-back-label{font-size:0.85rem;font-weight:800;color:var(--muted);}
+.vd-header{background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);border-radius:18px;padding:20px;margin-bottom:18px;text-align:center;}
+.vd-infinitive{font-size:2.2rem;font-weight:900;color:var(--purple);margin-bottom:4px;}
+.vd-type{font-size:0.72rem;color:var(--muted);font-style:italic;margin-bottom:12px;}
+.vd-en{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:14px;}
+.vd-forms{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:4px;}
+.vd-form-card{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:11px;padding:11px 12px;cursor:pointer;transition:all 0.15s;text-align:center;}
+.vd-form-card:active{background:rgba(167,139,250,0.12);}
+.vd-form-label{font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.vd-form-word{font-size:1.05rem;font-weight:900;color:#fff;}
+.vd-form-en{font-size:0.7rem;color:var(--muted);font-style:italic;margin-top:2px;}
+
+/* Verb conj mini tables */
+.vd-tense-wrap{margin-bottom:16px;}
+.vd-tense-title{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:11px 11px 0 0;padding:10px 14px;}
+.vd-tense-name{font-size:0.72rem;font-weight:800;color:var(--purple);letter-spacing:0.1em;text-transform:uppercase;}
+.vd-conj-rows{border:1px solid var(--border);border-top:none;border-radius:0 0 11px 11px;overflow:hidden;}
+.vd-conj-row{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:all 0.15s;gap:10px;min-height:48px;}
+.vd-conj-row:last-child{border-bottom:none;}
+.vd-conj-row:active{background:rgba(167,139,250,0.08);}
+.vd-pro{font-size:0.75rem;color:var(--muted);min-width:70px;font-weight:700;}
+.vd-verb{font-size:0.98rem;font-weight:900;color:#fff;flex:1;}
+.vd-en-small{font-size:0.68rem;color:var(--muted);font-style:italic;}
+.vd-spk{font-size:0.95rem;flex-shrink:0;}
+
+/* Word family */
+.word-family{background:rgba(232,180,74,0.07);border:1px solid rgba(232,180,74,0.2);border-radius:14px;padding:15px;margin-bottom:16px;}
+.wf-title{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;font-weight:800;}
+.wf-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.wf-card{background:rgba(232,180,74,0.07);border:1px solid rgba(232,180,74,0.15);border-radius:11px;padding:11px 12px;cursor:pointer;transition:all 0.15s;}
+.wf-card:active{background:rgba(232,180,74,0.15);}
+.wf-type{font-size:0.54rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:3px;opacity:0.7;}
+.wf-word{font-size:1rem;font-weight:900;color:#fff;}
+.wf-en{font-size:0.72rem;color:var(--muted);font-style:italic;margin-top:2px;}
+
+/* Imperative */
+.imperative-box{background:rgba(232,93,117,0.07);border:1px solid rgba(232,93,117,0.2);border-radius:14px;padding:14px;margin-bottom:16px;}
+.imp-title{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--pink);margin-bottom:11px;font-weight:800;}
+.imp-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.imp-card{background:rgba(232,93,117,0.08);border:1px solid rgba(232,93,117,0.15);border-radius:11px;padding:12px;text-align:center;cursor:pointer;transition:all 0.15s;}
+.imp-card:active{background:rgba(232,93,117,0.18);}
+.imp-label{font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--pink);margin-bottom:4px;opacity:0.8;}
+.imp-form{font-size:1.2rem;font-weight:900;color:var(--pink);}
+.imp-en{font-size:0.72rem;color:var(--muted);font-style:italic;margin-top:3px;}
+
+/* Vocab vocales */
+.vocal-section{margin-bottom:22px;}
+.vocal-hdr{display:flex;align-items:center;gap:13px;margin-bottom:11px;}
+.vocal-ltr{width:52px;height:52px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.9rem;font-weight:900;flex-shrink:0;}
+.vocal-hdr-info{flex:1;}
+.vocal-name{font-size:1.1rem;font-weight:900;color:#fff;}
+.vocal-sound{font-size:0.76rem;color:var(--muted);font-style:italic;margin-top:2px;}
+.vocal-exs{display:flex;flex-direction:column;gap:8px;padding-left:65px;}
+.vocal-ex{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:11px;cursor:pointer;transition:all 0.15s;min-height:54px;}
+.vocal-ex:active{background:rgba(232,93,117,0.09);}
+.vocal-ex-word{font-size:0.98rem;font-weight:800;color:#fff;flex:1;}
+.vocal-ex-en{font-size:0.76rem;color:var(--muted);font-style:italic;}
+.vocal-ex-ph{font-size:0.68rem;color:var(--pink);font-weight:700;margin-top:2px;}
+
+/* Numbers */
+.num-section{margin-bottom:20px;}
+.num-section-title{font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;font-weight:800;margin-bottom:10px;padding:6px 12px;border-radius:8px;display:inline-block;}
+.num-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:6px;}
+.num-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 15px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.15s;min-height:62px;}
 .num-card:active{transform:scale(0.97);}
-.num-digit{font-size:1.5rem;font-weight:900;min-width:48px;text-align:right;flex-shrink:0;}
-.num-word{font-size:1rem;font-weight:800;color:#fff;line-height:1.2;}
-.num-ph{font-size:0.7rem;color:var(--muted);font-style:italic;margin-top:3px;}
-
-.money-box{background:rgba(52,211,153,0.07);border:1px solid rgba(52,211,153,0.22);border-radius:18px;padding:18px;margin-bottom:18px;}
-.money-title{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--green);margin-bottom:14px;font-weight:800;}
-.money-row{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.035);border-radius:13px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all 0.15s;min-height:60px;}
+.num-digit{font-size:1.35rem;font-weight:900;min-width:42px;text-align:right;flex-shrink:0;}
+.num-word{font-size:0.92rem;font-weight:800;color:#fff;line-height:1.2;}
+.num-ph{font-size:0.66rem;color:var(--muted);font-style:italic;margin-top:2px;}
+.money-box{background:rgba(52,211,153,0.07);border:1px solid rgba(52,211,153,0.22);border-radius:16px;padding:16px;margin-bottom:16px;}
+.money-title{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--green);margin-bottom:12px;font-weight:800;}
+.money-row{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.035);border-radius:11px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all 0.15s;min-height:54px;}
 .money-row:active{background:rgba(52,211,153,0.11);}
-.money-cop{font-size:1rem;font-weight:900;color:var(--green);min-width:110px;}
+.money-cop{font-size:0.92rem;font-weight:900;color:var(--green);min-width:105px;}
 .money-info{flex:1;}
-.money-es{font-size:0.95rem;font-weight:800;color:#fff;}
-.money-en{font-size:0.72rem;color:var(--muted);font-style:italic;margin-top:3px;}
+.money-es{font-size:0.88rem;font-weight:800;color:#fff;}
+.money-en{font-size:0.68rem;color:var(--muted);font-style:italic;margin-top:2px;}
+.counting-rules{background:rgba(74,168,160,0.07);border:1px solid rgba(74,168,160,0.2);border-radius:14px;padding:14px;margin-bottom:16px;}
+.cr-title{font-size:0.58rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--teal);margin-bottom:10px;font-weight:800;}
+.cr-row{margin-bottom:9px;}
+.cr-ex{font-size:0.9rem;font-weight:800;color:#fff;}
+.cr-rule{font-size:0.73rem;color:var(--muted);margin-top:2px;}
 
-.counting-rules{background:rgba(74,168,160,0.07);border:1px solid rgba(74,168,160,0.2);border-radius:16px;padding:16px;margin-bottom:18px;}
-.cr-title{font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--teal);margin-bottom:12px;font-weight:800;}
-.cr-row{margin-bottom:10px;}
-.cr-ex{font-size:0.95rem;font-weight:800;color:#fff;}
-.cr-rule{font-size:0.78rem;color:var(--muted);margin-top:3px;}
-
-/* ── Preguntas ── */
-.q-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:13px;cursor:pointer;transition:all 0.15s;display:flex;align-items:flex-start;gap:14px;min-height:90px;}
+/* Preguntas */
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:15px;margin-bottom:11px;cursor:pointer;transition:all 0.15s;display:flex;align-items:flex-start;gap:12px;min-height:84px;}
 .q-card:active{transform:scale(0.985);}
-.q-mark{font-size:1.9rem;font-weight:900;min-width:54px;text-align:center;flex-shrink:0;padding-top:2px;}
+.q-mark{font-size:1.7rem;font-weight:900;min-width:48px;text-align:center;flex-shrink:0;padding-top:2px;}
 .q-info{flex:1;}
-.q-word{font-size:1.25rem;font-weight:900;color:#fff;}
-.q-en{font-size:0.85rem;color:var(--muted);margin-top:3px;font-style:italic;}
-.q-ph{font-size:0.76rem;color:var(--purple);margin-top:5px;font-weight:700;}
-.q-example{font-size:0.76rem;color:rgba(255,255,255,0.45);margin-top:6px;line-height:1.55;}
-.q-spk{font-size:1.4rem;flex-shrink:0;}
+.q-word{font-size:1.1rem;font-weight:900;color:#fff;}
+.q-en{font-size:0.8rem;color:var(--muted);margin-top:2px;font-style:italic;}
+.q-ph{font-size:0.7rem;color:var(--purple);margin-top:4px;font-weight:700;}
+.q-example{font-size:0.7rem;color:rgba(255,255,255,0.45);margin-top:5px;line-height:1.55;}
+.q-spk{font-size:1.25rem;flex-shrink:0;}
 
-/* ── BIG Greeting Cards ── */
-.gs{margin-bottom:22px;}
-.gs-title{font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;font-weight:800;margin-bottom:12px;padding:8px 14px;border-radius:10px;display:inline-block;}
-.gcard{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:20px;padding:20px 18px;margin-bottom:12px;
-  display:flex;align-items:center;gap:14px;
-  cursor:pointer;transition:all 0.15s;min-height:80px;
-}
-.gcard:active{transform:scale(0.985);}
-.gcard-txt{flex:1;}
-.g-es{font-size:1.1rem;font-weight:800;color:#fff;line-height:1.35;}
-.g-en{font-size:0.82rem;color:var(--muted);margin-top:5px;font-style:italic;}
-.g-spk{font-size:1.5rem;flex-shrink:0;}
+/* Colombianismos */
+.col-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:11px;cursor:pointer;transition:all 0.15s;min-height:82px;}
+.col-card:active{transform:scale(0.985);background:rgba(232,180,74,0.08);}
+.col-card-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;}
+.col-flag{font-size:1.5rem;flex-shrink:0;}
+.col-word-wrap{flex:1;}
+.col-word{font-size:1.2rem;font-weight:900;color:var(--gold);}
+.col-en{font-size:0.82rem;color:var(--muted);font-style:italic;margin-top:2px;}
+.col-spk{font-size:1.25rem;flex-shrink:0;}
+.col-usage{font-size:0.78rem;color:rgba(255,255,255,0.6);line-height:1.55;padding:8px 10px;background:rgba(232,180,74,0.06);border-radius:8px;}
+.col-example{font-size:0.76rem;color:var(--gold);font-style:italic;margin-top:5px;}
 
-/* ── Dialogue ── */
-.dialogue{background:rgba(255,255,255,0.035);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:22px;}
-.dlg-title{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;font-weight:800;}
-.dlg-line{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start;}
+/* Frases */
+.frase-section{margin-bottom:22px;}
+.frase-title{font-size:0.66rem;letter-spacing:0.15em;text-transform:uppercase;font-weight:800;margin-bottom:11px;padding:7px 13px;border-radius:9px;display:inline-block;}
+.frase-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:15px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.15s;min-height:70px;}
+.frase-card:active{transform:scale(0.985);}
+.frase-txt{flex:1;}
+.f-es{font-size:0.98rem;font-weight:800;color:#fff;line-height:1.3;}
+.f-en{font-size:0.76rem;color:var(--muted);margin-top:4px;font-style:italic;}
+.f-spk{font-size:1.25rem;flex-shrink:0;}
+.dialogue{background:rgba(255,255,255,0.035);border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:20px;}
+.dlg-title{font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:13px;font-weight:800;}
+.dlg-line{display:flex;gap:11px;margin-bottom:12px;align-items:flex-start;}
 .dlg-line.right{flex-direction:row-reverse;}
-.dlg-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
-.dlg-bubble{border-radius:16px;padding:13px 16px;cursor:pointer;transition:all 0.15s;flex:1;max-width:85%;}
+.dlg-avatar{width:33px;height:33px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.95rem;flex-shrink:0;}
+.dlg-bubble{border-radius:13px;padding:11px 14px;cursor:pointer;transition:all 0.15s;flex:1;max-width:82%;}
 .dlg-bubble:active{opacity:0.8;}
 .dlg-line:not(.right) .dlg-bubble{background:rgba(255,255,255,0.07);}
-.dlg-line.right .dlg-bubble{background:rgba(74,168,160,0.14);border:1px solid rgba(74,168,160,0.24);}
-.dlg-es{font-size:0.95rem;font-weight:700;color:#fff;line-height:1.4;}
-.dlg-en{font-size:0.72rem;color:var(--muted);margin-top:4px;font-style:italic;}
-
-.titles-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;}
-.title-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;text-align:center;cursor:pointer;transition:all 0.15s;min-height:110px;}
+.dlg-line.right .dlg-bubble{background:rgba(74,168,160,0.13);border:1px solid rgba(74,168,160,0.22);}
+.dlg-es{font-size:0.9rem;font-weight:700;color:#fff;line-height:1.4;}
+.dlg-en{font-size:0.68rem;color:var(--muted);margin-top:3px;font-style:italic;}
+.titles-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:20px;}
+.title-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;text-align:center;cursor:pointer;transition:all 0.15s;min-height:100px;}
 .title-card:active{transform:scale(0.97);}
-.title-abbr{font-size:2.3rem;font-weight:900;color:var(--teal);margin-bottom:6px;}
-.title-full{font-size:0.95rem;font-weight:700;color:#fff;}
-.title-en{font-size:0.76rem;color:var(--muted);font-style:italic;margin-top:4px;}
+.title-abbr{font-size:2.1rem;font-weight:900;color:var(--teal);margin-bottom:5px;}
+.title-full{font-size:0.9rem;font-weight:700;color:#fff;}
+.title-en{font-size:0.7rem;color:var(--muted);font-style:italic;margin-top:3px;}
 
-/* ── BIG Quiz ── */
-.quiz-score-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px 24px;margin-bottom:20px;}
+/* Grammar */
+.gram-tabs{display:flex;gap:7px;margin-bottom:18px;overflow-x:auto;scrollbar-width:none;}
+.gram-tabs::-webkit-scrollbar{display:none;}
+.gtab{padding:9px 14px;border-radius:20px;font-weight:700;font-size:0.73rem;border:1px solid rgba(255,255,255,0.11);background:transparent;color:rgba(255,255,255,0.4);white-space:nowrap;transition:all 0.15s;flex-shrink:0;min-height:40px;}
+.gtab.active{background:rgba(167,139,250,0.2);border-color:var(--purple);color:var(--purple);}
+.gram-section{display:none;}.gram-section.active{display:block;}
+.gram-intro{background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2);border-radius:14px;padding:14px;margin-bottom:14px;}
+.gram-intro-title{font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--purple);margin-bottom:6px;font-weight:800;}
+.gram-intro-text{font-size:0.84rem;color:var(--text);line-height:1.65;}
+.trick-box{background:rgba(232,180,74,0.09);border:1px solid rgba(232,180,74,0.25);border-radius:14px;padding:14px;margin-bottom:14px;}
+.trick-title{font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:7px;font-weight:800;}
+.trick-text{font-size:0.84rem;color:var(--text);line-height:1.7;}
+.conj-table{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:14px;overflow:hidden;}
+.conj-hdr{background:rgba(167,139,250,0.15);padding:11px 14px;}
+.conj-hdr-title{font-size:0.8rem;font-weight:800;color:var(--purple);}
+.conj-hdr-sub{font-size:0.66rem;color:var(--muted);margin-top:2px;}
+.conj-row{display:flex;align-items:center;padding:11px 14px;border-top:1px solid var(--border);cursor:pointer;transition:all 0.15s;gap:11px;min-height:52px;}
+.conj-row:active{background:rgba(167,139,250,0.08);}
+.conj-pronoun{font-size:0.76rem;color:var(--muted);min-width:78px;font-weight:700;}
+.conj-verb{font-size:0.98rem;font-weight:900;color:#fff;flex:1;}
+.conj-en{font-size:0.7rem;color:var(--muted);font-style:italic;}
+.conj-spk{font-size:1.1rem;flex-shrink:0;}
+.example-card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:12px 14px;margin-bottom:9px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:11px;min-height:60px;}
+.example-card:active{background:rgba(167,139,250,0.08);}
+.ex-info{flex:1;}
+.ex-es{font-size:0.92rem;font-weight:800;color:#fff;}
+.ex-en{font-size:0.73rem;color:var(--muted);font-style:italic;margin-top:3px;}
+.ex-spk{font-size:1.1rem;flex-shrink:0;}
+
+/* Pronombres */
+.pro-table{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:14px;overflow:hidden;}
+.pro-hdr{background:rgba(96,165,250,0.15);padding:11px 14px;}
+.pro-hdr-title{font-size:0.8rem;font-weight:800;color:var(--blue);}
+.pro-hdr-sub{font-size:0.66rem;color:var(--muted);margin-top:2px;}
+.pro-row{display:flex;align-items:center;padding:12px 14px;border-top:1px solid var(--border);cursor:pointer;transition:all 0.15s;gap:11px;min-height:52px;}
+.pro-row:active{background:rgba(96,165,250,0.08);}
+.pro-word{font-size:1.1rem;font-weight:900;color:var(--blue);min-width:60px;}
+.pro-meaning{font-size:0.88rem;font-weight:700;color:#fff;flex:1;}
+.pro-example{font-size:0.72rem;color:var(--muted);font-style:italic;margin-top:2px;}
+.pro-spk{font-size:1.1rem;flex-shrink:0;}
+
+/* Reflexivos */
+.reflex-card{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden;}
+.reflex-hdr{background:rgba(52,211,153,0.12);padding:11px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.reflex-hdr-title{font-size:0.9rem;font-weight:800;color:var(--green);}
+.reflex-hdr-en{font-size:0.76rem;color:var(--muted);font-style:italic;}
+.reflex-row{display:flex;align-items:center;padding:10px 14px;border-top:1px solid var(--border);cursor:pointer;transition:all 0.15s;gap:10px;min-height:48px;}
+.reflex-row:active{background:rgba(52,211,153,0.08);}
+.reflex-pro{font-size:0.75rem;color:var(--muted);min-width:68px;font-weight:700;}
+.reflex-verb{font-size:0.95rem;font-weight:900;color:#fff;flex:1;}
+.reflex-en{font-size:0.7rem;color:var(--muted);font-style:italic;}
+.reflex-spk{font-size:0.95rem;flex-shrink:0;}
+
+/* Tricks */
+.trick-list-item{display:flex;gap:10px;margin-bottom:12px;align-items:flex-start;}
+.trick-num{width:28px;height:28px;border-radius:50%;background:rgba(232,180,74,0.2);border:1px solid rgba(232,180,74,0.3);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:900;color:var(--gold);flex-shrink:0;}
+.trick-item-text{flex:1;}
+.trick-item-main{font-size:0.88rem;font-weight:800;color:#fff;line-height:1.3;}
+.trick-item-sub{font-size:0.75rem;color:var(--muted);margin-top:3px;line-height:1.5;}
+
+/* Quiz */
+.quiz-score-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:15px 20px;margin-bottom:17px;}
 .qs-item{text-align:center;}
-.qs-num{font-size:2rem;font-weight:900;}
-.qs-label{font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-top:3px;}
-
-.quiz-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:32px 20px;text-align:center;margin-bottom:18px;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
-.qc-label{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);}
-.qc-word{font-size:2.4rem;font-weight:900;color:#fff;line-height:1.1;}
-.qc-hear{background:rgba(74,168,160,0.15);border:1px solid rgba(74,168,160,0.3);border-radius:12px;padding:11px 24px;color:var(--teal);font-weight:800;font-size:0.9rem;margin-top:6px;min-height:48px;}
-
-/* ── BIG Quiz Options ── */
-.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
-.qopt{
-  background:var(--card);border:2px solid var(--border);
-  border-radius:18px;padding:20px 14px;
-  font-size:1rem;font-weight:700;color:var(--text);
-  text-align:center;transition:all 0.18s;
-  line-height:1.3;min-height:72px;
-  display:flex;align-items:center;justify-content:center;
-}
+.qs-num{font-size:1.85rem;font-weight:900;}
+.qs-label{font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+.quiz-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px 18px;text-align:center;margin-bottom:15px;min-height:144px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;}
+.qc-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);}
+.qc-word{font-size:2.1rem;font-weight:900;color:#fff;line-height:1.1;}
+.qc-hear{background:rgba(74,168,160,0.15);border:1px solid rgba(74,168,160,0.3);border-radius:10px;padding:9px 20px;color:var(--teal);font-weight:800;font-size:0.82rem;margin-top:5px;min-height:42px;}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:13px;}
+.qopt{background:var(--card);border:2px solid var(--border);border-radius:15px;padding:16px 10px;font-size:0.92rem;font-weight:700;color:var(--text);text-align:center;transition:all 0.18s;line-height:1.3;min-height:64px;display:flex;align-items:center;justify-content:center;}
 .qopt:active{transform:scale(0.97);}
 .qopt.correct{border-color:var(--teal);background:rgba(74,168,160,0.22);color:var(--teal);animation:bounce 0.35s ease;}
 .qopt.wrong{border-color:var(--pink);background:rgba(232,93,117,0.17);color:var(--pink);}
-.qopt.reveal{border-color:var(--teal);background:rgba(74,168,160,0.12);color:var(--teal);}
-.quiz-feedback{text-align:center;font-size:1.2rem;font-weight:800;height:32px;margin-bottom:10px;}
-.quiz-next{width:100%;padding:18px;border-radius:18px;background:var(--teal);color:#fff;font-weight:800;font-size:1rem;display:none;min-height:58px;}
-.quiz-cat-wrap{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;padding-bottom:4px;scrollbar-width:none;}
+.qopt.reveal{border-color:var(--teal);background:rgba(74,168,160,0.1);color:var(--teal);}
+.quiz-feedback{text-align:center;font-size:1.1rem;font-weight:800;height:28px;margin-bottom:9px;}
+.quiz-next{width:100%;padding:15px;border-radius:15px;background:var(--teal);color:#fff;font-weight:800;font-size:0.92rem;display:none;min-height:52px;}
+.quiz-cat-wrap{display:flex;gap:7px;overflow-x:auto;margin-bottom:13px;padding-bottom:4px;scrollbar-width:none;}
 .quiz-cat-wrap::-webkit-scrollbar{display:none;}
-.qcat{padding:9px 16px;border-radius:22px;font-weight:700;font-size:0.78rem;border:1px solid rgba(255,255,255,0.11);background:transparent;color:rgba(255,255,255,0.4);white-space:nowrap;transition:all 0.15s;flex-shrink:0;min-height:42px;}
+.qcat{padding:7px 13px;border-radius:20px;font-weight:700;font-size:0.7rem;border:1px solid rgba(255,255,255,0.11);background:transparent;color:rgba(255,255,255,0.4);white-space:nowrap;transition:all 0.15s;flex-shrink:0;min-height:36px;}
 .qcat.active{background:rgba(232,180,74,0.2);border-color:var(--gold);color:var(--gold);}
-
-.intro-note{background:rgba(167,139,250,0.07);border:1px solid rgba(167,139,250,0.18);border-radius:16px;padding:15px 17px;margin-bottom:18px;}
+.intro-note{background:rgba(167,139,250,0.07);border:1px solid rgba(167,139,250,0.18);border-radius:14px;padding:14px;margin-bottom:15px;}
 </style>
 </head>
 <body>
@@ -276,11 +338,9 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 
 <!-- LETRAS -->
 <div class="page active" id="page-letras">
-  <div class="ph">
-    <div class="ph-label">Español Colombiano</div>
+  <div class="ph"><div class="ph-label">Español Colombiano</div>
     <div class="ph-title"><span style="color:var(--teal)">El </span><span style="color:var(--text)">Alfabeto</span></div>
-    <div class="ph-sub">Toca cada letra para escuchar</div>
-  </div>
+    <div class="ph-sub">Toca cada letra para escuchar</div></div>
   <div id="voice-bar-letras"></div>
   <div class="sl" style="color:var(--pink)">Vocales</div>
   <div class="g5" id="vowel-grid"></div>
@@ -291,11 +351,9 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 
 <!-- SÍLABAS -->
 <div class="page" id="page-silabas">
-  <div class="ph">
-    <div class="ph-label">Español Colombiano</div>
+  <div class="ph"><div class="ph-label">Español Colombiano</div>
     <div class="ph-title" style="color:var(--pink)">Sílabas</div>
-    <div class="ph-sub">Consonante + Vocal · Toca para escuchar</div>
-  </div>
+    <div class="ph-sub">Consonante + Vocal · Toca para escuchar</div></div>
   <div class="vbar">
     <div class="vbi"><div class="vbl">A</div><div class="vbs">ah</div></div>
     <div class="vbi"><div class="vbl">E</div><div class="vbs">eh</div></div>
@@ -312,40 +370,55 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
     <div class="rr"><span class="rtag">G+e/i</span><span class="rdesc">Suena 'j'. Ej: gente, girasol</span></div>
     <div class="rr"><span class="rtag">H</span><span class="rdesc">Siempre muda. Ej: hola, huevo</span></div>
     <div class="rr"><span class="rtag">Ñ</span><span class="rdesc">Sonido 'ny'. Ej: niño, mañana</span></div>
-    <div class="rr"><span class="rtag">QU</span><span class="rdesc">U no suena — solo 'K'. Ej: queso</span></div>
-    <div class="rr"><span class="rtag">V</span><span class="rdesc">Igual que B. Ej: vaca</span></div>
+    <div class="rr"><span class="rtag">V = B</span><span class="rdesc">V suena como B. Ej: vo = "bo", vaca = "baca"</span></div>
     <div class="rr"><span class="rtag">Z</span><span class="rdesc">Suena 's'. Ej: zapato</span></div>
   </div>
 </div>
 
 <!-- VOCAB -->
 <div class="page" id="page-vocab">
-  <div class="ph">
-    <div class="ph-label">Español Colombiano</div>
+  <div class="ph"><div class="ph-label">Español Colombiano</div>
     <div class="ph-title" style="color:var(--teal)">Vocabulario</div>
-    <div class="ph-sub">Toca cada palabra para escuchar</div>
-  </div>
+    <div class="ph-sub">Toca cada palabra para escuchar</div></div>
   <div class="cat-wrap" id="cat-wrap"></div>
   <div id="vocab-list"></div>
+  <div class="verb-detail" id="verb-detail"></div>
 </div>
 
-<!-- SALUDOS -->
-<div class="page" id="page-saludos">
-  <div class="ph">
-    <div class="ph-label">Español Colombiano</div>
-    <div class="ph-title" style="color:var(--pink)">Saludos</div>
-    <div class="ph-sub">Toca cualquier frase para escuchar</div>
+<!-- FRASES -->
+<div class="page" id="page-frases">
+  <div class="ph"><div class="ph-label">Español Colombiano</div>
+    <div class="ph-title" style="color:var(--pink)">Frases</div>
+    <div class="ph-sub">Conversación diaria · Toca para escuchar</div></div>
+  <div id="frases-list"></div>
+</div>
+
+<!-- GRAMÁTICA -->
+<div class="page" id="page-gram">
+  <div class="ph"><div class="ph-label">Español Colombiano</div>
+    <div class="ph-title" style="color:var(--purple)">Gramática</div>
+    <div class="ph-sub">Tiempos verbales · Trucos para recordar</div></div>
+  <div class="gram-tabs">
+    <button class="gtab active" id="gt-presente" onclick="showGram('presente')">⚡ Presente</button>
+    <button class="gtab" id="gt-pasado" onclick="showGram('pasado')">⏮️ Pasado</button>
+    <button class="gtab" id="gt-futuro" onclick="showGram('futuro')">⏭️ Futuro</button>
+    <button class="gtab" id="gt-pronombres" onclick="showGram('pronombres')">👤 Lo/Le</button>
+    <button class="gtab" id="gt-reflexivos" onclick="showGram('reflexivos')">🔄 Reflexivos</button>
+    <button class="gtab" id="gt-trucos" onclick="showGram('trucos')">🧠 Trucos</button>
   </div>
-  <div id="saludos-list"></div>
+  <div class="gram-section active" id="gs-presente"></div>
+  <div class="gram-section" id="gs-pasado"></div>
+  <div class="gram-section" id="gs-futuro"></div>
+  <div class="gram-section" id="gs-pronombres"></div>
+  <div class="gram-section" id="gs-reflexivos"></div>
+  <div class="gram-section" id="gs-trucos"></div>
 </div>
 
 <!-- QUIZ -->
 <div class="page" id="page-quiz">
-  <div class="ph">
-    <div class="ph-label">Practica</div>
+  <div class="ph"><div class="ph-label">Practica</div>
     <div class="ph-title"><span style="color:var(--gold)">Quiz</span></div>
-    <div class="ph-sub">¿Cuánto recuerdas?</div>
-  </div>
+    <div class="ph-sub">¿Cuánto recuerdas?</div></div>
   <div class="quiz-score-bar">
     <div class="qs-item"><div class="qs-num" id="q-correct" style="color:var(--teal)">0</div><div class="qs-label">Correctas</div></div>
     <div class="qs-item"><div class="qs-num" id="q-streak" style="color:var(--gold)">🔥 0</div><div class="qs-label">Racha</div></div>
@@ -364,102 +437,314 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 
 </div>
 
-<!-- BIG Tab Bar -->
+<!-- 6-Tab Bar -->
 <div class="tab-bar">
-  <button class="tab-item active" id="tb-letras" onclick="showPage('letras')">
-    <span class="ti">🔤</span><span>Letras</span>
-  </button>
-  <button class="tab-item" id="tb-silabas" onclick="showPage('silabas')">
-    <span class="ti">🔡</span><span>Sílabas</span>
-  </button>
-  <button class="tab-item" id="tb-vocab" onclick="showPage('vocab')">
-    <span class="ti">📚</span><span>Vocab</span>
-  </button>
-  <button class="tab-item tsaludos" id="tb-saludos" onclick="showPage('saludos')">
-    <span class="ti">👋</span><span>Saludos</span>
-  </button>
-  <button class="tab-item tquiz" id="tb-quiz" onclick="showPage('quiz')">
-    <span class="ti">🧪</span><span>Quiz</span>
-  </button>
+  <button class="tab-item active" id="tb-letras" onclick="showPage('letras')"><span class="ti">🔤</span><span>Letras</span></button>
+  <button class="tab-item" id="tb-silabas" onclick="showPage('silabas')"><span class="ti">🔡</span><span>Sílabas</span></button>
+  <button class="tab-item" id="tb-vocab" onclick="showPage('vocab')"><span class="ti">📚</span><span>Vocab</span></button>
+  <button class="tab-item tfrases" id="tb-frases" onclick="showPage('frases')"><span class="ti">💬</span><span>Frases</span></button>
+  <button class="tab-item tgram" id="tb-gram" onclick="showPage('gram')"><span class="ti">📖</span><span>Gram</span></button>
+  <button class="tab-item tquiz" id="tb-quiz" onclick="showPage('quiz')"><span class="ti">🧪</span><span>Quiz</span></button>
 </div>
 </div>
 
 <script>
 // ── Voice ─────────────────────────────────────────────────────────────────────
 let voices=[],selV=null;
-function loadV(){
-  voices=window.speechSynthesis.getVoices();
-  const sp=voices.filter(v=>v.lang.startsWith("es"));
-  for(const p of["es-CO","es-MX","es-US","es-419","es-AR"]){const v=sp.find(x=>x.lang.startsWith(p));if(v){selV=v;break;}}
-  if(!selV&&sp.length)selV=sp[0];buildVB();
-}
-function buildVB(){
-  const sp=voices.filter(v=>v.lang.startsWith("es"));if(!sp.length)return;
-  document.getElementById("voice-bar-letras").innerHTML=`<div class="voice-bar">
-    <span class="voice-label">🎙️ Voz</span>
-    <select class="voice-select" onchange="chV(this.value)">
-      ${sp.map((v,i)=>`<option value="${i}" ${selV&&v.name===selV.name?"selected":""}>${v.lang} · ${v.name.replace("com.apple.","").replace("voice.","")}</option>`).join("")}
-    </select>
-    <button class="voice-test" onclick="speak('Hola, buenos días',0.8)">Probar</button>
-  </div>`;
-}
+function loadV(){voices=window.speechSynthesis.getVoices();const sp=voices.filter(v=>v.lang.startsWith("es"));for(const p of["es-CO","es-MX","es-US","es-419","es-AR"]){const v=sp.find(x=>x.lang.startsWith(p));if(v){selV=v;break;}}if(!selV&&sp.length)selV=sp[0];buildVB();}
+function buildVB(){const sp=voices.filter(v=>v.lang.startsWith("es"));if(!sp.length)return;document.getElementById("voice-bar-letras").innerHTML=`<div class="voice-bar"><span class="voice-label">🎙️ Voz</span><select class="voice-select" onchange="chV(this.value)">${sp.map((v,i)=>`<option value="${i}" ${selV&&v.name===selV.name?"selected":""}>${v.lang} · ${v.name.replace("com.apple.","").replace("voice.","")}</option>`).join("")}</select><button class="voice-test" onclick="speak('Hola, buenos días Colombia',0.8)">Probar</button></div>`;}
 function chV(i){const sp=voices.filter(v=>v.lang.startsWith("es"));selV=sp[i]||null;}
-function speak(t,r){
-  if(!window.speechSynthesis)return;speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(t);
-  if(selV)u.voice=selV;u.lang=selV?selV.lang:"es-CO";u.rate=r||0.8;
-  speechSynthesis.speak(u);
-}
+function speak(t,r){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);if(selV)u.voice=selV;u.lang=selV?selV.lang:"es-CO";u.rate=r||0.8;speechSynthesis.speak(u);}
 if(window.speechSynthesis){loadV();window.speechSynthesis.onvoiceschanged=loadV;}
 
-// ── Data ──────────────────────────────────────────────────────────────────────
+// ── Alphabet ──────────────────────────────────────────────────────────────────
 const VW=["a","e","i","o","u"],VL=["A","E","I","O","U"];
 const AL=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","Ñ","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
 const CN=AL.filter(l=>!VL.includes(l));
-const LI={A:{name:"a",phonetic:"ah",tts:"a"},B:{name:"be",phonetic:"beh",tts:"be"},C:{name:"ce",phonetic:"seh",tts:"ce"},D:{name:"de",phonetic:"deh",tts:"de"},E:{name:"e",phonetic:"eh",tts:"e"},F:{name:"efe",phonetic:"EH-feh",tts:"efe"},G:{name:"ge",phonetic:"heh",tts:"ge"},H:{name:"hache",phonetic:"AH-cheh",tts:"hache"},I:{name:"i",phonetic:"ee",tts:"i"},J:{name:"jota",phonetic:"HOH-tah",tts:"jota"},K:{name:"ka",phonetic:"kah",tts:"ka"},L:{name:"ele",phonetic:"EH-leh",tts:"ele"},M:{name:"eme",phonetic:"EH-meh",tts:"eme"},N:{name:"ene",phonetic:"EH-neh",tts:"ene"},Ñ:{name:"eñe",phonetic:"EH-nyeh",tts:"eñe"},O:{name:"o",phonetic:"oh",tts:"o"},P:{name:"pe",phonetic:"peh",tts:"pe"},Q:{name:"cu",phonetic:"koo",tts:"cu"},R:{name:"erre",phonetic:"EH-rreh",tts:"erre"},S:{name:"ese",phonetic:"EH-seh",tts:"ese"},T:{name:"te",phonetic:"teh",tts:"te"},U:{name:"u",phonetic:"oo",tts:"u"},V:{name:"uve",phonetic:"OO-beh",tts:"uve"},W:{name:"doble ve",phonetic:"DOH-bleh beh",tts:"doble ve"},X:{name:"equis",phonetic:"EH-kees",tts:"equis"},Y:{name:"ye",phonetic:"yeh",tts:"ye"},Z:{name:"zeta",phonetic:"SEH-tah",tts:"zeta"}};
+const LI={A:{name:"a",phonetic:"ah",tts:"a"},B:{name:"be",phonetic:"beh",tts:"be"},C:{name:"ce",phonetic:"seh",tts:"ce"},D:{name:"de",phonetic:"deh",tts:"de"},E:{name:"e",phonetic:"eh",tts:"e"},F:{name:"efe",phonetic:"EH-feh",tts:"efe"},G:{name:"ge",phonetic:"heh",tts:"ge"},H:{name:"hache",phonetic:"AH-cheh",tts:"hache"},I:{name:"i",phonetic:"ee",tts:"i"},J:{name:"jota",phonetic:"HOH-tah",tts:"jota"},K:{name:"ka",phonetic:"kah",tts:"ka"},L:{name:"ele",phonetic:"EH-leh",tts:"ele"},M:{name:"eme",phonetic:"EH-meh",tts:"eme"},N:{name:"ene",phonetic:"EH-neh",tts:"ene"},Ñ:{name:"eñe",phonetic:"EH-nyeh",tts:"eñe"},O:{name:"o",phonetic:"oh",tts:"o"},P:{name:"pe",phonetic:"peh",tts:"pe"},Q:{name:"cu",phonetic:"koo",tts:"cu"},R:{name:"erre",phonetic:"EH-rreh",tts:"erre"},S:{name:"ese",phonetic:"EH-seh",tts:"ese"},T:{name:"te",phonetic:"teh",tts:"te"},U:{name:"u",phonetic:"oo",tts:"u"},V:{name:"uve",phonetic:"OO-beh (=B)",tts:"uve"},W:{name:"doble ve",phonetic:"DOH-bleh beh",tts:"doble ve"},X:{name:"equis",phonetic:"EH-kees",tts:"equis"},Y:{name:"ye",phonetic:"yeh",tts:"ye"},Z:{name:"zeta",phonetic:"SEH-tah",tts:"zeta"}};
 const VS={a:"ah",e:"eh",i:"ee",o:"oh",u:"oo"};
 function gc(l,v){
-  const pv={C:{a:{p:"kah",t:"ca",n:null},e:{p:"seh",t:"ce",n:"suena 's'"},i:{p:"see",t:"ci",n:"suena 's'"},o:{p:"koh",t:"co",n:null},u:{p:"koo",t:"cu",n:null}},G:{a:{p:"gah",t:"ga",n:null},e:{p:"heh",t:"ge",n:"suena 'j'"},i:{p:"hee",t:"gi",n:"suena 'j'"},o:{p:"goh",t:"go",n:null},u:{p:"goo",t:"gu",n:null}},H:{a:{p:"ah",t:"ha",n:"H muda"},e:{p:"eh",t:"he",n:"H muda"},i:{p:"ee",t:"hi",n:"H muda"},o:{p:"oh",t:"ho",n:"H muda"},u:{p:"oo",t:"hu",n:"H muda"}},Q:{a:{p:"kah",t:"qa",n:"usa QU"},e:{p:"keh",t:"que",n:"QUE='keh'"},i:{p:"kee",t:"qui",n:"QUI='kee'"},o:{p:"koh",t:"qo",n:"usa QU"},u:{p:"koo",t:"qu",n:"con U"}}};
+  const pv={C:{a:{p:"kah",t:"ca",n:null},e:{p:"seh",t:"ce",n:"suena 's'"},i:{p:"see",t:"ci",n:"suena 's'"},o:{p:"koh",t:"co",n:null},u:{p:"koo",t:"cu",n:null}},G:{a:{p:"gah",t:"ga",n:null},e:{p:"heh",t:"ge",n:"suena 'j'"},i:{p:"hee",t:"gi",n:"suena 'j'"},o:{p:"goh",t:"go",n:null},u:{p:"goo",t:"gu",n:null}},H:{a:{p:"ah",t:"ha",n:"H muda"},e:{p:"eh",t:"he",n:"H muda"},i:{p:"ee",t:"hi",n:"H muda"},o:{p:"oh",t:"ho",n:"H muda"},u:{p:"oo",t:"hu",n:"H muda"}},Q:{a:{p:"kah",t:"qa",n:"usa QU"},e:{p:"keh",t:"que",n:"QUE='keh'"},i:{p:"kee",t:"qui",n:"QUI='kee'"},o:{p:"koh",t:"qo",n:"usa QU"},u:{p:"koo",t:"qu",n:"con U"}},
+    V:{a:{p:"bah",t:"ba",n:"V=B en Colombia"},e:{p:"beh",t:"be",n:"V=B en Colombia"},i:{p:"bee",t:"bi",n:"V=B en Colombia"},o:{p:"boh",t:"bo",n:"V=B en Colombia"},u:{p:"boo",t:"bu",n:"V=B en Colombia"}},
+    L:{a:{p:"lah",t:"la",n:null},e:{p:"leh",t:"le",n:null},i:{p:"lee",t:"li",n:null},o:{p:"loh",t:"lo",n:null},u:{p:"loo",t:"lu",n:null}},
+    N:{a:{p:"nah",t:"na",n:null},e:{p:"neh",t:"ne",n:null},i:{p:"nee",t:"ni",n:null},o:{p:"noh",t:"no",n:null},u:{p:"noo",t:"nu",n:null}},
+    Y:{a:{p:"yah",t:"ya",n:null},e:{p:"yeh",t:"ye",n:null},i:{p:"yee",t:"yi",n:"sonido 'y'"},o:{p:"yoh",t:"yo",n:null},u:{p:"yoo",t:"yu",n:null}},
+  };
   if(pv[l])return pv[l][v];
-  const s={B:"b",D:"d",F:"f",J:"j",K:"k",L:"l",M:"m",N:"n",Ñ:"ny",P:"p",R:"r",S:"s",T:"t",V:"b",W:"w",X:"ks",Y:"y",Z:"s"};
-  const n={J:"suena 'j'",V:"igual que B",X:"'ks' o 'j'",Z:"suena 's'",Ñ:"sonido 'ny'"};
+  const s={B:"b",D:"d",F:"f",J:"j",K:"k",M:"m",Ñ:"ny",P:"p",R:"r",S:"s",T:"t",W:"w",X:"ks",Z:"s"};
+  const n={J:"suena 'j'",X:"'ks' o 'j'",Z:"suena 's'",Ñ:"sonido 'ny'"};
   return{p:(s[l]||l.toLowerCase())+VS[v],t:(l==="Ñ"?"ñ":l.toLowerCase())+v,n:n[l]||null};
 }
+
+// ── VERB CONJUGATION DATA ─────────────────────────────────────────────────────
+const VERBS={
+  hablar:{en:"to speak / talk",type:"AR — Regular",icon:"🗣️",color:"#4aa8a0",
+    gerund:{f:"hablando",en:"speaking"},participle:{f:"hablado",en:"spoken"},
+    imperative:{tu:{f:"¡Habla!",en:"Speak! (informal)"},usted:{f:"¡Hable!",en:"Speak! (formal)"}},
+    present:[{p:"yo",v:"hablo",e:"I speak"},{p:"tú",v:"hablas",e:"you speak"},{p:"él/ella",v:"habla",e:"he/she speaks"},{p:"nosotros",v:"hablamos",e:"we speak"},{p:"ellos",v:"hablan",e:"they speak"}],
+    past:[{p:"yo",v:"hablé",e:"I spoke"},{p:"tú",v:"hablaste",e:"you spoke"},{p:"él/ella",v:"habló",e:"he/she spoke"},{p:"nosotros",v:"hablamos",e:"we spoke"},{p:"ellos",v:"hablaron",e:"they spoke"}],
+    future:[{p:"yo",v:"hablaré",e:"I will speak"},{p:"tú",v:"hablarás",e:"you will speak"},{p:"él/ella",v:"hablará",e:"he/she will speak"},{p:"nosotros",v:"hablaremos",e:"we will speak"},{p:"ellos",v:"hablarán",e:"they will speak"}],
+    family:[{f:"el habla",e:"speech / dialect",t:"sustantivo"},{f:"el/la hablante",e:"speaker",t:"sustantivo"},{f:"hablador/a",e:"talkative person",t:"adjetivo"},{f:"la hablada",e:"accent / way of talking",t:"sustantivo"}],
+    example:{es:"Yo hablo un poco de español.",en:"I speak a little Spanish."}},
+  comer:{en:"to eat",type:"ER — Regular",icon:"🍽️",color:"#f97316",
+    gerund:{f:"comiendo",en:"eating"},participle:{f:"comido",en:"eaten"},
+    imperative:{tu:{f:"¡Come!",en:"Eat! (informal)"},usted:{f:"¡Coma!",en:"Eat! (formal)"}},
+    present:[{p:"yo",v:"como",e:"I eat"},{p:"tú",v:"comes",e:"you eat"},{p:"él/ella",v:"come",e:"he/she eats"},{p:"nosotros",v:"comemos",e:"we eat"},{p:"ellos",v:"comen",e:"they eat"}],
+    past:[{p:"yo",v:"comí",e:"I ate"},{p:"tú",v:"comiste",e:"you ate"},{p:"él/ella",v:"comió",e:"he/she ate"},{p:"nosotros",v:"comimos",e:"we ate"},{p:"ellos",v:"comieron",e:"they ate"}],
+    future:[{p:"yo",v:"comeré",e:"I will eat"},{p:"tú",v:"comerás",e:"you will eat"},{p:"él/ella",v:"comerá",e:"he/she will eat"},{p:"nosotros",v:"comeremos",e:"we will eat"},{p:"ellos",v:"comerán",e:"they will eat"}],
+    family:[{f:"la comida",e:"food / meal",t:"sustantivo"},{f:"el comedor",e:"dining room",t:"sustantivo"},{f:"el/la comensal",e:"diner / guest",t:"sustantivo"},{f:"comestible",e:"edible",t:"adjetivo"}],
+    example:{es:"¿Qué vas a comer?",en:"What are you going to eat?"}},
+  vivir:{en:"to live",type:"IR — Regular",icon:"🏠",color:"#34d399",
+    gerund:{f:"viviendo",en:"living"},participle:{f:"vivido",en:"lived"},
+    imperative:{tu:{f:"¡Vive!",en:"Live! (informal)"},usted:{f:"¡Viva!",en:"Live! (formal) / Cheers!"}},
+    present:[{p:"yo",v:"vivo",e:"I live"},{p:"tú",v:"vives",e:"you live"},{p:"él/ella",v:"vive",e:"he/she lives"},{p:"nosotros",v:"vivimos",e:"we live"},{p:"ellos",v:"viven",e:"they live"}],
+    past:[{p:"yo",v:"viví",e:"I lived"},{p:"tú",v:"viviste",e:"you lived"},{p:"él/ella",v:"vivió",e:"he/she lived"},{p:"nosotros",v:"vivimos",e:"we lived"},{p:"ellos",v:"vivieron",e:"they lived"}],
+    future:[{p:"yo",v:"viviré",e:"I will live"},{p:"tú",v:"vivirás",e:"you will live"},{p:"él/ella",v:"vivirá",e:"he/she will live"},{p:"nosotros",v:"viviremos",e:"we will live"},{p:"ellos",v:"vivirán",e:"they will live"}],
+    family:[{f:"la vida",e:"life",t:"sustantivo"},{f:"la vivienda",e:"housing / home",t:"sustantivo"},{f:"vivo/a",e:"alive / lively",t:"adjetivo"},{f:"el/la vecino/a",e:"neighbour",t:"sustantivo"}],
+    example:{es:"Vivo en Colombia.",en:"I live in Colombia."}},
+  beber:{en:"to drink",type:"ER — Regular",icon:"🥤",color:"#60a5fa",
+    gerund:{f:"bebiendo",en:"drinking"},participle:{f:"bebido",en:"drunk (drunk something)"},
+    imperative:{tu:{f:"¡Bebe!",en:"Drink! (informal)"},usted:{f:"¡Beba!",en:"Drink! (formal)"}},
+    present:[{p:"yo",v:"bebo",e:"I drink"},{p:"tú",v:"bebes",e:"you drink"},{p:"él/ella",v:"bebe",e:"he/she drinks"},{p:"nosotros",v:"bebemos",e:"we drink"},{p:"ellos",v:"beben",e:"they drink"}],
+    past:[{p:"yo",v:"bebí",e:"I drank"},{p:"tú",v:"bebiste",e:"you drank"},{p:"él/ella",v:"bebió",e:"he/she drank"},{p:"nosotros",v:"bebimos",e:"we drank"},{p:"ellos",v:"bebieron",e:"they drank"}],
+    future:[{p:"yo",v:"beberé",e:"I will drink"},{p:"tú",v:"beberás",e:"you will drink"},{p:"él/ella",v:"beberá",e:"he/she will drink"},{p:"nosotros",v:"beberemos",e:"we will drink"},{p:"ellos",v:"beberán",e:"they will drink"}],
+    family:[{f:"la bebida",e:"drink / beverage",t:"sustantivo"},{f:"el bebedor",e:"drinker",t:"sustantivo"},{f:"bebible",e:"drinkable",t:"adjetivo"},{f:"la bebida alcohólica",e:"alcoholic drink",t:"sustantivo"}],
+    example:{es:"¿Qué bebida quieres?",en:"What drink do you want?"}},
+  trabajar:{en:"to work",type:"AR — Regular",icon:"💼",color:"#e8b44a",
+    gerund:{f:"trabajando",en:"working"},participle:{f:"trabajado",en:"worked"},
+    imperative:{tu:{f:"¡Trabaja!",en:"Work! (informal)"},usted:{f:"¡Trabaje!",en:"Work! (formal)"}},
+    present:[{p:"yo",v:"trabajo",e:"I work"},{p:"tú",v:"trabajas",e:"you work"},{p:"él/ella",v:"trabaja",e:"he/she works"},{p:"nosotros",v:"trabajamos",e:"we work"},{p:"ellos",v:"trabajan",e:"they work"}],
+    past:[{p:"yo",v:"trabajé",e:"I worked"},{p:"tú",v:"trabajaste",e:"you worked"},{p:"él/ella",v:"trabajó",e:"he/she worked"},{p:"nosotros",v:"trabajamos",e:"we worked"},{p:"ellos",v:"trabajaron",e:"they worked"}],
+    future:[{p:"yo",v:"trabajaré",e:"I will work"},{p:"tú",v:"trabajarás",e:"you will work"},{p:"él/ella",v:"trabajará",e:"he/she will work"},{p:"nosotros",v:"trabajaremos",e:"we will work"},{p:"ellos",v:"trabajarán",e:"they will work"}],
+    family:[{f:"el trabajo",e:"work / job",t:"sustantivo"},{f:"el/la trabajador/a",e:"worker",t:"sustantivo"},{f:"trabajador/a",e:"hardworking",t:"adjetivo"},{f:"el taller",e:"workshop",t:"sustantivo"}],
+    example:{es:"Trabajo en una empresa colombiana.",en:"I work at a Colombian company."}},
+  comprar:{en:"to buy",type:"AR — Regular",icon:"🛍️",color:"#ec4899",
+    gerund:{f:"comprando",en:"buying"},participle:{f:"comprado",en:"bought"},
+    imperative:{tu:{f:"¡Compra!",en:"Buy! (informal)"},usted:{f:"¡Compre!",en:"Buy! (formal)"}},
+    present:[{p:"yo",v:"compro",e:"I buy"},{p:"tú",v:"compras",e:"you buy"},{p:"él/ella",v:"compra",e:"he/she buys"},{p:"nosotros",v:"compramos",e:"we buy"},{p:"ellos",v:"compran",e:"they buy"}],
+    past:[{p:"yo",v:"compré",e:"I bought"},{p:"tú",v:"compraste",e:"you bought"},{p:"él/ella",v:"compró",e:"he/she bought"},{p:"nosotros",v:"compramos",e:"we bought"},{p:"ellos",v:"compraron",e:"they bought"}],
+    future:[{p:"yo",v:"compraré",e:"I will buy"},{p:"tú",v:"comprarás",e:"you will buy"},{p:"él/ella",v:"comprará",e:"he/she will buy"},{p:"nosotros",v:"compraremos",e:"we will buy"},{p:"ellos",v:"comprarán",e:"they will buy"}],
+    family:[{f:"la compra",e:"purchase / shopping",t:"sustantivo"},{f:"el/la comprador/a",e:"buyer / shopper",t:"sustantivo"},{f:"las compras",e:"shopping (groceries)",t:"sustantivo"},{f:"el supermercado",e:"supermarket",t:"sustantivo"}],
+    example:{es:"Fui a comprar en el mercado.",en:"I went to shop at the market."}},
+  ir:{en:"to go",type:"Irregular",icon:"🚶",color:"#a78bfa",
+    gerund:{f:"yendo",en:"going"},participle:{f:"ido",en:"gone"},
+    imperative:{tu:{f:"¡Ve!",en:"Go! (informal)"},usted:{f:"¡Vaya!",en:"Go! (formal)"}},
+    present:[{p:"yo",v:"voy",e:"I go"},{p:"tú",v:"vas",e:"you go"},{p:"él/ella",v:"va",e:"he/she goes"},{p:"nosotros",v:"vamos",e:"we go"},{p:"ellos",v:"van",e:"they go"}],
+    past:[{p:"yo",v:"fui",e:"I went"},{p:"tú",v:"fuiste",e:"you went"},{p:"él/ella",v:"fue",e:"he/she went"},{p:"nosotros",v:"fuimos",e:"we went"},{p:"ellos",v:"fueron",e:"they went"}],
+    future:[{p:"yo",v:"iré",e:"I will go"},{p:"tú",v:"irás",e:"you will go"},{p:"él/ella",v:"irá",e:"he/she will go"},{p:"nosotros",v:"iremos",e:"we will go"},{p:"ellos",v:"irán",e:"they will go"}],
+    family:[{f:"la ida",e:"going / outward journey",t:"sustantivo"},{f:"la vuelta",e:"return / coming back",t:"sustantivo"},{f:"el viaje",e:"trip / journey",t:"sustantivo"},{f:"vamos a...",e:"let's go to... / going to...",t:"expresión"}],
+    example:{es:"¿A dónde vas mañana?",en:"Where are you going tomorrow?"}},
+  ser:{en:"to be (permanent)",type:"Irregular",icon:"⭐",color:"#a78bfa",
+    gerund:{f:"siendo",en:"being"},participle:{f:"sido",en:"been"},
+    imperative:{tu:{f:"¡Sé!",en:"Be! (informal)"},usted:{f:"¡Sea!",en:"Be! (formal)"}},
+    present:[{p:"yo",v:"soy",e:"I am"},{p:"tú",v:"eres",e:"you are"},{p:"él/ella",v:"es",e:"he/she is"},{p:"nosotros",v:"somos",e:"we are"},{p:"ellos",v:"son",e:"they are"}],
+    past:[{p:"yo",v:"fui",e:"I was"},{p:"tú",v:"fuiste",e:"you were"},{p:"él/ella",v:"fue",e:"he/she was"},{p:"nosotros",v:"fuimos",e:"we were"},{p:"ellos",v:"fueron",e:"they were"}],
+    future:[{p:"yo",v:"seré",e:"I will be"},{p:"tú",v:"serás",e:"you will be"},{p:"él/ella",v:"será",e:"he/she will be"},{p:"nosotros",v:"seremos",e:"we will be"},{p:"ellos",v:"serán",e:"they will be"}],
+    family:[{f:"el ser",e:"being / creature",t:"sustantivo"},{f:"la persona",e:"person",t:"sustantivo"},{f:"la identidad",e:"identity",t:"sustantivo"},{f:"propio/a",e:"own / one's own",t:"adjetivo"}],
+    example:{es:"Soy colombiano. ¿Y tú?",en:"I'm Colombian. And you?"}},
+  estar:{en:"to be (temporary/location)",type:"Irregular",icon:"📍",color:"#60a5fa",
+    gerund:{f:"estando",en:"being"},participle:{f:"estado",en:"been"},
+    imperative:{tu:{f:"¡Estate!",en:"Stay! (informal)"},usted:{f:"¡Esté!",en:"Be! (formal)"}},
+    present:[{p:"yo",v:"estoy",e:"I am"},{p:"tú",v:"estás",e:"you are"},{p:"él/ella",v:"está",e:"he/she is"},{p:"nosotros",v:"estamos",e:"we are"},{p:"ellos",v:"están",e:"they are"}],
+    past:[{p:"yo",v:"estuve",e:"I was"},{p:"tú",v:"estuviste",e:"you were"},{p:"él/ella",v:"estuvo",e:"he/she was"},{p:"nosotros",v:"estuvimos",e:"we were"},{p:"ellos",v:"estuvieron",e:"they were"}],
+    future:[{p:"yo",v:"estaré",e:"I will be"},{p:"tú",v:"estarás",e:"you will be"},{p:"él/ella",v:"estará",e:"he/she will be"},{p:"nosotros",v:"estaremos",e:"we will be"},{p:"ellos",v:"estarán",e:"they will be"}],
+    family:[{f:"el estado",e:"state / condition",t:"sustantivo"},{f:"la estancia",e:"stay / ranch",t:"sustantivo"},{f:"estable",e:"stable",t:"adjetivo"},{f:"bien/mal",e:"well/bad (used with estar)",t:"adjetivo"}],
+    example:{es:"¿Cómo estás? Estoy bien.",en:"How are you? I'm fine."}},
+  tener:{en:"to have",type:"Irregular",icon:"✋",color:"#f59e0b",
+    gerund:{f:"teniendo",en:"having"},participle:{f:"tenido",en:"had"},
+    imperative:{tu:{f:"¡Ten!",en:"Have/Take! (informal)"},usted:{f:"¡Tenga!",en:"Have/Take! (formal)"}},
+    present:[{p:"yo",v:"tengo",e:"I have"},{p:"tú",v:"tienes",e:"you have"},{p:"él/ella",v:"tiene",e:"he/she has"},{p:"nosotros",v:"tenemos",e:"we have"},{p:"ellos",v:"tienen",e:"they have"}],
+    past:[{p:"yo",v:"tuve",e:"I had"},{p:"tú",v:"tuviste",e:"you had"},{p:"él/ella",v:"tuvo",e:"he/she had"},{p:"nosotros",v:"tuvimos",e:"we had"},{p:"ellos",v:"tuvieron",e:"they had"}],
+    future:[{p:"yo",v:"tendré",e:"I will have"},{p:"tú",v:"tendrás",e:"you will have"},{p:"él/ella",v:"tendrá",e:"he/she will have"},{p:"nosotros",v:"tendremos",e:"we will have"},{p:"ellos",v:"tendrán",e:"they will have"}],
+    family:[{f:"el tenedor",e:"fork",t:"sustantivo"},{f:"la tenencia",e:"possession / holding",t:"sustantivo"},{f:"el/la dueño/a",e:"owner",t:"sustantivo"},{f:"tener que",e:"to have to (must)",t:"expresión"}],
+    example:{es:"Tengo treinta años. ¿Cuántos años tienes tú?",en:"I'm thirty years old. How old are you?"}},
+  hacer:{en:"to do / to make",type:"Irregular",icon:"🛠️",color:"#34d399",
+    gerund:{f:"haciendo",en:"doing/making"},participle:{f:"hecho",en:"done/made"},
+    imperative:{tu:{f:"¡Haz!",en:"Do/Make! (informal)"},usted:{f:"¡Haga!",en:"Do/Make! (formal)"}},
+    present:[{p:"yo",v:"hago",e:"I do/make"},{p:"tú",v:"haces",e:"you do/make"},{p:"él/ella",v:"hace",e:"he/she does/makes"},{p:"nosotros",v:"hacemos",e:"we do/make"},{p:"ellos",v:"hacen",e:"they do/make"}],
+    past:[{p:"yo",v:"hice",e:"I did/made"},{p:"tú",v:"hiciste",e:"you did/made"},{p:"él/ella",v:"hizo",e:"he/she did/made"},{p:"nosotros",v:"hicimos",e:"we did/made"},{p:"ellos",v:"hicieron",e:"they did/made"}],
+    future:[{p:"yo",v:"haré",e:"I will do/make"},{p:"tú",v:"harás",e:"you will do/make"},{p:"él/ella",v:"hará",e:"he/she will do/make"},{p:"nosotros",v:"haremos",e:"we will do/make"},{p:"ellos",v:"harán",e:"they will do/make"}],
+    family:[{f:"el hecho",e:"fact / deed (done!)",t:"sustantivo"},{f:"la hazaña",e:"feat / achievement",t:"sustantivo"},{f:"hacedero/a",e:"doable / feasible",t:"adjetivo"},{f:"hacer una vuelta",e:"to run an errand (Colombian!)",t:"expresión"}],
+    example:{es:"¿Qué haces hoy?",en:"What are you doing today?"}},
+  poder:{en:"can / to be able to",type:"Irregular (stem-change)",icon:"💪",color:"#ef4444",
+    gerund:{f:"pudiendo",en:"being able to"},participle:{f:"podido",en:"been able to"},
+    imperative:{tu:{f:"¡Puede!",en:"You can! (rare as command)"},usted:{f:"—",en:"Rarely used as imperative"}},
+    present:[{p:"yo",v:"puedo",e:"I can"},{p:"tú",v:"puedes",e:"you can"},{p:"él/ella",v:"puede",e:"he/she can"},{p:"nosotros",v:"podemos",e:"we can"},{p:"ellos",v:"pueden",e:"they can"}],
+    past:[{p:"yo",v:"pude",e:"I could"},{p:"tú",v:"pudiste",e:"you could"},{p:"él/ella",v:"pudo",e:"he/she could"},{p:"nosotros",v:"pudimos",e:"we could"},{p:"ellos",v:"pudieron",e:"they could"}],
+    future:[{p:"yo",v:"podré",e:"I will be able to"},{p:"tú",v:"podrás",e:"you will be able to"},{p:"él/ella",v:"podrá",e:"he/she will be able to"},{p:"nosotros",v:"podremos",e:"we will be able to"},{p:"ellos",v:"podrán",e:"they will be able to"}],
+    family:[{f:"el poder",e:"power",t:"sustantivo"},{f:"poderoso/a",e:"powerful",t:"adjetivo"},{f:"posible",e:"possible",t:"adjetivo"},{f:"¿Puede ayudarme?",e:"Can you help me?",t:"expresión"}],
+    example:{es:"¿Puede repetir, por favor?",en:"Can you repeat, please?"}},
+  querer:{en:"to want / to love",type:"Irregular (stem-change)",icon:"❤️",color:"#e85d75",
+    gerund:{f:"queriendo",en:"wanting/loving"},participle:{f:"querido",en:"wanted/loved"},
+    imperative:{tu:{f:"¡Quiere!",en:"Want/Love! (informal)"},usted:{f:"¡Quiera!",en:"Please want (formal, rare)"}},
+    present:[{p:"yo",v:"quiero",e:"I want/love"},{p:"tú",v:"quieres",e:"you want/love"},{p:"él/ella",v:"quiere",e:"he/she wants/loves"},{p:"nosotros",v:"queremos",e:"we want/love"},{p:"ellos",v:"quieren",e:"they want/love"}],
+    past:[{p:"yo",v:"quise",e:"I wanted/loved"},{p:"tú",v:"quisiste",e:"you wanted"},{p:"él/ella",v:"quiso",e:"he/she wanted"},{p:"nosotros",v:"quisimos",e:"we wanted"},{p:"ellos",v:"quisieron",e:"they wanted"}],
+    future:[{p:"yo",v:"querré",e:"I will want"},{p:"tú",v:"querrás",e:"you will want"},{p:"él/ella",v:"querrá",e:"he/she will want"},{p:"nosotros",v:"querremos",e:"we will want"},{p:"ellos",v:"querrán",e:"they will want"}],
+    family:[{f:"el/la querido/a",e:"dear / darling",t:"sustantivo/adjetivo"},{f:"el querer",e:"love / affection",t:"sustantivo"},{f:"querido/a",e:"dear / beloved",t:"adjetivo"},{f:"querer decir",e:"to mean (to want to say)",t:"expresión"}],
+    example:{es:"Te quiero mucho. ¿Qué quieres comer?",en:"I love you a lot. What do you want to eat?"}},
+  dormir:{en:"to sleep",type:"IR — Irregular (stem-change)",icon:"😴",color:"#8b5cf6",
+    gerund:{f:"durmiendo",en:"sleeping"},participle:{f:"dormido",en:"slept/asleep"},
+    imperative:{tu:{f:"¡Duerme!",en:"Sleep! (informal)"},usted:{f:"¡Duerma!",en:"Sleep! (formal)"}},
+    present:[{p:"yo",v:"duermo",e:"I sleep"},{p:"tú",v:"duermes",e:"you sleep"},{p:"él/ella",v:"duerme",e:"he/she sleeps"},{p:"nosotros",v:"dormimos",e:"we sleep"},{p:"ellos",v:"duermen",e:"they sleep"}],
+    past:[{p:"yo",v:"dormí",e:"I slept"},{p:"tú",v:"dormiste",e:"you slept"},{p:"él/ella",v:"durmió",e:"he/she slept"},{p:"nosotros",v:"dormimos",e:"we slept"},{p:"ellos",v:"durmieron",e:"they slept"}],
+    future:[{p:"yo",v:"dormiré",e:"I will sleep"},{p:"tú",v:"dormirás",e:"you will sleep"},{p:"él/ella",v:"dormirá",e:"he/she will sleep"},{p:"nosotros",v:"dormiremos",e:"we will sleep"},{p:"ellos",v:"dormirán",e:"they will sleep"}],
+    family:[{f:"el sueño",e:"sleep / dream",t:"sustantivo"},{f:"el dormitorio",e:"bedroom",t:"sustantivo"},{f:"dormido/a",e:"asleep",t:"adjetivo"},{f:"la siesta",e:"nap / siesta",t:"sustantivo"}],
+    example:{es:"Dormí ocho horas anoche.",en:"I slept eight hours last night."}},
+  escribir:{en:"to write",type:"IR — Regular",icon:"✍️",color:"#06b6d4",
+    gerund:{f:"escribiendo",en:"writing"},participle:{f:"escrito",en:"written (irregular!)"},
+    imperative:{tu:{f:"¡Escribe!",en:"Write! (informal)"},usted:{f:"¡Escriba!",en:"Write! (formal)"}},
+    present:[{p:"yo",v:"escribo",e:"I write"},{p:"tú",v:"escribes",e:"you write"},{p:"él/ella",v:"escribe",e:"he/she writes"},{p:"nosotros",v:"escribimos",e:"we write"},{p:"ellos",v:"escriben",e:"they write"}],
+    past:[{p:"yo",v:"escribí",e:"I wrote"},{p:"tú",v:"escribiste",e:"you wrote"},{p:"él/ella",v:"escribió",e:"he/she wrote"},{p:"nosotros",v:"escribimos",e:"we wrote"},{p:"ellos",v:"escribieron",e:"they wrote"}],
+    future:[{p:"yo",v:"escribiré",e:"I will write"},{p:"tú",v:"escribirás",e:"you will write"},{p:"él/ella",v:"escribirá",e:"he/she will write"},{p:"nosotros",v:"escribiremos",e:"we will write"},{p:"ellos",v:"escribirán",e:"they will write"}],
+    family:[{f:"la escritura",e:"writing / handwriting",t:"sustantivo"},{f:"escrito/a",e:"written",t:"adjetivo"},{f:"el/la escritor/a",e:"writer / author",t:"sustantivo"},{f:"la carta",e:"letter (written)",t:"sustantivo"}],
+    example:{es:"Escríbalo, por favor.",en:"Write it down, please."}},
+};
+
+// ── Numbers ───────────────────────────────────────────────────────────────────
 const N130=[{n:1,w:"Uno",ph:"OO-noh"},{n:2,w:"Dos",ph:"dohs"},{n:3,w:"Tres",ph:"trehs"},{n:4,w:"Cuatro",ph:"KWAH-troh"},{n:5,w:"Cinco",ph:"SEEN-koh"},{n:6,w:"Seis",ph:"seh-ees"},{n:7,w:"Siete",ph:"SYEH-teh"},{n:8,w:"Ocho",ph:"OH-choh"},{n:9,w:"Nueve",ph:"NWEH-beh"},{n:10,w:"Diez",ph:"dyehs"},{n:11,w:"Once",ph:"ON-seh"},{n:12,w:"Doce",ph:"DOH-seh"},{n:13,w:"Trece",ph:"TREH-seh"},{n:14,w:"Catorce",ph:"kah-TOR-seh"},{n:15,w:"Quince",ph:"KEEN-seh"},{n:16,w:"Dieciséis",ph:"dyeh-see-SEYS"},{n:17,w:"Diecisiete",ph:"dyeh-see-SYEH-teh"},{n:18,w:"Dieciocho",ph:"dyeh-see-OH-choh"},{n:19,w:"Diecinueve",ph:"dyeh-see-NWEH-beh"},{n:20,w:"Veinte",ph:"BEYN-teh"},{n:21,w:"Veintiuno",ph:"beyn-tee-OO-noh"},{n:22,w:"Veintidós",ph:"beyn-tee-DOHS"},{n:23,w:"Veintitrés",ph:"beyn-tee-TREHS"},{n:24,w:"Veinticuatro",ph:"beyn-tee-KWAH-troh"},{n:25,w:"Veinticinco",ph:"beyn-tee-SEEN-koh"},{n:26,w:"Veintiséis",ph:"beyn-tee-SEYS"},{n:27,w:"Veintisiete",ph:"beyn-tee-SYEH-teh"},{n:28,w:"Veintiocho",ph:"beyn-tee-OH-choh"},{n:29,w:"Veintinueve",ph:"beyn-tee-NWEH-beh"},{n:30,w:"Treinta",ph:"TREYN-tah"}];
 const NT=[{n:40,w:"Cuarenta",ph:"kwah-REN-tah"},{n:50,w:"Cincuenta",ph:"seen-KWEN-tah"},{n:60,w:"Sesenta",ph:"seh-SEN-tah"},{n:70,w:"Setenta",ph:"seh-TEN-tah"},{n:80,w:"Ochenta",ph:"oh-CHEN-tah"},{n:90,w:"Noventa",ph:"noh-BEN-tah"},{n:100,w:"Cien",ph:"syen"},{n:200,w:"Doscientos",ph:"dohs-SYEN-tohs"},{n:300,w:"Trescientos",ph:"trehs-SYEN-tohs"},{n:400,w:"Cuatrocientos",ph:"kwah-troh-SYEN-tohs"},{n:500,w:"Quinientos",ph:"kee-NYEN-tohs"}];
+
+// ── All Vocab Categories ──────────────────────────────────────────────────────
 const VC=[
-  {id:"vocales",label:"🐝 Vocales",type:"basic",items:[{word:"Abeja",en:"Bee",ph:"ah-BEH-hah",tts:"abeja",icon:"🐝",color:"#f59e0b"},{word:"Elefante",en:"Elephant",ph:"eh-leh-FAN-teh",tts:"elefante",icon:"🐘",color:"#8b5cf6"},{word:"Iguana",en:"Iguana",ph:"ee-GWAH-nah",tts:"iguana",icon:"🦎",color:"#10b981"},{word:"Oveja",en:"Sheep",ph:"oh-BEH-hah",tts:"oveja",icon:"🐑",color:"#6366f1"},{word:"Urraca",en:"Magpie",ph:"oo-RRAH-kah",tts:"urraca",icon:"🐦",color:"#64748b"}]},
+  {id:"vocales",label:"🐝 Vocales",type:"vocales"},
   {id:"numeros",label:"🔢 Números",type:"numeros"},
+  {id:"meses",label:"📆 Meses",type:"basic",items:[
+    {word:"Enero",en:"January",ph:"eh-NEH-roh",tts:"enero",icon:"❄️",color:"#60a5fa"},
+    {word:"Febrero",en:"February",ph:"feh-BREH-roh",tts:"febrero",icon:"💝",color:"#f43f5e"},
+    {word:"Marzo",en:"March",ph:"MAR-soh",tts:"marzo",icon:"🌱",color:"#34d399"},
+    {word:"Abril",en:"April",ph:"ah-BREEL",tts:"abril",icon:"🌸",color:"#f9a8d4"},
+    {word:"Mayo",en:"May",ph:"MAH-yoh",tts:"mayo",icon:"🌻",color:"#fbbf24"},
+    {word:"Junio",en:"June",ph:"HOO-nyoh",tts:"junio",icon:"☀️",color:"#fb923c"},
+    {word:"Julio",en:"July",ph:"HOO-lyoh",tts:"julio",icon:"🏖️",color:"#f59e0b"},
+    {word:"Agosto",en:"August",ph:"ah-GOHS-toh",tts:"agosto",icon:"🌞",color:"#ef4444"},
+    {word:"Septiembre",en:"September",ph:"sep-TYEM-breh",tts:"septiembre",icon:"🍂",color:"#d97706"},
+    {word:"Octubre",en:"October",ph:"ok-TOO-breh",tts:"octubre",icon:"🎃",color:"#f97316"},
+    {word:"Noviembre",en:"November",ph:"noh-BYEM-breh",tts:"noviembre",icon:"🍁",color:"#92400e"},
+    {word:"Diciembre",en:"December",ph:"dee-SYEM-breh",tts:"diciembre",icon:"🎄",color:"#4aa8a0"},
+  ]},
   {id:"colores",label:"🎨 Colores",type:"basic",items:[{word:"Rojo",en:"Red",ph:"RROH-hoh",tts:"rojo",icon:"🔴",color:"#ef4444"},{word:"Azul",en:"Blue",ph:"ah-SOOL",tts:"azul",icon:"🔵",color:"#3b82f6"},{word:"Verde",en:"Green",ph:"BER-deh",tts:"verde",icon:"🟢",color:"#10b981"},{word:"Amarillo",en:"Yellow",ph:"ah-mah-REE-yoh",tts:"amarillo",icon:"🟡",color:"#f59e0b"},{word:"Naranja",en:"Orange",ph:"nah-RAN-hah",tts:"naranja",icon:"🟠",color:"#f97316"},{word:"Rosado",en:"Pink",ph:"roh-SAH-doh",tts:"rosado",icon:"🩷",color:"#ec4899"},{word:"Morado",en:"Purple",ph:"moh-RAH-doh",tts:"morado",icon:"🟣",color:"#8b5cf6"},{word:"Blanco",en:"White",ph:"BLAN-koh",tts:"blanco",icon:"⬜",color:"#94a3b8"},{word:"Negro",en:"Black",ph:"NEH-groh",tts:"negro",icon:"⬛",color:"#475569"},{word:"Café",en:"Brown",ph:"kah-FEH",tts:"café",icon:"🟫",color:"#92400e"},{word:"Gris",en:"Gray",ph:"grees",tts:"gris",icon:"🩶",color:"#64748b"}]},
   {id:"dias",label:"📅 Los Días",type:"basic",items:[{word:"Lunes",en:"Monday",ph:"LOO-nehs",tts:"lunes",icon:"1️⃣",color:"#4aa8a0"},{word:"Martes",en:"Tuesday",ph:"MAR-tehs",tts:"martes",icon:"2️⃣",color:"#4aa8a0"},{word:"Miércoles",en:"Wednesday",ph:"MYER-koh-lehs",tts:"miércoles",icon:"3️⃣",color:"#4aa8a0"},{word:"Jueves",en:"Thursday",ph:"HWEH-behs",tts:"jueves",icon:"4️⃣",color:"#4aa8a0"},{word:"Viernes",en:"Friday",ph:"BYER-nehs",tts:"viernes",icon:"5️⃣",color:"#4aa8a0"},{word:"Sábado",en:"Saturday",ph:"SAH-bah-doh",tts:"sábado",icon:"6️⃣",color:"#e8b44a"},{word:"Domingo",en:"Sunday",ph:"doh-MEEN-goh",tts:"domingo",icon:"7️⃣",color:"#e8b44a"}]},
-  {id:"familia",label:"👨‍👩‍👧 Familia",type:"basic",items:[{word:"Mamá",en:"Mom",ph:"mah-MAH",tts:"mamá",icon:"👩",color:"#ec4899"},{word:"Papá",en:"Dad",ph:"pah-PAH",tts:"papá",icon:"👨",color:"#3b82f6"},{word:"Hermano",en:"Brother",ph:"er-MAH-noh",tts:"hermano",icon:"👦",color:"#10b981"},{word:"Hermana",en:"Sister",ph:"er-MAH-nah",tts:"hermana",icon:"👧",color:"#f59e0b"},{word:"Abuelo",en:"Grandfather",ph:"ah-BWEH-loh",tts:"abuelo",icon:"👴",color:"#8b5cf6"},{word:"Abuela",en:"Grandmother",ph:"ah-BWEH-lah",tts:"abuela",icon:"👵",color:"#e85d75"},{word:"Tío",en:"Uncle",ph:"TEE-oh",tts:"tío",icon:"🧑",color:"#4aa8a0"},{word:"Tía",en:"Aunt",ph:"TEE-ah",tts:"tía",icon:"👩",color:"#a78bfa"},{word:"Primo",en:"Cousin (m.)",ph:"PREE-moh",tts:"primo",icon:"🧒",color:"#06b6d4"},{word:"Prima",en:"Cousin (f.)",ph:"PREE-mah",tts:"prima",icon:"👧",color:"#f43f5e"}]},
+  {id:"familia",label:"👨‍👩‍👧 Familia",type:"basic",items:[{word:"Mamá",en:"Mom",ph:"mah-MAH",tts:"mamá",icon:"👩",color:"#ec4899"},{word:"Papá",en:"Dad",ph:"pah-PAH",tts:"papá",icon:"👨",color:"#3b82f6"},{word:"Hermano",en:"Brother",ph:"er-MAH-noh",tts:"hermano",icon:"👦",color:"#10b981"},{word:"Hermana",en:"Sister",ph:"er-MAH-nah",tts:"hermana",icon:"👧",color:"#f59e0b"},{word:"Abuelo",en:"Grandfather",ph:"ah-BWEH-loh",tts:"abuelo",icon:"👴",color:"#8b5cf6"},{word:"Abuela",en:"Grandmother",ph:"ah-BWEH-lah",tts:"abuela",icon:"👵",color:"#e85d75"},{word:"Tío",en:"Uncle",ph:"TEE-oh",tts:"tío",icon:"🧑",color:"#4aa8a0"},{word:"Tía",en:"Aunt",ph:"TEE-ah",tts:"tía",icon:"👩",color:"#a78bfa"},{word:"Hijo",en:"Son",ph:"EE-hoh",tts:"hijo",icon:"👦",color:"#34d399"},{word:"Hija",en:"Daughter",ph:"EE-hah",tts:"hija",icon:"👧",color:"#fb923c"}]},
+  {id:"verbos",label:"🏃 Verbos",type:"verbos"},
+  {id:"cuerpo",label:"🫀 Cuerpo",type:"basic",items:[{word:"Cabeza",en:"Head",ph:"kah-BEH-sah",tts:"cabeza",icon:"🧠",color:"#e85d75"},{word:"Ojo",en:"Eye",ph:"OH-hoh",tts:"ojo",icon:"👁️",color:"#60a5fa"},{word:"Oreja",en:"Ear",ph:"oh-REH-hah",tts:"oreja",icon:"👂",color:"#f59e0b"},{word:"Nariz",en:"Nose",ph:"nah-REES",tts:"nariz",icon:"👃",color:"#f97316"},{word:"Boca",en:"Mouth",ph:"BOH-kah",tts:"boca",icon:"👄",color:"#e85d75"},{word:"Cuello",en:"Neck",ph:"KWEH-yoh",tts:"cuello",icon:"🔵",color:"#4aa8a0"},{word:"Hombro",en:"Shoulder",ph:"OHM-broh",tts:"hombro",icon:"💪",color:"#a78bfa"},{word:"Brazo",en:"Arm",ph:"BRAH-soh",tts:"brazo",icon:"💪",color:"#3b82f6"},{word:"Mano",en:"Hand",ph:"MAH-noh",tts:"mano",icon:"✋",color:"#f59e0b"},{word:"Dedo",en:"Finger",ph:"DEH-doh",tts:"dedo",icon:"☝️",color:"#fb923c"},{word:"Pierna",en:"Leg",ph:"PYER-nah",tts:"pierna",icon:"🦵",color:"#34d399"},{word:"Pie",en:"Foot",ph:"pyeh",tts:"pie",icon:"🦶",color:"#e85d75"},{word:"Corazón",en:"Heart",ph:"koh-rah-SOHN",tts:"corazón",icon:"❤️",color:"#ef4444"},{word:"Estómago",en:"Stomach",ph:"ehs-TOH-mah-goh",tts:"estómago",icon:"🫄",color:"#f97316"},{word:"Espalda",en:"Back",ph:"ehs-PAL-dah",tts:"espalda",icon:"🔵",color:"#8b5cf6"}]},
+  {id:"comida",label:"🍽️ Comida",type:"basic",items:[{word:"Agua",en:"Water",ph:"AH-gwah",tts:"agua",icon:"💧",color:"#60a5fa"},{word:"Café",en:"Coffee",ph:"kah-FEH",tts:"café",icon:"☕",color:"#92400e"},{word:"Tinto",en:"Black coffee (Colombian!)",ph:"TEEN-toh",tts:"tinto",icon:"☕",color:"#7c2d12"},{word:"Jugo",en:"Juice",ph:"HOO-goh",tts:"jugo",icon:"🧃",color:"#f59e0b"},{word:"Cerveza",en:"Beer",ph:"ser-BEH-sah",tts:"cerveza",icon:"🍺",color:"#d97706"},{word:"Leche",en:"Milk",ph:"LEH-cheh",tts:"leche",icon:"🥛",color:"#94a3b8"},{word:"Pan",en:"Bread",ph:"pan",tts:"pan",icon:"🍞",color:"#d97706"},{word:"Arroz",en:"Rice",ph:"ah-RROHS",tts:"arroz",icon:"🍚",color:"#94a3b8"},{word:"Pollo",en:"Chicken",ph:"POH-yoh",tts:"pollo",icon:"🍗",color:"#f59e0b"},{word:"Carne",en:"Meat / Beef",ph:"KAR-neh",tts:"carne",icon:"🥩",color:"#ef4444"},{word:"Arepa",en:"Arepa (Colombian!)",ph:"ah-REH-pah",tts:"arepa",icon:"🫓",color:"#f59e0b"},{word:"Aguacate",en:"Avocado",ph:"ah-gwah-KAH-teh",tts:"aguacate",icon:"🥑",color:"#34d399"},{word:"Fruta",en:"Fruit",ph:"FROO-tah",tts:"fruta",icon:"🍎",color:"#e85d75"},{word:"Huevo",en:"Egg",ph:"WEH-boh",tts:"huevo",icon:"🥚",color:"#fbbf24"},{word:"Bandeja paisa",en:"Traditional Colombian meal",ph:"ban-DEH-hah PAY-sah",tts:"bandeja paisa",icon:"🍛",color:"#f97316"}]},
+  {id:"lugares",label:"📍 Lugares",type:"basic",items:[{word:"Casa",en:"House / Home",ph:"KAH-sah",tts:"casa",icon:"🏠",color:"#4aa8a0"},{word:"Tienda",en:"Shop / Store",ph:"TYEN-dah",tts:"tienda",icon:"🏪",color:"#f59e0b"},{word:"Mercado",en:"Market",ph:"mer-KAH-doh",tts:"mercado",icon:"🛒",color:"#34d399"},{word:"Banco",en:"Bank",ph:"BAN-koh",tts:"banco",icon:"🏦",color:"#60a5fa"},{word:"Hospital",en:"Hospital",ph:"ohs-pee-TAL",tts:"hospital",icon:"🏥",color:"#ef4444"},{word:"Farmacia",en:"Pharmacy",ph:"far-MAH-syah",tts:"farmacia",icon:"💊",color:"#34d399"},{word:"Restaurante",en:"Restaurant",ph:"rrehs-tah-oo-RAN-teh",tts:"restaurante",icon:"🍽️",color:"#f97316"},{word:"Hotel",en:"Hotel",ph:"oh-TEL",tts:"hotel",icon:"🏨",color:"#a78bfa"},{word:"Aeropuerto",en:"Airport",ph:"ah-eh-roh-PWER-toh",tts:"aeropuerto",icon:"✈️",color:"#60a5fa"},{word:"Calle",en:"Street",ph:"KAH-yeh",tts:"calle",icon:"🛣️",color:"#94a3b8"},{word:"Parque",en:"Park",ph:"PAR-keh",tts:"parque",icon:"🌳",color:"#34d399"},{word:"Baño",en:"Bathroom",ph:"BAH-nyoh",tts:"baño",icon:"🚽",color:"#60a5fa"}]},
+  {id:"tiempo",label:"⏰ Tiempo",type:"basic",items:[{word:"Hoy",en:"Today",ph:"oy",tts:"hoy",icon:"📅",color:"#4aa8a0"},{word:"Mañana",en:"Tomorrow",ph:"mah-NYAH-nah",tts:"mañana",icon:"🌅",color:"#f59e0b"},{word:"Ayer",en:"Yesterday",ph:"ah-YER",tts:"ayer",icon:"⏮️",color:"#a78bfa"},{word:"Ahora",en:"Now",ph:"ah-OH-rah",tts:"ahora",icon:"⚡",color:"#34d399"},{word:"Tarde",en:"Late / Afternoon",ph:"TAR-deh",tts:"tarde",icon:"🌆",color:"#fb923c"},{word:"Temprano",en:"Early",ph:"tem-PRAH-noh",tts:"temprano",icon:"🌅",color:"#60a5fa"},{word:"Siempre",en:"Always",ph:"SYEM-preh",tts:"siempre",icon:"♾️",color:"#4aa8a0"},{word:"Nunca",en:"Never",ph:"NOON-kah",tts:"nunca",icon:"🚫",color:"#ef4444"},{word:"A veces",en:"Sometimes",ph:"ah BEH-sehs",tts:"a veces",icon:"🔄",color:"#e8b44a"},{word:"Después",en:"After / Later",ph:"dehs-PWES",tts:"después",icon:"⏩",color:"#f97316"},{word:"Antes",en:"Before",ph:"AN-tehs",tts:"antes",icon:"⏪",color:"#8b5cf6"}]},
+  {id:"adjetivos",label:"✨ Adjetivos",type:"basic",items:[{word:"Grande",en:"Big / Large",ph:"GRAN-deh",tts:"grande",icon:"🔼",color:"#4aa8a0"},{word:"Pequeño",en:"Small / Little",ph:"peh-KEH-nyoh",tts:"pequeño",icon:"🔽",color:"#60a5fa"},{word:"Bonito",en:"Pretty / Nice",ph:"boh-NEE-toh",tts:"bonito",icon:"😍",color:"#ec4899"},{word:"Feo",en:"Ugly",ph:"FEH-oh",tts:"feo",icon:"😬",color:"#94a3b8"},{word:"Caro",en:"Expensive",ph:"KAH-roh",tts:"caro",icon:"💸",color:"#ef4444"},{word:"Barato",en:"Cheap",ph:"bah-RAH-toh",tts:"barato",icon:"🏷️",color:"#34d399"},{word:"Rápido",en:"Fast",ph:"RRAH-pee-doh",tts:"rápido",icon:"⚡",color:"#f59e0b"},{word:"Lento",en:"Slow",ph:"LEN-toh",tts:"lento",icon:"🐢",color:"#94a3b8"},{word:"Fácil",en:"Easy",ph:"FAH-seel",tts:"fácil",icon:"😊",color:"#34d399"},{word:"Difícil",en:"Difficult",ph:"dee-FEE-seel",tts:"difícil",icon:"😰",color:"#ef4444"},{word:"Bueno",en:"Good",ph:"BWEH-noh",tts:"bueno",icon:"👍",color:"#34d399"},{word:"Malo",en:"Bad",ph:"MAH-loh",tts:"malo",icon:"👎",color:"#ef4444"},{word:"Nuevo",en:"New",ph:"NWEH-boh",tts:"nuevo",icon:"✨",color:"#a78bfa"},{word:"Viejo",en:"Old",ph:"BYEH-hoh",tts:"viejo",icon:"📜",color:"#92400e"},{word:"Limpio",en:"Clean",ph:"LEEM-pyoh",tts:"limpio",icon:"✅",color:"#34d399"},{word:"Sucio",en:"Dirty",ph:"SOO-syoh",tts:"sucio",icon:"🤢",color:"#92400e"}]},
+  {id:"colombianismos",label:"🇨🇴 Colombia",type:"colombianismos"},
   {id:"preguntas",label:"❓ Preguntas",type:"preguntas"},
 ];
-const PQ=[{word:"¿Quién?",en:"Who?",ph:"kyen",tts:"¿Quién?",example:"¿Quién es? — Who is it?"},{word:"¿Qué?",en:"What?",ph:"keh",tts:"¿Qué?",example:"¿Qué es esto? — What is this?"},{word:"¿Cuándo?",en:"When?",ph:"KWAN-doh",tts:"¿Cuándo?",example:"¿Cuándo es? — When is it?"},{word:"¿Dónde?",en:"Where?",ph:"DON-deh",tts:"¿Dónde?",example:"¿Dónde está? — Where is it?"},{word:"¿Cómo?",en:"How?",ph:"KOH-moh",tts:"¿Cómo?",example:"¿Cómo se dice? — How do you say it?"},{word:"¿Por qué?",en:"Why?",ph:"por KEH",tts:"¿Por qué?",example:"¿Por qué? — Why?"},{word:"¿Cuánto?",en:"How much?",ph:"KWAN-toh",tts:"¿Cuánto?",example:"¿Cuánto cuesta? — How much?"},{word:"¿Cuántos?",en:"How many?",ph:"KWAN-tohs",tts:"¿Cuántos?",example:"¿Cuántos son? — How many?"},{word:"¿Cuál?",en:"Which?",ph:"kwal",tts:"¿Cuál?",example:"¿Cuál quiere? — Which one?"},{word:"¿A qué hora?",en:"What time?",ph:"ah keh OH-rah",tts:"¿A qué hora?",example:"¿A qué hora es? — What time?"}];
-const SL=[{section:"Saludo informal",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[{es:"Hola, ¿cómo estás?",en:"Hi, how are you?"},{es:"¿Cómo te va?",en:"How are you doing?"},{es:"¿Qué has hecho?",en:"What have you been up to?"},{es:"¿Qué tal?",en:"How are things?"},{es:"¿Qué te cuentas?",en:"What's up?"}]},{section:"Respuestas",cls:"color:var(--pink);background:rgba(232,93,117,0.1);border:1px solid rgba(232,93,117,0.2)",items:[{es:"Estoy bien, gracias.",en:"I'm fine, thank you."},{es:"Muy bien, ¿y tú?",en:"Very well, and you?"},{es:"Más o menos.",en:"More or less."},{es:"Mal.",en:"Bad."},{es:"No muy bien.",en:"Not very well."}]},{section:"Saludo formal",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[{es:"Buenos días.",en:"Good morning."},{es:"Buenas tardes.",en:"Good afternoon."},{es:"Buenas noches.",en:"Good evening."},{es:"¿Cómo le va a usted?",en:"How are you? (formal)"},{es:"Buenos días, señora Paola.",en:"Good morning, Mrs. Paola."}]},{section:"Presentaciones",cls:"color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)",items:[{es:"Hola, ¿cómo está?",en:"Hi, how are you? (formal)"},{es:"Soy [tu nombre].",en:"I am [your name]."},{es:"¡Gusto en conocerle!",en:"Nice to meet you! (formal)"},{es:"¡Gusto en conocerte!",en:"Nice to meet you! (informal)"},{es:"¡El gusto es mío!",en:"The pleasure is mine!"},{es:"Mucho gusto.",en:"Nice to meet you."},{es:"Encantado / Encantada.",en:"Delighted to meet you."},{es:"Igualmente.",en:"Likewise."}]},{section:"Despedidas",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[{es:"Adiós.",en:"Goodbye."},{es:"Hasta luego.",en:"See you later."},{es:"Hasta mañana.",en:"See you tomorrow."},{es:"Chao.",en:"Bye! (very Colombian)"},{es:"Cuídate.",en:"Take care."}]}];
-const DL=[{who:"A",es:"Hola, ¿cómo está?",en:"Hi, how are you? (formal)"},{who:"B",es:"Hola, estoy bien, gracias.",en:"Hi, I'm fine, thank you."},{who:"A",es:"Soy David. ¡Gusto en conocerle!",en:"I'm David. Nice to meet you!"},{who:"B",es:"Soy Roberto. ¡El gusto es mío!",en:"I'm Roberto. The pleasure is mine!"},{who:"A",es:"Mucho gusto, señor Roberto.",en:"Nice to meet you, Mr. Roberto."},{who:"B",es:"Igualmente, señor David.",en:"Likewise, Mr. David."}];
 
-// ── Letras ────────────────────────────────────────────────────────────────────
+const COLOMBIANISMOS=[
+  {word:"¿Qué más?",en:"What's up? / How's it going?",usage:"The most common Colombian greeting. Used instead of ¿Cómo estás? with friends.",example:"¡Hola! ¿Qué más, parce?",tts:"¿Qué más?"},
+  {word:"¡Venga!",en:"Come on! / OK! / Come here!",usage:"One word, many meanings. ¡Venga! = OK/agreed. Venga acá = Come here. ¡Venga, hagámoslo! = Come on, let's do it!",example:"¿Vamos al mercado? — ¡Venga!",tts:"¡Venga!"},
+  {word:"Listo",en:"OK / Ready / Got it / Done",usage:"Said constantly. Means you understand or agree. Like saying 'alright' or 'got it' in English.",example:"¿Entendiste? — Sí, listo.",tts:"listo"},
+  {word:"Bacano/a",en:"Cool / Great / Awesome",usage:"Very Colombian. 'Qué bacano' = How cool! Used for things, places, people.",example:"¡Qué bacano ese restaurante!",tts:"bacano"},
+  {word:"Chévere",en:"Great / Cool / Awesome",usage:"Used across Latin America but very common in Colombia. Similar to 'bacano'.",example:"¡Chévere! Vamos entonces.",tts:"chévere"},
+  {word:"Parcero / Parce",en:"Buddy / Friend / Mate",usage:"Like 'mate' or 'buddy'. Very Colombian. Used between friends. Parce is the short form.",example:"¡Parce, qué más!",tts:"parcero"},
+  {word:"Tinto",en:"Black coffee (Colombian!)",usage:"In Colombia, tinto = black coffee. In Spain, tinto = red wine. Don't get confused! '¿Un tinto?' means a coffee.",example:"¿Le traigo un tinto?",tts:"tinto"},
+  {word:"Plata",en:"Money (not silver!)",usage:"In Colombia plata = money, not silver. 'No tengo plata' = I have no money. Very common everyday word.",example:"No tengo plata para el taxi.",tts:"plata"},
+  {word:"Vaina",en:"Thing / Stuff / What's-it",usage:"A catch-all word for anything. Like 'thing' or 'stuff' in English. '¿Qué es esa vaina?' = What is that thing?",example:"Esa vaina no funciona.",tts:"vaina"},
+  {word:"¡Uy!",en:"Wow! / Oh! / Oops!",usage:"Expression of surprise, shock, or mild pain. Like 'ooh' or 'wow' in English.",example:"¡Uy, qué calor hace!",tts:"uy"},
+  {word:"Dale",en:"Go ahead / OK / Sure",usage:"Used to agree or encourage. '¡Dale!' = Go for it! / OK! / Let's go!",example:"¿Empezamos? — ¡Dale!",tts:"dale"},
+  {word:"Chimba",en:"Awesome / Amazing (informal!)",usage:"Very informal slang. Only use with close friends. Qué chimba = How awesome!",example:"¡Qué chimba de concierto!",tts:"chimba"},
+  {word:"Hacer una vuelta",en:"To run an errand",usage:"'Una vuelta' literally means a turn/loop but in Colombia it means running an errand. Very common expression.",example:"Tengo que hacer una vuelta en el banco.",tts:"hacer una vuelta"},
+  {word:"¿Me regala...?",en:"Can I have...? / Please give me...",usage:"Literally 'gift me' but used like 'can I have' when ordering or asking for something. Very polite.",example:"¿Me regala un tinto, por favor?",tts:"¿Me regala un tinto, por favor?"},
+  {word:"Chino/a",en:"Kid / Boy / Girl",usage:"In Colombia chino = kid/child, NOT Chinese person. '¿Ese chino quién es?' = Who is that kid?",example:"Los chinos están jugando.",tts:"chino"},
+  {word:"Berraco/a",en:"Tough / Impressive / Badass",usage:"Can mean hardworking, tough, or impressive. '¡Qué berracos!' = What tough/impressive people!",example:"Ese man es muy berraco.",tts:"berraco"},
+];
+
+const VOCALES_DATA=[
+  {letter:"A",color:"#e85d75",bg:"rgba(232,93,117,0.15)",sound:"ah",examples:[{word:"Abeja",en:"Bee",ph:"ah-BEH-hah",tts:"abeja"},{word:"Árbol",en:"Tree",ph:"AR-bol",tts:"árbol"},{word:"Amor",en:"Love",ph:"ah-MOR",tts:"amor"}]},
+  {letter:"E",color:"#a78bfa",bg:"rgba(167,139,250,0.15)",sound:"eh",examples:[{word:"Elefante",en:"Elephant",ph:"eh-leh-FAN-teh",tts:"elefante"},{word:"Estrella",en:"Star",ph:"ehs-TREH-yah",tts:"estrella"},{word:"Escuela",en:"School",ph:"ehs-KWEH-lah",tts:"escuela"}]},
+  {letter:"I",color:"#60a5fa",bg:"rgba(96,165,250,0.15)",sound:"ee",examples:[{word:"Iguana",en:"Iguana",ph:"ee-GWAH-nah",tts:"iguana"},{word:"Isla",en:"Island",ph:"EES-lah",tts:"isla"},{word:"Iglesia",en:"Church",ph:"ee-GLEH-syah",tts:"iglesia"}]},
+  {letter:"O",color:"#34d399",bg:"rgba(52,211,153,0.15)",sound:"oh",examples:[{word:"Oveja",en:"Sheep",ph:"oh-BEH-hah",tts:"oveja"},{word:"Oso",en:"Bear",ph:"OH-soh",tts:"oso"},{word:"Ojo",en:"Eye",ph:"OH-hoh",tts:"ojo"}]},
+  {letter:"U",color:"#f59e0b",bg:"rgba(245,158,11,0.15)",sound:"oo",examples:[{word:"Urraca",en:"Magpie",ph:"oo-RRAH-kah",tts:"urraca"},{word:"Uva",en:"Grape",ph:"OO-bah",tts:"uva"},{word:"Uno",en:"One",ph:"OO-noh",tts:"uno"}]},
+];
+const PQ=[{word:"¿Quién?",en:"Who?",ph:"kyen",tts:"¿Quién?",example:"¿Quién es? — Who is it?"},{word:"¿Qué?",en:"What?",ph:"keh",tts:"¿Qué?",example:"¿Qué es esto? — What is this?"},{word:"¿Cuándo?",en:"When?",ph:"KWAN-doh",tts:"¿Cuándo?",example:"¿Cuándo es? — When is it?"},{word:"¿Dónde?",en:"Where?",ph:"DON-deh",tts:"¿Dónde?",example:"¿Dónde está? — Where is it?"},{word:"¿Cómo?",en:"How?",ph:"KOH-moh",tts:"¿Cómo?",example:"¿Cómo se dice? — How do you say?"},{word:"¿Por qué?",en:"Why?",ph:"por KEH",tts:"¿Por qué?",example:"¿Por qué? — Why?"},{word:"¿Cuánto?",en:"How much?",ph:"KWAN-toh",tts:"¿Cuánto?",example:"¿Cuánto cuesta? — How much?"},{word:"¿Cuántos?",en:"How many?",ph:"KWAN-tohs",tts:"¿Cuántos?",example:"¿Cuántos son? — How many?"},{word:"¿Cuál?",en:"Which?",ph:"kwal",tts:"¿Cuál?",example:"¿Cuál quiere? — Which one?"},{word:"¿A qué hora?",en:"What time?",ph:"ah keh OH-rah",tts:"¿A qué hora?",example:"¿A qué hora es? — What time?"}];
+
+const FRASES=[
+  {section:"💬 Saludos — Informal",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[{es:"Hola, ¿cómo estás?",en:"Hi, how are you?"},{es:"¿Cómo te va?",en:"How are you doing?"},{es:"¿Qué más?",en:"What's up? (very Colombian)"},{es:"¿Qué tal?",en:"How are things?"},{es:"Estoy bien, gracias.",en:"I'm fine, thank you."},{es:"Muy bien, ¿y tú?",en:"Very well, and you?"},{es:"Más o menos.",en:"More or less."},{es:"Chao.",en:"Bye! (very Colombian)"}]},
+  {section:"🤝 Saludos — Formal",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[{es:"Buenos días.",en:"Good morning."},{es:"Buenas tardes.",en:"Good afternoon."},{es:"Buenas noches.",en:"Good evening."},{es:"¿Cómo le va a usted?",en:"How are you? (formal)"},{es:"¡Gusto en conocerle!",en:"Nice to meet you! (formal)"},{es:"¡El gusto es mío!",en:"The pleasure is mine!"},{es:"Igualmente.",en:"Likewise."}]},
+  {section:"🛍️ De Compras",cls:"color:var(--pink);background:rgba(232,93,117,0.1);border:1px solid rgba(232,93,117,0.2)",items:[{es:"¿Cuánto cuesta?",en:"How much does it cost?"},{es:"¿Me regala...?",en:"Can I have...? (Colombian!)"},{es:"Es muy caro.",en:"It's very expensive."},{es:"¿Tiene algo más barato?",en:"Do you have something cheaper?"},{es:"¿Puede hacer un descuento?",en:"Can you give me a discount?"},{es:"Solo estoy mirando.",en:"I'm just looking."},{es:"Me llevo este.",en:"I'll take this one."},{es:"¿Aceptan tarjeta?",en:"Do you accept card?"}]},
+  {section:"🍽️ En el Restaurante",cls:"color:var(--green);background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2)",items:[{es:"Una mesa para dos, por favor.",en:"A table for two, please."},{es:"¿Qué recomienda?",en:"What do you recommend?"},{es:"Quisiera pedir...",en:"I would like to order..."},{es:"La cuenta, por favor.",en:"The bill, please."},{es:"Está delicioso.",en:"It's delicious."},{es:"¿Tiene menú del día?",en:"Do you have a daily menu?"},{es:"Sin picante, por favor.",en:"Without spice, please."},{es:"¿Me regala un tinto?",en:"Can I have a black coffee? (Colombian!)"}]},
+  {section:"🆘 Pidiendo Ayuda",cls:"color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)",items:[{es:"No entiendo.",en:"I don't understand."},{es:"¿Puede repetir más despacio?",en:"Can you repeat more slowly?"},{es:"¿Habla inglés?",en:"Do you speak English?"},{es:"No hablo bien español.",en:"I don't speak Spanish well."},{es:"¿Cómo se dice... en español?",en:"How do you say... in Spanish?"},{es:"¿Me puede ayudar?",en:"Can you help me?"},{es:"Estoy perdido/a.",en:"I'm lost."},{es:"¿Dónde está...?",en:"Where is...?"},{es:"No sé.",en:"I don't know."}]},
+  {section:"🚨 Emergencias",cls:"color:var(--pink);background:rgba(232,93,117,0.12);border:1px solid rgba(232,93,117,0.3)",items:[{es:"¡Ayuda!",en:"Help!"},{es:"Llame a la policía.",en:"Call the police."},{es:"Necesito un médico.",en:"I need a doctor."},{es:"Llame a una ambulancia.",en:"Call an ambulance."},{es:"Me robaron.",en:"I was robbed."},{es:"¿Dónde está el hospital?",en:"Where is the hospital?"},{es:"Me siento mal.",en:"I feel sick."}]},
+  {section:"🚕 Transporte",cls:"color:var(--blue);background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2)",items:[{es:"¿Dónde está la parada de bus?",en:"Where is the bus stop?"},{es:"¿Cuánto cuesta el taxi hasta...?",en:"How much is a taxi to...?"},{es:"Lléveme a esta dirección.",en:"Take me to this address."},{es:"Para aquí, por favor.",en:"Stop here, please."},{es:"¿Cuánto tarda hasta...?",en:"How long does it take to...?"},{es:"¿Tiene cambio?",en:"Do you have change?"}]},
+  {section:"☀️ Conversación Diaria",cls:"color:var(--teal);background:rgba(74,168,160,0.08);border:1px solid rgba(74,168,160,0.18)",items:[{es:"¿Cuántos años tiene usted?",en:"How old are you? (formal)"},{es:"Tengo ___ años.",en:"I am ___ years old."},{es:"¿De dónde es usted?",en:"Where are you from?"},{es:"Soy de...",en:"I'm from..."},{es:"¿Qué hora es?",en:"What time is it?"},{es:"Son las tres.",en:"It's three o'clock."},{es:"Por favor.",en:"Please."},{es:"Gracias.",en:"Thank you."},{es:"De nada.",en:"You're welcome."},{es:"Con permiso.",en:"Excuse me (passing)."},{es:"¿Puede escribirlo?",en:"Can you write it down?"},{es:"Entiendo un poco.",en:"I understand a little."}]},
+];
+const DIALOGUE=[{who:"A",es:"Hola, ¿cómo está?",en:"Hi, how are you? (formal)"},{who:"B",es:"Hola, estoy bien, gracias.",en:"Hi, I'm fine, thank you."},{who:"A",es:"Soy David. ¡Gusto en conocerle!",en:"I'm David. Nice to meet you!"},{who:"B",es:"Soy Roberto. ¡El gusto es mío!",en:"I'm Roberto. The pleasure is mine!"},{who:"A",es:"Mucho gusto, señor Roberto.",en:"Nice to meet you, Mr. Roberto."},{who:"B",es:"Igualmente, señor David.",en:"Likewise, Mr. David."}];
+
+// ── Grammar data ──────────────────────────────────────────────────────────────
+const GRAMMAR={
+  presente:{intro:"The present tense describes habits, facts, and current actions. 3 verb types: AR, ER, IR.",trick:"The -O ending always means 'I'. Yo habl-O = I speak. Yo com-O = I eat. Yo viv-O = I live. Learn -O and you can talk about yourself instantly!",
+    tables:[{title:"AR Verbs — Hablar",sub:"Drop -AR, add: -o, -as, -a, -amos, -an",rows:[{pro:"Yo",verb:"hablo",en:"I speak",tts:"yo hablo"},{pro:"Tú",verb:"hablas",en:"you speak",tts:"tú hablas"},{pro:"Él/Ella",verb:"habla",en:"he/she speaks",tts:"él habla"},{pro:"Nosotros",verb:"hablamos",en:"we speak",tts:"nosotros hablamos"},{pro:"Ellos",verb:"hablan",en:"they speak",tts:"ellos hablan"}]},{title:"ER Verbs — Comer",sub:"Drop -ER, add: -o, -es, -e, -emos, -en",rows:[{pro:"Yo",verb:"como",en:"I eat",tts:"yo como"},{pro:"Tú",verb:"comes",en:"you eat",tts:"tú comes"},{pro:"Él/Ella",verb:"come",en:"he/she eats",tts:"él come"},{pro:"Nosotros",verb:"comemos",en:"we eat",tts:"nosotros comemos"},{pro:"Ellos",verb:"comen",en:"they eat",tts:"ellos comen"}]},{title:"IR Verbs — Vivir",sub:"Drop -IR, add: -o, -es, -e, -imos, -en",rows:[{pro:"Yo",verb:"vivo",en:"I live",tts:"yo vivo"},{pro:"Tú",verb:"vives",en:"you live",tts:"tú vives"},{pro:"Él/Ella",verb:"vive",en:"he/she lives",tts:"él vive"},{pro:"Nosotros",verb:"vivimos",en:"we live",tts:"nosotros vivimos"},{pro:"Ellos",verb:"viven",en:"they live",tts:"ellos viven"}]}],
+    examples:[{es:"Yo hablo un poco de español.",en:"I speak a little Spanish.",tts:"Yo hablo un poco de español."},{es:"¿Dónde vives tú?",en:"Where do you live?",tts:"¿Dónde vives tú?"},{es:"Ella come arepa todos los días.",en:"She eats arepa every day.",tts:"Ella come arepa todos los días."}]},
+  pasado:{intro:"The simple past (Pretérito Indefinido) is used for completed actions. 'I spoke', 'I ate', 'I went'. Accents on the endings are the key signal.",trick:"Look for the accent at the END of a verb — it signals past tense! hablÉ = I spoke, comIÓ = he ate, fuÉ = I was/went. Spot the tilde = something HAPPENED!",
+    tables:[{title:"AR Verbs — Hablar",sub:"Past endings: -é, -aste, -ó, -amos, -aron",rows:[{pro:"Yo",verb:"hablé",en:"I spoke",tts:"yo hablé"},{pro:"Tú",verb:"hablaste",en:"you spoke",tts:"tú hablaste"},{pro:"Él/Ella",verb:"habló",en:"he/she spoke",tts:"él habló"},{pro:"Nosotros",verb:"hablamos",en:"we spoke",tts:"nosotros hablamos"},{pro:"Ellos",verb:"hablaron",en:"they spoke",tts:"ellos hablaron"}]},{title:"ER/IR Verbs — Comer",sub:"Past endings: -í, -iste, -ió, -imos, -ieron",rows:[{pro:"Yo",verb:"comí",en:"I ate",tts:"yo comí"},{pro:"Tú",verb:"comiste",en:"you ate",tts:"tú comiste"},{pro:"Él/Ella",verb:"comió",en:"he/she ate",tts:"él comió"},{pro:"Nosotros",verb:"comimos",en:"we ate",tts:"nosotros comimos"},{pro:"Ellos",verb:"comieron",en:"they ate",tts:"ellos comieron"}]},{title:"⚡ Ser & Ir — IDENTICAL past tense!",sub:"Both mean 'was' AND 'went' — context tells you which",rows:[{pro:"Yo",verb:"fui",en:"I was / I went",tts:"yo fui"},{pro:"Tú",verb:"fuiste",en:"you were / went",tts:"tú fuiste"},{pro:"Él/Ella",verb:"fue",en:"he was / he went",tts:"él fue"},{pro:"Nosotros",verb:"fuimos",en:"we were / went",tts:"nosotros fuimos"},{pro:"Ellos",verb:"fueron",en:"they were / went",tts:"ellos fueron"}]}],
+    examples:[{es:"Ayer hablé con mi amigo.",en:"Yesterday I spoke with my friend.",tts:"Ayer hablé con mi amigo."},{es:"¿Qué comiste anoche?",en:"What did you eat last night?",tts:"¿Qué comiste anoche?"},{es:"Fui al mercado esta mañana.",en:"I went to the market this morning.",tts:"Fui al mercado esta mañana."}]},
+  futuro:{intro:"Great news — the future is the EASIEST tense! Keep the full infinitive and add endings. Or use the even simpler 'voy a' (going to) form.",trick:"Near future = VOY A + any verb. Exactly like English 'going to'. Voy a comer = I'm going to eat. Start with this — you can use it for months before needing the full future tense!",
+    tables:[{title:"Simple Future — Any Verb",sub:"Keep full infinitive + add: -é, -ás, -á, -emos, -án",rows:[{pro:"Yo",verb:"-é  (hablaré)",en:"I will speak",tts:"yo hablaré"},{pro:"Tú",verb:"-ás  (hablarás)",en:"you will speak",tts:"tú hablarás"},{pro:"Él/Ella",verb:"-á  (hablará)",en:"he/she will speak",tts:"él hablará"},{pro:"Nosotros",verb:"-emos  (hablaremos)",en:"we will speak",tts:"nosotros hablaremos"},{pro:"Ellos",verb:"-án  (hablarán)",en:"they will speak",tts:"ellos hablarán"}]},{title:"Ir a + Infinitive — Near Future",sub:"The easy way: voy/vas/va/vamos/van + a + verb",rows:[{pro:"Yo",verb:"voy a comer",en:"I'm going to eat",tts:"voy a comer"},{pro:"Tú",verb:"vas a comer",en:"you're going to eat",tts:"vas a comer"},{pro:"Él/Ella",verb:"va a comer",en:"he's going to eat",tts:"va a comer"},{pro:"Nosotros",verb:"vamos a comer",en:"we're going to eat",tts:"vamos a comer"},{pro:"Ellos",verb:"van a comer",en:"they're going to eat",tts:"van a comer"}]}],
+    examples:[{es:"Mañana voy a ir al mercado.",en:"Tomorrow I'm going to go to the market.",tts:"Mañana voy a ir al mercado."},{es:"¿Vas a comer arepa?",en:"Are you going to eat arepa?",tts:"¿Vas a comer arepa?"},{es:"Va a llover esta tarde.",en:"It's going to rain this afternoon.",tts:"Va a llover esta tarde."}]},
+  trucos:[{main:"V = B in Colombian Spanish",sub:"Never stress about V vs B. Vaca = 'baca'. Vo = 'bo'. Identical sounds in Colombia. ✓",icon:"🎯"},{main:"Accents at end = Past tense",sub:"Hablé = I spoke. Comió = he ate. Fue = he was/went. If you see an accent at the END of a verb, something HAPPENED.",icon:"⏮️"},{main:"Voy a = 'Going to'",sub:"The simplest future: Voy a + verb. Voy a comer = I'm going to eat. Start with this for months.",icon:"⏭️"},{main:"Ser vs Estar (both = 'to be')",sub:"Ser = permanent: Soy alto. Estar = temporary: Estoy cansado. Will it change? Yes → Estar. No → Ser.",icon:"⭐"},{main:"Fui = was AND went",sub:"Ser and Ir are IDENTICAL in past tense! Fui = I was (ser) OR I went (ir). Context tells you which.",icon:"🤯"},{main:"-O ending always means 'I'",sub:"Any present verb ending -O = I do it. Hablo = I speak. Como = I eat. Tengo = I have.",icon:"👤"},{main:"H is always silent",sub:"Hola, huevo, hacer, hotel — H is NEVER pronounced in Spanish. Just ignore it.",icon:"🤫"},{main:"The tilde changes meaning",sub:"Sí = Yes. Si = If. Él = He. El = The. Más = More. Mas = But. That little accent changes everything.",icon:"✍️"},{main:"Colombia = no 'vosotros'",sub:"Spain uses 'vosotros' for 'you all'. Colombia just uses 'ustedes' for everyone. One less thing to learn!",icon:"🇨🇴"},{main:"Gerunds end in -ando/-iendo",sub:"Habl-ANDO = speaking. Com-IENDO = eating. Viv-IENDO = living. Use these with estar: Estoy hablando = I am speaking.",icon:"🔄"}],
+};
+
+// Pronouns data
+const PRONOMBRES={
+  directo:{title:"Objeto Directo (Direct Object)",sub:"Replaces the thing receiving the action directly",color:"#60a5fa",rows:[
+    {w:"lo",meaning:"him / it (m.)",example:"Lo veo. — I see him/it.",tts:"lo veo"},
+    {w:"la",meaning:"her / it (f.)",example:"La veo. — I see her/it.",tts:"la veo"},
+    {w:"los",meaning:"them (m./mixed)",example:"Los compro. — I'm buying them.",tts:"los compro"},
+    {w:"las",meaning:"them (f.)",example:"Las tengo. — I have them.",tts:"las tengo"},
+    {w:"me",meaning:"me (first person)",example:"Me llaman. — They call me.",tts:"me llaman"},
+    {w:"te",meaning:"you (second person)",example:"Te veo mañana. — I'll see you tomorrow.",tts:"te veo mañana"},
+    {w:"nos",meaning:"us",example:"Nos llaman. — They call us.",tts:"nos llaman"},
+  ]},
+  indirecto:{title:"Objeto Indirecto (Indirect Object)",sub:"Replaces the person TO WHOM something is done",color:"#a78bfa",rows:[
+    {w:"le",meaning:"to him / to her / to you (formal)",example:"Le doy el libro. — I give him/her the book.",tts:"le doy el libro"},
+    {w:"me",meaning:"to me",example:"Me da el dinero. — He gives me the money.",tts:"me da el dinero"},
+    {w:"te",meaning:"to you",example:"Te mando un mensaje. — I'm sending you a message.",tts:"te mando un mensaje"},
+    {w:"nos",meaning:"to us",example:"Nos explica todo. — He explains everything to us.",tts:"nos explica todo"},
+    {w:"les",meaning:"to them / to you all",example:"Les digo la verdad. — I tell them the truth.",tts:"les digo la verdad"},
+  ]},
+  trick:"In Colombian Spanish: 'Le' is used for the indirect object (to him/her). 'Lo/La' for the direct object (him/her/it). Unlike Spain, Colombians do NOT use 'le' for the direct object — they always say 'lo veo' (I see him), never 'le veo'.",
+  examples:[
+    {es:"¿Lo ves? — Sí, lo veo.",en:"Do you see it/him? — Yes, I see it/him.",tts:"¿Lo ves? Sí, lo veo."},
+    {es:"Le di el dinero a Juan.",en:"I gave Juan the money. (to Juan = le)",tts:"Le di el dinero a Juan."},
+    {es:"Te quiero mucho.",en:"I love you a lot.",tts:"Te quiero mucho."},
+    {es:"¿Me puede ayudar?",en:"Can you help me?",tts:"¿Me puede ayudar?"},
+    {es:"La compré en el mercado.",en:"I bought it (f.) at the market.",tts:"La compré en el mercado."},
+    {es:"Nos llaman mañana.",en:"They're calling us tomorrow.",tts:"Nos llaman mañana."},
+  ],
+};
+
+// Reflexive verbs
+const REFLEXIVOS=[
+  {inf:"llamarse",en:"to be called (name)",forms:[{p:"Yo",v:"me llamo",e:"I am called / my name is"},{p:"Tú",v:"te llamas",e:"you are called"},{p:"Él/Ella",v:"se llama",e:"he/she is called"},{p:"Nosotros",v:"nos llamamos",e:"we are called"},{p:"Ellos",v:"se llaman",e:"they are called"}],example:{es:"Me llamo David. ¿Cómo te llamas?",en:"My name is David. What's your name?"}},
+  {inf:"levantarse",en:"to get up / to stand up",forms:[{p:"Yo",v:"me levanto",e:"I get up"},{p:"Tú",v:"te levantas",e:"you get up"},{p:"Él/Ella",v:"se levanta",e:"he/she gets up"},{p:"Nosotros",v:"nos levantamos",e:"we get up"},{p:"Ellos",v:"se levantan",e:"they get up"}],example:{es:"Me levanto a las seis.",en:"I get up at six o'clock."}},
+  {inf:"sentarse",en:"to sit down",forms:[{p:"Yo",v:"me siento",e:"I sit down"},{p:"Tú",v:"te sientas",e:"you sit down"},{p:"Él/Ella",v:"se sienta",e:"he/she sits down"},{p:"Nosotros",v:"nos sentamos",e:"we sit down"},{p:"Ellos",v:"se sientan",e:"they sit down"}],example:{es:"¿Puedo sentarme aquí?",en:"Can I sit here?"}},
+  {inf:"irse",en:"to leave / to go away",forms:[{p:"Yo",v:"me voy",e:"I'm leaving"},{p:"Tú",v:"te vas",e:"you're leaving"},{p:"Él/Ella",v:"se va",e:"he/she is leaving"},{p:"Nosotros",v:"nos vamos",e:"we're leaving"},{p:"Ellos",v:"se van",e:"they're leaving"}],example:{es:"¡Me voy! Hasta mañana.",en:"I'm leaving! See you tomorrow."}},
+  {inf:"sentirse",en:"to feel (emotion/physical)",forms:[{p:"Yo",v:"me siento",e:"I feel"},{p:"Tú",v:"te sientes",e:"you feel"},{p:"Él/Ella",v:"se siente",e:"he/she feels"},{p:"Nosotros",v:"nos sentimos",e:"we feel"},{p:"Ellos",v:"se sienten",e:"they feel"}],example:{es:"Me siento muy bien hoy.",en:"I feel very well today."}},
+  {inf:"despertarse",en:"to wake up",forms:[{p:"Yo",v:"me despierto",e:"I wake up"},{p:"Tú",v:"te despiertas",e:"you wake up"},{p:"Él/Ella",v:"se despierta",e:"he/she wakes up"},{p:"Nosotros",v:"nos despertamos",e:"we wake up"},{p:"Ellos",v:"se despiertan",e:"they wake up"}],example:{es:"Me despierto temprano en Colombia.",en:"I wake up early in Colombia."}},
+];
+
+// ── Build Letras ──────────────────────────────────────────────────────────────
 const vg=document.getElementById("vowel-grid");
 VL.forEach(l=>{const b=document.createElement("button");b.className="lc";b.id="lc-"+l;b.textContent=l;b.onclick=()=>sel(l);vg.appendChild(b);});
-const cg=document.getElementById("cons-grid");
-CN.forEach(l=>{const b=document.createElement("button");b.className="lc";b.id="lc-"+l;b.textContent=l;b.onclick=()=>sel(l);cg.appendChild(b);});
+const cgEl=document.getElementById("cons-grid");
+CN.forEach(l=>{const b=document.createElement("button");b.className="lc";b.id="lc-"+l;b.textContent=l;b.onclick=()=>sel(l);cgEl.appendChild(b);});
 let aL=null;
 function sel(l){
   if(aL){const p=document.getElementById("lc-"+aL);if(p)p.className="lc";}
-  aL=l;const iv=VL.includes(l);
-  document.getElementById("lc-"+l).className="lc "+(iv?"av":"ac");
-  speak(LI[l].tts,0.7);
-  const c=iv?"var(--pink)":"var(--teal)";const i=LI[l];
+  aL=l;const iv=VL.includes(l);document.getElementById("lc-"+l).className="lc "+(iv?"av":"ac");
+  speak(LI[l].tts,0.7);const c=iv?"var(--pink)":"var(--teal)";const i=LI[l];
   document.getElementById("detail-card").innerHTML=`<div class="dc" style="border:1px solid ${iv?"rgba(232,93,117,0.25)":"rgba(74,168,160,0.25)"}">
-    <div class="dc-big" style="color:${c}">${l}</div>
-    <div class="dc-sub">Se llama</div><div class="dc-name">"${i.name}"</div>
-    <div class="dc-phon">[${i.phonetic}]</div>
-    <div class="dc-badge">${iv?"🔴 Vocal — el alma de cada sílaba":"🔵 Consonante — se combina con vocales"}</div><br/>
+    <div class="dc-big" style="color:${c}">${l}</div><div class="dc-sub">Se llama</div><div class="dc-name">"${i.name}"</div>
+    <div class="dc-phon">[${i.phonetic}]</div><div class="dc-badge">${iv?"🔴 Vocal — el alma de cada sílaba":"🔵 Consonante — se combina con vocales"}</div><br/>
     <button class="spk-btn" style="background:${c}" onclick="speak('${i.tts}',0.65)">🔊 Escuchar otra vez</button></div>`;
 }
 
-// ── Sílabas ───────────────────────────────────────────────────────────────────
+// ── Build Sílabas ─────────────────────────────────────────────────────────────
 let aF=null;const fw=document.getElementById("filter-wrap");
 const fab=document.createElement("button");fab.className="fb active";fab.id="fb-all";fab.textContent="Todas";fab.onclick=()=>sF(null);fw.appendChild(fab);
 CN.forEach(l=>{const b=document.createElement("button");b.className="fb";b.id="fb-"+l;b.textContent=l;b.onclick=()=>sF(l);fw.appendChild(b);});
@@ -469,32 +754,79 @@ function rC(){
   (aF?[aF]:CN).forEach(con=>{
     const ch=con==="Ñ"?"ñ":con.toLowerCase();const g=document.createElement("div");g.className="cg";
     g.innerHTML=`<div class="cg-hdr"><button class="cg-badge" onclick="speak('${LI[con].tts}',0.7)">${con}</button>
-      <div><div class="cg-title">${con} + vocal</div><div class="cg-sub">Toca para escuchar</div></div></div>
-      <div class="g5c" id="cg-${con}"></div>`;
+      <div><div class="cg-title">${con} + vocal</div><div class="cg-sub">Toca para escuchar</div></div></div><div class="g5c" id="cg-${con}"></div>`;
     c.appendChild(g);const gr=g.querySelector(".g5c");
-    VW.forEach(v=>{const inf=gc(con,v);const d=ch+v;
-      const chip=document.createElement("button");chip.className="cc";
+    VW.forEach(v=>{const inf=gc(con,v);const d=ch+v;const chip=document.createElement("button");chip.className="cc";
       chip.innerHTML=`<span class="cc-big"><span style="color:var(--teal)">${d[0].toUpperCase()}</span><span style="color:var(--pink)">${d[1]}</span></span>
         <span class="cc-ph">${inf.p}</span>${inf.n?`<span class="cc-note">${inf.n}</span>`:""}
-        <span style="font-size:0.85rem">🔊</span>`;
-      chip.onclick=()=>speak(inf.t,0.75);gr.appendChild(chip);});
-  });
+        <span style="font-size:0.8rem">🔊</span>`;
+      chip.onclick=()=>speak(inf.t,0.75);gr.appendChild(chip);});});
 }
 rC();
 
-// ── Vocab ─────────────────────────────────────────────────────────────────────
+// ── Build Vocab ───────────────────────────────────────────────────────────────
 let aC="vocales";const cw=document.getElementById("cat-wrap");
 VC.forEach(cat=>{const p=document.createElement("button");p.className="cat-pill"+(cat.id===aC?" active":"");p.textContent=cat.label;p.onclick=()=>sCat(cat.id);cw.appendChild(p);});
-function sCat(id){document.querySelectorAll(".cat-pill").forEach((p,i)=>p.classList.toggle("active",VC[i].id===id));aC=id;rV();}
+function sCat(id){document.querySelectorAll(".cat-pill").forEach((p,i)=>p.classList.toggle("active",VC[i].id===id));aC=id;hideVerbDetail();rV();}
 function rV(){
   const cat=VC.find(c=>c.id===aC);const list=document.getElementById("vocab-list");list.innerHTML="";
+  if(cat.type==="vocales"){rVocales(list);return;}
   if(cat.type==="numeros"){rN(list);return;}
   if(cat.type==="preguntas"){rP(list);return;}
+  if(cat.type==="verbos"){rVerbos(list);return;}
+  if(cat.type==="colombianismos"){rCol(list);return;}
   cat.items.forEach(item=>{const card=document.createElement("div");card.className="vc";
     card.innerHTML=`<div class="vc-icon" style="background:${item.color}22;color:${item.color}">${item.icon}</div>
       <div class="vc-info"><div class="vc-word">${item.word}</div><div class="vc-en">${item.en}</div><div class="vc-ph">${item.ph}</div></div>
       <span class="vc-spk">🔊</span>`;card.onclick=()=>speak(item.tts,0.75);list.appendChild(card);});
 }
+
+function rVocales(list){
+  VOCALES_DATA.forEach(v=>{
+    const sec=document.createElement("div");sec.className="vocal-section";
+    const hdr=document.createElement("div");hdr.className="vocal-hdr";
+    hdr.innerHTML=`<div class="vocal-ltr" style="background:${v.bg};color:${v.color}">${v.letter}</div>
+      <div class="vocal-hdr-info"><div class="vocal-name">La vocal "${v.letter.toLowerCase()}"</div><div class="vocal-sound">Suena: "${v.sound}"</div></div>
+      <button onclick="speak('${v.letter}',0.7)" style="background:transparent;border:none;font-size:1.3rem;cursor:pointer">🔊</button>`;
+    sec.appendChild(hdr);
+    const exs=document.createElement("div");exs.className="vocal-exs";
+    v.examples.forEach(ex=>{
+      const ec=document.createElement("div");ec.className="vocal-ex";
+      const w=ex.word.replace(new RegExp(v.letter,"gi"),m=>`<span style="color:${v.color};font-weight:900">${m}</span>`);
+      ec.innerHTML=`<div style="flex:1"><div class="vocal-ex-word">${w}</div><div class="vocal-ex-en">${ex.en}</div><div class="vocal-ex-ph">${ex.ph}</div></div><span style="font-size:1.2rem">🔊</span>`;
+      ec.onclick=()=>speak(ex.tts,0.75);exs.appendChild(ec);});
+    sec.appendChild(exs);list.appendChild(sec);});
+}
+
+function rVerbos(list){
+  const note=document.createElement("div");note.className="intro-note";
+  note.innerHTML=`<div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--purple);margin-bottom:6px;font-weight:800">🏃 Verbos — Tap any verb for full conjugation</div>
+    <div style="font-size:0.82rem;color:var(--muted);line-height:1.6">Tap a verb to see all tenses (present/past/future), word family (beber→bebida), imperatives, and examples.</div>`;
+  list.appendChild(note);
+  Object.entries(VERBS).forEach(([key,verb])=>{
+    const card=document.createElement("div");card.className="vc";
+    card.style.borderColor=`${verb.color}44`;
+    card.innerHTML=`<div class="vc-icon" style="background:${verb.color}22;color:${verb.color}">${verb.icon}</div>
+      <div class="vc-info"><div class="vc-word" style="color:${verb.color}">${key}</div><div class="vc-en">${verb.en}</div><div class="vc-ph" style="color:${verb.color}">${verb.type}</div></div>
+      <span class="vc-arrow">›</span>`;
+    card.onclick=()=>showVerbDetail(key,verb);list.appendChild(card);});
+}
+
+function rCol(list){
+  const note=document.createElement("div");note.className="intro-note";
+  note.innerHTML=`<div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:800">🇨🇴 Colombianismos</div>
+    <div style="font-size:0.82rem;color:var(--muted);line-height:1.6">Expressions used every day in Colombia that you won't learn in a textbook. Tap to hear.</div>`;
+  list.appendChild(note);
+  COLOMBIANISMOS.forEach(item=>{
+    const card=document.createElement("div");card.className="col-card";
+    card.innerHTML=`<div class="col-card-top">
+      <span class="col-flag">🇨🇴</span>
+      <div class="col-word-wrap"><div class="col-word">${item.word}</div><div class="col-en">${item.en}</div></div>
+      <span class="col-spk">🔊</span></div>
+      <div class="col-usage">${item.usage}<div class="col-example">💬 ${item.example}</div></div>`;
+    card.onclick=()=>speak(item.tts,0.75);list.appendChild(card);});
+}
+
 function rN(list){
   const cr=document.createElement("div");cr.className="counting-rules";
   cr.innerHTML=`<div class="cr-title">📖 Reglas para contar</div>
@@ -503,9 +835,9 @@ function rN(list){
     <div class="cr-row"><div class="cr-ex">245 = doscientos cuarenta y cinco</div><div class="cr-rule">Hundreds + tens + units</div></div>`;
   list.appendChild(cr);
   const mb=document.createElement("div");mb.className="money-box";mb.innerHTML=`<div class="money-title">💰 Dinero Colombiano (COP)</div>`;
-  [{cop:"$1.000",es:"Mil pesos",en:"~$0.25 USD",tts:"mil pesos"},{cop:"$2.000",es:"Dos mil pesos",en:"~$0.50 USD",tts:"dos mil pesos"},{cop:"$5.000",es:"Cinco mil pesos",en:"~$1.25 USD",tts:"cinco mil pesos"},{cop:"$10.000",es:"Diez mil pesos",en:"~$2.50 USD",tts:"diez mil pesos"},{cop:"$20.000",es:"Veinte mil pesos",en:"~$5 USD",tts:"veinte mil pesos"},{cop:"$50.000",es:"Cincuenta mil pesos",en:"~$12 USD",tts:"cincuenta mil pesos"},{cop:"$100.000",es:"Cien mil pesos",en:"~$25 USD",tts:"cien mil pesos"},{cop:"$500.000",es:"Quinientos mil pesos",en:"~$125 USD",tts:"quinientos mil pesos"},{cop:"$1.000.000",es:"Un millón de pesos",en:"~$250 USD",tts:"un millón de pesos"},{cop:"$2.000.000",es:"Dos millones de pesos",en:"~$500 USD",tts:"dos millones de pesos"}].forEach(m=>{
+  [{cop:"$1.000",es:"Mil pesos",en:"~$0.25 USD",tts:"mil pesos"},{cop:"$5.000",es:"Cinco mil pesos",en:"~$1.25 USD",tts:"cinco mil pesos"},{cop:"$10.000",es:"Diez mil pesos",en:"~$2.50 USD",tts:"diez mil pesos"},{cop:"$20.000",es:"Veinte mil pesos",en:"~$5 USD",tts:"veinte mil pesos"},{cop:"$50.000",es:"Cincuenta mil pesos",en:"~$12 USD",tts:"cincuenta mil pesos"},{cop:"$100.000",es:"Cien mil pesos",en:"~$25 USD",tts:"cien mil pesos"},{cop:"$500.000",es:"Quinientos mil pesos",en:"~$125 USD",tts:"quinientos mil pesos"},{cop:"$1.000.000",es:"Un millón de pesos",en:"~$250 USD",tts:"un millón de pesos"},{cop:"$2.000.000",es:"Dos millones de pesos",en:"~$500 USD",tts:"dos millones de pesos"}].forEach(m=>{
     const row=document.createElement("div");row.className="money-row";
-    row.innerHTML=`<div class="money-cop">${m.cop}</div><div class="money-info"><div class="money-es">${m.es}</div><div class="money-en">${m.en}</div></div><span style="font-size:1.3rem">🔊</span>`;
+    row.innerHTML=`<div class="money-cop">${m.cop}</div><div class="money-info"><div class="money-es">${m.es}</div><div class="money-en">${m.en}</div></div><span style="font-size:1.1rem">🔊</span>`;
     row.onclick=()=>speak(m.tts,0.75);mb.appendChild(row);});
   list.appendChild(mb);
   [[N130,"1 – 30","var(--pink)","rgba(232,93,117,0.1)","rgba(232,93,117,0.2)"],[NT,"40 – 500","var(--teal)","rgba(74,168,160,0.1)","rgba(74,168,160,0.2)"]].forEach(([data,title,col,bg,bdr])=>{
@@ -516,18 +848,17 @@ function rN(list){
       const nc=["#e85d75","#f59e0b","#10b981","#3b82f6","#8b5cf6"][typeof n.n==="number"?n.n%5:0];
       card.innerHTML=`<div class="num-digit" style="color:${nc}">${n.n}</div><div><div class="num-word">${n.w}</div><div class="num-ph">${n.ph}</div></div>`;
       card.onclick=()=>speak(n.w,0.75);g.appendChild(card);});s.appendChild(g);list.appendChild(s);});
-  const s3=document.createElement("div");s3.className="num-section";
-  s3.innerHTML=`<div class="num-section-title" style="color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)">Miles y Millones</div>`;
+  const s3=document.createElement("div");s3.className="num-section";s3.innerHTML=`<div class="num-section-title" style="color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)">Miles y Millones</div>`;
   const g3=document.createElement("div");g3.className="num-grid";
-  [{n:"1.000",w:"Mil",ph:"meel"},{n:"2.000",w:"Dos mil",ph:"dohs meel"},{n:"10.000",w:"Diez mil",ph:"dyehs meel"},{n:"100.000",w:"Cien mil",ph:"syen meel"},{n:"500.000",w:"Quinientos mil",ph:"kee-NYEN-tohs meel"},{n:"1.000.000",w:"Un millón",ph:"oon mee-LYON"},{n:"2.000.000",w:"Dos millones",ph:"dohs mee-YOH-nehs"},{n:"10.000.000",w:"Diez millones",ph:"dyehs mee-YOH-nehs"}].forEach(n=>{
+  [{n:"1.000",w:"Mil",ph:"meel"},{n:"2.000",w:"Dos mil",ph:"dohs meel"},{n:"10.000",w:"Diez mil",ph:"dyehs meel"},{n:"100.000",w:"Cien mil",ph:"syen meel"},{n:"1.000.000",w:"Un millón",ph:"oon mee-LYON"},{n:"2.000.000",w:"Dos millones",ph:"dohs mee-YOH-nehs"}].forEach(n=>{
     const card=document.createElement("div");card.className="num-card";
-    card.innerHTML=`<div style="font-size:0.85rem;font-weight:900;color:var(--gold);min-width:60px;text-align:right;flex-shrink:0">${n.n}</div><div><div class="num-word">${n.w}</div><div class="num-ph">${n.ph}</div></div>`;
+    card.innerHTML=`<div style="font-size:0.82rem;font-weight:900;color:var(--gold);min-width:58px;text-align:right;flex-shrink:0">${n.n}</div><div><div class="num-word">${n.w}</div><div class="num-ph">${n.ph}</div></div>`;
     card.onclick=()=>speak(n.w,0.75);g3.appendChild(card);});s3.appendChild(g3);list.appendChild(s3);
 }
 function rP(list){
   const intro=document.createElement("div");intro.className="intro-note";
-  intro.innerHTML=`<div style="font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--purple);margin-bottom:7px;font-weight:800">❓ Palabras interrogativas</div>
-    <div style="font-size:0.85rem;color:var(--muted);line-height:1.6">Question words always carry accent marks. Tap each card to hear it.</div>`;
+  intro.innerHTML=`<div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--purple);margin-bottom:6px;font-weight:800">❓ Palabras interrogativas</div>
+    <div style="font-size:0.82rem;color:var(--muted);line-height:1.6">Question words always carry accent marks. Tap each card to hear it.</div>`;
   list.appendChild(intro);
   PQ.forEach(item=>{const card=document.createElement("div");card.className="q-card";
     card.innerHTML=`<div class="q-mark" style="color:var(--purple)">${item.word.replace("¿","").replace("?","")}</div>
@@ -537,40 +868,191 @@ function rP(list){
 }
 rV();
 
-// ── Saludos ───────────────────────────────────────────────────────────────────
-const sle=document.getElementById("saludos-list");
+// ── Verb Detail View ──────────────────────────────────────────────────────────
+function showVerbDetail(key,verb){
+  document.getElementById("vocab-list").style.display="none";
+  const vd=document.getElementById("verb-detail");vd.innerHTML="";vd.classList.add("active");
+  // Back button
+  const back=document.createElement("button");back.className="vd-back";
+  back.innerHTML=`<span style="font-size:1.2rem">‹</span><span class="vd-back-label">Volver a Verbos</span>`;
+  back.onclick=hideVerbDetail;vd.appendChild(back);
+  // Header
+  const hdr=document.createElement("div");hdr.className="vd-header";
+  hdr.style.borderColor=`${verb.color}44`;
+  hdr.innerHTML=`<div class="vd-infinitive" style="color:${verb.color}">${key}</div>
+    <div class="vd-type">${verb.type}</div>
+    <div class="vd-en">${verb.en}</div>
+    <div class="vd-forms">
+      <div class="vd-form-card" onclick="speak('${verb.gerund.f}',0.8)"><div class="vd-form-label">Gerundio</div><div class="vd-form-word">${verb.gerund.f}</div><div class="vd-form-en">${verb.gerund.en} 🔊</div></div>
+      <div class="vd-form-card" onclick="speak('${verb.participle.f}',0.8)"><div class="vd-form-label">Participio</div><div class="vd-form-word">${verb.participle.f}</div><div class="vd-form-en">${verb.participle.en} 🔊</div></div>
+    </div>`;
+  vd.appendChild(hdr);
+  // Conjugation tables
+  [["⚡ Presente","present","rgba(74,168,160,0.2)","var(--teal)"],["⏮️ Pasado","past","rgba(232,93,117,0.2)","var(--pink)"],["⏭️ Futuro","future","rgba(96,165,250,0.2)","var(--blue)"]].forEach(([title,tense,bg,color])=>{
+    const wrap=document.createElement("div");wrap.className="vd-tense-wrap";
+    const th=document.createElement("div");th.className="vd-tense-title";th.style.background=bg;
+    th.innerHTML=`<span class="vd-tense-name" style="color:${color}">${title}</span>`;
+    const rows=document.createElement("div");rows.className="vd-conj-rows";
+    verb[tense].forEach(row=>{
+      const r=document.createElement("div");r.className="vd-conj-row";
+      r.innerHTML=`<span class="vd-pro">${row.p}</span><span class="vd-verb">${row.v}</span><span class="vd-en-small">${row.e}</span><span class="vd-spk">🔊</span>`;
+      r.onclick=()=>speak(row.v,0.75);rows.appendChild(r);});
+    wrap.appendChild(th);wrap.appendChild(rows);vd.appendChild(wrap);});
+  // Imperative
+  const imp=document.createElement("div");imp.className="imperative-box";
+  imp.innerHTML=`<div class="imp-title">🫵 Imperativo (Commands)</div>
+    <div class="imp-grid">
+      <div class="imp-card" onclick="speak('${verb.imperative.tu.f}',0.75)"><div class="imp-label">Tú (informal)</div><div class="imp-form">${verb.imperative.tu.f}</div><div class="imp-en">${verb.imperative.tu.en} 🔊</div></div>
+      <div class="imp-card" onclick="speak('${verb.imperative.usted.f}',0.75)"><div class="imp-label">Usted (formal)</div><div class="imp-form">${verb.imperative.usted.f}</div><div class="imp-en">${verb.imperative.usted.en} 🔊</div></div>
+    </div>`;
+  vd.appendChild(imp);
+  // Word family
+  const wf=document.createElement("div");wf.className="word-family";
+  wf.innerHTML=`<div class="wf-title">🌱 Familia de Palabras — Words from "${key}"</div><div class="wf-grid"></div>`;
+  const wfg=wf.querySelector(".wf-grid");
+  verb.family.forEach(item=>{
+    const c=document.createElement("div");c.className="wf-card";
+    c.innerHTML=`<div class="wf-type">${item.t}</div><div class="wf-word">${item.f}</div><div class="wf-en">${item.e}</div><span style="font-size:0.9rem;margin-top:4px;display:block">🔊</span>`;
+    c.onclick=()=>speak(item.f,0.75);wfg.appendChild(c);});
+  vd.appendChild(wf);
+  // Example sentence
+  const ex=document.createElement("div");ex.style.cssText="background:rgba(167,139,250,0.07);border:1px solid rgba(167,139,250,0.18);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;";
+  ex.innerHTML=`<div style="font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--purple);margin-bottom:7px;font-weight:800">💬 Ejemplo</div>
+    <div style="font-size:0.95rem;font-weight:800;color:#fff">${verb.example.es}</div>
+    <div style="font-size:0.78rem;color:var(--muted);font-style:italic;margin-top:4px">${verb.example.en} 🔊</div>`;
+  ex.onclick=()=>speak(verb.example.es,0.75);vd.appendChild(ex);
+}
+function hideVerbDetail(){
+  document.getElementById("vocab-list").style.display="";
+  const vd=document.getElementById("verb-detail");vd.classList.remove("active");vd.innerHTML="";
+}
+
+// ── Build Frases ──────────────────────────────────────────────────────────────
+const fl=document.getElementById("frases-list");
 const dd=document.createElement("div");dd.className="dialogue";
 dd.innerHTML=`<div class="dlg-title">💬 Diálogo — Presentaciones formales</div>`+
-  DL.map(l=>`<div class="dlg-line ${l.who==="B"?"right":""}">
+  DIALOGUE.map(l=>`<div class="dlg-line ${l.who==="B"?"right":""}">
     <div class="dlg-avatar" style="background:${l.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${l.who==="A"?"🧑":"👤"}</div>
     <div class="dlg-bubble" onclick="speak('${l.es.replace(/'/g,"\\'")}',0.75)">
       <div class="dlg-es">${l.es}</div><div class="dlg-en">${l.en}</div></div></div>`).join("");
-sle.appendChild(dd);
-const td=document.createElement("div");td.className="gs";
-const ttl=document.createElement("div");ttl.className="gs-title";
-ttl.style.cssText="color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)";
-ttl.textContent="Títulos · Titles";td.appendChild(ttl);
+fl.appendChild(dd);
+const td=document.createElement("div");td.className="frase-section";
+const ttlEl=document.createElement("div");ttlEl.className="frase-title";
+ttlEl.style.cssText="color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)";
+ttlEl.textContent="Títulos · Titles";td.appendChild(ttlEl);
 const tg=document.createElement("div");tg.className="titles-grid";
 [{abbr:"Sr.",full:"Señor",en:"Mr."},{abbr:"Sra.",full:"Señora",en:"Mrs. / Ms."}].forEach(t=>{
   const tc=document.createElement("div");tc.className="title-card";
   tc.innerHTML=`<div class="title-abbr">${t.abbr}</div><div class="title-full">${t.full}</div><div class="title-en">${t.en}</div>`;
   tc.onclick=()=>speak(t.full,0.75);tg.appendChild(tc);});
-td.appendChild(tg);sle.appendChild(td);
-SL.forEach(sec=>{const wrap=document.createElement("div");wrap.className="gs";
-  const st=document.createElement("div");st.className="gs-title";st.style.cssText=sec.cls;st.textContent=sec.section;wrap.appendChild(st);
-  sec.items.forEach(item=>{const card=document.createElement("div");card.className="gcard";
-    card.innerHTML=`<div class="gcard-txt"><div class="g-es">${item.es}</div><div class="g-en">${item.en}</div></div><span class="g-spk">🔊</span>`;
-    card.onclick=()=>speak(item.es,0.75);wrap.appendChild(card);});sle.appendChild(wrap);});
+td.appendChild(tg);fl.appendChild(td);
+FRASES.forEach(sec=>{const wrap=document.createElement("div");wrap.className="frase-section";
+  const st=document.createElement("div");st.className="frase-title";st.style.cssText=sec.cls;st.textContent=sec.section;wrap.appendChild(st);
+  sec.items.forEach(item=>{const card=document.createElement("div");card.className="frase-card";
+    card.innerHTML=`<div class="frase-txt"><div class="f-es">${item.es}</div><div class="f-en">${item.en}</div></div><span class="f-spk">🔊</span>`;
+    card.onclick=()=>speak(item.es,0.75);wrap.appendChild(card);});fl.appendChild(wrap);});
+
+// ── Build Grammar ─────────────────────────────────────────────────────────────
+function buildGram(id,data){
+  const sec=document.getElementById("gs-"+id);sec.innerHTML="";
+  if(id==="trucos"){
+    const intro=document.createElement("div");intro.className="gram-intro";
+    intro.innerHTML=`<div class="gram-intro-title">🧠 Memory Tricks for Colombian Spanish</div>
+      <div class="gram-intro-text">Learn these patterns and you will sound much more natural, much faster.</div>`;
+    sec.appendChild(intro);
+    data.forEach((trick,i)=>{
+      const item=document.createElement("div");item.className="trick-list-item";
+      item.innerHTML=`<div class="trick-num">${i+1}</div>
+        <div class="trick-item-text"><div class="trick-item-main">${trick.icon} ${trick.main}</div><div class="trick-item-sub">${trick.sub}</div></div>`;
+      sec.appendChild(item);});return;
+  }
+  if(id==="pronombres"){buildPronombres(sec);return;}
+  if(id==="reflexivos"){buildReflexivos(sec);return;}
+  const intro=document.createElement("div");intro.className="gram-intro";
+  intro.innerHTML=`<div class="gram-intro-title">${id==="presente"?"⚡":id==="pasado"?"⏮️":"⏭️"} ${id.charAt(0).toUpperCase()+id.slice(1)}</div>
+    <div class="gram-intro-text">${data.intro}</div>`;
+  sec.appendChild(intro);
+  const trick=document.createElement("div");trick.className="trick-box";
+  trick.innerHTML=`<div class="trick-title">🧠 Memory Trick</div><div class="trick-text">${data.trick}</div>`;
+  sec.appendChild(trick);
+  data.tables.forEach(table=>{
+    const ct=document.createElement("div");ct.className="conj-table";
+    ct.innerHTML=`<div class="conj-hdr"><div class="conj-hdr-title">${table.title}</div><div class="conj-hdr-sub">${table.sub}</div></div>`;
+    table.rows.forEach(row=>{
+      const r=document.createElement("div");r.className="conj-row";
+      r.innerHTML=`<span class="conj-pronoun">${row.pro}</span><span class="conj-verb">${row.verb}</span><span class="conj-en">${row.en}</span><span class="conj-spk">🔊</span>`;
+      r.onclick=()=>speak(row.tts,0.75);ct.appendChild(r);});sec.appendChild(ct);});
+  const exLabel=document.createElement("div");exLabel.style.cssText="font-size:0.56rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:800;";exLabel.textContent="Ejemplos";sec.appendChild(exLabel);
+  data.examples.forEach(ex=>{const card=document.createElement("div");card.className="example-card";
+    card.innerHTML=`<div class="ex-info"><div class="ex-es">${ex.es}</div><div class="ex-en">${ex.en}</div></div><span class="ex-spk">🔊</span>`;
+    card.onclick=()=>speak(ex.tts,0.75);sec.appendChild(card);});
+}
+function buildPronombres(sec){
+  const intro=document.createElement("div");intro.className="gram-intro";
+  intro.innerHTML=`<div class="gram-intro-title">👤 Pronombres de Objeto</div>
+    <div class="gram-intro-text">Lo/La/Le/Me/Te etc. These small words replace nouns and are placed BEFORE the verb. Mastering these makes you sound very natural in Colombian Spanish.</div>`;
+  sec.appendChild(intro);
+  [PRONOMBRES.directo,PRONOMBRES.indirecto].forEach(table=>{
+    const pt=document.createElement("div");pt.className="pro-table";
+    pt.innerHTML=`<div class="pro-hdr" style="background:${table.color}22"><div class="pro-hdr-title" style="color:${table.color}">${table.title}</div><div class="pro-hdr-sub">${table.sub}</div></div>`;
+    table.rows.forEach(row=>{
+      const r=document.createElement("div");r.className="pro-row";
+      r.innerHTML=`<span class="pro-word" style="color:${table.color}">${row.w}</span><div style="flex:1"><div class="pro-meaning">${row.meaning}</div><div class="pro-example">${row.example}</div></div><span class="pro-spk">🔊</span>`;
+      r.onclick=()=>speak(row.tts,0.8);pt.appendChild(r);});
+    sec.appendChild(pt);});
+  const trick=document.createElement("div");trick.className="trick-box";
+  trick.innerHTML=`<div class="trick-title">🧠 Colombian Tip</div><div class="trick-text">${PRONOMBRES.trick}</div>`;
+  sec.appendChild(trick);
+  const exLabel=document.createElement("div");exLabel.style.cssText="font-size:0.56rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:800;";exLabel.textContent="Ejemplos";sec.appendChild(exLabel);
+  PRONOMBRES.examples.forEach(ex=>{const card=document.createElement("div");card.className="example-card";
+    card.innerHTML=`<div class="ex-info"><div class="ex-es">${ex.es}</div><div class="ex-en">${ex.en}</div></div><span class="ex-spk">🔊</span>`;
+    card.onclick=()=>speak(ex.tts,0.75);sec.appendChild(card);});
+}
+function buildReflexivos(sec){
+  const intro=document.createElement("div");intro.className="gram-intro";
+  intro.innerHTML=`<div class="gram-intro-title">🔄 Verbos Reflexivos</div>
+    <div class="gram-intro-text">Reflexive verbs have 'se' at the end of the infinitive (llamarse, levantarse). When conjugated, the pronoun (me/te/se/nos) goes BEFORE the verb. Very common in everyday Colombian Spanish.</div>`;
+  sec.appendChild(intro);
+  const trick=document.createElement("div");trick.className="trick-box";
+  trick.innerHTML=`<div class="trick-title">🧠 The Pattern</div><div class="trick-text">Think of reflexive verbs as doing something TO YOURSELF. Me llamo = I call myself. Me levanto = I lift myself up (get up). Se llama = He/she calls himself/herself. The "me/te/se" always matches the subject!</div>`;
+  sec.appendChild(trick);
+  REFLEXIVOS.forEach(verb=>{
+    const card=document.createElement("div");card.className="reflex-card";
+    const hdr=document.createElement("div");hdr.className="reflex-hdr";
+    hdr.innerHTML=`<span class="reflex-hdr-title">${verb.inf}</span><span class="reflex-hdr-en">${verb.en} 🔊</span>`;
+    hdr.onclick=()=>speak(verb.inf,0.75);card.appendChild(hdr);
+    verb.forms.forEach(row=>{
+      const r=document.createElement("div");r.className="reflex-row";
+      r.innerHTML=`<span class="reflex-pro">${row.p}</span><span class="reflex-verb">${row.v}</span><span class="reflex-en">${row.e}</span><span class="reflex-spk">🔊</span>`;
+      r.onclick=()=>speak(row.v,0.75);card.appendChild(r);});
+    const exDiv=document.createElement("div");exDiv.style.cssText="padding:11px 14px;border-top:1px solid rgba(52,211,153,0.15);background:rgba(52,211,153,0.04);cursor:pointer;";
+    exDiv.innerHTML=`<div style="font-size:0.9rem;font-weight:700;color:#fff">${verb.example.es}</div>
+      <div style="font-size:0.72rem;color:var(--muted);font-style:italic;margin-top:3px">${verb.example.en} 🔊</div>`;
+    exDiv.onclick=()=>speak(verb.example.es,0.75);card.appendChild(exDiv);
+    sec.appendChild(card);});
+}
+["presente","pasado","futuro","trucos"].forEach(id=>buildGram(id,GRAMMAR[id]));
+buildGram("pronombres");buildGram("reflexivos");
+
+function showGram(id){
+  ["presente","pasado","futuro","pronombres","reflexivos","trucos"].forEach(g=>{
+    document.getElementById("gs-"+g).classList.toggle("active",g===id);
+    document.getElementById("gt-"+g).classList.toggle("active",g===id);
+  });
+}
 
 // ── Quiz ──────────────────────────────────────────────────────────────────────
 let aQ=[];
 VC.forEach(cat=>{
   if(cat.type==="basic")cat.items.forEach(i=>aQ.push({es:i.word,en:i.en,tts:i.tts,cat:cat.id}));
+  if(cat.type==="vocales")VOCALES_DATA.forEach(v=>v.examples.forEach(ex=>aQ.push({es:ex.word,en:ex.en,tts:ex.tts,cat:"vocales"})));
   if(cat.type==="numeros"){[...N130,...NT].forEach(n=>aQ.push({es:n.w,en:String(n.n),tts:n.w,cat:"numeros"}));}
   if(cat.type==="preguntas")PQ.forEach(p=>aQ.push({es:p.word,en:p.en,tts:p.tts,cat:"preguntas"}));
+  if(cat.type==="verbos")Object.entries(VERBS).forEach(([k,v])=>aQ.push({es:k,en:v.en,tts:k,cat:"verbos"}));
+  if(cat.type==="colombianismos")COLOMBIANISMOS.forEach(c=>aQ.push({es:c.word,en:c.en,tts:c.tts,cat:"colombianismos"}));
 });
-SL.forEach(sec=>{if(sec.items)sec.items.forEach(i=>aQ.push({es:i.es,en:i.en,tts:i.es,cat:"saludos"}));});
-const QC=[{id:"all",label:"Todo"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"preguntas",label:"Preguntas"},{id:"saludos",label:"Saludos"}];
+FRASES.forEach(sec=>{if(sec.items)sec.items.forEach(i=>aQ.push({es:i.es,en:i.en,tts:i.es,cat:"frases"}));});
+const QC=[{id:"all",label:"Todo"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"colombianismos",label:"Colombia"},{id:"frases",label:"Frases"}];
 let qCat="all",qC=0,qT=0,qS=0,cQ=null,an=false;
 const qcw=document.getElementById("qcat-wrap");
 QC.forEach(c=>{const b=document.createElement("button");b.className="qcat"+(c.id==="all"?" active":"");b.textContent=c.label;
@@ -593,10 +1075,11 @@ function quizHear(){if(cQ)speak(cQ.tts,0.7);}
 setTimeout(nQ,400);
 
 // ── Nav ───────────────────────────────────────────────────────────────────────
-const PG=["letras","silabas","vocab","saludos","quiz"];
+const PG=["letras","silabas","vocab","frases","gram","quiz"];
 function showPage(id){
   PG.forEach(p=>{document.getElementById("page-"+p).classList.toggle("active",p===id);document.getElementById("tb-"+p).classList.toggle("active",p===id);});
   document.querySelector(".scroll").scrollTop=0;
+  if(id!=="vocab")hideVerbDetail();
 }
 </script>
 </body>
