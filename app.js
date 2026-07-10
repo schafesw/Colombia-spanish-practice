@@ -1,4 +1,4 @@
-﻿// Spanish learning app behavior
+// Spanish learning app behavior
 // ── Voice ─────────────────────────────────────────────────────────────────────
 let voices=[],selV=null;
 function getSpanishVoices(){
@@ -243,38 +243,61 @@ function hideVerbDetail(){
   const vd=document.getElementById("verb-detail");vd.classList.remove("active");vd.innerHTML="";
 }
 
-// ── Build Frases ──────────────────────────────────────────────────────────────
+
+ // ── Build Frases ──────────────────────────────────────────────────────────────
 const fl=document.getElementById("frases-list");
-const dd=document.createElement("div");dd.className="dialogue";
-dd.innerHTML=`<div class="dlg-title">💬 Diálogo — Presentaciones formales</div>`+
-  DIALOGUE.map(l=>`<div class="dlg-line ${l.who==="B"?"right":""}">
-    <div class="dlg-avatar" style="background:${l.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${l.who==="A"?"🧑":"👤"}</div>
-    <div class="dlg-bubble" onclick="speak('${(l.tts||l.es).replace(/'/g,"\\'")}',0.75)">
-      <div class="dlg-es">${l.es}</div><div class="dlg-en">${l.en}</div></div></div>`).join("");
-fl.appendChild(dd);
-const td=document.createElement("div");td.className="frase-section";
-const ttlEl=document.createElement("div");ttlEl.className="frase-title";
-ttlEl.style.cssText="color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)";
-ttlEl.textContent="Títulos · Titles";td.appendChild(ttlEl);
-const tg=document.createElement("div");tg.className="titles-grid";
-[{abbr:"Sr.",full:"Señor",en:"Mr."},{abbr:"Sra.",full:"Señora",en:"Mrs. / Ms."}].forEach(t=>{
-  const tc=document.createElement("div");tc.className="title-card";
-  tc.innerHTML=`<div class="title-abbr">${t.abbr}</div><div class="title-full">${t.full}</div><div class="title-en">${t.en}</div>`;
-  tc.onclick=()=>speak(t.full,0.75);tg.appendChild(tc);});
-td.appendChild(tg);fl.appendChild(td);
-FRASES.forEach(sec=>{const wrap=document.createElement("div");wrap.className="frase-section";
-  const st=document.createElement("div");st.className="frase-title";st.style.cssText=sec.cls;st.textContent=sec.section;wrap.appendChild(st);
-  sec.items.forEach(item=>{const card=document.createElement("div");card.className="frase-card";
-    card.innerHTML=`<div class="frase-txt"><div class="f-es">${item.es}</div><div class="f-en">${item.en}</div></div><span class="f-spk">🔊</span>`;
-    card.onclick=()=>speak(item.es,0.75);wrap.appendChild(card);});fl.appendChild(wrap);});
-const cv=document.createElement("div");cv.className="frase-section";
-const cvTitle=document.createElement("div");cvTitle.className="frase-title";cvTitle.style.cssText="color:var(--pink);background:rgba(232,93,117,0.1);border:1px solid rgba(232,93,117,0.2)";cvTitle.textContent="🗣️ Conversaciones · Ahora / Planes / Ayer";cv.appendChild(cvTitle);
-CONVERSATIONS.forEach(con=>{const box=document.createElement("div");box.className="dialogue";
-  box.innerHTML=`<div class="dlg-title">${con.title} · ${con.tense}</div>`;
-  con.lines.forEach(line=>{const row=document.createElement("div");row.className="dlg-line"+(line.who==="B"?" right":"");
-    row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(232,93,117,0.2)":"rgba(167,139,250,0.2)"}">${line.who==="A"?"🧑":"👤"}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
-    row.querySelector(".dlg-bubble").onclick=()=>speak(line.tts,0.75);box.appendChild(row);});cv.appendChild(box);});
-fl.appendChild(cv);
+const PHRASE_DIALOGUES=[
+  {title:"Saludos formales",preview:DIALOGUE[0].es,en:"Formal greetings and introductions",lines:DIALOGUE},
+  ...Array.from(new Set(CONVERSATIONS.map(c=>c.title))).map(title=>{
+    const versions=CONVERSATIONS.filter(c=>c.title===title);
+    return {title,preview:versions[0].lines[0].es,en:"Ahora + Planes · Present and near future",lines:versions.flatMap(v=>v.lines).slice(0,4)};
+  })
+];
+function renderFraseMenu(){
+  fl.dataset.view="menu";
+  fl.innerHTML="";
+  const note=document.createElement("div");
+  note.className="phrase-index-note";
+  note.innerHTML=`<div class="phrase-index-title">Elige una situación</div><div class="phrase-index-text">Toca una frase para abrir un diálogo corto. Puedes practicar las dos personas: A y B.</div>`;
+  fl.appendChild(note);
+  const menu=document.createElement("div");
+  menu.className="phrase-menu";
+  PHRASE_DIALOGUES.forEach(dialogue=>{
+    const card=document.createElement("button");
+    card.type="button";
+    card.className="phrase-topic-card";
+    card.innerHTML=`<div class="phrase-topic-copy"><div class="phrase-topic-title">${dialogue.title}</div><div class="phrase-topic-preview">${dialogue.preview}</div><div class="phrase-topic-en">${dialogue.en}</div></div><span class="phrase-topic-arrow">›</span>`;
+    card.onclick=()=>renderFraseDialogue(dialogue);
+    menu.appendChild(card);
+  });
+  fl.appendChild(menu);
+}
+function renderFraseDialogue(dialogue){
+  fl.dataset.view="dialogue";
+  fl.innerHTML="";
+  const back=document.createElement("button");
+  back.type="button";
+  back.className="phrase-back";
+  back.innerHTML="<span>‹</span><span>Volver a frases</span>";
+  back.onclick=renderFraseMenu;
+  fl.appendChild(back);
+  const box=document.createElement("div");
+  box.className="dialogue phrase-dialogue";
+  box.innerHTML=`<div class="dlg-title">${dialogue.title} · Toca cada línea para escuchar</div>`;
+  dialogue.lines.forEach(line=>{
+    const row=document.createElement("div");
+    row.className="dlg-line"+(line.who==="B"?" right":"");
+    row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${line.who}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
+    row.querySelector(".dlg-bubble").onclick=()=>speak(line.tts,0.75);
+    box.appendChild(row);
+  });
+  fl.appendChild(box);
+  const tip=document.createElement("div");
+  tip.className="phrase-practice-note";
+  tip.textContent="Practice both sides: read Persona A, then Persona B. Tap any line to hear it.";
+  fl.appendChild(tip);
+}
+renderFraseMenu();
 
 // ── Build Grammar ─────────────────────────────────────────────────────────────
 function buildGram(id,data){
@@ -441,3 +464,4 @@ function showPage(id){
   document.querySelector(".scroll").scrollTop=0;
   if(id!=="vocab")hideVerbDetail();
 }
+ 
