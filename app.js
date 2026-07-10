@@ -36,6 +36,34 @@ function speak(t,r){
   if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
   u.rate=r||0.8;
   speechSynthesis.speak(u);
+  rememberSpoken(t);
+}
+/* ── Lento (slow replay) ─────────────────────────────────────────────────────
+   Every speak() remembers its text; the floating 🐢 button replays it at 0.45x. */
+let lastSpokenText=null,lentoBtn=null;
+function rememberSpoken(t){
+  lastSpokenText=t;
+  if(!lentoBtn){
+    lentoBtn=document.createElement("button");
+    lentoBtn.className="lento-btn";
+    lentoBtn.type="button";
+    lentoBtn.innerHTML="🐢";
+    lentoBtn.title="Repetir despacio";
+    lentoBtn.setAttribute("aria-label","Repetir la última frase despacio");
+    lentoBtn.onclick=()=>{
+      if(!lastSpokenText)return;
+      /* replay directly (not via speak) so it doesn't overwrite lastSpokenText rate context */
+      const sp=getSpanishVoices();
+      const voice=(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang))||chooseSpanishVoice(sp);
+      speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(lastSpokenText);
+      if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX";
+      u.rate=0.45;
+      speechSynthesis.speak(u);
+    };
+    document.body.appendChild(lentoBtn);
+  }
+  lentoBtn.style.display="flex";
 }
 if(window.speechSynthesis){
   loadV();
@@ -69,9 +97,23 @@ function rC(){
   const c=document.getElementById("combo-groups");c.innerHTML="";
   (aF?[aF]:CN).forEach(con=>{
     const ch=con==="Ñ"?"ñ":con.toLowerCase();const g=document.createElement("div");g.className="cg";
+    const sub=con==="X"?"X casi siempre va entre vocales — palabras reales":"Toca para escuchar";
     g.innerHTML=`<div class="cg-hdr"><button class="cg-badge" onclick="speak('${LI[con].tts}',0.7)">${con}</button>
-      <div><div class="cg-title">${con} + vocal</div><div class="cg-sub">Toca para escuchar</div></div></div><div class="g5c" id="cg-${con}"></div>`;
+      <div><div class="cg-title">${con==="X"?"X en palabras reales":con+" + vocal"}</div><div class="cg-sub">${sub}</div></div></div><div class="g5c" id="cg-${con}"></div>`;
     c.appendChild(g);const gr=g.querySelector(".g5c");
+    /* X never starts a Spanish syllable — show real words instead of fake X+vowel combos */
+    if(con==="X"){
+      gr.style.gridTemplateColumns="repeat(3,1fr)";
+      X_EXAMPLES.forEach(ex=>{
+        const chip=document.createElement("button");chip.className="cc";
+        const w=ex.word.replace(/x/i,m=>`<span style="color:var(--pink)">${m}</span>`);
+        chip.innerHTML=`<span class="cc-big" style="font-size:1.05rem;color:var(--teal)">${w}</span>
+          <span class="cc-ph">${ex.ph}</span><span class="cc-note">${ex.en}</span>
+          <span style="font-size:0.8rem">🔊</span>`;
+        chip.onclick=()=>speak(ex.tts,0.75);gr.appendChild(chip);
+      });
+      return;
+    }
     VW.forEach(v=>{const inf=gc(con,v);const d=ch+v;const chip=document.createElement("button");chip.className="cc";
       chip.innerHTML=`<span class="cc-big"><span style="color:var(--teal)">${d[0].toUpperCase()}</span><span style="color:var(--pink)">${d[1]}</span></span>
         <span class="cc-ph">${inf.p}</span>${inf.n?`<span class="cc-note">${inf.n}</span>`:""}
@@ -82,8 +124,22 @@ rC();
 
 // ── Build Vocab ───────────────────────────────────────────────────────────────
 let aC="vocales";const cw=document.getElementById("cat-wrap");
+const vocabJump=document.getElementById("vocab-jump");
+const vocabPosition=document.getElementById("vocab-position");
+const vocabPrev=document.getElementById("vocab-prev");
+const vocabNext=document.getElementById("vocab-next");
 VC.forEach(cat=>{const p=document.createElement("button");p.className="cat-pill"+(cat.id===aC?" active":"");p.textContent=cat.label;p.onclick=()=>sCat(cat.id);cw.appendChild(p);});
-function sCat(id){document.querySelectorAll(".cat-pill").forEach((p,i)=>p.classList.toggle("active",VC[i].id===id));aC=id;hideVerbDetail();rV();}
+vocabJump.innerHTML=VC.map(cat=>`<option value="${cat.id}">${cat.label}</option>`).join("");
+vocabJump.onchange=()=>sCat(vocabJump.value);
+vocabPrev.onclick=()=>{const i=VC.findIndex(c=>c.id===aC);if(i>0)sCat(VC[i-1].id);};
+vocabNext.onclick=()=>{const i=VC.findIndex(c=>c.id===aC);if(i<VC.length-1)sCat(VC[i+1].id);};
+function updateVocabNav(){
+  const i=VC.findIndex(c=>c.id===aC);
+  vocabJump.value=aC;
+  vocabPosition.textContent=`${i+1} de ${VC.length}`;
+  vocabPrev.disabled=i<=0;vocabNext.disabled=i>=VC.length-1;
+}
+function sCat(id){document.querySelectorAll(".cat-pill").forEach((p,i)=>p.classList.toggle("active",VC[i].id===id));aC=id;updateVocabNav();hideVerbDetail();rV();}
 function rV(){
   const cat=VC.find(c=>c.id===aC);const list=document.getElementById("vocab-list");list.innerHTML="";
   if(cat.type==="vocales"){rVocales(list);return;}
@@ -182,7 +238,7 @@ function rP(list){
       <div class="q-ph">[${item.ph}]</div><div class="q-example">💬 ${item.example}</div></div>
       <span class="q-spk">🔊</span>`;card.onclick=()=>speak(item.tts,0.75);list.appendChild(card);});
 }
-rV();
+rV();updateVocabNav();
 
 // ── Verb Detail View ──────────────────────────────────────────────────────────
 function showVerbDetail(key,verb){
@@ -262,8 +318,24 @@ const TENSE_BADGE={
 function renderFraseMenu(){
   fl.dataset.view="menu";
   fl.innerHTML="";
+  /* Sticky jump navigation — pick a section without scrolling */
+  const jump=document.createElement("div");
+  jump.className="frase-jump";
+  const sel=document.createElement("select");
+  sel.className="voice-select frase-jump-select";
+  const jumpTargets=[["frs-dialogos","🗣️ Diálogos y conversaciones"],["frs-titulos","Títulos · Sr. / Sra."],
+    ...FRASES.filter(s=>s.section).map((s,i)=>["frs-sec-"+i,s.section])];
+  sel.innerHTML=`<option value="">🧭 Ir a sección…</option>`+jumpTargets.map(([id,label])=>`<option value="${id}">${label}</option>`).join("");
+  sel.onchange=()=>{
+    const el=document.getElementById(sel.value);
+    if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
+    sel.value="";
+  };
+  jump.appendChild(sel);
+  fl.appendChild(jump);
   const note=document.createElement("div");
   note.className="phrase-index-note";
+  note.id="frs-dialogos";
   note.innerHTML=`<div class="phrase-index-title">Elige una situación</div><div class="phrase-index-text">Toca una frase para abrir un diálogo corto. Puedes practicar las dos personas: A y B.</div>`;
   fl.appendChild(note);
   const menu=document.createElement("div");
@@ -281,7 +353,7 @@ function renderFraseMenu(){
 }
 /* Classic phrase lists (Saludos, Compras, Restaurante, Gustos, etc.) below the dialogue menu */
 function renderFraseSections(){
-  const td=document.createElement("div");td.className="frase-section";
+  const td=document.createElement("div");td.className="frase-section";td.id="frs-titulos";
   const ttlEl=document.createElement("div");ttlEl.className="frase-title";
   ttlEl.style.cssText="color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)";
   ttlEl.textContent="Títulos · Titles";td.appendChild(ttlEl);
@@ -291,7 +363,7 @@ function renderFraseSections(){
     tc.innerHTML=`<div class="title-abbr">${t.abbr}</div><div class="title-full">${t.full}</div><div class="title-en">${t.en}</div>`;
     tc.onclick=()=>speak(t.full,0.75);tg.appendChild(tc);});
   td.appendChild(tg);fl.appendChild(td);
-  FRASES.forEach(sec=>{const wrap=document.createElement("div");wrap.className="frase-section";
+  FRASES.filter(s=>s.section).forEach((sec,i)=>{const wrap=document.createElement("div");wrap.className="frase-section";wrap.id="frs-sec-"+i;
     const st=document.createElement("div");st.className="frase-title";st.style.cssText=sec.cls;st.textContent=sec.section;wrap.appendChild(st);
     sec.items.forEach(item=>{const card=document.createElement("div");card.className="frase-card";
       card.innerHTML=`<div class="frase-txt"><div class="f-es">${item.es}</div><div class="f-en">${item.en}</div></div><span class="f-spk">🔊</span>`;
@@ -306,32 +378,77 @@ function renderFraseDialogue(dialogue){
   back.innerHTML="<span>‹</span><span>Volver a frases</span>";
   back.onclick=renderFraseMenu;
   fl.appendChild(back);
+  const roles=document.createElement("div");
+  roles.className="phrase-role-controls";
+  roles.innerHTML=`<div class="phrase-role-label">Practica tu papel</div><div class="phrase-role-buttons"><button type="button" data-role="both" class="active">Ambos</button><button type="button" data-role="A">Yo soy A</button><button type="button" data-role="B">Yo soy B</button></div>`;
+  fl.appendChild(roles);
   const box=document.createElement("div");
   box.className="dialogue phrase-dialogue";
-  box.innerHTML=`<div class="dlg-title">${dialogue.title} · Toca cada línea para escuchar</div>`;
-  dialogue.versions.forEach(version=>{
-    if(version.tense&&TENSE_BADGE[version.tense]){
-      const badge=document.createElement("div");
-      badge.className="conv-tense-badge";
-      badge.style.cssText=TENSE_BADGE[version.tense].css;
-      badge.textContent=TENSE_BADGE[version.tense].txt;
-      box.appendChild(badge);
-    }
-    version.lines.forEach(line=>{
-      const row=document.createElement("div");
-      row.className="dlg-line"+(line.who==="B"?" right":"");
-      row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${line.who}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
-      row.querySelector(".dlg-bubble").onclick=()=>speak(line.tts,0.75);
-      box.appendChild(row);
+  let activeRole="both";
+  function paintDialogue(){
+    box.innerHTML=`<div class="dlg-title">${dialogue.title} · Toca cada línea para escuchar</div>`;
+    dialogue.versions.forEach(version=>{
+      if(version.tense&&TENSE_BADGE[version.tense]){
+        const badge=document.createElement("div");
+        badge.className="conv-tense-badge";
+        badge.style.cssText=TENSE_BADGE[version.tense].css;
+        badge.textContent=TENSE_BADGE[version.tense].txt;
+        box.appendChild(badge);
+      }
+      version.lines.forEach(line=>{
+        const row=document.createElement("div");
+        const hidden=activeRole!=="both"&&activeRole===line.who;
+        row.className="dlg-line"+(line.who==="B"?" right":"")+(hidden?" role-hidden":"");
+        row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${line.who}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
+        row.querySelector(".dlg-bubble").onclick=()=>{if(row.classList.contains("role-hidden")){row.classList.remove("role-hidden");}else{speak(line.tts,0.75);}};
+        box.appendChild(row);
+      });
     });
-  });
+  }
+  roles.querySelectorAll("[data-role]").forEach(button=>button.onclick=()=>{activeRole=button.dataset.role;roles.querySelectorAll("[data-role]").forEach(x=>x.classList.toggle("active",x===button));paintDialogue();});
+  paintDialogue();
   fl.appendChild(box);
   const tip=document.createElement("div");
   tip.className="phrase-practice-note";
-  tip.textContent="Practice both sides: read Persona A, then Persona B. Tap any line to hear it.";
+  tip.textContent="En Yo soy A/B, la línea de tu papel está borrosa. Dila primero y tócala para revelar y escuchar.";
   fl.appendChild(tip);
 }
 renderFraseMenu();
+
+// ── Build Lecciones ──────────────────────────────────────────────────────────
+const LESSONS=[
+  {id:"presentate",icon:"👋",title:"Preséntate",sub:"Tu nombre, tu ciudad y un saludo",vocab:"gustos",dialogue:"Presentación personal",quizCat:"all",quizMode:"conversation"},
+  {id:"plata",icon:"💰",title:"Números y plata",sub:"Precios, cantidades y dinero colombiano",vocab:"numeros",dialogue:"Carro y taxi",quizCat:"numeros"},
+  {id:"trabajo",icon:"💼",title:"Tu trabajo",sub:"Habla de tu profesión y tus planes",vocab:"trabajo",dialogue:"Trabajo y oficina",quizCat:"trabajo"},
+  {id:"casa",icon:"🏠",title:"Tu casa",sub:"Habitaciones, objetos y ubicación",vocab:"habitacion",dialogue:"La habitación",quizCat:"habitacion"},
+  {id:"calle",icon:"🧭",title:"En la calle",sub:"Direcciones, taxi y transporte",vocab:"direcciones",dialogue:"Pedir direcciones",quizCat:"direcciones"},
+  {id:"cocina",icon:"🍳",title:"La cocina",sub:"Utensilios, comida y acciones",vocab:"cocina",dialogue:"Preparar la cocina",quizCat:"cocina"},
+  {id:"gustos",icon:"❤️",title:"Gustos y familia",sub:"Habla de las personas y cosas que te gustan",vocab:"gustos",dialogue:"Gustos y familia",quizCat:"gustos"},
+  {id:"planes",icon:"📱",title:"Planes y teléfono",sub:"Organiza una salida y mantén el contacto",vocab:"tecnologia",dialogue:"Ver televisión",quizCat:"tecnologia"},
+  {id:"sentirse",icon:"😊",title:"Cómo te sientes",sub:"Expresa necesidades, emociones y estados",vocab:"emociones",dialogue:"En casa",quizCat:"emociones"},
+  {id:"colombia",icon:"🇨🇴",title:"Colombianismos",sub:"Sonidos y palabras que escucharás en Colombia",vocab:"colombianismos",dialogue:"Carro y taxi",quizCat:"colombianismos"}
+];
+const LESSON_KEY="esco-lesson-progress-v1";
+let lessonProgress={};
+try{lessonProgress=JSON.parse(localStorage.getItem(LESSON_KEY)||"{}");}catch(e){lessonProgress={};}
+function saveLessons(){try{localStorage.setItem(LESSON_KEY,JSON.stringify(lessonProgress));}catch(e){}}
+function renderLessons(){
+  const root=document.getElementById("lesson-list");if(!root)return;root.innerHTML="";
+  const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
+  const intro=document.createElement("div");intro.className="lesson-intro";
+  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} completadas</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-intro-text">Cada lección combina palabras, conversación y práctica oral. Avanza a tu ritmo.</div>`;
+  root.appendChild(intro);
+  LESSONS.forEach((lesson,i)=>{
+    const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"");
+    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${i+1}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div><div class="lesson-sub">${lesson.sub}</div></div><button type="button" class="lesson-check" aria-label="Marcar lección completa">${lessonProgress[lesson.id]?"✓":"○"}</button></div><div class="lesson-actions"><button type="button" data-action="learn">Aprende</button><button type="button" data-action="speak">Habla</button><button type="button" data-action="quiz">Quiz</button></div>`;
+    card.querySelector("[data-action=learn]").onclick=()=>{showPage("vocab");sCat(lesson.vocab);};
+    card.querySelector("[data-action=speak]").onclick=()=>{showPage("frases");const d=PHRASE_DIALOGUES.find(x=>x.title===lesson.dialogue);if(d)renderFraseDialogue(d);};
+    card.querySelector("[data-action=quiz]").onclick=()=>{showPage("quiz");qCat=lesson.quizCat;qMode=lesson.quizMode||"mixed";syncQuizControls();nQ();};
+    card.querySelector(".lesson-check").onclick=()=>{lessonProgress[lesson.id]=!lessonProgress[lesson.id];saveLessons();renderLessons();};
+    root.appendChild(card);
+  });
+}
+renderLessons();
 
 // ── Build Grammar ─────────────────────────────────────────────────────────────
 function buildGram(id,data){
@@ -457,6 +574,37 @@ const CONVERSATION_QUIZ=[
   {kind:"listening",es:"Ayer la dejé junto al lavamanos.",en:"Yesterday I left it next to the sink.",tts:"Ayer la dejé junto al lavamanos.",cat:"conversaciones",choices:["Yesterday I left it next to the sink.","It is next to the bedroom.","I'm going to change the sheet.","Where is the bathroom?"]},
   {kind:"tense",es:"¿Cuál frase describe el presente?",en:"Está al lado de la habitación.",tts:"Está al lado de la habitación.",cat:"conversaciones",choices:["Está al lado de la habitación.","Voy a cambiar la sábana.","Ayer la dejé junto al lavamanos.","¿Dónde estaba la toalla?"]}
 ];
+/* ── Fill-in-the-blank Quiz Data (NEW v13) ──────────────────────────────────
+   kind:"blank" — sentence with ___ ; choices are single words; tts = full sentence */
+const FILL_BLANK_QUIZ=[
+  /* Presente */
+  {kind:"blank",es:"Yo ___ en Bogotá.",en:"vivo",tts:"Yo vivo en Bogotá.",cat:"completar",choices:["vivo","vives","vive","vivimos"]},
+  {kind:"blank",es:"¿Dónde ___ tú?",en:"vives",tts:"¿Dónde vives tú?",cat:"completar",choices:["vives","vivo","viven","vivimos"]},
+  {kind:"blank",es:"Ella ___ arepa todos los días.",en:"come",tts:"Ella come arepa todos los días.",cat:"completar",choices:["come","como","comes","comemos"]},
+  {kind:"blank",es:"Nosotros ___ español.",en:"hablamos",tts:"Nosotros hablamos español.",cat:"completar",choices:["hablamos","hablo","hablas","hablan"]},
+  {kind:"blank",es:"Yo ___ dos hermanos.",en:"tengo",tts:"Yo tengo dos hermanos.",cat:"completar",choices:["tengo","tienes","tiene","tenemos"]},
+  {kind:"blank",es:"¿Usted ___ inglés?",en:"habla",tts:"¿Usted habla inglés?",cat:"completar",choices:["habla","hablo","hablamos","hablan"]},
+  /* Futuro cercano — voy a... */
+  {kind:"blank",es:"Mañana ___ a trabajar.",en:"voy",tts:"Mañana voy a trabajar.",cat:"completar",choices:["voy","vas","va","vamos"]},
+  {kind:"blank",es:"¿Qué ___ a comer tú?",en:"vas",tts:"¿Qué vas a comer tú?",cat:"completar",choices:["vas","voy","va","van"]},
+  {kind:"blank",es:"Nosotros ___ a cocinar arepas.",en:"vamos",tts:"Nosotros vamos a cocinar arepas.",cat:"completar",choices:["vamos","voy","vas","van"]},
+  {kind:"blank",es:"Ella ___ a ver una película.",en:"va",tts:"Ella va a ver una película.",cat:"completar",choices:["va","voy","vas","vamos"]},
+  /* Pasado */
+  {kind:"blank",es:"Ayer yo ___ al mercado.",en:"fui",tts:"Ayer yo fui al mercado.",cat:"completar",choices:["fui","fue","fuiste","fuimos"]},
+  {kind:"blank",es:"¿Qué ___ tú anoche?",en:"comiste",tts:"¿Qué comiste tú anoche?",cat:"completar",choices:["comiste","comí","comió","comimos"]},
+  {kind:"blank",es:"Él ___ hasta las seis.",en:"trabajó",tts:"Él trabajó hasta las seis.",cat:"completar",choices:["trabajó","trabajé","trabajaste","trabajamos"]},
+  {kind:"blank",es:"Anoche yo ___ ocho horas.",en:"dormí",tts:"Anoche yo dormí ocho horas.",cat:"completar",choices:["dormí","durmió","dormiste","dormimos"]},
+  /* Vocabulario */
+  {kind:"blank",es:"¿Me regala un ___, por favor?",en:"tinto",tts:"¿Me regala un tinto, por favor?",cat:"completar",choices:["tinto","trancón","cuchillo","semáforo"]},
+  {kind:"blank",es:"Gire a la ___ en la esquina.",en:"derecha",tts:"Gire a la derecha en la esquina.",cat:"completar",choices:["derecha","ducha","cuchara","almohada"]},
+  {kind:"blank",es:"El jabón está en la ___.",en:"ducha",tts:"El jabón está en la ducha.",cat:"completar",choices:["ducha","cama","olla","esquina"]},
+  {kind:"blank",es:"Hay mucho ___ en la avenida.",en:"trancón",tts:"Hay mucho trancón en la avenida.",cat:"completar",choices:["trancón","tinto","clóset","jabón"]},
+  {kind:"blank",es:"Corto la cebolla con el ___.",en:"cuchillo",tts:"Corto la cebolla con el cuchillo.",cat:"completar",choices:["cuchillo","sofá","semáforo","reloj"]},
+  {kind:"blank",es:"Veo la película en el ___.",en:"sofá",tts:"Veo la película en el sofá.",cat:"completar",choices:["sofá","lavamanos","parqueadero","azúcar"]},
+  {kind:"blank",es:"No tengo ___ para el taxi.",en:"plata",tts:"No tengo plata para el taxi.",cat:"completar",choices:["plata","vaina","cobija","sartén"]},
+  {kind:"blank",es:"La ___ está sobre la cama.",en:"cobija",tts:"La cobija está sobre la cama.",cat:"completar",choices:["cobija","gasolina","luz","sal"]},
+];
+
 let aQ=[];
 VC.forEach(cat=>{
   if(cat.type==="basic")cat.items.forEach(i=>aQ.push({es:i.word,en:i.en,tts:i.tts,cat:cat.id}));
@@ -466,36 +614,120 @@ VC.forEach(cat=>{
   if(cat.type==="verbos")Object.entries(VERBS).forEach(([k,v])=>aQ.push({es:k,en:v.en,tts:k,cat:"verbos"}));
   if(cat.type==="colombianismos")COLOMBIANISMOS.forEach(c=>aQ.push({es:c.word,en:c.en,tts:c.tts,cat:"colombianismos"}));
 });
-FRASES.forEach(sec=>{if(sec.items)sec.items.forEach(i=>aQ.push({es:i.es,en:i.en,tts:i.es,cat:"frases"}));});
+FRASES.filter(sec=>sec.section).forEach(sec=>{if(sec.items)sec.items.forEach(i=>aQ.push({es:i.es,en:i.en,tts:i.es,cat:"frases"}));});
 CONVERSATION_QUIZ.forEach(q=>aQ.push(q));
-const QC=[{id:"all",label:"Todo"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"colombianismos",label:"Colombia"},{id:"frases",label:"Frases"},{id:"conversaciones",label:"Conversaciones"}];
-let qCat="all",qC=0,qT=0,qS=0,cQ=null,an=false;
+FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
+
+const QC=[{id:"all",label:"Todo"},{id:"frases",label:"Frases"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"direcciones",label:"Direcciones"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
+const QUIZ_MODES=[
+  {id:"mixed",label:"Mixto"},{id:"es-en",label:"ES → EN"},{id:"en-es",label:"EN → ES"},
+  {id:"listening",label:"🎧 Escuchar"},{id:"blank",label:"✏️ Completar"},{id:"conversation",label:"💬 Conversación"}
+];
+
+/* ── Persistent score + missed-question tracking (NEW v13) ──────────────────
+   Saved in localStorage. Wrong answers get asked again more often. */
+const QS_KEY="esco-quiz-v1";
+let qStore={c:0,t:0,s:0,missed:{}};
+try{const raw=localStorage.getItem(QS_KEY);if(raw)qStore=Object.assign(qStore,JSON.parse(raw));}catch(e){}
+function saveQ(){try{localStorage.setItem(QS_KEY,JSON.stringify(qStore));}catch(e){}}
+let qCat="all",qMode="mixed",qC=qStore.c||0,qT=qStore.t||0,qS=qStore.s||0,cQ=null,an=false;
+document.getElementById("q-correct").textContent=qC;
+document.getElementById("q-total").textContent=qT;
+document.getElementById("q-streak").textContent="🔥 "+qS;
+/* Reset button inside the compact score bar */
+(function(){
+  const bar=document.querySelector(".quiz-score-bar");
+  const btn=document.createElement("button");
+  btn.type="button";btn.className="quiz-reset";
+  btn.textContent="↺";btn.title="Reiniciar puntaje";btn.setAttribute("aria-label","Reiniciar puntaje");
+  btn.onclick=()=>{
+    qC=0;qT=0;qS=0;qStore={c:0,t:0,s:0,missed:{}};saveQ();
+    document.getElementById("q-correct").textContent=0;
+    document.getElementById("q-total").textContent=0;
+    document.getElementById("q-streak").textContent="🔥 0";
+    document.getElementById("quiz-fb").textContent="";
+    nQ();
+  };
+  bar.appendChild(btn);
+})();
+
+const qmw=document.getElementById("qmode-wrap");
+QUIZ_MODES.forEach(m=>{const b=document.createElement("button");b.type="button";b.className="qmode"+(m.id===qMode?" active":"");b.textContent=m.label;b.onclick=()=>{qMode=m.id;syncQuizControls();nQ();};qmw.appendChild(b);});
 const qcw=document.getElementById("qcat-wrap");
 QC.forEach(c=>{const b=document.createElement("button");b.className="qcat"+(c.id==="all"?" active":"");b.textContent=c.label;
-  b.onclick=()=>{document.querySelectorAll(".qcat").forEach((x,i)=>x.classList.toggle("active",QC[i].id===c.id));qCat=c.id;nQ();};qcw.appendChild(b);});
+  b.onclick=()=>{qCat=c.id;syncQuizControls();nQ();};qcw.appendChild(b);});
+function syncQuizControls(){
+  document.querySelectorAll(".qcat").forEach((x,i)=>x.classList.toggle("active",QC[i].id===qCat));
+  document.querySelectorAll(".qmode").forEach((x,i)=>x.classList.toggle("active",QUIZ_MODES[i].id===qMode));
+}
+const BLANK_EN={
+  "Yo vivo en Bogotá.":"I live in Bogotá.","¿Dónde vives tú?":"Where do you live?","Ella come arepa todos los días.":"She eats arepa every day.","Nosotros hablamos español.":"We speak Spanish.","Yo tengo dos hermanos.":"I have two siblings.","¿Usted habla inglés?":"Do you speak English?",
+  "Mañana voy a trabajar.":"Tomorrow I am going to work.","¿Qué vas a comer tú?":"What are you going to eat?","Nosotros vamos a cocinar arepas.":"We are going to cook arepas.","Ella va a ver una película.":"She is going to watch a movie.",
+  "Ayer yo fui al mercado.":"Yesterday I went to the market.","¿Qué comiste tú anoche?":"What did you eat last night?","Él trabajó hasta las seis.":"He worked until six.","Anoche yo dormí ocho horas.":"Last night I slept eight hours.",
+  "¿Me regala un tinto, por favor?":"Can I have a black coffee, please?","Gire a la derecha en la esquina.":"Turn right at the corner.","El jabón está en la ducha.":"The soap is in the shower.","Hay mucho trancón en la avenida.":"There is a lot of traffic on the avenue.","Corto la cebolla con el cuchillo.":"I cut the onion with the knife.","Veo la película en el sofá.":"I watch the movie on the sofa.","No tengo plata para el taxi.":"I don't have money for the taxi.","La cobija está sobre la cama.":"The blanket is on the bed."
+};
+function quizPool(){
+  let pool;
+  if(qMode==="blank")pool=FILL_BLANK_QUIZ.map(q=>({...q,answer:q.en,prompt:q.es}));
+  else if(qMode==="conversation")pool=CONVERSATION_QUIZ.map(q=>({...q,answer:q.en,prompt:q.es}));
+  else if(qMode==="en-es")pool=aQ.filter(q=>!q.kind).map(q=>({...q,answer:q.es,prompt:q.en}));
+  else if(qMode==="listening")pool=aQ.filter(q=>!q.kind).map(q=>({...q,answer:q.es,prompt:"🎧"}));
+  else if(qMode==="es-en")pool=aQ.filter(q=>!q.kind||q.kind==="meaning").map(q=>({...q,answer:q.en,prompt:q.es}));
+  else pool=aQ.map(q=>({...q,answer:q.en,prompt:q.kind==="listening"?"🎧":q.es}));
+  return qCat==="all"?pool:pool.filter(q=>q.cat===qCat);
+}
+function spanishAnswer(q){
+  if(qMode==="en-es")return q.es;
+  if(q.kind==="reply"||q.kind==="tense")return q.en;
+  if(q.kind==="blank")return q.tts;
+  return q.es||q.tts;
+}
+function englishAnswer(q){
+  if(q.kind==="blank")return BLANK_EN[q.tts]||"";
+  const lines=[...(typeof DIALOGUE!=="undefined"?DIALOGUE:[]),...CONVERSATIONS.flatMap(c=>c.lines||[])];
+  const found=lines.find(line=>line.es===q.en||line.es===q.tts||line.es===q.es);
+  return found?found.en:(q.en||"");
+}
 function nQ(){
-  an=false;document.getElementById("quiz-next").style.display="none";document.getElementById("quiz-fb").textContent="";
-  const pool=qCat==="all"?aQ:aQ.filter(q=>q.cat===qCat);if(!pool.length)return;
-  cQ=pool[Math.floor(Math.random()*pool.length)];
+  an=false;document.getElementById("quiz-next").style.display="none";document.getElementById("quiz-fb").textContent="";document.getElementById("quiz-reveal").innerHTML="";
+  const base=quizPool();if(!base.length){document.getElementById("qc-word").textContent="—";return;}
+  /* 35% of the time, re-serve a question you previously missed */
+  const missedPool=base.filter(q=>qStore.missed&&qStore.missed[q.es+"|"+q.answer]);
+  const pickFrom=(missedPool.length&&Math.random()<0.35)?missedPool:base;
+  cQ=pickFrom[Math.floor(Math.random()*pickFrom.length)];
   /* Listening questions must not show the Spanish text — hide it and auto-play */
-  document.getElementById("qc-word").textContent=cQ.kind==="listening"?"🎧":cQ.es;
-  document.querySelector(".qc-label").textContent=cQ.kind==="reply"?"Escoge la respuesta correcta":cQ.kind==="listening"?"Escucha y reconoce":cQ.kind==="tense"?"Reconoce el tiempo":"Traducir al inglés";
-  if(cQ.kind==="listening")setTimeout(()=>speak(cQ.tts,0.7),350);
-  const wrong=cQ.choices?cQ.choices.filter(x=>x!==cQ.en).sort(()=>Math.random()-0.5).slice(0,3).map(en=>({en})):pool.filter(q=>q.en!==cQ.en).sort(()=>Math.random()-0.5).slice(0,3);
+  document.getElementById("qc-word").textContent=qMode==="listening"||cQ.kind==="listening"?"🎧":cQ.prompt;
+  document.querySelector(".qc-label").textContent=qMode==="en-es"?"Traduce al español":qMode==="listening"?"Escucha y reconoce":qMode==="blank"?"Completa la frase":qMode==="conversation"?"Escoge la respuesta correcta":qMode==="es-en"?"Traduce al inglés":cQ.kind==="reply"?"Escoge la respuesta correcta":cQ.kind==="listening"?"Escucha y reconoce":cQ.kind==="tense"?"Reconoce el tiempo":"Elige la respuesta correcta";
+  if(qMode==="listening"||cQ.kind==="listening")setTimeout(()=>speak(cQ.tts,0.7),350);
+  const wrong=cQ.choices?cQ.choices.filter(x=>x!==cQ.answer).sort(()=>Math.random()-0.5).slice(0,3).map(answer=>({answer})):base.filter(q=>q.answer!==cQ.answer).sort(()=>Math.random()-0.5).slice(0,3);
   const opts=[cQ,...wrong].sort(()=>Math.random()-0.5);
   const ow=document.getElementById("quiz-opts");ow.innerHTML="";
-  opts.forEach(opt=>{const b=document.createElement("button");b.className="qopt";b.textContent=opt.en;
+  opts.forEach(opt=>{const b=document.createElement("button");b.className="qopt";b.textContent=opt.answer;
     b.onclick=()=>{if(an)return;an=true;qT++;document.getElementById("q-total").textContent=qT;
       const fb=document.getElementById("quiz-fb");
-      if(opt.en===cQ.en){b.classList.add("correct");qC++;qS++;document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.textContent="✅ ¡Correcto!";fb.style.color="var(--teal)";speak(cQ.tts,0.75);}
-      else{b.classList.add("wrong");qS=0;document.getElementById("q-streak").textContent="🔥 0";fb.textContent="❌ Incorrecto";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(x.textContent===cQ.en)x.classList.add("reveal");});}
+      const mk=cQ.es+"|"+cQ.answer;
+      if(opt.answer===cQ.answer){b.classList.add("correct");qC++;qS++;document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.textContent="✅ ¡Correcto!";fb.style.color="var(--teal)";speak(cQ.tts,0.75);
+        if(qStore.missed[mk]){qStore.missed[mk]--;if(qStore.missed[mk]<=0)delete qStore.missed[mk];}}
+      else{b.classList.add("wrong");qS=0;document.getElementById("q-streak").textContent="🔥 0";fb.textContent="❌ Incorrecto";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(x.textContent===cQ.answer)x.classList.add("reveal");});
+        qStore.missed[mk]=(qStore.missed[mk]||0)+2;}
+      document.getElementById("quiz-reveal").innerHTML=`<div>🇪🇸 <strong>${spanishAnswer(cQ)}</strong></div><div>🇬🇧 ${englishAnswer(cQ)}</div>`;
+      qStore.c=qC;qStore.t=qT;qStore.s=qS;saveQ();
       document.getElementById("quiz-next").style.display="block";};ow.appendChild(b);});
 }
-function quizHear(){if(cQ)speak(cQ.tts,0.7);}
+function quizHear(){
+  if(!cQ)return;
+  /* For fill-in-the-blank, don't speak the answer word — pause at the blank instead */
+  if(cQ.kind==="blank"){speak(cQ.es.replace(/_+/g,","),0.7);return;}
+  speak(cQ.tts,0.7);
+}
 setTimeout(nQ,400);
 
 // ── Nav ───────────────────────────────────────────────────────────────────────
-const PG=["letras","silabas","vocab","frases","gram","quiz"];
+function showPhonetic(id){
+  document.querySelectorAll(".phonetic-panel").forEach(x=>x.classList.toggle("active",x.id==="phonetic-"+id));
+  document.querySelectorAll(".phonetic-tab").forEach(x=>x.classList.toggle("active",x.id==="pt-"+id));
+}
+const PG=["fonetica","lecciones","vocab","frases","gram","quiz"];
 function showPage(id){
   PG.forEach(p=>{document.getElementById("page-"+p).classList.toggle("active",p===id);document.getElementById("tb-"+p).classList.toggle("active",p===id);});
   document.querySelector(".scroll").scrollTop=0;

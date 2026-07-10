@@ -8,49 +8,58 @@
 <meta name="apple-mobile-web-app-title" content="Español CO"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="styles.css"/>
+<link rel="stylesheet" href="styles.css?v=14"/>
 </head>
 <body>
 <div id="app">
 <div class="scroll">
 
-<!-- LETRAS -->
-<div class="page active" id="page-letras">
+<!-- FONÉTICA: letras + sílabas, with the existing syllable layout preserved -->
+<div class="page active" id="page-fonetica">
   <div class="ph"><div class="ph-label">Español Colombiano</div>
-    <div class="ph-title"><span style="color:var(--teal)">El </span><span style="color:var(--text)">Alfabeto</span></div>
-    <div class="ph-sub">Toca cada letra para escuchar</div></div>
-  <div id="voice-bar-letras"></div>
-  <div class="sl" style="color:var(--pink)">Vocales</div>
-  <div class="g5" id="vowel-grid"></div>
-  <div class="sl" style="color:var(--teal)">Consonantes</div>
-  <div class="g7" id="cons-grid"></div>
-  <div id="detail-card"></div>
+    <div class="ph-title" style="color:var(--teal)">Fonética</div>
+    <div class="ph-sub">Escucha, mira y practica los sonidos</div></div>
+  <div class="phonetic-tabs">
+    <button class="phonetic-tab active" id="pt-letters" onclick="showPhonetic('letters')">🔤 Letras</button>
+    <button class="phonetic-tab" id="pt-syllables" onclick="showPhonetic('syllables')">🔡 Sílabas</button>
+  </div>
+  <div class="phonetic-panel active" id="phonetic-letters">
+    <div id="voice-bar-letras"></div>
+    <div class="sl" style="color:var(--pink)">Vocales</div>
+    <div class="g5" id="vowel-grid"></div>
+    <div class="sl" style="color:var(--teal)">Consonantes</div>
+    <div class="g7" id="cons-grid"></div>
+    <div id="detail-card"></div>
+  </div>
+  <div class="phonetic-panel" id="phonetic-syllables">
+    <div class="vbar">
+      <div class="vbi"><div class="vbl">A</div><div class="vbs">ah</div></div>
+      <div class="vbi"><div class="vbl">E</div><div class="vbs">eh</div></div>
+      <div class="vbi"><div class="vbl">I</div><div class="vbs">ee</div></div>
+      <div class="vbi"><div class="vbl">O</div><div class="vbs">oh</div></div>
+      <div class="vbi"><div class="vbl">U</div><div class="vbs">oo</div></div>
+    </div>
+    <div class="sl" style="color:var(--muted)">Filtrar por consonante</div>
+    <div class="fw" id="filter-wrap"></div>
+    <div id="combo-groups"></div>
+    <div class="rb">
+      <div class="rt">⚡ Reglas especiales (Colombia)</div>
+      <div class="rr"><span class="rtag">C+e/i</span><span class="rdesc">Suena 's'. Ej: cena, ciudad</span></div>
+      <div class="rr"><span class="rtag">G+e/i</span><span class="rdesc">Suena 'j'. Ej: gente, girasol</span></div>
+      <div class="rr"><span class="rtag">H</span><span class="rdesc">Siempre muda. Ej: hola, huevo</span></div>
+      <div class="rr"><span class="rtag">Ñ</span><span class="rdesc">Sonido 'ny'. Ej: niño, mañana</span></div>
+      <div class="rr"><span class="rtag">V = B</span><span class="rdesc">V suena como B. Ej: vo = "bo", vaca = "baca"</span></div>
+      <div class="rr"><span class="rtag">Z</span><span class="rdesc">Suena 's'. Ej: zapato</span></div>
+    </div>
+  </div>
 </div>
 
-<!-- SÍLABAS -->
-<div class="page" id="page-silabas">
-  <div class="ph"><div class="ph-label">Español Colombiano</div>
-    <div class="ph-title" style="color:var(--pink)">Sílabas</div>
-    <div class="ph-sub">Consonante + Vocal · Toca para escuchar</div></div>
-  <div class="vbar">
-    <div class="vbi"><div class="vbl">A</div><div class="vbs">ah</div></div>
-    <div class="vbi"><div class="vbl">E</div><div class="vbs">eh</div></div>
-    <div class="vbi"><div class="vbl">I</div><div class="vbs">ee</div></div>
-    <div class="vbi"><div class="vbl">O</div><div class="vbs">oh</div></div>
-    <div class="vbi"><div class="vbl">U</div><div class="vbs">oo</div></div>
-  </div>
-  <div class="sl" style="color:var(--muted)">Filtrar por consonante</div>
-  <div class="fw" id="filter-wrap"></div>
-  <div id="combo-groups"></div>
-  <div class="rb">
-    <div class="rt">⚡ Reglas especiales (Colombia)</div>
-    <div class="rr"><span class="rtag">C+e/i</span><span class="rdesc">Suena 's'. Ej: cena, ciudad</span></div>
-    <div class="rr"><span class="rtag">G+e/i</span><span class="rdesc">Suena 'j'. Ej: gente, girasol</span></div>
-    <div class="rr"><span class="rtag">H</span><span class="rdesc">Siempre muda. Ej: hola, huevo</span></div>
-    <div class="rr"><span class="rtag">Ñ</span><span class="rdesc">Sonido 'ny'. Ej: niño, mañana</span></div>
-    <div class="rr"><span class="rtag">V = B</span><span class="rdesc">V suena como B. Ej: vo = "bo", vaca = "baca"</span></div>
-    <div class="rr"><span class="rtag">Z</span><span class="rdesc">Suena 's'. Ej: zapato</span></div>
-  </div>
+<!-- LECCIONES -->
+<div class="page" id="page-lecciones">
+  <div class="ph"><div class="ph-label">Tu camino</div>
+    <div class="ph-title" style="color:var(--gold)">Lecciones</div>
+    <div class="ph-sub">Un paso corto hacia una conversación real</div></div>
+  <div id="lesson-list"></div>
 </div>
 
 <!-- VOCAB -->
@@ -58,6 +67,14 @@
   <div class="ph"><div class="ph-label">Español Colombiano</div>
     <div class="ph-title" style="color:var(--teal)">Vocabulario</div>
     <div class="ph-sub">Toca cada palabra para escuchar</div></div>
+  <div class="vocab-nav">
+    <select class="voice-select vocab-jump" id="vocab-jump" aria-label="Ir a categoría"></select>
+    <div class="vocab-nav-row">
+      <button class="vocab-nav-btn" id="vocab-prev" type="button">‹ Anterior</button>
+      <span class="vocab-position" id="vocab-position"></span>
+      <button class="vocab-nav-btn" id="vocab-next" type="button">Siguiente ›</button>
+    </div>
+  </div>
   <div class="cat-wrap" id="cat-wrap"></div>
   <div id="vocab-list"></div>
   <div class="verb-detail" id="verb-detail"></div>
@@ -102,6 +119,10 @@
     <div class="qs-item"><div class="qs-num" id="q-streak" style="color:var(--gold)">🔥 0</div><div class="qs-label">Racha</div></div>
     <div class="qs-item"><div class="qs-num" id="q-total" style="color:var(--muted)">0</div><div class="qs-label">Total</div></div>
   </div>
+  <div class="quiz-mode-wrap">
+    <div class="quiz-control-label">Modo de práctica</div>
+    <div class="quiz-mode-row" id="qmode-wrap"></div>
+  </div>
   <div class="quiz-cat-wrap" id="qcat-wrap"></div>
   <div class="quiz-card">
     <div class="qc-label">Traducir al inglés</div>
@@ -109,6 +130,7 @@
     <button class="qc-hear" onclick="quizHear()">🔊 Escuchar</button>
   </div>
   <div class="quiz-feedback" id="quiz-fb"></div>
+  <div class="quiz-reveal" id="quiz-reveal"></div>
   <div class="quiz-opts" id="quiz-opts"></div>
   <button class="quiz-next" id="quiz-next" onclick="nQ()">Siguiente →</button>
 </div>
@@ -117,8 +139,8 @@
 
 <!-- 6-Tab Bar -->
 <div class="tab-bar">
-  <button class="tab-item active" id="tb-letras" onclick="showPage('letras')"><span class="ti">🔤</span><span>Letras</span></button>
-  <button class="tab-item" id="tb-silabas" onclick="showPage('silabas')"><span class="ti">🔡</span><span>Sílabas</span></button>
+  <button class="tab-item active" id="tb-fonetica" onclick="showPage('fonetica')"><span class="ti">🔤</span><span>Fonética</span></button>
+  <button class="tab-item" id="tb-lecciones" onclick="showPage('lecciones')"><span class="ti">🎓</span><span>Lecciones</span></button>
   <button class="tab-item" id="tb-vocab" onclick="showPage('vocab')"><span class="ti">📚</span><span>Vocab</span></button>
   <button class="tab-item tfrases" id="tb-frases" onclick="showPage('frases')"><span class="ti">💬</span><span>Frases</span></button>
   <button class="tab-item tgram" id="tb-gram" onclick="showPage('gram')"><span class="ti">📖</span><span>Gram</span></button>
@@ -126,7 +148,6 @@
 </div>
 </div>
 
-<script src="data.js"></script><script src="app.js"></script>
+<script src="data.js?v=14"></script><script src="app.js?v=14"></script>
 </body>
 </html>
-
