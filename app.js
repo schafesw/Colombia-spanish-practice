@@ -1,4 +1,4 @@
-// Spanish learning app behavior
+﻿// Spanish learning app behavior
 // ── Voice ─────────────────────────────────────────────────────────────────────
 let voices=[],selV=null;
 function getSpanishVoices(){
@@ -33,7 +33,7 @@ function speak(t,r){
   if(voice)selV=voice;
   speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(t);
-  if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-CO";
+  if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
   u.rate=r||0.8;
   speechSynthesis.speak(u);
 }
@@ -246,13 +246,19 @@ function hideVerbDetail(){
 
  // ── Build Frases ──────────────────────────────────────────────────────────────
 const fl=document.getElementById("frases-list");
+/* Each menu entry keeps its versions separate so Ahora / Planes / Ayer all display */
 const PHRASE_DIALOGUES=[
-  {title:"Saludos formales",preview:DIALOGUE[0].es,en:"Formal greetings and introductions",lines:DIALOGUE},
+  {title:"Saludos formales",preview:DIALOGUE[0].es,en:"Formal greetings and introductions",versions:[{tense:null,lines:DIALOGUE}]},
   ...Array.from(new Set(CONVERSATIONS.map(c=>c.title))).map(title=>{
-    const versions=CONVERSATIONS.filter(c=>c.title===title);
-    return {title,preview:versions[0].lines[0].es,en:"Ahora + Planes · Present and near future",lines:versions.flatMap(v=>v.lines).slice(0,4)};
+    const versions=CONVERSATIONS.filter(c=>c.title===title).map(c=>({tense:c.tense,lines:c.lines}));
+    return {title,preview:versions[0].lines[0].es,en:"Ahora · Planes · Ayer",versions};
   })
 ];
+const TENSE_BADGE={
+  "Ahora":{txt:"⚡ Ahora · presente",css:"color:var(--teal);background:rgba(74,168,160,0.12);border:1px solid rgba(74,168,160,0.25)"},
+  "Planes":{txt:"⏭️ Planes · voy a...",css:"color:var(--blue);background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.25)"},
+  "Ayer":{txt:"⏮️ Ayer · pasado",css:"color:var(--pink);background:rgba(232,93,117,0.12);border:1px solid rgba(232,93,117,0.25)"},
+};
 function renderFraseMenu(){
   fl.dataset.view="menu";
   fl.innerHTML="";
@@ -271,6 +277,25 @@ function renderFraseMenu(){
     menu.appendChild(card);
   });
   fl.appendChild(menu);
+  renderFraseSections();
+}
+/* Classic phrase lists (Saludos, Compras, Restaurante, Gustos, etc.) below the dialogue menu */
+function renderFraseSections(){
+  const td=document.createElement("div");td.className="frase-section";
+  const ttlEl=document.createElement("div");ttlEl.className="frase-title";
+  ttlEl.style.cssText="color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)";
+  ttlEl.textContent="Títulos · Titles";td.appendChild(ttlEl);
+  const tg=document.createElement("div");tg.className="titles-grid";
+  [{abbr:"Sr.",full:"Señor",en:"Mr."},{abbr:"Sra.",full:"Señora",en:"Mrs. / Ms."}].forEach(t=>{
+    const tc=document.createElement("div");tc.className="title-card";
+    tc.innerHTML=`<div class="title-abbr">${t.abbr}</div><div class="title-full">${t.full}</div><div class="title-en">${t.en}</div>`;
+    tc.onclick=()=>speak(t.full,0.75);tg.appendChild(tc);});
+  td.appendChild(tg);fl.appendChild(td);
+  FRASES.forEach(sec=>{const wrap=document.createElement("div");wrap.className="frase-section";
+    const st=document.createElement("div");st.className="frase-title";st.style.cssText=sec.cls;st.textContent=sec.section;wrap.appendChild(st);
+    sec.items.forEach(item=>{const card=document.createElement("div");card.className="frase-card";
+      card.innerHTML=`<div class="frase-txt"><div class="f-es">${item.es}</div><div class="f-en">${item.en}</div></div><span class="f-spk">🔊</span>`;
+      card.onclick=()=>speak(item.es,0.75);wrap.appendChild(card);});fl.appendChild(wrap);});
 }
 function renderFraseDialogue(dialogue){
   fl.dataset.view="dialogue";
@@ -284,12 +309,21 @@ function renderFraseDialogue(dialogue){
   const box=document.createElement("div");
   box.className="dialogue phrase-dialogue";
   box.innerHTML=`<div class="dlg-title">${dialogue.title} · Toca cada línea para escuchar</div>`;
-  dialogue.lines.forEach(line=>{
-    const row=document.createElement("div");
-    row.className="dlg-line"+(line.who==="B"?" right":"");
-    row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${line.who}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
-    row.querySelector(".dlg-bubble").onclick=()=>speak(line.tts,0.75);
-    box.appendChild(row);
+  dialogue.versions.forEach(version=>{
+    if(version.tense&&TENSE_BADGE[version.tense]){
+      const badge=document.createElement("div");
+      badge.className="conv-tense-badge";
+      badge.style.cssText=TENSE_BADGE[version.tense].css;
+      badge.textContent=TENSE_BADGE[version.tense].txt;
+      box.appendChild(badge);
+    }
+    version.lines.forEach(line=>{
+      const row=document.createElement("div");
+      row.className="dlg-line"+(line.who==="B"?" right":"");
+      row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${line.who}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
+      row.querySelector(".dlg-bubble").onclick=()=>speak(line.tts,0.75);
+      box.appendChild(row);
+    });
   });
   fl.appendChild(box);
   const tip=document.createElement("div");
@@ -442,8 +476,11 @@ QC.forEach(c=>{const b=document.createElement("button");b.className="qcat"+(c.id
 function nQ(){
   an=false;document.getElementById("quiz-next").style.display="none";document.getElementById("quiz-fb").textContent="";
   const pool=qCat==="all"?aQ:aQ.filter(q=>q.cat===qCat);if(!pool.length)return;
-  cQ=pool[Math.floor(Math.random()*pool.length)];document.getElementById("qc-word").textContent=cQ.es;
+  cQ=pool[Math.floor(Math.random()*pool.length)];
+  /* Listening questions must not show the Spanish text — hide it and auto-play */
+  document.getElementById("qc-word").textContent=cQ.kind==="listening"?"🎧":cQ.es;
   document.querySelector(".qc-label").textContent=cQ.kind==="reply"?"Escoge la respuesta correcta":cQ.kind==="listening"?"Escucha y reconoce":cQ.kind==="tense"?"Reconoce el tiempo":"Traducir al inglés";
+  if(cQ.kind==="listening")setTimeout(()=>speak(cQ.tts,0.7),350);
   const wrong=cQ.choices?cQ.choices.filter(x=>x!==cQ.en).sort(()=>Math.random()-0.5).slice(0,3).map(en=>({en})):pool.filter(q=>q.en!==cQ.en).sort(()=>Math.random()-0.5).slice(0,3);
   const opts=[cQ,...wrong].sort(()=>Math.random()-0.5);
   const ow=document.getElementById("quiz-opts");ow.innerHTML="";

@@ -1,11 +1,13 @@
-// Spanish learning app data
+﻿// Spanish learning app data
 // ── Alphabet ──────────────────────────────────────────────────────────────────
 const VW=["a","e","i","o","u"],VL=["A","E","I","O","U"];
 const AL=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","Ñ","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
 const CN=AL.filter(l=>!VL.includes(l));
 const LI={A:{name:"a",phonetic:"ah",tts:"a"},B:{name:"be",phonetic:"beh",tts:"be"},C:{name:"ce",phonetic:"seh",tts:"ce"},D:{name:"de",phonetic:"deh",tts:"de"},E:{name:"e",phonetic:"eh",tts:"e"},F:{name:"efe",phonetic:"EH-feh",tts:"efe"},G:{name:"ge",phonetic:"heh",tts:"ge"},H:{name:"hache",phonetic:"AH-cheh",tts:"hache"},I:{name:"i",phonetic:"ee",tts:"i"},J:{name:"jota",phonetic:"HOH-tah",tts:"jota"},K:{name:"ka",phonetic:"kah",tts:"ka"},L:{name:"ele",phonetic:"EH-leh",tts:"ele"},M:{name:"eme",phonetic:"EH-meh",tts:"eme"},N:{name:"ene",phonetic:"EH-neh",tts:"ene"},Ñ:{name:"eñe",phonetic:"EH-nyeh",tts:"eñe"},O:{name:"o",phonetic:"oh",tts:"o"},P:{name:"pe",phonetic:"peh",tts:"pe"},Q:{name:"cu",phonetic:"koo",tts:"cu"},R:{name:"erre",phonetic:"EH-rreh",tts:"erre"},S:{name:"ese",phonetic:"EH-seh",tts:"ese"},T:{name:"te",phonetic:"teh",tts:"te"},U:{name:"u",phonetic:"oo",tts:"u"},V:{name:"uve",phonetic:"OO-beh (=B)",tts:"uve"},W:{name:"doble ve",phonetic:"DOH-bleh beh",tts:"doble ve"},X:{name:"equis",phonetic:"EH-kees",tts:"equis"},Y:{name:"ye",phonetic:"yeh",tts:"ye"},Z:{name:"zeta",phonetic:"SEH-tah",tts:"zeta"}};
 const VS={a:"ah",e:"eh",i:"ee",o:"oh",u:"oo"};
-const SYL_TTS_FIX={do:"doh",go:"goh",he:"eh",hi:"ee",qi:"kee",to:"toh",ro:"rroh",wu:"woo",zo:"soh",xa:"ksa",xe:"kse",xi:"ksi",xo:"kso",xu:"ksu"};
+/* Spanish orthography on purpose: these strings are read by a SPANISH voice,
+   so "dó/quí/só" come out right, while English-style "doh/kee/soh" would not. */
+const SYL_TTS_FIX={do:"dó",go:"gó",he:"é",hi:"í",qi:"quí",to:"tó",ro:"ró",wu:"wú",zo:"só",xa:"ksa",xe:"kse",xi:"ksi",xo:"kso",xu:"ksu"};
 function sylTTS(label,fallback){return SYL_TTS_FIX[label.toLowerCase()]||fallback||label.toLowerCase();}
 function speakSyl(label,fallback){
   speak(sylTTS(label,fallback),0.75);
@@ -329,6 +331,9 @@ const CONVERSATIONS=[
   {title:"Cocinar juntos",tense:"Ahora",lines:[{who:"A",es:"¿Cocinamos juntos?",en:"Shall we cook together?",tts:"¿Cocinamos juntos?"},{who:"B",es:"Dale, yo corto las verduras.",en:"Sure, I'll cut the vegetables.",tts:"Dale, yo corto las verduras."}]},
   {title:"Cocinar juntos",tense:"Planes",lines:[{who:"A",es:"¿Qué vamos a cocinar?",en:"What are we going to cook?",tts:"¿Qué vamos a cocinar?"},{who:"B",es:"Vamos a preparar una sopa.",en:"We are going to make a soup.",tts:"Vamos a preparar una sopa."}]},
   {title:"Cocinar juntos",tense:"Ayer",lines:[{who:"A",es:"¿Qué cocinaron ayer?",en:"What did you cook yesterday?",tts:"¿Qué cocinaron ayer?"},{who:"B",es:"Ayer hervimos la comida y probamos la salsa.",en:"Yesterday we boiled the food and tasted the sauce.",tts:"Ayer hervimos la comida y probamos la salsa."}]},
+  {title:"Ver televisión",tense:"Ahora",lines:[{who:"A",es:"¿Qué quieres ver?",en:"What do you want to watch?",tts:"¿Qué quieres ver?"},{who:"B",es:"Una serie. ¿Dónde está el control remoto?",en:"A series. Where is the remote control?",tts:"Una serie. ¿Dónde está el control remoto?"},{who:"A",es:"Está en el sofá.",en:"It's on the sofa.",tts:"Está en el sofá."}]},
+  {title:"Ver televisión",tense:"Planes",lines:[{who:"A",es:"¿Qué vas a hacer esta noche?",en:"What are you going to do tonight?",tts:"¿Qué vas a hacer esta noche?"},{who:"B",es:"Voy a ver una película y relajarme.",en:"I'm going to watch a movie and relax.",tts:"Voy a ver una película y relajarme."}]},
+  {title:"Ver televisión",tense:"Ayer",lines:[{who:"A",es:"¿Qué viste anoche?",en:"What did you watch last night?",tts:"¿Qué viste anoche?"},{who:"B",es:"Vi las noticias y descansé en el sofá.",en:"I watched the news and rested on the sofa.",tts:"Vi las noticias y descansé en el sofá."}]},
   {title:"En casa",tense:"Ahora",lines:[{who:"A",es:"¿Dónde está el baño?",en:"Where is the bathroom?",tts:"¿Dónde está el baño?"},{who:"B",es:"Está al lado de la habitación.",en:"It is next to the bedroom.",tts:"Está al lado de la habitación."}]},
   {title:"En casa",tense:"Planes",lines:[{who:"A",es:"¿Vas a arreglar la habitación?",en:"Are you going to tidy the bedroom?",tts:"¿Vas a arreglar la habitación?"},{who:"B",es:"Sí, voy a cambiar la sábana y la cobija.",en:"Yes, I'm going to change the sheet and the blanket.",tts:"Sí, voy a cambiar la sábana y la cobija."}]},
   {title:"En casa",tense:"Ayer",lines:[{who:"A",es:"¿Dónde estaba la toalla?",en:"Where was the towel?",tts:"¿Dónde estaba la toalla?"},{who:"B",es:"Ayer la dejé junto al lavamanos.",en:"Yesterday I left it next to the sink.",tts:"Ayer la dejé junto al lavamanos."}]}
