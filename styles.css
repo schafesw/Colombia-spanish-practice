@@ -1,4 +1,4 @@
-﻿
+
 html{font-size:18px;width:100%;height:100%;-webkit-text-size-adjust:none;text-size-adjust:none;}
 :root{
   --teal:#4aa8a0;--pink:#e85d75;--gold:#e8b44a;--purple:#a78bfa;--green:#34d399;--blue:#60a5fa;
@@ -238,6 +238,24 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 .title-full{font-size:0.9rem;font-weight:700;color:#fff;}
 .title-en{font-size:0.7rem;color:var(--muted);font-style:italic;margin-top:3px;}
 
+
+/* Frase conversation picker */
+.phrase-index-note{background:rgba(232,93,117,0.08);border:1px solid rgba(232,93,117,0.2);border-radius:14px;padding:14px;margin-bottom:16px;}
+.phrase-index-title{font-size:0.66rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--pink);font-weight:800;margin-bottom:6px;}
+.phrase-index-text{font-size:0.82rem;color:var(--text);line-height:1.55;}
+.phrase-menu{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.phrase-topic-card{width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:15px;min-height:76px;color:#fff;transition:all 0.15s;}
+.phrase-topic-card:active{transform:scale(0.985);background:rgba(232,93,117,0.1);}
+.phrase-topic-copy{flex:1;min-width:0;}
+.phrase-topic-title{font-size:1rem;font-weight:900;color:#fff;}
+.phrase-topic-preview{font-size:0.9rem;font-weight:800;color:var(--pink);margin-top:4px;}
+.phrase-topic-en{font-size:0.74rem;color:var(--muted);font-style:italic;margin-top:3px;}
+.phrase-topic-arrow{font-size:1.6rem;color:var(--pink);flex-shrink:0;}
+.phrase-back{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;padding:11px 16px;margin-bottom:16px;color:var(--muted);font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:800;min-height:46px;}
+.phrase-back span:first-child{font-size:1.3rem;color:var(--pink);}
+.phrase-dialogue{margin-bottom:12px;}
+.phrase-practice-note{background:rgba(74,168,160,0.08);border:1px solid rgba(74,168,160,0.2);border-radius:12px;padding:12px 14px;color:var(--muted);font-size:0.76rem;line-height:1.55;}
+
 /* Grammar */
 .gram-tabs{display:flex;gap:7px;margin-bottom:18px;overflow-x:auto;scrollbar-width:none;}
 .gram-tabs::-webkit-scrollbar{display:none;}
@@ -320,3 +338,4 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 .qcat{padding:7px 13px;border-radius:20px;font-weight:700;font-size:0.7rem;border:1px solid rgba(255,255,255,0.11);background:transparent;color:rgba(255,255,255,0.4);white-space:nowrap;transition:all 0.15s;flex-shrink:0;min-height:36px;}
 .qcat.active{background:rgba(232,180,74,0.2);border-color:var(--gold);color:var(--gold);}
 .intro-note{background:rgba(167,139,250,0.07);border:1px solid rgba(167,139,250,0.18);border-radius:14px;padding:14px;margin-bottom:15px;}
+
