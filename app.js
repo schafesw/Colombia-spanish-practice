@@ -1,4 +1,4 @@
-// Spanish learning app behavior
+﻿// Spanish learning app behavior
 // ── Voice ─────────────────────────────────────────────────────────────────────
 let voices=[],selV=null;
 function getSpanishVoices(){
@@ -33,9 +33,35 @@ function speak(t,r){
   if(voice)selV=voice;
   speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(t);
-  if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-CO";
+  if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
   u.rate=r||0.8;
   speechSynthesis.speak(u);
+  rememberSpoken(t);
+}
+/* ── Lento (slow replay) ─────────────────────────────────────────────────────
+   Every speak() remembers its text; the floating 🐢 button replays it at 0.45x. */
+let lastSpokenText=null,lentoBtn=null;
+function rememberSpoken(t){
+  lastSpokenText=t;
+  if(!lentoBtn){
+    lentoBtn=document.createElement("button");
+    lentoBtn.className="lento-btn";
+    lentoBtn.type="button";
+    lentoBtn.innerHTML="🐢 Lento";
+    lentoBtn.onclick=()=>{
+      if(!lastSpokenText)return;
+      /* replay directly (not via speak) so it doesn't overwrite lastSpokenText rate context */
+      const sp=getSpanishVoices();
+      const voice=(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang))||chooseSpanishVoice(sp);
+      speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(lastSpokenText);
+      if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX";
+      u.rate=0.45;
+      speechSynthesis.speak(u);
+    };
+    document.body.appendChild(lentoBtn);
+  }
+  lentoBtn.style.display="flex";
 }
 if(window.speechSynthesis){
   loadV();
@@ -69,9 +95,23 @@ function rC(){
   const c=document.getElementById("combo-groups");c.innerHTML="";
   (aF?[aF]:CN).forEach(con=>{
     const ch=con==="Ñ"?"ñ":con.toLowerCase();const g=document.createElement("div");g.className="cg";
+    const sub=con==="X"?"X casi siempre va entre vocales — palabras reales":"Toca para escuchar";
     g.innerHTML=`<div class="cg-hdr"><button class="cg-badge" onclick="speak('${LI[con].tts}',0.7)">${con}</button>
-      <div><div class="cg-title">${con} + vocal</div><div class="cg-sub">Toca para escuchar</div></div></div><div class="g5c" id="cg-${con}"></div>`;
+      <div><div class="cg-title">${con==="X"?"X en palabras reales":con+" + vocal"}</div><div class="cg-sub">${sub}</div></div></div><div class="g5c" id="cg-${con}"></div>`;
     c.appendChild(g);const gr=g.querySelector(".g5c");
+    /* X never starts a Spanish syllable — show real words instead of fake X+vowel combos */
+    if(con==="X"){
+      gr.style.gridTemplateColumns="repeat(3,1fr)";
+      X_EXAMPLES.forEach(ex=>{
+        const chip=document.createElement("button");chip.className="cc";
+        const w=ex.word.replace(/x/i,m=>`<span style="color:var(--pink)">${m}</span>`);
+        chip.innerHTML=`<span class="cc-big" style="font-size:1.05rem;color:var(--teal)">${w}</span>
+          <span class="cc-ph">${ex.ph}</span><span class="cc-note">${ex.en}</span>
+          <span style="font-size:0.8rem">🔊</span>`;
+        chip.onclick=()=>speak(ex.tts,0.75);gr.appendChild(chip);
+      });
+      return;
+    }
     VW.forEach(v=>{const inf=gc(con,v);const d=ch+v;const chip=document.createElement("button");chip.className="cc";
       chip.innerHTML=`<span class="cc-big"><span style="color:var(--teal)">${d[0].toUpperCase()}</span><span style="color:var(--pink)">${d[1]}</span></span>
         <span class="cc-ph">${inf.p}</span>${inf.n?`<span class="cc-note">${inf.n}</span>`:""}
@@ -246,18 +286,40 @@ function hideVerbDetail(){
 
  // ── Build Frases ──────────────────────────────────────────────────────────────
 const fl=document.getElementById("frases-list");
+/* Each menu entry keeps its versions separate so Ahora / Planes / Ayer all display */
 const PHRASE_DIALOGUES=[
-  {title:"Saludos formales",preview:DIALOGUE[0].es,en:"Formal greetings and introductions",lines:DIALOGUE},
+  {title:"Saludos formales",preview:DIALOGUE[0].es,en:"Formal greetings and introductions",versions:[{tense:null,lines:DIALOGUE}]},
   ...Array.from(new Set(CONVERSATIONS.map(c=>c.title))).map(title=>{
-    const versions=CONVERSATIONS.filter(c=>c.title===title);
-    return {title,preview:versions[0].lines[0].es,en:"Ahora + Planes · Present and near future",lines:versions.flatMap(v=>v.lines).slice(0,4)};
+    const versions=CONVERSATIONS.filter(c=>c.title===title).map(c=>({tense:c.tense,lines:c.lines}));
+    return {title,preview:versions[0].lines[0].es,en:"Ahora · Planes · Ayer",versions};
   })
 ];
+const TENSE_BADGE={
+  "Ahora":{txt:"⚡ Ahora · presente",css:"color:var(--teal);background:rgba(74,168,160,0.12);border:1px solid rgba(74,168,160,0.25)"},
+  "Planes":{txt:"⏭️ Planes · voy a...",css:"color:var(--blue);background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.25)"},
+  "Ayer":{txt:"⏮️ Ayer · pasado",css:"color:var(--pink);background:rgba(232,93,117,0.12);border:1px solid rgba(232,93,117,0.25)"},
+};
 function renderFraseMenu(){
   fl.dataset.view="menu";
   fl.innerHTML="";
+  /* Sticky jump navigation — pick a section without scrolling */
+  const jump=document.createElement("div");
+  jump.className="frase-jump";
+  const sel=document.createElement("select");
+  sel.className="voice-select frase-jump-select";
+  const jumpTargets=[["frs-dialogos","🗣️ Diálogos y conversaciones"],["frs-titulos","Títulos · Sr. / Sra."],
+    ...FRASES.map((s,i)=>["frs-sec-"+i,s.section])];
+  sel.innerHTML=`<option value="">🧭 Ir a sección…</option>`+jumpTargets.map(([id,label])=>`<option value="${id}">${label}</option>`).join("");
+  sel.onchange=()=>{
+    const el=document.getElementById(sel.value);
+    if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
+    sel.value="";
+  };
+  jump.appendChild(sel);
+  fl.appendChild(jump);
   const note=document.createElement("div");
   note.className="phrase-index-note";
+  note.id="frs-dialogos";
   note.innerHTML=`<div class="phrase-index-title">Elige una situación</div><div class="phrase-index-text">Toca una frase para abrir un diálogo corto. Puedes practicar las dos personas: A y B.</div>`;
   fl.appendChild(note);
   const menu=document.createElement("div");
@@ -271,6 +333,25 @@ function renderFraseMenu(){
     menu.appendChild(card);
   });
   fl.appendChild(menu);
+  renderFraseSections();
+}
+/* Classic phrase lists (Saludos, Compras, Restaurante, Gustos, etc.) below the dialogue menu */
+function renderFraseSections(){
+  const td=document.createElement("div");td.className="frase-section";td.id="frs-titulos";
+  const ttlEl=document.createElement("div");ttlEl.className="frase-title";
+  ttlEl.style.cssText="color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)";
+  ttlEl.textContent="Títulos · Titles";td.appendChild(ttlEl);
+  const tg=document.createElement("div");tg.className="titles-grid";
+  [{abbr:"Sr.",full:"Señor",en:"Mr."},{abbr:"Sra.",full:"Señora",en:"Mrs. / Ms."}].forEach(t=>{
+    const tc=document.createElement("div");tc.className="title-card";
+    tc.innerHTML=`<div class="title-abbr">${t.abbr}</div><div class="title-full">${t.full}</div><div class="title-en">${t.en}</div>`;
+    tc.onclick=()=>speak(t.full,0.75);tg.appendChild(tc);});
+  td.appendChild(tg);fl.appendChild(td);
+  FRASES.forEach((sec,i)=>{const wrap=document.createElement("div");wrap.className="frase-section";wrap.id="frs-sec-"+i;
+    const st=document.createElement("div");st.className="frase-title";st.style.cssText=sec.cls;st.textContent=sec.section;wrap.appendChild(st);
+    sec.items.forEach(item=>{const card=document.createElement("div");card.className="frase-card";
+      card.innerHTML=`<div class="frase-txt"><div class="f-es">${item.es}</div><div class="f-en">${item.en}</div></div><span class="f-spk">🔊</span>`;
+      card.onclick=()=>speak(item.es,0.75);wrap.appendChild(card);});fl.appendChild(wrap);});
 }
 function renderFraseDialogue(dialogue){
   fl.dataset.view="dialogue";
@@ -284,12 +365,21 @@ function renderFraseDialogue(dialogue){
   const box=document.createElement("div");
   box.className="dialogue phrase-dialogue";
   box.innerHTML=`<div class="dlg-title">${dialogue.title} · Toca cada línea para escuchar</div>`;
-  dialogue.lines.forEach(line=>{
-    const row=document.createElement("div");
-    row.className="dlg-line"+(line.who==="B"?" right":"");
-    row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${line.who}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
-    row.querySelector(".dlg-bubble").onclick=()=>speak(line.tts,0.75);
-    box.appendChild(row);
+  dialogue.versions.forEach(version=>{
+    if(version.tense&&TENSE_BADGE[version.tense]){
+      const badge=document.createElement("div");
+      badge.className="conv-tense-badge";
+      badge.style.cssText=TENSE_BADGE[version.tense].css;
+      badge.textContent=TENSE_BADGE[version.tense].txt;
+      box.appendChild(badge);
+    }
+    version.lines.forEach(line=>{
+      const row=document.createElement("div");
+      row.className="dlg-line"+(line.who==="B"?" right":"");
+      row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${line.who}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
+      row.querySelector(".dlg-bubble").onclick=()=>speak(line.tts,0.75);
+      box.appendChild(row);
+    });
   });
   fl.appendChild(box);
   const tip=document.createElement("div");
@@ -423,6 +513,37 @@ const CONVERSATION_QUIZ=[
   {kind:"listening",es:"Ayer la dejé junto al lavamanos.",en:"Yesterday I left it next to the sink.",tts:"Ayer la dejé junto al lavamanos.",cat:"conversaciones",choices:["Yesterday I left it next to the sink.","It is next to the bedroom.","I'm going to change the sheet.","Where is the bathroom?"]},
   {kind:"tense",es:"¿Cuál frase describe el presente?",en:"Está al lado de la habitación.",tts:"Está al lado de la habitación.",cat:"conversaciones",choices:["Está al lado de la habitación.","Voy a cambiar la sábana.","Ayer la dejé junto al lavamanos.","¿Dónde estaba la toalla?"]}
 ];
+/* ── Fill-in-the-blank Quiz Data (NEW v13) ──────────────────────────────────
+   kind:"blank" — sentence with ___ ; choices are single words; tts = full sentence */
+const FILL_BLANK_QUIZ=[
+  /* Presente */
+  {kind:"blank",es:"Yo ___ en Bogotá.",en:"vivo",tts:"Yo vivo en Bogotá.",cat:"completar",choices:["vivo","vives","vive","vivimos"]},
+  {kind:"blank",es:"¿Dónde ___ tú?",en:"vives",tts:"¿Dónde vives tú?",cat:"completar",choices:["vives","vivo","viven","vivimos"]},
+  {kind:"blank",es:"Ella ___ arepa todos los días.",en:"come",tts:"Ella come arepa todos los días.",cat:"completar",choices:["come","como","comes","comemos"]},
+  {kind:"blank",es:"Nosotros ___ español.",en:"hablamos",tts:"Nosotros hablamos español.",cat:"completar",choices:["hablamos","hablo","hablas","hablan"]},
+  {kind:"blank",es:"Yo ___ dos hermanos.",en:"tengo",tts:"Yo tengo dos hermanos.",cat:"completar",choices:["tengo","tienes","tiene","tenemos"]},
+  {kind:"blank",es:"¿Usted ___ inglés?",en:"habla",tts:"¿Usted habla inglés?",cat:"completar",choices:["habla","hablo","hablamos","hablan"]},
+  /* Futuro cercano — voy a... */
+  {kind:"blank",es:"Mañana ___ a trabajar.",en:"voy",tts:"Mañana voy a trabajar.",cat:"completar",choices:["voy","vas","va","vamos"]},
+  {kind:"blank",es:"¿Qué ___ a comer tú?",en:"vas",tts:"¿Qué vas a comer tú?",cat:"completar",choices:["vas","voy","va","van"]},
+  {kind:"blank",es:"Nosotros ___ a cocinar arepas.",en:"vamos",tts:"Nosotros vamos a cocinar arepas.",cat:"completar",choices:["vamos","voy","vas","van"]},
+  {kind:"blank",es:"Ella ___ a ver una película.",en:"va",tts:"Ella va a ver una película.",cat:"completar",choices:["va","voy","vas","vamos"]},
+  /* Pasado */
+  {kind:"blank",es:"Ayer yo ___ al mercado.",en:"fui",tts:"Ayer yo fui al mercado.",cat:"completar",choices:["fui","fue","fuiste","fuimos"]},
+  {kind:"blank",es:"¿Qué ___ tú anoche?",en:"comiste",tts:"¿Qué comiste tú anoche?",cat:"completar",choices:["comiste","comí","comió","comimos"]},
+  {kind:"blank",es:"Él ___ hasta las seis.",en:"trabajó",tts:"Él trabajó hasta las seis.",cat:"completar",choices:["trabajó","trabajé","trabajaste","trabajamos"]},
+  {kind:"blank",es:"Anoche yo ___ ocho horas.",en:"dormí",tts:"Anoche yo dormí ocho horas.",cat:"completar",choices:["dormí","durmió","dormiste","dormimos"]},
+  /* Vocabulario */
+  {kind:"blank",es:"¿Me regala un ___, por favor?",en:"tinto",tts:"¿Me regala un tinto, por favor?",cat:"completar",choices:["tinto","trancón","cuchillo","semáforo"]},
+  {kind:"blank",es:"Gire a la ___ en la esquina.",en:"derecha",tts:"Gire a la derecha en la esquina.",cat:"completar",choices:["derecha","ducha","cuchara","almohada"]},
+  {kind:"blank",es:"El jabón está en la ___.",en:"ducha",tts:"El jabón está en la ducha.",cat:"completar",choices:["ducha","cama","olla","esquina"]},
+  {kind:"blank",es:"Hay mucho ___ en la avenida.",en:"trancón",tts:"Hay mucho trancón en la avenida.",cat:"completar",choices:["trancón","tinto","clóset","jabón"]},
+  {kind:"blank",es:"Corto la cebolla con el ___.",en:"cuchillo",tts:"Corto la cebolla con el cuchillo.",cat:"completar",choices:["cuchillo","sofá","semáforo","reloj"]},
+  {kind:"blank",es:"Veo la película en el ___.",en:"sofá",tts:"Veo la película en el sofá.",cat:"completar",choices:["sofá","lavamanos","parqueadero","azúcar"]},
+  {kind:"blank",es:"No tengo ___ para el taxi.",en:"plata",tts:"No tengo plata para el taxi.",cat:"completar",choices:["plata","vaina","cobija","sartén"]},
+  {kind:"blank",es:"La ___ está sobre la cama.",en:"cobija",tts:"La cobija está sobre la cama.",cat:"completar",choices:["cobija","gasolina","luz","sal"]},
+];
+
 let aQ=[];
 VC.forEach(cat=>{
   if(cat.type==="basic")cat.items.forEach(i=>aQ.push({es:i.word,en:i.en,tts:i.tts,cat:cat.id}));
@@ -434,27 +555,71 @@ VC.forEach(cat=>{
 });
 FRASES.forEach(sec=>{if(sec.items)sec.items.forEach(i=>aQ.push({es:i.es,en:i.en,tts:i.es,cat:"frases"}));});
 CONVERSATION_QUIZ.forEach(q=>aQ.push(q));
-const QC=[{id:"all",label:"Todo"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"colombianismos",label:"Colombia"},{id:"frases",label:"Frases"},{id:"conversaciones",label:"Conversaciones"}];
-let qCat="all",qC=0,qT=0,qS=0,cQ=null,an=false;
+FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
+
+const QC=[{id:"all",label:"Todo"},{id:"completar",label:"✏️ Completar"},{id:"conversaciones",label:"Conversaciones"},{id:"frases",label:"Frases"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"direcciones",label:"Direcciones"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
+
+/* ── Persistent score + missed-question tracking (NEW v13) ──────────────────
+   Saved in localStorage. Wrong answers get asked again more often. */
+const QS_KEY="esco-quiz-v1";
+let qStore={c:0,t:0,s:0,missed:{}};
+try{const raw=localStorage.getItem(QS_KEY);if(raw)qStore=Object.assign(qStore,JSON.parse(raw));}catch(e){}
+function saveQ(){try{localStorage.setItem(QS_KEY,JSON.stringify(qStore));}catch(e){}}
+let qCat="all",qC=qStore.c||0,qT=qStore.t||0,qS=qStore.s||0,cQ=null,an=false;
+document.getElementById("q-correct").textContent=qC;
+document.getElementById("q-total").textContent=qT;
+document.getElementById("q-streak").textContent="🔥 "+qS;
+/* Reset button under the score bar */
+(function(){
+  const bar=document.querySelector(".quiz-score-bar");
+  const btn=document.createElement("button");
+  btn.type="button";btn.className="quiz-reset";
+  btn.textContent="↺ Reiniciar puntaje";
+  btn.onclick=()=>{
+    qC=0;qT=0;qS=0;qStore={c:0,t:0,s:0,missed:{}};saveQ();
+    document.getElementById("q-correct").textContent=0;
+    document.getElementById("q-total").textContent=0;
+    document.getElementById("q-streak").textContent="🔥 0";
+    document.getElementById("quiz-fb").textContent="";
+    nQ();
+  };
+  bar.insertAdjacentElement("afterend",btn);
+})();
+
 const qcw=document.getElementById("qcat-wrap");
 QC.forEach(c=>{const b=document.createElement("button");b.className="qcat"+(c.id==="all"?" active":"");b.textContent=c.label;
   b.onclick=()=>{document.querySelectorAll(".qcat").forEach((x,i)=>x.classList.toggle("active",QC[i].id===c.id));qCat=c.id;nQ();};qcw.appendChild(b);});
 function nQ(){
   an=false;document.getElementById("quiz-next").style.display="none";document.getElementById("quiz-fb").textContent="";
-  const pool=qCat==="all"?aQ:aQ.filter(q=>q.cat===qCat);if(!pool.length)return;
-  cQ=pool[Math.floor(Math.random()*pool.length)];document.getElementById("qc-word").textContent=cQ.es;
-  document.querySelector(".qc-label").textContent=cQ.kind==="reply"?"Escoge la respuesta correcta":cQ.kind==="listening"?"Escucha y reconoce":cQ.kind==="tense"?"Reconoce el tiempo":"Traducir al inglés";
-  const wrong=cQ.choices?cQ.choices.filter(x=>x!==cQ.en).sort(()=>Math.random()-0.5).slice(0,3).map(en=>({en})):pool.filter(q=>q.en!==cQ.en).sort(()=>Math.random()-0.5).slice(0,3);
+  const base=qCat==="all"?aQ:aQ.filter(q=>q.cat===qCat);if(!base.length)return;
+  /* 35% of the time, re-serve a question you previously missed */
+  const missedPool=base.filter(q=>qStore.missed&&qStore.missed[q.es+"|"+q.en]);
+  const pickFrom=(missedPool.length&&Math.random()<0.35)?missedPool:base;
+  cQ=pickFrom[Math.floor(Math.random()*pickFrom.length)];
+  /* Listening questions must not show the Spanish text — hide it and auto-play */
+  document.getElementById("qc-word").textContent=cQ.kind==="listening"?"🎧":cQ.es;
+  document.querySelector(".qc-label").textContent=cQ.kind==="reply"?"Escoge la respuesta correcta":cQ.kind==="listening"?"Escucha y reconoce":cQ.kind==="tense"?"Reconoce el tiempo":cQ.kind==="blank"?"Completa la frase":"Traducir al inglés";
+  if(cQ.kind==="listening")setTimeout(()=>speak(cQ.tts,0.7),350);
+  const wrong=cQ.choices?cQ.choices.filter(x=>x!==cQ.en).sort(()=>Math.random()-0.5).slice(0,3).map(en=>({en})):base.filter(q=>q.en!==cQ.en).sort(()=>Math.random()-0.5).slice(0,3);
   const opts=[cQ,...wrong].sort(()=>Math.random()-0.5);
   const ow=document.getElementById("quiz-opts");ow.innerHTML="";
   opts.forEach(opt=>{const b=document.createElement("button");b.className="qopt";b.textContent=opt.en;
     b.onclick=()=>{if(an)return;an=true;qT++;document.getElementById("q-total").textContent=qT;
       const fb=document.getElementById("quiz-fb");
-      if(opt.en===cQ.en){b.classList.add("correct");qC++;qS++;document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.textContent="✅ ¡Correcto!";fb.style.color="var(--teal)";speak(cQ.tts,0.75);}
-      else{b.classList.add("wrong");qS=0;document.getElementById("q-streak").textContent="🔥 0";fb.textContent="❌ Incorrecto";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(x.textContent===cQ.en)x.classList.add("reveal");});}
+      const mk=cQ.es+"|"+cQ.en;
+      if(opt.en===cQ.en){b.classList.add("correct");qC++;qS++;document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.textContent="✅ ¡Correcto!";fb.style.color="var(--teal)";speak(cQ.tts,0.75);
+        if(qStore.missed[mk]){qStore.missed[mk]--;if(qStore.missed[mk]<=0)delete qStore.missed[mk];}}
+      else{b.classList.add("wrong");qS=0;document.getElementById("q-streak").textContent="🔥 0";fb.textContent="❌ Incorrecto";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(x.textContent===cQ.en)x.classList.add("reveal");});
+        qStore.missed[mk]=(qStore.missed[mk]||0)+2;}
+      qStore.c=qC;qStore.t=qT;qStore.s=qS;saveQ();
       document.getElementById("quiz-next").style.display="block";};ow.appendChild(b);});
 }
-function quizHear(){if(cQ)speak(cQ.tts,0.7);}
+function quizHear(){
+  if(!cQ)return;
+  /* For fill-in-the-blank, don't speak the answer word — pause at the blank instead */
+  if(cQ.kind==="blank"){speak(cQ.es.replace(/_+/g,","),0.7);return;}
+  speak(cQ.tts,0.7);
+}
 setTimeout(nQ,400);
 
 // ── Nav ───────────────────────────────────────────────────────────────────────

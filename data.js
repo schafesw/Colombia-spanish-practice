@@ -1,11 +1,20 @@
-// Spanish learning app data
+﻿// Spanish learning app data
 // ── Alphabet ──────────────────────────────────────────────────────────────────
 const VW=["a","e","i","o","u"],VL=["A","E","I","O","U"];
 const AL=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","Ñ","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
 const CN=AL.filter(l=>!VL.includes(l));
 const LI={A:{name:"a",phonetic:"ah",tts:"a"},B:{name:"be",phonetic:"beh",tts:"be"},C:{name:"ce",phonetic:"seh",tts:"ce"},D:{name:"de",phonetic:"deh",tts:"de"},E:{name:"e",phonetic:"eh",tts:"e"},F:{name:"efe",phonetic:"EH-feh",tts:"efe"},G:{name:"ge",phonetic:"heh",tts:"ge"},H:{name:"hache",phonetic:"AH-cheh",tts:"hache"},I:{name:"i",phonetic:"ee",tts:"i"},J:{name:"jota",phonetic:"HOH-tah",tts:"jota"},K:{name:"ka",phonetic:"kah",tts:"ka"},L:{name:"ele",phonetic:"EH-leh",tts:"ele"},M:{name:"eme",phonetic:"EH-meh",tts:"eme"},N:{name:"ene",phonetic:"EH-neh",tts:"ene"},Ñ:{name:"eñe",phonetic:"EH-nyeh",tts:"eñe"},O:{name:"o",phonetic:"oh",tts:"o"},P:{name:"pe",phonetic:"peh",tts:"pe"},Q:{name:"cu",phonetic:"koo",tts:"cu"},R:{name:"erre",phonetic:"EH-rreh",tts:"erre"},S:{name:"ese",phonetic:"EH-seh",tts:"ese"},T:{name:"te",phonetic:"teh",tts:"te"},U:{name:"u",phonetic:"oo",tts:"u"},V:{name:"uve",phonetic:"OO-beh (=B)",tts:"uve"},W:{name:"doble ve",phonetic:"DOH-bleh beh",tts:"doble ve"},X:{name:"equis",phonetic:"EH-kees",tts:"equis"},Y:{name:"ye",phonetic:"yeh",tts:"ye"},Z:{name:"zeta",phonetic:"SEH-tah",tts:"zeta"}};
 const VS={a:"ah",e:"eh",i:"ee",o:"oh",u:"oo"};
-const SYL_TTS_FIX={do:"doh",go:"goh",he:"eh",hi:"ee",qi:"kee",to:"toh",ro:"rroh",wu:"woo",zo:"soh",xa:"ksa",xe:"kse",xi:"ksi",xo:"kso",xu:"ksu"};
+/* Spanish orthography on purpose: these strings are read by a SPANISH voice,
+   so "dó/quí/só" come out right, while English-style "doh/kee/soh" would not. */
+const SYL_TTS_FIX={do:"dó",go:"gó",he:"é",hi:"í",qi:"quí",to:"tó",ro:"ró",wu:"wú",zo:"só"};
+/* X almost never starts a syllable in real Spanish — it lives between vowels.
+   So instead of fake X+vowel syllables, the Sílabas tab shows real example words. */
+const X_EXAMPLES=[
+  {word:"Taxi",ph:"TAK-see",tts:"taxi",en:"taxi"},
+  {word:"Examen",ph:"ek-SAH-men",tts:"examen",en:"exam"},
+  {word:"Éxito",ph:"EK-see-toh",tts:"éxito",en:"success"},
+];
 function sylTTS(label,fallback){return SYL_TTS_FIX[label.toLowerCase()]||fallback||label.toLowerCase();}
 function speakSyl(label,fallback){
   speak(sylTTS(label,fallback),0.75);
@@ -265,6 +274,93 @@ const VC=[
     {word:"Es delicioso.",en:"It is delicious.",ph:"",tts:"Es delicioso.",icon:"😋",color:"#f59e0b"},
     {word:"Es horrible.",en:"It is horrible.",ph:"",tts:"Es horrible.",icon:"😖",color:"#e85d75"}
   ]},
+  /* ── NEW v13: TV · Descanso (restored) ── */
+  {id:"tv",label:"📺 TV · Descanso",type:"basic",items:[
+    {word:"Televisión",en:"Television",ph:"teh-leh-bee-SYOHN",tts:"televisión",icon:"📺",color:"#60a5fa"},
+    {word:"Película",en:"Movie",ph:"peh-LEE-koo-lah",tts:"película",icon:"🎬",color:"#e85d75"},
+    {word:"Serie",en:"Series",ph:"SEH-ryeh",tts:"serie",icon:"🎞️",color:"#a78bfa"},
+    {word:"Noticias",en:"News",ph:"noh-TEE-syahs",tts:"noticias",icon:"📰",color:"#94a3b8"},
+    {word:"Programa",en:"Show",ph:"proh-GRAH-mah",tts:"programa",icon:"📡",color:"#4aa8a0"},
+    {word:"Control remoto",en:"Remote control",ph:"kon-TROL rreh-MOH-toh",tts:"control remoto",icon:"🎛️",color:"#f59e0b"},
+    {word:"Sofá",en:"Sofa",ph:"soh-FAH",tts:"sofá",icon:"🛋️",color:"#92400e"},
+    {word:"Descansar",en:"To rest",ph:"dehs-kan-SAR",tts:"descansar",icon:"😌",color:"#34d399"},
+    {word:"Relajarse",en:"To relax",ph:"rreh-lah-HAR-seh",tts:"relajarse",icon:"🧘",color:"#a78bfa"},
+    {word:"Ver televisión",en:"To watch TV",ph:"ber teh-leh-bee-SYOHN",tts:"ver televisión",icon:"👀",color:"#60a5fa"},
+  ]},
+  /* ── NEW v13: Ropa ── */
+  {id:"ropa",label:"👕 Ropa",type:"basic",items:[
+    {word:"Camisa",en:"Shirt",ph:"kah-MEE-sah",tts:"camisa",icon:"👔",color:"#60a5fa"},
+    {word:"Camiseta",en:"T-shirt",ph:"kah-mee-SEH-tah",tts:"camiseta",icon:"👕",color:"#4aa8a0"},
+    {word:"Pantalón",en:"Pants",ph:"pan-tah-LOHN",tts:"pantalón",icon:"👖",color:"#3b82f6"},
+    {word:"Zapatos",en:"Shoes",ph:"sah-PAH-tohs",tts:"zapatos",icon:"👟",color:"#92400e"},
+    {word:"Medias",en:"Socks (Colombian!)",ph:"MEH-dyahs",tts:"medias",icon:"🧦",color:"#e85d75"},
+    {word:"Chaqueta",en:"Jacket",ph:"chah-KEH-tah",tts:"chaqueta",icon:"🧥",color:"#a78bfa"},
+    {word:"Saco",en:"Sweater (Colombian!)",ph:"SAH-koh",tts:"saco",icon:"🧶",color:"#e8b44a"},
+    {word:"Vestido",en:"Dress",ph:"behs-TEE-doh",tts:"vestido",icon:"👗",color:"#ec4899"},
+    {word:"Falda",en:"Skirt",ph:"FAL-dah",tts:"falda",icon:"👚",color:"#f9a8d4"},
+    {word:"Sombrero",en:"Hat",ph:"som-BREH-roh",tts:"sombrero",icon:"👒",color:"#f59e0b"},
+    {word:"Gafas",en:"Glasses",ph:"GAH-fahs",tts:"gafas",icon:"👓",color:"#94a3b8"},
+    {word:"Reloj",en:"Watch / Clock",ph:"rreh-LOH",tts:"reloj",icon:"⌚",color:"#64748b"},
+  ]},
+  /* ── NEW v13: Animales ── */
+  {id:"animales",label:"🐾 Animales",type:"basic",items:[
+    {word:"Perro",en:"Dog",ph:"PEH-rroh",tts:"perro",icon:"🐕",color:"#e8b44a"},
+    {word:"Gato",en:"Cat",ph:"GAH-toh",tts:"gato",icon:"🐈",color:"#94a3b8"},
+    {word:"Pájaro",en:"Bird",ph:"PAH-hah-roh",tts:"pájaro",icon:"🐦",color:"#60a5fa"},
+    {word:"Pez",en:"Fish",ph:"pehs",tts:"pez",icon:"🐟",color:"#3b82f6"},
+    {word:"Caballo",en:"Horse",ph:"kah-BAH-yoh",tts:"caballo",icon:"🐴",color:"#92400e"},
+    {word:"Vaca",en:"Cow",ph:"BAH-kah",tts:"vaca",icon:"🐄",color:"#94a3b8"},
+    {word:"Gallina",en:"Hen / Chicken",ph:"gah-YEE-nah",tts:"gallina",icon:"🐔",color:"#f59e0b"},
+    {word:"Cerdo",en:"Pig",ph:"SER-doh",tts:"cerdo",icon:"🐷",color:"#ec4899"},
+    {word:"Mono",en:"Monkey",ph:"MOH-noh",tts:"mono",icon:"🐒",color:"#e8b44a"},
+    {word:"Mariposa",en:"Butterfly",ph:"mah-ree-POH-sah",tts:"mariposa",icon:"🦋",color:"#a78bfa"},
+    {word:"Mosca",en:"Fly",ph:"MOHS-kah",tts:"mosca",icon:"🪰",color:"#64748b"},
+    {word:"Culebra",en:"Snake (Colombian!)",ph:"koo-LEH-brah",tts:"culebra",icon:"🐍",color:"#34d399"},
+  ]},
+  /* ── NEW v13: Clima ── */
+  {id:"clima",label:"🌤️ Clima",type:"basic",items:[
+    {word:"Clima",en:"Weather",ph:"KLEE-mah",tts:"clima",icon:"🌡️",color:"#4aa8a0"},
+    {word:"Sol",en:"Sun",ph:"sohl",tts:"sol",icon:"☀️",color:"#f59e0b"},
+    {word:"Lluvia",en:"Rain",ph:"YOO-byah",tts:"lluvia",icon:"🌧️",color:"#60a5fa"},
+    {word:"Nube",en:"Cloud",ph:"NOO-beh",tts:"nube",icon:"☁️",color:"#94a3b8"},
+    {word:"Viento",en:"Wind",ph:"BYEN-toh",tts:"viento",icon:"💨",color:"#4aa8a0"},
+    {word:"Tormenta",en:"Storm",ph:"tor-MEN-tah",tts:"tormenta",icon:"⛈️",color:"#8b5cf6"},
+    {word:"Aguacero",en:"Downpour (Colombian!)",ph:"ah-gwah-SEH-roh",tts:"aguacero",icon:"🌧️",color:"#3b82f6"},
+    {word:"Hace calor",en:"It's hot",ph:"AH-seh kah-LOR",tts:"hace calor",icon:"🥵",color:"#ef4444"},
+    {word:"Hace frío",en:"It's cold",ph:"AH-seh FREE-oh",tts:"hace frío",icon:"🥶",color:"#60a5fa"},
+    {word:"Hace sol",en:"It's sunny",ph:"AH-seh sohl",tts:"hace sol",icon:"😎",color:"#f59e0b"},
+    {word:"Está lloviendo",en:"It's raining",ph:"ehs-TAH yoh-BYEN-doh",tts:"está lloviendo",icon:"☔",color:"#3b82f6"},
+  ]},
+  /* ── NEW v13: Tecnología ── */
+  {id:"tecnologia",label:"📱 Tecnología",type:"basic",items:[
+    {word:"Celular",en:"Cell phone (Colombian!)",ph:"seh-loo-LAR",tts:"celular",icon:"📱",color:"#4aa8a0"},
+    {word:"Cargador",en:"Charger",ph:"kar-gah-DOR",tts:"cargador",icon:"🔌",color:"#f59e0b"},
+    {word:"Computador",en:"Computer (Colombian!)",ph:"kom-poo-tah-DOR",tts:"computador",icon:"💻",color:"#60a5fa"},
+    {word:"Wifi",en:"Wifi",ph:"WEE-fee",tts:"wifi",icon:"📶",color:"#34d399"},
+    {word:"Aplicación",en:"App",ph:"ah-plee-kah-SYOHN",tts:"aplicación",icon:"📲",color:"#a78bfa"},
+    {word:"Mensaje",en:"Message",ph:"men-SAH-heh",tts:"mensaje",icon:"💬",color:"#4aa8a0"},
+    {word:"Llamada",en:"Call",ph:"yah-MAH-dah",tts:"llamada",icon:"📞",color:"#e85d75"},
+    {word:"Foto",en:"Photo",ph:"FOH-toh",tts:"foto",icon:"📷",color:"#ec4899"},
+    {word:"Audífonos",en:"Headphones",ph:"ah-oo-DEE-foh-nohs",tts:"audífonos",icon:"🎧",color:"#8b5cf6"},
+    {word:"Pantalla",en:"Screen",ph:"pan-TAH-yah",tts:"pantalla",icon:"🖥️",color:"#94a3b8"},
+    {word:"Contraseña",en:"Password",ph:"kon-trah-SEH-nyah",tts:"contraseña",icon:"🔑",color:"#e8b44a"},
+    {word:"Batería",en:"Battery",ph:"bah-teh-REE-ah",tts:"batería",icon:"🔋",color:"#34d399"},
+  ]},
+  /* ── NEW v13: Emociones ── */
+  {id:"emociones",label:"😊 Emociones",type:"basic",items:[
+    {word:"Feliz",en:"Happy",ph:"feh-LEES",tts:"feliz",icon:"😄",color:"#f59e0b"},
+    {word:"Triste",en:"Sad",ph:"TREES-teh",tts:"triste",icon:"😢",color:"#60a5fa"},
+    {word:"Cansado/a",en:"Tired",ph:"kan-SAH-doh",tts:"cansado",icon:"😴",color:"#8b5cf6"},
+    {word:"Preocupado/a",en:"Worried",ph:"preh-oh-koo-PAH-doh",tts:"preocupado",icon:"😟",color:"#94a3b8"},
+    {word:"Emocionado/a",en:"Excited",ph:"eh-moh-syoh-NAH-doh",tts:"emocionado",icon:"🤩",color:"#ec4899"},
+    {word:"Bravo/a",en:"Angry (Colombian!)",ph:"BRAH-boh",tts:"bravo",icon:"😠",color:"#ef4444"},
+    {word:"Nervioso/a",en:"Nervous",ph:"ner-BYOH-soh",tts:"nervioso",icon:"😬",color:"#e8b44a"},
+    {word:"Tranquilo/a",en:"Calm",ph:"tran-KEE-loh",tts:"tranquilo",icon:"😌",color:"#34d399"},
+    {word:"Aburrido/a",en:"Bored",ph:"ah-boo-RREE-doh",tts:"aburrido",icon:"🥱",color:"#64748b"},
+    {word:"Sorprendido/a",en:"Surprised",ph:"sor-pren-DEE-doh",tts:"sorprendido",icon:"😲",color:"#a78bfa"},
+    {word:"Enamorado/a",en:"In love",ph:"eh-nah-moh-RAH-doh",tts:"enamorado",icon:"😍",color:"#e85d75"},
+    {word:"Asustado/a",en:"Scared",ph:"ah-soos-TAH-doh",tts:"asustado",icon:"😨",color:"#8b5cf6"},
+  ]},
 ];
 
 const COLOMBIANISMOS=[
@@ -305,6 +401,14 @@ const FRASES=[
   {section:"🚕 Transporte",cls:"color:var(--blue);background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2)",items:[{es:"¿Dónde está la parada de bus?",en:"Where is the bus stop?"},{es:"¿Cuánto cuesta el taxi hasta...?",en:"How much is a taxi to...?"},{es:"Lléveme a esta dirección.",en:"Take me to this address."},{es:"Para aquí, por favor.",en:"Stop here, please."},{es:"¿Cuánto tarda hasta...?",en:"How long does it take to...?"},{es:"¿Tiene cambio?",en:"Do you have change?"}]},
   {section:"☀️ Conversación Diaria",cls:"color:var(--teal);background:rgba(74,168,160,0.08);border:1px solid rgba(74,168,160,0.18)",items:[{es:"¿Cuántos años tiene usted?",en:"How old are you? (formal)"},{es:"Tengo ___ años.",en:"I am ___ years old."},{es:"¿De dónde es usted?",en:"Where are you from?"},{es:"Soy de...",en:"I'm from..."},{es:"¿Qué hora es?",en:"What time is it?"},{es:"Son las tres.",en:"It's three o'clock."},{es:"Por favor.",en:"Please."},{es:"Gracias.",en:"Thank you."},{es:"De nada.",en:"You're welcome."},{es:"Con permiso.",en:"Excuse me (passing)."},{es:"¿Puede escribirlo?",en:"Can you write it down?"},{es:"Entiendo un poco.",en:"I understand a little."}]},
   {section:"❤️ Gustos y conversación",cls:"color:var(--pink);background:rgba(232,93,117,0.1);border:1px solid rgba(232,93,117,0.2)",items:[{es:"Soy...",en:"I am..."},{es:"Trabajo como...",en:"I work as..."},{es:"Trabajo en...",en:"I work at / in..."},{es:"Estudio...",en:"I study..."},{es:"Me gusta mi trabajo.",en:"I like my job."},{es:"No me gusta mi trabajo.",en:"I don't like my job."},{es:"¿Qué haces?",en:"What do you do?"},{es:"¿En qué trabajas?",en:"What do you do for work?"},{es:"¿Cómo te llamas?",en:"What's your name?"},{es:"Me llamo...",en:"My name is..."},{es:"¿De dónde eres?",en:"Where are you from?"},{es:"¿Dónde vives?",en:"Where do you live?"},{es:"Vivo en...",en:"I live in..."},{es:"Mi ciudad es grande / pequeña.",en:"My city is big / small."},{es:"Me gusta vivir aquí.",en:"I like living here."},{es:"No me gusta vivir aquí.",en:"I don't like living here."},{es:"Tengo ... años.",en:"I am ... years old."},{es:"Mi cumpleaños es...",en:"My birthday is..."},{es:"¿Cuántos años tienes?",en:"How old are you?"},{es:"¿Tienes hermanos?",en:"Do you have siblings?"},{es:"¿Tienes mascotas?",en:"Do you have pets?"},{es:"Mi familia es pequeña / grande.",en:"My family is small / big."},{es:"Los quiero mucho.",en:"I love them very much."},{es:"Me gusta...",en:"I like..."},{es:"No me gusta...",en:"I don't like..."},{es:"Me encanta...",en:"I love..."},{es:"Odio...",en:"I hate..."},{es:"Prefiero...",en:"I prefer..."},{es:"Mi favorito/a es...",en:"My favorite is..."},{es:"Es divertido.",en:"It's fun."},{es:"Es interesante.",en:"It's interesting."},{es:"Es aburrido.",en:"It's boring."},{es:"Es fácil.",en:"It's easy."},{es:"Es difícil.",en:"It's difficult."},{es:"Es delicioso.",en:"It's delicious."},{es:"Es horrible.",en:"It's horrible."}]},
+  /* ── NEW v13: Haciendo Planes ── */
+  {section:"📆 Haciendo Planes",cls:"color:var(--blue);background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2)",items:[{es:"¿Qué vas a hacer mañana?",en:"What are you going to do tomorrow?"},{es:"¿Nos vemos mañana?",en:"Shall we meet tomorrow?"},{es:"¿A qué hora nos vemos?",en:"What time shall we meet?"},{es:"¿Quieres salir?",en:"Do you want to go out?"},{es:"¡Claro que sí!",en:"Of course!"},{es:"No puedo, tengo planes.",en:"I can't, I have plans."},{es:"¿Qué tal el sábado?",en:"How about Saturday?"},{es:"De pronto voy.",en:"Maybe I'll go. (Colombian: de pronto = maybe)"},{es:"Nos vemos a las siete.",en:"See you at seven."},{es:"¡De una!",en:"I'm in! / Right away! (Colombian!)"},{es:"Te aviso.",en:"I'll let you know."},{es:"¿Dónde nos encontramos?",en:"Where shall we meet?"}]},
+  /* ── NEW v13: Por Teléfono / Mensajes ── */
+  {section:"📱 Por Teléfono / Mensajes",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[{es:"¿Aló?",en:"Hello? (answering the phone — Colombian!)"},{es:"¿Con quién hablo?",en:"Who am I speaking with?"},{es:"¿Me escuchas?",en:"Can you hear me?"},{es:"Te llamo más tarde.",en:"I'll call you later."},{es:"Se cortó la llamada.",en:"The call dropped."},{es:"Te escribo.",en:"I'll text you."},{es:"Mándame la ubicación.",en:"Send me the location."},{es:"¿Me pasas tu número?",en:"Can you give me your number?"},{es:"Estoy sin señal.",en:"I have no signal."},{es:"No tengo minutos.",en:"I don't have phone minutes. (very Colombian)"},{es:"Voy a llamar.",en:"I'm going to call."},{es:"Deja el mensaje.",en:"Leave the message."}]},
+  /* ── NEW v13: ¿Cómo Te Sientes? ── */
+  {section:"🩺 ¿Cómo Te Sientes?",cls:"color:var(--green);background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2)",items:[{es:"¿Cómo te sientes?",en:"How do you feel?"},{es:"Me siento bien.",en:"I feel good."},{es:"Me siento mal.",en:"I feel bad."},{es:"Tengo hambre.",en:"I'm hungry."},{es:"Tengo sed.",en:"I'm thirsty."},{es:"Tengo sueño.",en:"I'm sleepy."},{es:"Tengo frío.",en:"I'm cold."},{es:"Tengo calor.",en:"I'm hot."},{es:"Me duele la cabeza.",en:"My head hurts."},{es:"Me duele el estómago.",en:"My stomach hurts."},{es:"Estoy cansado/a.",en:"I'm tired."},{es:"Estoy enfermo/a.",en:"I'm sick."},{es:"Necesito descansar.",en:"I need to rest."},{es:"¡Que te mejores!",en:"Get well soon!"}]},
+  /* ── NEW v13: Plata y Pagos ── */
+  {section:"💰 Plata y Pagos",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[{es:"¿Cuánto le debo?",en:"How much do I owe you?"},{es:"¿Tiene cambio de cincuenta mil?",en:"Do you have change for fifty thousand?"},{es:"¿Puedo pagar con tarjeta?",en:"Can I pay by card?"},{es:"Pago en efectivo.",en:"I'll pay in cash."},{es:"¿Me hace la transferencia?",en:"Can you send me the transfer? (Nequi-style)"},{es:"Quedamos a mano.",en:"We're even."},{es:"¿Me rebaja algo?",en:"Can you lower the price a bit?"},{es:"Necesito sacar plata.",en:"I need to withdraw money. (Colombian!)"},{es:"¿Dónde hay un cajero?",en:"Where is there an ATM?"},{es:"A la orden.",en:"At your service / You're welcome. (Colombian!)"}]},
 ];
 const DIALOGUE=[{who:"A",es:"Hola, ¿cómo está?",en:"Hi, how are you? (formal)",tts:"Hola, ¿cómo está?"},{who:"B",es:"Hola, estoy bien, gracias.",en:"Hi, I'm fine, thank you.",tts:"Hola, estoy bien, gracias."},{who:"A",es:"Soy David. ¡Gusto en conocerle!",en:"I'm David. Nice to meet you!",tts:"Soy David. ¡Gusto en conocerle!"},{who:"B",es:"Soy Roberto. ¡El gusto es mío!",en:"I'm Roberto. The pleasure is mine!",tts:"Soy Roberto. ¡El gusto es mío!"},{who:"A",es:"Mucho gusto, señor Roberto.",en:"Nice to meet you, Mr. Roberto.",tts:"Mucho gusto, señor Roberto."},{who:"B",es:"Igualmente, señor David.",en:"Likewise, Mr. David.",tts:"Igualmente, señor David."}];
 const CONVERSATIONS=[
@@ -329,6 +433,9 @@ const CONVERSATIONS=[
   {title:"Cocinar juntos",tense:"Ahora",lines:[{who:"A",es:"¿Cocinamos juntos?",en:"Shall we cook together?",tts:"¿Cocinamos juntos?"},{who:"B",es:"Dale, yo corto las verduras.",en:"Sure, I'll cut the vegetables.",tts:"Dale, yo corto las verduras."}]},
   {title:"Cocinar juntos",tense:"Planes",lines:[{who:"A",es:"¿Qué vamos a cocinar?",en:"What are we going to cook?",tts:"¿Qué vamos a cocinar?"},{who:"B",es:"Vamos a preparar una sopa.",en:"We are going to make a soup.",tts:"Vamos a preparar una sopa."}]},
   {title:"Cocinar juntos",tense:"Ayer",lines:[{who:"A",es:"¿Qué cocinaron ayer?",en:"What did you cook yesterday?",tts:"¿Qué cocinaron ayer?"},{who:"B",es:"Ayer hervimos la comida y probamos la salsa.",en:"Yesterday we boiled the food and tasted the sauce.",tts:"Ayer hervimos la comida y probamos la salsa."}]},
+  {title:"Ver televisión",tense:"Ahora",lines:[{who:"A",es:"¿Qué quieres ver?",en:"What do you want to watch?",tts:"¿Qué quieres ver?"},{who:"B",es:"Una serie. ¿Dónde está el control remoto?",en:"A series. Where is the remote control?",tts:"Una serie. ¿Dónde está el control remoto?"},{who:"A",es:"Está en el sofá.",en:"It's on the sofa.",tts:"Está en el sofá."}]},
+  {title:"Ver televisión",tense:"Planes",lines:[{who:"A",es:"¿Qué vas a hacer esta noche?",en:"What are you going to do tonight?",tts:"¿Qué vas a hacer esta noche?"},{who:"B",es:"Voy a ver una película y relajarme.",en:"I'm going to watch a movie and relax.",tts:"Voy a ver una película y relajarme."}]},
+  {title:"Ver televisión",tense:"Ayer",lines:[{who:"A",es:"¿Qué viste anoche?",en:"What did you watch last night?",tts:"¿Qué viste anoche?"},{who:"B",es:"Vi las noticias y descansé en el sofá.",en:"I watched the news and rested on the sofa.",tts:"Vi las noticias y descansé en el sofá."}]},
   {title:"En casa",tense:"Ahora",lines:[{who:"A",es:"¿Dónde está el baño?",en:"Where is the bathroom?",tts:"¿Dónde está el baño?"},{who:"B",es:"Está al lado de la habitación.",en:"It is next to the bedroom.",tts:"Está al lado de la habitación."}]},
   {title:"En casa",tense:"Planes",lines:[{who:"A",es:"¿Vas a arreglar la habitación?",en:"Are you going to tidy the bedroom?",tts:"¿Vas a arreglar la habitación?"},{who:"B",es:"Sí, voy a cambiar la sábana y la cobija.",en:"Yes, I'm going to change the sheet and the blanket.",tts:"Sí, voy a cambiar la sábana y la cobija."}]},
   {title:"En casa",tense:"Ayer",lines:[{who:"A",es:"¿Dónde estaba la toalla?",en:"Where was the towel?",tts:"¿Dónde estaba la toalla?"},{who:"B",es:"Ayer la dejé junto al lavamanos.",en:"Yesterday I left it next to the sink.",tts:"Ayer la dejé junto al lavamanos."}]}
