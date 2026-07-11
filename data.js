@@ -409,7 +409,24 @@ const FRASES=[
   {section:"🩺 ¿Cómo Te Sientes?",cls:"color:var(--green);background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2)",items:[{es:"¿Cómo te sientes?",en:"How do you feel?"},{es:"Me siento bien.",en:"I feel good."},{es:"Me siento mal.",en:"I feel bad."},{es:"Tengo hambre.",en:"I'm hungry."},{es:"Tengo sed.",en:"I'm thirsty."},{es:"Tengo sueño.",en:"I'm sleepy."},{es:"Tengo frío.",en:"I'm cold."},{es:"Tengo calor.",en:"I'm hot."},{es:"Me duele la cabeza.",en:"My head hurts."},{es:"Me duele el estómago.",en:"My stomach hurts."},{es:"Estoy cansado/a.",en:"I'm tired."},{es:"Estoy enfermo/a.",en:"I'm sick."},{es:"Necesito descansar.",en:"I need to rest."},{es:"¡Que te mejores!",en:"Get well soon!"}]},
   /* ── NEW v13: Plata y Pagos ── */
   {section:"💰 Plata y Pagos",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[{es:"¿Cuánto le debo?",en:"How much do I owe you?"},{es:"¿Tiene cambio de cincuenta mil?",en:"Do you have change for fifty thousand?"},{es:"¿Puedo pagar con tarjeta?",en:"Can I pay by card?"},{es:"Pago en efectivo.",en:"I'll pay in cash."},{es:"¿Me hace la transferencia?",en:"Can you send me the transfer? (Nequi-style)"},{es:"Quedamos a mano.",en:"We're even."},{es:"¿Me rebaja algo?",en:"Can you lower the price a bit?"},{es:"Necesito sacar plata.",en:"I need to withdraw money. (Colombian!)"},{es:"¿Dónde hay un cajero?",en:"Where is there an ATM?"},{es:"A la orden.",en:"At your service / You're welcome. (Colombian!)"}]},
+  {id:"habitacion",label:"🛏️ Habitación",type:"basic",items:[
+    {word:"cama",en:"bed",ph:"KAH-mah",tts:"cama",icon:"🛏️",color:"#a78bfa"},{word:"almohada",en:"pillow",ph:"al-moh-AH-dah",tts:"almohada",icon:"🛌",color:"#ec4899"},{word:"cobija",en:"blanket",ph:"koh-BEE-hah",tts:"cobija",icon:"🧣",color:"#e85d75"},{word:"sábana",en:"sheet",ph:"SAH-bah-nah",tts:"sábana",icon:"🛏️",color:"#60a5fa"},{word:"clóset",en:"closet",ph:"KLOH-set",tts:"clóset",icon:"🚪",color:"#a78bfa"},{word:"mesita de noche",en:"nightstand",ph:"meh-SEE-tah deh NOH-cheh",tts:"mesita de noche",icon:"🛋️",color:"#e8b44a"},{word:"lámpara",en:"lamp",ph:"LAM-pah-rah",tts:"lámpara",icon:"💡",color:"#f59e0b"},{word:"espejo",en:"mirror",ph:"ehs-PEH-hoh",tts:"espejo",icon:"🪞",color:"#60a5fa"},{word:"cortina",en:"curtain",ph:"kor-TEE-nah",tts:"cortina",icon:"🪟",color:"#4aa8a0"},{word:"armario",en:"wardrobe",ph:"ar-MAH-ryoh",tts:"armario",icon:"🗄️",color:"#92400e"}
+  ]},
+  {id:"bano",label:"🚿 Baño",type:"basic",items:[
+    {word:"baño",en:"bathroom",ph:"BAH-nyoh",tts:"baño",icon:"🚿",color:"#60a5fa"},{word:"ducha",en:"shower",ph:"DOO-chah",tts:"ducha",icon:"🚿",color:"#60a5fa"},{word:"inodoro",en:"toilet",ph:"ee-noh-DOH-roh",tts:"inodoro",icon:"🚽",color:"#94a3b8"},{word:"lavamanos",en:"sink",ph:"lah-vah-MAH-nohs",tts:"lavamanos",icon:"🧼",color:"#60a5fa"},{word:"jabón",en:"soap",ph:"hah-BON",tts:"jabón",icon:"🧴",color:"#34d399"},{word:"toalla",en:"towel",ph:"toh-AH-yah",tts:"toalla",icon:"🧖",color:"#a78bfa"},{word:"cepillo de dientes",en:"toothbrush",ph:"seh-PEE-yoh deh DYEN-tehs",tts:"cepillo de dientes",icon:"🪥",color:"#60a5fa"},{word:"pasta dental",en:"toothpaste",ph:"PAHS-tah den-TAHL",tts:"pasta dental",icon:"🦷",color:"#34d399"},{word:"papel higiénico",en:"toilet paper",ph:"pah-PEL ee-HYEH-nee-koh",tts:"papel higiénico",icon:"🧻",color:"#fff"},{word:"champú",en:"shampoo",ph:"cham-POO",tts:"champú",icon:"🧴",color:"#ec4899"}
+  ]},
+  {id:"trabajo",label:"💼 Trabajo",type:"basic",items:[
+    {word:"empresa",en:"company",ph:"em-PREH-sah",tts:"empresa",icon:"🏢",color:"#a78bfa"},{word:"jefe/a",en:"boss",ph:"HEH-feh / fah",tts:"jefe o jefa",icon:"👔",color:"#e8b44a"},{word:"cliente",en:"client / customer",ph:"klee-EN-teh",tts:"cliente",icon:"🤝",color:"#4aa8a0"},{word:"compañero/a",en:"coworker",ph:"kom-pah-NYEH-roh / rah",tts:"compañero o compañera",icon:"🧑‍💼",color:"#60a5fa"},{word:"reunión",en:"meeting",ph:"reh-oo-NYON",tts:"reunión",icon:"🗣️",color:"#ec4899"},{word:"proyecto",en:"project",ph:"proh-YEHK-toh",tts:"proyecto",icon:"📋",color:"#f59e0b"},{word:"horario",en:"schedule",ph:"oh-RAH-ryoh",tts:"horario",icon:"🕘",color:"#34d399"},{word:"sueldo",en:"salary",ph:"SWEHL-doh",tts:"sueldo",icon:"💰",color:"#e8b44a"},{word:"entrevista",en:"interview",ph:"en-treh-BEES-tah",tts:"entrevista",icon:"📝",color:"#a78bfa"},{word:"negocio",en:"business",ph:"neh-GOH-syoh",tts:"negocio",icon:"🏪",color:"#e85d75"}
+  ]},
+  {id:"oficina",label:"🖥️ Oficina",type:"basic",items:[
+    {word:"computador",en:"computer (Colombian)",ph:"kom-poo-tah-DOR",tts:"computador",icon:"💻",color:"#60a5fa"},{word:"escritorio",en:"desk",ph:"ehs-kree-TOH-ryoh",tts:"escritorio",icon:"🪑",color:"#92400e"},{word:"teclado",en:"keyboard",ph:"teh-KLAH-doh",tts:"teclado",icon:"⌨️",color:"#94a3b8"},{word:"pantalla",en:"screen",ph:"pan-TAH-yah",tts:"pantalla",icon:"🖥️",color:"#60a5fa"},{word:"impresora",en:"printer",ph:"eem-preh-SOH-rah",tts:"impresora",icon:"🖨️",color:"#a78bfa"},{word:"documento",en:"document",ph:"doh-koo-MEN-toh",tts:"documento",icon:"📄",color:"#fff"},{word:"correo electrónico",en:"email",ph:"koh-RREH-oh eh-lehk-TROH-nee-koh",tts:"correo electrónico",icon:"📧",color:"#4aa8a0"},{word:"archivo",en:"file",ph:"ar-CHEE-boh",tts:"archivo",icon:"🗂️",color:"#f59e0b"},{word:"silla",en:"chair",ph:"SEE-yah",tts:"silla",icon:"🪑",color:"#34d399"}
+  ]},
+  {id:"carropartes",label:"🚗 Partes del carro",type:"basic",items:[
+    {word:"motor",en:"engine",ph:"moh-TOR",tts:"motor",icon:"⚙️",color:"#94a3b8"},{word:"llanta",en:"tire (Colombian)",ph:"YAN-tah",tts:"llanta",icon:"🛞",color:"#e85d75"},{word:"volante",en:"steering wheel",ph:"boh-LAN-teh",tts:"volante",icon:"⭕",color:"#60a5fa"},{word:"freno",en:"brake",ph:"FREH-noh",tts:"freno",icon:"🛑",color:"#e85d75"},{word:"batería",en:"battery",ph:"bah-teh-REE-ah",tts:"batería",icon:"🔋",color:"#34d399"},{word:"parabrisas",en:"windshield",ph:"pah-rah-BREE-sahs",tts:"parabrisas",icon:"🚘",color:"#60a5fa"},{word:"espejo retrovisor",en:"rearview mirror",ph:"ehs-PEH-hoh rreh-troh-bee-SOR",tts:"espejo retrovisor",icon:"🪞",color:"#a78bfa"},{word:"placa",en:"license plate",ph:"PLAH-kah",tts:"placa",icon:"🔖",color:"#e8b44a"},{word:"baúl",en:"trunk",ph:"bah-OOL",tts:"baúl",icon:"🧳",color:"#92400e"},{word:"capó",en:"hood",ph:"kah-POH",tts:"capó",icon:"🚗",color:"#f59e0b"},{word:"puerta",en:"door",ph:"PWER-tah",tts:"puerta",icon:"🚪",color:"#4aa8a0"}
+  ]},
 ];
+/* New home, work, office, and car categories are also available in Vocab. */
+VC.push(...FRASES.filter(section=>section.id&&section.type==="basic"));
 const DIALOGUE=[{who:"A",es:"Hola, ¿cómo está?",en:"Hi, how are you? (formal)",tts:"Hola, ¿cómo está?"},{who:"B",es:"Hola, estoy bien, gracias.",en:"Hi, I'm fine, thank you.",tts:"Hola, estoy bien, gracias."},{who:"A",es:"Soy David. ¡Gusto en conocerle!",en:"I'm David. Nice to meet you!",tts:"Soy David. ¡Gusto en conocerle!"},{who:"B",es:"Soy Roberto. ¡El gusto es mío!",en:"I'm Roberto. The pleasure is mine!",tts:"Soy Roberto. ¡El gusto es mío!"},{who:"A",es:"Mucho gusto, señor Roberto.",en:"Nice to meet you, Mr. Roberto.",tts:"Mucho gusto, señor Roberto."},{who:"B",es:"Igualmente, señor David.",en:"Likewise, Mr. David.",tts:"Igualmente, señor David."}];
 const CONVERSATIONS=[
   {title:"Presentación personal",tense:"Ahora",lines:[{who:"A",es:"Hola, ¿cómo te llamas?",en:"Hi, what's your name?",tts:"Hola, ¿cómo te llamas?"},{who:"B",es:"Me llamo Laura. Mucho gusto.",en:"My name is Laura. Nice to meet you.",tts:"Me llamo Laura. Mucho gusto."}]},
@@ -439,6 +456,54 @@ const CONVERSATIONS=[
   {title:"En casa",tense:"Ahora",lines:[{who:"A",es:"¿Dónde está el baño?",en:"Where is the bathroom?",tts:"¿Dónde está el baño?"},{who:"B",es:"Está al lado de la habitación.",en:"It is next to the bedroom.",tts:"Está al lado de la habitación."}]},
   {title:"En casa",tense:"Planes",lines:[{who:"A",es:"¿Vas a arreglar la habitación?",en:"Are you going to tidy the bedroom?",tts:"¿Vas a arreglar la habitación?"},{who:"B",es:"Sí, voy a cambiar la sábana y la cobija.",en:"Yes, I'm going to change the sheet and the blanket.",tts:"Sí, voy a cambiar la sábana y la cobija."}]},
   {title:"En casa",tense:"Ayer",lines:[{who:"A",es:"¿Dónde estaba la toalla?",en:"Where was the towel?",tts:"¿Dónde estaba la toalla?"},{who:"B",es:"Ayer la dejé junto al lavamanos.",en:"Yesterday I left it next to the sink.",tts:"Ayer la dejé junto al lavamanos."}]}
+  ,{title:"La habitación",tense:"Ahora",lines:[{who:"A",es:"¿Dónde está la sábana?",en:"Where is the sheet?",tts:"¿Dónde está la sábana?"},{who:"B",es:"Está en el clóset, al lado de la cobija.",en:"It is in the closet, next to the blanket.",tts:"Está en el clóset, al lado de la cobija."},{who:"A",es:"También necesito una almohada.",en:"I also need a pillow.",tts:"También necesito una almohada."},{who:"B",es:"Hay una sobre la cama.",en:"There is one on the bed.",tts:"Hay una sobre la cama."}]},
+  {title:"La habitación",tense:"Planes",lines:[
+    {who:"A",es:"Voy a organizar la habitación mañana.",en:"I'm going to organize the bedroom tomorrow.",tts:"Voy a organizar la habitación mañana."},
+    {who:"B",es:"¿Vas a cambiar las sábanas?",en:"Are you going to change the sheets?",tts:"¿Vas a cambiar las sábanas?"},
+    {who:"A",es:"Sí, y voy a comprar una almohada nueva.",en:"Yes, and I'm going to buy a new pillow.",tts:"Sí, y voy a comprar una almohada nueva."}]},
+  {title:"La habitación",tense:"Ayer",lines:[
+    {who:"A",es:"Ayer arreglé la habitación.",en:"Yesterday I tidied up the bedroom.",tts:"Ayer arreglé la habitación."},
+    {who:"B",es:"¿Lavaste las cobijas?",en:"Did you wash the blankets?",tts:"¿Lavaste las cobijas?"},
+    {who:"A",es:"Sí, y guardé la ropa en el clóset.",en:"Yes, and I put the clothes away in the closet.",tts:"Sí, y guardé la ropa en el clóset."}]},
+  {title:"El baño",tense:"Ahora",lines:[{who:"A",es:"Disculpe, ¿dónde está el baño?",en:"Excuse me, where is the bathroom?",tts:"Disculpe, ¿dónde está el baño?"},{who:"B",es:"Está al fondo, a la derecha.",en:"It is at the back, on the right.",tts:"Está al fondo, a la derecha."},{who:"A",es:"¿Hay una toalla limpia?",en:"Is there a clean towel?",tts:"¿Hay una toalla limpia?"},{who:"B",es:"Sí, está junto al lavamanos.",en:"Yes, it is next to the sink.",tts:"Sí, está junto al lavamanos."}]},
+  {title:"El baño",tense:"Planes",lines:[
+    {who:"A",es:"Voy a tomar una ducha.",en:"I'm going to take a shower.",tts:"Voy a tomar una ducha."},
+    {who:"B",es:"Listo, voy a buscar una toalla limpia.",en:"OK, I'm going to get a clean towel.",tts:"Listo, voy a buscar una toalla limpia."},
+    {who:"A",es:"¿Vas a comprar champú mañana?",en:"Are you going to buy shampoo tomorrow?",tts:"¿Vas a comprar champú mañana?"},
+    {who:"B",es:"Sí, y también jabón.",en:"Yes, and soap too.",tts:"Sí, y también jabón."}]},
+  {title:"El baño",tense:"Ayer",lines:[
+    {who:"A",es:"Ayer limpié el baño.",en:"Yesterday I cleaned the bathroom.",tts:"Ayer limpié el baño."},
+    {who:"B",es:"¡Gracias! ¿Cambiaste la cortina de baño?",en:"Thanks! Did you change the shower curtain?",tts:"¡Gracias! ¿Cambiaste la cortina de baño?"},
+    {who:"A",es:"Sí, y lavé el lavamanos.",en:"Yes, and I washed the sink.",tts:"Sí, y lavé el lavamanos."}]},
+  {title:"Trabajo y oficina",tense:"Ahora",lines:[{who:"A",es:"¿Tienes una reunión hoy?",en:"Do you have a meeting today?",tts:"¿Tienes una reunión hoy?"},{who:"B",es:"Sí, con un cliente nuevo.",en:"Yes, with a new client.",tts:"Sí, con un cliente nuevo."},{who:"A",es:"¿Vas a enviar el correo?",en:"Are you going to send the email?",tts:"¿Vas a enviar el correo?"},{who:"B",es:"Sí, después de imprimir el documento.",en:"Yes, after printing the document.",tts:"Sí, después de imprimir el documento."}]},
+  {title:"Trabajo y oficina",tense:"Planes",lines:[
+    {who:"A",es:"Mañana voy a firmar el contrato.",en:"Tomorrow I'm going to sign the contract.",tts:"Mañana voy a firmar el contrato."},
+    {who:"B",es:"¡Qué bueno! ¿Vas a hablar con el jefe?",en:"Great! Are you going to talk to the boss?",tts:"¡Qué bueno! ¿Vas a hablar con el jefe?"},
+    {who:"A",es:"Sí, vamos a revisar el proyecto en la sala de juntas.",en:"Yes, we're going to review the project in the meeting room.",tts:"Sí, vamos a revisar el proyecto en la sala de juntas."}]},
+  {title:"Trabajo y oficina",tense:"Ayer",lines:[
+    {who:"A",es:"¿Cómo te fue en la reunión ayer?",en:"How did the meeting go yesterday?",tts:"¿Cómo te fue en la reunión ayer?"},
+    {who:"B",es:"Muy bien. El cliente firmó el contrato.",en:"Very well. The client signed the contract.",tts:"Muy bien. El cliente firmó el contrato."},
+    {who:"A",es:"¡Felicitaciones! Fue una buena venta.",en:"Congratulations! It was a good sale.",tts:"¡Felicitaciones! Fue una buena venta."}]},
+  {title:"Partes del carro",tense:"Ahora",lines:[{who:"A",es:"¿Qué le pasa al carro?",en:"What is wrong with the car?",tts:"¿Qué le pasa al carro?"},{who:"B",es:"La llanta está baja y el freno suena.",en:"The tire is low and the brake makes a noise.",tts:"La llanta está baja y el freno suena."},{who:"A",es:"¿Hay gasolina?",en:"Is there gas?",tts:"¿Hay gasolina?"},{who:"B",es:"Sí, pero hay que revisar la batería.",en:"Yes, but we need to check the battery.",tts:"Sí, pero hay que revisar la batería."}]},
+  {title:"Partes del carro",tense:"Planes",lines:[
+    {who:"A",es:"Mañana voy a llevar el carro al taller.",en:"Tomorrow I'm going to take the car to the shop.",tts:"Mañana voy a llevar el carro al taller."},
+    {who:"B",es:"¿Qué le van a cambiar?",en:"What are they going to change on it?",tts:"¿Qué le van a cambiar?"},
+    {who:"A",es:"Van a cambiar la llanta y revisar los frenos.",en:"They're going to change the tire and check the brakes.",tts:"Van a cambiar la llanta y revisar los frenos."}]},
+  {title:"Partes del carro",tense:"Ayer",lines:[
+    {who:"A",es:"Ayer llevé el carro al taller.",en:"Yesterday I took the car to the shop.",tts:"Ayer llevé el carro al taller."},
+    {who:"B",es:"¿Qué le hicieron?",en:"What did they do to it?",tts:"¿Qué le hicieron?"},
+    {who:"A",es:"Cambiaron la batería y arreglaron el pito.",en:"They changed the battery and fixed the horn.",tts:"Cambiaron la batería y arreglaron el pito."},
+    {who:"B",es:"¡Uy, qué caro!",en:"Wow, so expensive!",tts:"¡Uy, qué caro!"}]},
+  {title:"Preparar la cocina",tense:"Ahora",lines:[{who:"A",es:"¿Dónde está el cuchillo?",en:"Where is the knife?",tts:"¿Dónde está el cuchillo?"},{who:"B",es:"Está en el cajón, junto a la cuchara.",en:"It is in the drawer, next to the spoon.",tts:"Está en el cajón, junto a la cuchara."},{who:"A",es:"Voy a cortar las verduras.",en:"I am going to cut the vegetables.",tts:"Voy a cortar las verduras."},{who:"B",es:"Listo, yo caliento la olla.",en:"All right, I will heat the pot.",tts:"Listo, yo caliento la olla."}]},
+  {title:"Preparar la cocina",tense:"Planes",lines:[
+    {who:"A",es:"¿Qué vamos a cocinar mañana?",en:"What are we going to cook tomorrow?",tts:"¿Qué vamos a cocinar mañana?"},
+    {who:"B",es:"Vamos a freír unas arepas.",en:"We're going to fry some arepas.",tts:"Vamos a freír unas arepas."},
+    {who:"A",es:"Voy a sacar los huevos de la nevera.",en:"I'm going to get the eggs out of the fridge.",tts:"Voy a sacar los huevos de la nevera."}]},
+  {title:"Preparar la cocina",tense:"Ayer",lines:[
+    {who:"A",es:"¿Qué cocinaste anoche?",en:"What did you cook last night?",tts:"¿Qué cocinaste anoche?"},
+    {who:"B",es:"Hice una sopa. Herví las verduras en la olla.",en:"I made a soup. I boiled the vegetables in the pot.",tts:"Hice una sopa. Herví las verduras en la olla."},
+    {who:"A",es:"¿Y probaste la salsa?",en:"And did you taste the sauce?",tts:"¿Y probaste la salsa?"},
+    {who:"B",es:"Sí, ¡quedó deliciosa!",en:"Yes, it turned out delicious!",tts:"Sí, ¡quedó deliciosa!"}]}
 ];
 
 // ── Grammar data ──────────────────────────────────────────────────────────────
@@ -495,3 +560,40 @@ const REFLEXIVOS=[
 ];
 
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   Lesson Player Content (v15) — speaking-first
+   goal: the sentence you'll be able to SAY at the end
+   words: key chunks (tap to hear) · phrases: production cards (EN shown → you say it in Spanish, tap to check)
+   ═══════════════════════════════════════════════════════════════════════════ */
+const LESSON_CONTENT={
+  presentate:{goal:{es:"Me llamo Seth, soy de Estados Unidos y vivo en Colombia.",en:"My name is Seth, I'm from the U.S. and I live in Colombia."},
+    words:[{es:"Me llamo...",en:"My name is..."},{es:"Soy de...",en:"I'm from..."},{es:"Vivo en...",en:"I live in..."},{es:"Mucho gusto",en:"Nice to meet you"},{es:"¿Cómo te llamas?",en:"What's your name?"},{es:"¿De dónde eres?",en:"Where are you from?"}],
+    phrases:[{en:"My name is Ana.",es:"Me llamo Ana."},{en:"I'm from the United States.",es:"Soy de Estados Unidos."},{en:"I live in Bogotá.",es:"Vivo en Bogotá."},{en:"Nice to meet you!",es:"¡Mucho gusto!"}]},
+  plata:{goal:{es:"¿Cuánto cuesta? — Son veinte mil pesos.",en:"How much is it? — It's twenty thousand pesos."},
+    words:[{es:"La plata",en:"Money (Colombian!)"},{es:"¿Cuánto cuesta?",en:"How much does it cost?"},{es:"Mil pesos",en:"A thousand pesos"},{es:"El cambio",en:"Change"},{es:"En efectivo",en:"In cash"},{es:"Caro / Barato",en:"Expensive / Cheap"}],
+    phrases:[{en:"How much does it cost?",es:"¿Cuánto cuesta?"},{en:"It's ten thousand pesos.",es:"Son diez mil pesos."},{en:"Do you have change?",es:"¿Tiene cambio?"},{en:"It's very expensive!",es:"¡Está muy caro!"}]},
+  trabajo:{goal:{es:"Trabajo como ingeniero y tengo una reunión hoy.",en:"I work as an engineer and I have a meeting today."},
+    words:[{es:"El trabajo",en:"Work / Job"},{es:"La reunión",en:"Meeting"},{es:"El cliente",en:"Client"},{es:"El jefe",en:"Boss"},{es:"El correo",en:"Email"},{es:"La oficina",en:"Office"}],
+    phrases:[{en:"What do you do for work?",es:"¿En qué trabajas?"},{en:"I work as an engineer.",es:"Trabajo como ingeniero."},{en:"I have a meeting today.",es:"Tengo una reunión hoy."},{en:"I like my job.",es:"Me gusta mi trabajo."}]},
+  casa:{goal:{es:"La toalla está en la habitación, sobre la cama.",en:"The towel is in the bedroom, on the bed."},
+    words:[{es:"La cama",en:"Bed"},{es:"La almohada",en:"Pillow"},{es:"La cobija",en:"Blanket (Colombian!)"},{es:"La ducha",en:"Shower"},{es:"La toalla",en:"Towel"},{es:"El clóset",en:"Closet"}],
+    phrases:[{en:"Where is the towel?",es:"¿Dónde está la toalla?"},{en:"It's on the bed.",es:"Está sobre la cama."},{en:"I need a pillow.",es:"Necesito una almohada."},{en:"The soap is in the shower.",es:"El jabón está en la ducha."}]},
+  calle:{goal:{es:"Siga derecho y gire a la derecha en el semáforo.",en:"Go straight and turn right at the traffic light."},
+    words:[{es:"La derecha",en:"Right"},{es:"La izquierda",en:"Left"},{es:"La esquina",en:"Corner"},{es:"El semáforo",en:"Traffic light"},{es:"Queda cerca",en:"It's nearby"},{es:"Queda lejos",en:"It's far"}],
+    phrases:[{en:"Where is the bank?",es:"¿Dónde queda el banco?"},{en:"Go straight.",es:"Siga derecho."},{en:"Turn left at the corner.",es:"Gire a la izquierda en la esquina."},{en:"Is it nearby?",es:"¿Queda cerca?"}]},
+  cocina:{goal:{es:"Voy a cortar las verduras y tú calientas la olla.",en:"I'll cut the vegetables and you heat the pot."},
+    words:[{es:"El cuchillo",en:"Knife"},{es:"La olla",en:"Pot"},{es:"La sartén",en:"Pan"},{es:"Cortar",en:"To cut"},{es:"Hervir",en:"To boil"},{es:"La nevera",en:"Fridge (Colombian!)"}],
+    phrases:[{en:"Where is the knife?",es:"¿Dónde está el cuchillo?"},{en:"I'm going to cut the onion.",es:"Voy a cortar la cebolla."},{en:"The pot is on the stove.",es:"La olla está en la estufa."},{en:"It's delicious!",es:"¡Está delicioso!"}]},
+  gustos:{goal:{es:"Me gusta cocinar y pasar tiempo con mi familia.",en:"I like cooking and spending time with my family."},
+    words:[{es:"Me gusta...",en:"I like..."},{es:"Me encanta...",en:"I love..."},{es:"La familia",en:"Family"},{es:"Los hermanos",en:"Siblings"},{es:"Mi favorito/a",en:"My favorite"},{es:"Odio...",en:"I hate..."}],
+    phrases:[{en:"I like music.",es:"Me gusta la música."},{en:"I love traveling.",es:"Me encanta viajar."},{en:"Do you have siblings?",es:"¿Tienes hermanos?"},{en:"I love them a lot.",es:"Los quiero mucho."}]},
+  planes:{goal:{es:"¿Nos vemos mañana? — ¡De una! Te escribo.",en:"Shall we meet tomorrow? — I'm in! I'll text you."},
+    words:[{es:"Mañana",en:"Tomorrow"},{es:"El celular",en:"Cell phone (Colombian!)"},{es:"El mensaje",en:"Message"},{es:"La llamada",en:"Call"},{es:"¿Aló?",en:"Hello? (phone, Colombian!)"},{es:"De pronto",en:"Maybe (Colombian!)"}],
+    phrases:[{en:"Shall we meet tomorrow?",es:"¿Nos vemos mañana?"},{en:"I'll call you later.",es:"Te llamo más tarde."},{en:"Send me the location.",es:"Mándame la ubicación."},{en:"I'm in!",es:"¡De una!"}]},
+  sentirse:{goal:{es:"Me duele la cabeza y tengo sueño.",en:"My head hurts and I'm sleepy."},
+    words:[{es:"Cansado/a",en:"Tired"},{es:"Feliz",en:"Happy"},{es:"Tengo hambre",en:"I'm hungry"},{es:"Tengo sueño",en:"I'm sleepy"},{es:"Me duele...",en:"...hurts"},{es:"Enfermo/a",en:"Sick"}],
+    phrases:[{en:"How do you feel?",es:"¿Cómo te sientes?"},{en:"I'm hungry.",es:"Tengo hambre."},{en:"My head hurts.",es:"Me duele la cabeza."},{en:"I need to rest.",es:"Necesito descansar."}]},
+  colombia:{goal:{es:"¿Qué más, parce? — Todo bien, ¡qué bacano verte!",en:"What's up, buddy? — All good, so cool to see you!"},
+    words:[{es:"Parce",en:"Buddy (Colombian!)"},{es:"Chévere",en:"Cool"},{es:"Bacano",en:"Awesome (Colombian!)"},{es:"El tinto",en:"Black coffee (Colombian!)"},{es:"La plata",en:"Money (Colombian!)"},{es:"¿Qué más?",en:"What's up? (Colombian!)"}],
+    phrases:[{en:"What's up, buddy?",es:"¿Qué más, parce?"},{en:"How cool!",es:"¡Qué bacano!"},{en:"Can I have a coffee?",es:"¿Me regala un tinto?"},{en:"OK, got it.",es:"Listo."}]},
+};
