@@ -457,10 +457,53 @@ const CONVERSATIONS=[
   {title:"En casa",tense:"Planes",lines:[{who:"A",es:"¿Vas a arreglar la habitación?",en:"Are you going to tidy the bedroom?",tts:"¿Vas a arreglar la habitación?"},{who:"B",es:"Sí, voy a cambiar la sábana y la cobija.",en:"Yes, I'm going to change the sheet and the blanket.",tts:"Sí, voy a cambiar la sábana y la cobija."}]},
   {title:"En casa",tense:"Ayer",lines:[{who:"A",es:"¿Dónde estaba la toalla?",en:"Where was the towel?",tts:"¿Dónde estaba la toalla?"},{who:"B",es:"Ayer la dejé junto al lavamanos.",en:"Yesterday I left it next to the sink.",tts:"Ayer la dejé junto al lavamanos."}]}
   ,{title:"La habitación",tense:"Ahora",lines:[{who:"A",es:"¿Dónde está la sábana?",en:"Where is the sheet?",tts:"¿Dónde está la sábana?"},{who:"B",es:"Está en el clóset, al lado de la cobija.",en:"It is in the closet, next to the blanket.",tts:"Está en el clóset, al lado de la cobija."},{who:"A",es:"También necesito una almohada.",en:"I also need a pillow.",tts:"También necesito una almohada."},{who:"B",es:"Hay una sobre la cama.",en:"There is one on the bed.",tts:"Hay una sobre la cama."}]},
+  {title:"La habitación",tense:"Planes",lines:[
+    {who:"A",es:"Voy a organizar la habitación mañana.",en:"I'm going to organize the bedroom tomorrow.",tts:"Voy a organizar la habitación mañana."},
+    {who:"B",es:"¿Vas a cambiar las sábanas?",en:"Are you going to change the sheets?",tts:"¿Vas a cambiar las sábanas?"},
+    {who:"A",es:"Sí, y voy a comprar una almohada nueva.",en:"Yes, and I'm going to buy a new pillow.",tts:"Sí, y voy a comprar una almohada nueva."}]},
+  {title:"La habitación",tense:"Ayer",lines:[
+    {who:"A",es:"Ayer arreglé la habitación.",en:"Yesterday I tidied up the bedroom.",tts:"Ayer arreglé la habitación."},
+    {who:"B",es:"¿Lavaste las cobijas?",en:"Did you wash the blankets?",tts:"¿Lavaste las cobijas?"},
+    {who:"A",es:"Sí, y guardé la ropa en el clóset.",en:"Yes, and I put the clothes away in the closet.",tts:"Sí, y guardé la ropa en el clóset."}]},
   {title:"El baño",tense:"Ahora",lines:[{who:"A",es:"Disculpe, ¿dónde está el baño?",en:"Excuse me, where is the bathroom?",tts:"Disculpe, ¿dónde está el baño?"},{who:"B",es:"Está al fondo, a la derecha.",en:"It is at the back, on the right.",tts:"Está al fondo, a la derecha."},{who:"A",es:"¿Hay una toalla limpia?",en:"Is there a clean towel?",tts:"¿Hay una toalla limpia?"},{who:"B",es:"Sí, está junto al lavamanos.",en:"Yes, it is next to the sink.",tts:"Sí, está junto al lavamanos."}]},
+  {title:"El baño",tense:"Planes",lines:[
+    {who:"A",es:"Voy a tomar una ducha.",en:"I'm going to take a shower.",tts:"Voy a tomar una ducha."},
+    {who:"B",es:"Listo, voy a buscar una toalla limpia.",en:"OK, I'm going to get a clean towel.",tts:"Listo, voy a buscar una toalla limpia."},
+    {who:"A",es:"¿Vas a comprar champú mañana?",en:"Are you going to buy shampoo tomorrow?",tts:"¿Vas a comprar champú mañana?"},
+    {who:"B",es:"Sí, y también jabón.",en:"Yes, and soap too.",tts:"Sí, y también jabón."}]},
+  {title:"El baño",tense:"Ayer",lines:[
+    {who:"A",es:"Ayer limpié el baño.",en:"Yesterday I cleaned the bathroom.",tts:"Ayer limpié el baño."},
+    {who:"B",es:"¡Gracias! ¿Cambiaste la cortina de baño?",en:"Thanks! Did you change the shower curtain?",tts:"¡Gracias! ¿Cambiaste la cortina de baño?"},
+    {who:"A",es:"Sí, y lavé el lavamanos.",en:"Yes, and I washed the sink.",tts:"Sí, y lavé el lavamanos."}]},
   {title:"Trabajo y oficina",tense:"Ahora",lines:[{who:"A",es:"¿Tienes una reunión hoy?",en:"Do you have a meeting today?",tts:"¿Tienes una reunión hoy?"},{who:"B",es:"Sí, con un cliente nuevo.",en:"Yes, with a new client.",tts:"Sí, con un cliente nuevo."},{who:"A",es:"¿Vas a enviar el correo?",en:"Are you going to send the email?",tts:"¿Vas a enviar el correo?"},{who:"B",es:"Sí, después de imprimir el documento.",en:"Yes, after printing the document.",tts:"Sí, después de imprimir el documento."}]},
+  {title:"Trabajo y oficina",tense:"Planes",lines:[
+    {who:"A",es:"Mañana voy a firmar el contrato.",en:"Tomorrow I'm going to sign the contract.",tts:"Mañana voy a firmar el contrato."},
+    {who:"B",es:"¡Qué bueno! ¿Vas a hablar con el jefe?",en:"Great! Are you going to talk to the boss?",tts:"¡Qué bueno! ¿Vas a hablar con el jefe?"},
+    {who:"A",es:"Sí, vamos a revisar el proyecto en la sala de juntas.",en:"Yes, we're going to review the project in the meeting room.",tts:"Sí, vamos a revisar el proyecto en la sala de juntas."}]},
+  {title:"Trabajo y oficina",tense:"Ayer",lines:[
+    {who:"A",es:"¿Cómo te fue en la reunión ayer?",en:"How did the meeting go yesterday?",tts:"¿Cómo te fue en la reunión ayer?"},
+    {who:"B",es:"Muy bien. El cliente firmó el contrato.",en:"Very well. The client signed the contract.",tts:"Muy bien. El cliente firmó el contrato."},
+    {who:"A",es:"¡Felicitaciones! Fue una buena venta.",en:"Congratulations! It was a good sale.",tts:"¡Felicitaciones! Fue una buena venta."}]},
   {title:"Partes del carro",tense:"Ahora",lines:[{who:"A",es:"¿Qué le pasa al carro?",en:"What is wrong with the car?",tts:"¿Qué le pasa al carro?"},{who:"B",es:"La llanta está baja y el freno suena.",en:"The tire is low and the brake makes a noise.",tts:"La llanta está baja y el freno suena."},{who:"A",es:"¿Hay gasolina?",en:"Is there gas?",tts:"¿Hay gasolina?"},{who:"B",es:"Sí, pero hay que revisar la batería.",en:"Yes, but we need to check the battery.",tts:"Sí, pero hay que revisar la batería."}]},
-  {title:"Preparar la cocina",tense:"Ahora",lines:[{who:"A",es:"¿Dónde está el cuchillo?",en:"Where is the knife?",tts:"¿Dónde está el cuchillo?"},{who:"B",es:"Está en el cajón, junto a la cuchara.",en:"It is in the drawer, next to the spoon.",tts:"Está en el cajón, junto a la cuchara."},{who:"A",es:"Voy a cortar las verduras.",en:"I am going to cut the vegetables.",tts:"Voy a cortar las verduras."},{who:"B",es:"Listo, yo caliento la olla.",en:"All right, I will heat the pot.",tts:"Listo, yo caliento la olla."}]}
+  {title:"Partes del carro",tense:"Planes",lines:[
+    {who:"A",es:"Mañana voy a llevar el carro al taller.",en:"Tomorrow I'm going to take the car to the shop.",tts:"Mañana voy a llevar el carro al taller."},
+    {who:"B",es:"¿Qué le van a cambiar?",en:"What are they going to change on it?",tts:"¿Qué le van a cambiar?"},
+    {who:"A",es:"Van a cambiar la llanta y revisar los frenos.",en:"They're going to change the tire and check the brakes.",tts:"Van a cambiar la llanta y revisar los frenos."}]},
+  {title:"Partes del carro",tense:"Ayer",lines:[
+    {who:"A",es:"Ayer llevé el carro al taller.",en:"Yesterday I took the car to the shop.",tts:"Ayer llevé el carro al taller."},
+    {who:"B",es:"¿Qué le hicieron?",en:"What did they do to it?",tts:"¿Qué le hicieron?"},
+    {who:"A",es:"Cambiaron la batería y arreglaron el pito.",en:"They changed the battery and fixed the horn.",tts:"Cambiaron la batería y arreglaron el pito."},
+    {who:"B",es:"¡Uy, qué caro!",en:"Wow, so expensive!",tts:"¡Uy, qué caro!"}]},
+  {title:"Preparar la cocina",tense:"Ahora",lines:[{who:"A",es:"¿Dónde está el cuchillo?",en:"Where is the knife?",tts:"¿Dónde está el cuchillo?"},{who:"B",es:"Está en el cajón, junto a la cuchara.",en:"It is in the drawer, next to the spoon.",tts:"Está en el cajón, junto a la cuchara."},{who:"A",es:"Voy a cortar las verduras.",en:"I am going to cut the vegetables.",tts:"Voy a cortar las verduras."},{who:"B",es:"Listo, yo caliento la olla.",en:"All right, I will heat the pot.",tts:"Listo, yo caliento la olla."}]},
+  {title:"Preparar la cocina",tense:"Planes",lines:[
+    {who:"A",es:"¿Qué vamos a cocinar mañana?",en:"What are we going to cook tomorrow?",tts:"¿Qué vamos a cocinar mañana?"},
+    {who:"B",es:"Vamos a freír unas arepas.",en:"We're going to fry some arepas.",tts:"Vamos a freír unas arepas."},
+    {who:"A",es:"Voy a sacar los huevos de la nevera.",en:"I'm going to get the eggs out of the fridge.",tts:"Voy a sacar los huevos de la nevera."}]},
+  {title:"Preparar la cocina",tense:"Ayer",lines:[
+    {who:"A",es:"¿Qué cocinaste anoche?",en:"What did you cook last night?",tts:"¿Qué cocinaste anoche?"},
+    {who:"B",es:"Hice una sopa. Herví las verduras en la olla.",en:"I made a soup. I boiled the vegetables in the pot.",tts:"Hice una sopa. Herví las verduras en la olla."},
+    {who:"A",es:"¿Y probaste la salsa?",en:"And did you taste the sauce?",tts:"¿Y probaste la salsa?"},
+    {who:"B",es:"Sí, ¡quedó deliciosa!",en:"Yes, it turned out delicious!",tts:"Sí, ¡quedó deliciosa!"}]}
 ];
 
 // ── Grammar data ──────────────────────────────────────────────────────────────
@@ -515,3 +558,42 @@ const REFLEXIVOS=[
   {inf:"sentirse",en:"to feel (emotion/physical)",forms:[{p:"Yo",v:"me siento",e:"I feel"},{p:"Tú",v:"te sientes",e:"you feel"},{p:"Él/Ella",v:"se siente",e:"he/she feels"},{p:"Nosotros",v:"nos sentimos",e:"we feel"},{p:"Ellos",v:"se sienten",e:"they feel"}],example:{es:"Me siento muy bien hoy.",en:"I feel very well today."}},
   {inf:"despertarse",en:"to wake up",forms:[{p:"Yo",v:"me despierto",e:"I wake up"},{p:"Tú",v:"te despiertas",e:"you wake up"},{p:"Él/Ella",v:"se despierta",e:"he/she wakes up"},{p:"Nosotros",v:"nos despertamos",e:"we wake up"},{p:"Ellos",v:"se despiertan",e:"they wake up"}],example:{es:"Me despierto temprano en Colombia.",en:"I wake up early in Colombia."}},
 ];
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Lesson Player Content (v15) — speaking-first
+   goal: the sentence you'll be able to SAY at the end
+   words: key chunks (tap to hear) · phrases: production cards (EN shown → you say it in Spanish, tap to check)
+   ═══════════════════════════════════════════════════════════════════════════ */
+const LESSON_CONTENT={
+  presentate:{goal:{es:"Me llamo Seth, soy de Estados Unidos y vivo en Colombia.",en:"My name is Seth, I'm from the U.S. and I live in Colombia."},
+    words:[{es:"Me llamo...",en:"My name is..."},{es:"Soy de...",en:"I'm from..."},{es:"Vivo en...",en:"I live in..."},{es:"Mucho gusto",en:"Nice to meet you"},{es:"¿Cómo te llamas?",en:"What's your name?"},{es:"¿De dónde eres?",en:"Where are you from?"}],
+    phrases:[{en:"My name is Ana.",es:"Me llamo Ana."},{en:"I'm from the United States.",es:"Soy de Estados Unidos."},{en:"I live in Bogotá.",es:"Vivo en Bogotá."},{en:"Nice to meet you!",es:"¡Mucho gusto!"}]},
+  plata:{goal:{es:"¿Cuánto cuesta? — Son veinte mil pesos.",en:"How much is it? — It's twenty thousand pesos."},
+    words:[{es:"La plata",en:"Money (Colombian!)"},{es:"¿Cuánto cuesta?",en:"How much does it cost?"},{es:"Mil pesos",en:"A thousand pesos"},{es:"El cambio",en:"Change"},{es:"En efectivo",en:"In cash"},{es:"Caro / Barato",en:"Expensive / Cheap"}],
+    phrases:[{en:"How much does it cost?",es:"¿Cuánto cuesta?"},{en:"It's ten thousand pesos.",es:"Son diez mil pesos."},{en:"Do you have change?",es:"¿Tiene cambio?"},{en:"It's very expensive!",es:"¡Está muy caro!"}]},
+  trabajo:{goal:{es:"Trabajo como ingeniero y tengo una reunión hoy.",en:"I work as an engineer and I have a meeting today."},
+    words:[{es:"El trabajo",en:"Work / Job"},{es:"La reunión",en:"Meeting"},{es:"El cliente",en:"Client"},{es:"El jefe",en:"Boss"},{es:"El correo",en:"Email"},{es:"La oficina",en:"Office"}],
+    phrases:[{en:"What do you do for work?",es:"¿En qué trabajas?"},{en:"I work as an engineer.",es:"Trabajo como ingeniero."},{en:"I have a meeting today.",es:"Tengo una reunión hoy."},{en:"I like my job.",es:"Me gusta mi trabajo."}]},
+  casa:{goal:{es:"La toalla está en la habitación, sobre la cama.",en:"The towel is in the bedroom, on the bed."},
+    words:[{es:"La cama",en:"Bed"},{es:"La almohada",en:"Pillow"},{es:"La cobija",en:"Blanket (Colombian!)"},{es:"La ducha",en:"Shower"},{es:"La toalla",en:"Towel"},{es:"El clóset",en:"Closet"}],
+    phrases:[{en:"Where is the towel?",es:"¿Dónde está la toalla?"},{en:"It's on the bed.",es:"Está sobre la cama."},{en:"I need a pillow.",es:"Necesito una almohada."},{en:"The soap is in the shower.",es:"El jabón está en la ducha."}]},
+  calle:{goal:{es:"Siga derecho y gire a la derecha en el semáforo.",en:"Go straight and turn right at the traffic light."},
+    words:[{es:"La derecha",en:"Right"},{es:"La izquierda",en:"Left"},{es:"La esquina",en:"Corner"},{es:"El semáforo",en:"Traffic light"},{es:"Queda cerca",en:"It's nearby"},{es:"Queda lejos",en:"It's far"}],
+    phrases:[{en:"Where is the bank?",es:"¿Dónde queda el banco?"},{en:"Go straight.",es:"Siga derecho."},{en:"Turn left at the corner.",es:"Gire a la izquierda en la esquina."},{en:"Is it nearby?",es:"¿Queda cerca?"}]},
+  cocina:{goal:{es:"Voy a cortar las verduras y tú calientas la olla.",en:"I'll cut the vegetables and you heat the pot."},
+    words:[{es:"El cuchillo",en:"Knife"},{es:"La olla",en:"Pot"},{es:"La sartén",en:"Pan"},{es:"Cortar",en:"To cut"},{es:"Hervir",en:"To boil"},{es:"La nevera",en:"Fridge (Colombian!)"}],
+    phrases:[{en:"Where is the knife?",es:"¿Dónde está el cuchillo?"},{en:"I'm going to cut the onion.",es:"Voy a cortar la cebolla."},{en:"The pot is on the stove.",es:"La olla está en la estufa."},{en:"It's delicious!",es:"¡Está delicioso!"}]},
+  gustos:{goal:{es:"Me gusta cocinar y pasar tiempo con mi familia.",en:"I like cooking and spending time with my family."},
+    words:[{es:"Me gusta...",en:"I like..."},{es:"Me encanta...",en:"I love..."},{es:"La familia",en:"Family"},{es:"Los hermanos",en:"Siblings"},{es:"Mi favorito/a",en:"My favorite"},{es:"Odio...",en:"I hate..."}],
+    phrases:[{en:"I like music.",es:"Me gusta la música."},{en:"I love traveling.",es:"Me encanta viajar."},{en:"Do you have siblings?",es:"¿Tienes hermanos?"},{en:"I love them a lot.",es:"Los quiero mucho."}]},
+  planes:{goal:{es:"¿Nos vemos mañana? — ¡De una! Te escribo.",en:"Shall we meet tomorrow? — I'm in! I'll text you."},
+    words:[{es:"Mañana",en:"Tomorrow"},{es:"El celular",en:"Cell phone (Colombian!)"},{es:"El mensaje",en:"Message"},{es:"La llamada",en:"Call"},{es:"¿Aló?",en:"Hello? (phone, Colombian!)"},{es:"De pronto",en:"Maybe (Colombian!)"}],
+    phrases:[{en:"Shall we meet tomorrow?",es:"¿Nos vemos mañana?"},{en:"I'll call you later.",es:"Te llamo más tarde."},{en:"Send me the location.",es:"Mándame la ubicación."},{en:"I'm in!",es:"¡De una!"}]},
+  sentirse:{goal:{es:"Me duele la cabeza y tengo sueño.",en:"My head hurts and I'm sleepy."},
+    words:[{es:"Cansado/a",en:"Tired"},{es:"Feliz",en:"Happy"},{es:"Tengo hambre",en:"I'm hungry"},{es:"Tengo sueño",en:"I'm sleepy"},{es:"Me duele...",en:"...hurts"},{es:"Enfermo/a",en:"Sick"}],
+    phrases:[{en:"How do you feel?",es:"¿Cómo te sientes?"},{en:"I'm hungry.",es:"Tengo hambre."},{en:"My head hurts.",es:"Me duele la cabeza."},{en:"I need to rest.",es:"Necesito descansar."}]},
+  colombia:{goal:{es:"¿Qué más, parce? — Todo bien, ¡qué bacano verte!",en:"What's up, buddy? — All good, so cool to see you!"},
+    words:[{es:"Parce",en:"Buddy (Colombian!)"},{es:"Chévere",en:"Cool"},{es:"Bacano",en:"Awesome (Colombian!)"},{es:"El tinto",en:"Black coffee (Colombian!)"},{es:"La plata",en:"Money (Colombian!)"},{es:"¿Qué más?",en:"What's up? (Colombian!)"}],
+    phrases:[{en:"What's up, buddy?",es:"¿Qué más, parce?"},{en:"How cool!",es:"¡Qué bacano!"},{en:"Can I have a coffee?",es:"¿Me regala un tinto?"},{en:"OK, got it.",es:"Listo."}]},
+};

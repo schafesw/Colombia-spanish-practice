@@ -139,7 +139,7 @@ function updateVocabNav(){
   vocabPosition.textContent=`${i+1} de ${VC.length}`;
   vocabPrev.disabled=i<=0;vocabNext.disabled=i>=VC.length-1;
 }
-function sCat(id){document.querySelectorAll(".cat-pill").forEach((p,i)=>p.classList.toggle("active",VC[i].id===id));aC=id;updateVocabNav();hideVerbDetail();rV();}
+function sCat(id){document.querySelectorAll(".cat-pill").forEach((p,i)=>p.classList.toggle("active",VC[i].id===id));aC=id;updateVocabNav();hideVerbDetail();rV();document.querySelector(".scroll").scrollTop=0;}
 function rV(){
   const cat=VC.find(c=>c.id===aC);const list=document.getElementById("vocab-list");list.innerHTML="";
   if(cat.type==="vocales"){rVocales(list);return;}
@@ -373,49 +373,63 @@ function renderFraseDialogue(dialogue){
   fl.dataset.view="dialogue";
   fl.innerHTML="";
   const back=document.createElement("button");
-  back.type="button";
-  back.className="phrase-back";
+  back.type="button";back.className="phrase-back";
   back.innerHTML="<span>‹</span><span>Volver a frases</span>";
   back.onclick=renderFraseMenu;
   fl.appendChild(back);
-  const roles=document.createElement("div");
-  roles.className="phrase-role-controls";
-  roles.innerHTML=`<div class="phrase-role-label">Practica tu papel</div><div class="phrase-role-buttons"><button type="button" data-role="both" class="active">Ambos</button><button type="button" data-role="A">Yo soy A</button><button type="button" data-role="B">Yo soy B</button></div>`;
-  fl.appendChild(roles);
+  /* Speaking practice: hide one side, say the line out loud, tap to reveal */
+  const bubbles=[];
+  const pbar=document.createElement("div");pbar.className="practice-bar";
+  const pInfo=document.createElement("div");pInfo.className="practice-info";
+  pInfo.textContent="🗣️ Practica hablando: esconde un lado, di la línea en voz alta y toca para revelar.";
+  const pBtns=document.createElement("div");pBtns.className="practice-btns";
+  const mkPB=(label,who)=>{
+    const b=document.createElement("button");b.type="button";b.className="practice-btn"+(who===null?" active":"");b.textContent=label;
+    b.onclick=()=>{
+      pBtns.querySelectorAll(".practice-btn").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+      bubbles.forEach(bb=>bb.el.classList.toggle("dlg-hidden",who!==null&&bb.who===who));
+    };
+    return b;
+  };
+  pBtns.appendChild(mkPB("👀 Ver todo",null));
+  pBtns.appendChild(mkPB("Practicar A","A"));
+  pBtns.appendChild(mkPB("Practicar B","B"));
+  pbar.appendChild(pInfo);pbar.appendChild(pBtns);
+  fl.appendChild(pbar);
   const box=document.createElement("div");
   box.className="dialogue phrase-dialogue";
-  let activeRole="both";
-  function paintDialogue(){
-    box.innerHTML=`<div class="dlg-title">${dialogue.title} · Toca cada línea para escuchar</div>`;
-    dialogue.versions.forEach(version=>{
-      if(version.tense&&TENSE_BADGE[version.tense]){
-        const badge=document.createElement("div");
-        badge.className="conv-tense-badge";
-        badge.style.cssText=TENSE_BADGE[version.tense].css;
-        badge.textContent=TENSE_BADGE[version.tense].txt;
-        box.appendChild(badge);
-      }
-      version.lines.forEach(line=>{
-        const row=document.createElement("div");
-        const hidden=activeRole!=="both"&&activeRole===line.who;
-        row.className="dlg-line"+(line.who==="B"?" right":"")+(hidden?" role-hidden":"");
-        row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${line.who}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
-        row.querySelector(".dlg-bubble").onclick=()=>{if(row.classList.contains("role-hidden")){row.classList.remove("role-hidden");}else{speak(line.tts,0.75);}};
-        box.appendChild(row);
-      });
+  box.innerHTML=`<div class="dlg-title">${dialogue.title} · Toca cada línea para escuchar</div>`;
+  dialogue.versions.forEach(version=>{
+    if(version.tense&&TENSE_BADGE[version.tense]){
+      const badge=document.createElement("div");
+      badge.className="conv-tense-badge";
+      badge.style.cssText=TENSE_BADGE[version.tense].css;
+      badge.textContent=TENSE_BADGE[version.tense].txt;
+      box.appendChild(badge);
+    }
+    version.lines.forEach(line=>{
+      const row=document.createElement("div");
+      row.className="dlg-line"+(line.who==="B"?" right":"");
+      row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${line.who}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
+      const bub=row.querySelector(".dlg-bubble");
+      bubbles.push({who:line.who,el:bub});
+      bub.onclick=()=>{
+        if(bub.classList.contains("dlg-hidden"))bub.classList.remove("dlg-hidden");
+        speak(line.tts,0.75);
+      };
+      box.appendChild(row);
     });
-  }
-  roles.querySelectorAll("[data-role]").forEach(button=>button.onclick=()=>{activeRole=button.dataset.role;roles.querySelectorAll("[data-role]").forEach(x=>x.classList.toggle("active",x===button));paintDialogue();});
-  paintDialogue();
+  });
   fl.appendChild(box);
   const tip=document.createElement("div");
   tip.className="phrase-practice-note";
-  tip.textContent="En Yo soy A/B, la línea de tu papel está borrosa. Dila primero y tócala para revelar y escuchar.";
+  tip.textContent="Practice both sides: read Persona A, then Persona B. Tap any line to hear it.";
   fl.appendChild(tip);
 }
 renderFraseMenu();
 
-// ── Build Lecciones ──────────────────────────────────────────────────────────
+// ── Build Lecciones — speaking-first lesson player (v15) ─────────────────────
 const LESSONS=[
   {id:"presentate",icon:"👋",title:"Preséntate",sub:"Tu nombre, tu ciudad y un saludo",vocab:"gustos",dialogue:"Presentación personal",quizCat:"all",quizMode:"conversation"},
   {id:"plata",icon:"💰",title:"Números y plata",sub:"Precios, cantidades y dinero colombiano",vocab:"numeros",dialogue:"Carro y taxi",quizCat:"numeros"},
@@ -432,19 +446,186 @@ const LESSON_KEY="esco-lesson-progress-v1";
 let lessonProgress={};
 try{lessonProgress=JSON.parse(localStorage.getItem(LESSON_KEY)||"{}");}catch(e){lessonProgress={};}
 function saveLessons(){try{localStorage.setItem(LESSON_KEY,JSON.stringify(lessonProgress));}catch(e){}}
+
+/* Racha de días — practice-day streak */
+const DAY_KEY="esco-days-v1";
+let dayInfo={last:"",streak:0};
+try{dayInfo=Object.assign(dayInfo,JSON.parse(localStorage.getItem(DAY_KEY)||"{}"));}catch(e){}
+(function(){
+  const today=new Date().toISOString().slice(0,10);
+  if(dayInfo.last!==today){
+    const y=new Date(Date.now()-86400000).toISOString().slice(0,10);
+    dayInfo.streak=(dayInfo.last===y)?(dayInfo.streak||0)+1:1;
+    dayInfo.last=today;
+    try{localStorage.setItem(DAY_KEY,JSON.stringify(dayInfo));}catch(e){}
+  }
+})();
+
+/* Lesson player state */
+let lpLesson=null,lpSteps=[],lpStep=0,lpScore=0,lpQs=[],lpQi=0,lpAnswered=false;
+function lessonDialogue(lesson){return PHRASE_DIALOGUES.find(x=>x.title===lesson.dialogue);}
+function openLesson(lesson){
+  lpLesson=lesson;lpStep=0;lpScore=0;lpQi=0;lpAnswered=false;
+  const c=LESSON_CONTENT[lesson.id];
+  lpSteps=c?["objetivo","escucha","palabras","frases","hablaA","hablaB","quiz","fin"]:["fin"];
+  if(c)buildLessonQuiz(lesson,c);
+  renderLessonStep();
+}
+function buildLessonQuiz(lesson,c){
+  lpQs=[];
+  const shuffle=a=>a.slice().sort(()=>Math.random()-0.5);
+  const pad=(opts,pool,n)=>{const s=new Set(opts);for(const p of shuffle(pool)){if(opts.length>=n)break;if(p&&!s.has(p)){s.add(p);opts.push(p);}}return opts;};
+  const globalEs=aQ.filter(q=>!q.kind).map(q=>q.es);
+  const globalEn=aQ.filter(q=>!q.kind).map(q=>q.en);
+  shuffle(c.phrases).slice(0,2).forEach(p=>{
+    const opts=pad([p.es,...shuffle(c.phrases.filter(x=>x.es!==p.es)).slice(0,3).map(x=>x.es)],globalEs,4);
+    lpQs.push({label:"Di y elige en español",prompt:p.en,answer:p.es,options:shuffle(opts),afterTts:p.es,revEs:p.es,revEn:p.en});
+  });
+  shuffle(c.words).slice(0,2).forEach(w=>{
+    const opts=pad([w.es,...shuffle(c.words.filter(x=>x.es!==w.es)).slice(0,3).map(x=>x.es)],globalEs,4);
+    lpQs.push({label:"¿Cómo se dice?",prompt:w.en,answer:w.es,options:shuffle(opts),afterTts:w.es.replace(/\.\.\./g,""),revEs:w.es,revEn:w.en});
+  });
+  const d=lessonDialogue(lesson);
+  if(d){
+    const lines=d.versions[0].lines;
+    const L=lines[Math.floor(Math.random()*lines.length)];
+    const opts=pad([L.en,...shuffle(lines.filter(x=>x.en!==L.en)).map(x=>x.en).slice(0,3)],globalEn,4);
+    lpQs.push({label:"Escucha y reconoce",prompt:"🎧",answer:L.en,options:shuffle(opts),autoTts:L.tts,afterTts:L.tts,revEs:L.es,revEn:L.en});
+  }
+}
+function lpEl(cls,html){const d=document.createElement("div");d.className=cls;if(html!==undefined)d.innerHTML=html;return d;}
+function lpSpeakBtn(text,label){const b=document.createElement("button");b.type="button";b.className="lp-speak";b.textContent=label||"🔊 Escuchar";b.onclick=()=>speak(text,0.75);return b;}
+function renderLessonStep(){
+  const root=document.getElementById("lesson-list");if(!root||!lpLesson)return;root.innerHTML="";
+  const c=LESSON_CONTENT[lpLesson.id];
+  const step=lpSteps[lpStep];
+  const back=document.createElement("button");back.type="button";back.className="phrase-back";
+  back.innerHTML="<span>‹</span><span>Volver a lecciones</span>";
+  back.onclick=()=>{lpLesson=null;renderLessons();};
+  root.appendChild(back);
+  root.appendChild(lpEl("lp-dots",lpSteps.map((s,i)=>`<span class="lp-dot${i===lpStep?" on":i<lpStep?" past":""}"></span>`).join("")));
+  const card=lpEl("lp-card");
+  const title=lpEl("lp-step-title");
+  const body=lpEl("lp-body");
+  card.appendChild(title);card.appendChild(body);root.appendChild(card);
+  const nav=lpEl("lp-nav");root.appendChild(nav);
+  const navBtn=(label,fn,primary)=>{const b=document.createElement("button");b.type="button";b.className="lp-nav-btn"+(primary?" primary":"");b.textContent=label;b.onclick=fn;nav.appendChild(b);return b;};
+  const next=()=>{lpStep++;lpAnswered=false;renderLessonStep();};
+  const prev=()=>{if(lpStep>0){lpStep--;renderLessonStep();}};
+  if(step==="objetivo"){
+    title.textContent="🎯 Objetivo — al final vas a poder decir:";
+    body.appendChild(lpEl("lp-goal-es",c.goal.es));
+    body.appendChild(lpEl("lp-goal-en",c.goal.en));
+    body.appendChild(lpSpeakBtn(c.goal.es));
+    body.appendChild(lpEl("lp-hint","Escúchala y dila en voz alta 2 veces antes de seguir."));
+    navBtn("Empezar →",next,true);
+  }
+  else if(step==="escucha"){
+    title.textContent="👂 Escucha la conversación";
+    const d=lessonDialogue(lpLesson);
+    const lines=d?d.versions[0].lines:[];
+    lines.forEach(L=>{
+      const row=lpEl("lp-line","<strong>"+L.who+":</strong> "+L.es+"<div class='lp-line-en'>"+L.en+"</div>");
+      row.onclick=()=>speak(L.tts,0.75);
+      body.appendChild(row);
+    });
+    if(lines.length)body.appendChild(lpSpeakBtn(lines.map(l=>l.tts).join(". "),"▶️ Escuchar todo"));
+    navBtn("‹ Atrás",prev);navBtn("Siguiente →",next,true);
+  }
+  else if(step==="palabras"){
+    title.textContent="🔑 Palabras clave — toca, escucha y repite";
+    const grid=lpEl("lp-grid");
+    c.words.forEach(w=>{
+      const wc=lpEl("lp-word","<div class='lp-word-es'>"+w.es+"</div><div class='lp-word-en'>"+w.en+"</div><span>🔊</span>");
+      wc.onclick=()=>speak(w.es.replace(/\.\.\./g,""),0.75);
+      grid.appendChild(wc);
+    });
+    body.appendChild(grid);
+    navBtn("‹ Atrás",prev);navBtn("Siguiente →",next,true);
+  }
+  else if(step==="frases"){
+    title.textContent="🗣️ ¿Cómo se dice? — DI la frase en español, luego toca para comprobar";
+    c.phrases.forEach(p=>{
+      const pc=lpEl("lp-prod","<div class='lp-prod-en'>"+p.en+"</div><div class='lp-prod-es lp-blur'>"+p.es+"</div>");
+      pc.onclick=()=>{pc.querySelector(".lp-prod-es").classList.remove("lp-blur");speak(p.es,0.75);};
+      body.appendChild(pc);
+    });
+    body.appendChild(lpEl("lp-hint","Primero dila TÚ en voz alta. Después toca para escuchar y comparar."));
+    navBtn("‹ Atrás",prev);navBtn("Siguiente →",next,true);
+  }
+  else if(step==="hablaA"||step==="hablaB"){
+    const who=step==="hablaA"?"A":"B";
+    title.textContent="🎭 Tu turno — eres Persona "+who+". Di tus líneas en voz alta, toca para comprobar";
+    const d=lessonDialogue(lpLesson);
+    const lines=d?d.versions[0].lines:[];
+    lines.forEach(L=>{
+      const hidden=L.who===who;
+      const row=lpEl("lp-line"+(hidden?" lp-me":""),"<strong>"+L.who+":</strong> <span class='lp-line-es"+(hidden?" lp-blur":"")+"'>"+L.es+"</span><div class='lp-line-en'>"+L.en+"</div>");
+      row.onclick=()=>{
+        const esEl=row.querySelector(".lp-line-es");
+        if(esEl.classList.contains("lp-blur"))esEl.classList.remove("lp-blur");
+        speak(L.tts,0.75);
+      };
+      body.appendChild(row);
+    });
+    navBtn("‹ Atrás",prev);navBtn("Siguiente →",next,true);
+  }
+  else if(step==="quiz"){
+    const q=lpQs[lpQi];
+    title.textContent="🧪 Mini-quiz "+(lpQi+1)+" de "+lpQs.length+" — "+q.label;
+    body.appendChild(lpEl("lp-quiz-prompt",q.prompt));
+    if(q.autoTts)setTimeout(()=>speak(q.autoTts,0.7),300);
+    const fb=lpEl("lp-quiz-fb","");
+    const grid=lpEl("lp-grid lp-quiz-grid");
+    q.options.forEach(opt=>{
+      const b=document.createElement("button");b.type="button";b.className="lp-opt";b.textContent=opt;
+      b.onclick=()=>{
+        if(lpAnswered)return;lpAnswered=true;
+        if(opt===q.answer){b.classList.add("correct");lpScore++;fb.innerHTML="✅ ¡Correcto! <div class='lp-reveal'>📖 "+q.revEs+" — "+q.revEn+"</div>";speak(q.afterTts,0.75);}
+        else{b.classList.add("wrong");grid.querySelectorAll(".lp-opt").forEach(x=>{if(x.textContent===q.answer)x.classList.add("reveal");});fb.innerHTML="❌ Casi. <div class='lp-reveal'>📖 "+q.revEs+" — "+q.revEn+"</div>";}
+        navBtn(lpQi<lpQs.length-1?"Siguiente pregunta →":"Terminar →",()=>{
+          if(lpQi<lpQs.length-1){lpQi++;lpAnswered=false;renderLessonStep();}
+          else{lpStep++;lpAnswered=false;renderLessonStep();}
+        },true);
+      };
+      grid.appendChild(b);
+    });
+    body.appendChild(grid);body.appendChild(fb);
+  }
+  else{
+    title.textContent="🎉 ¡Lección completada!";
+    if(lpQs.length)body.appendChild(lpEl("lp-goal-es","Mini-quiz: "+lpScore+" de "+lpQs.length));
+    if(c){body.appendChild(lpEl("lp-hint","Ya puedes decir:"));body.appendChild(lpEl("lp-goal-es",c.goal.es));body.appendChild(lpSpeakBtn(c.goal.es));}
+    lessonProgress[lpLesson.id]=true;saveLessons();
+    const explore=lpEl("lp-explore","<div class='lp-hint'>Explora más:</div>");
+    const mk=(label,fn)=>{const b=document.createElement("button");b.type="button";b.className="lp-nav-btn";b.textContent=label;b.onclick=fn;explore.appendChild(b);};
+    mk("📚 Vocabulario",()=>{showPage("vocab");sCat(lpLesson.vocab);});
+    mk("💬 Conversación completa",()=>{showPage("frases");const d=lessonDialogue(lpLesson);if(d)renderFraseDialogue(d);});
+    mk("🧪 Quiz completo",()=>{showPage("quiz");qCat=lpLesson.quizCat;qMode=lpLesson.quizMode||"mixed";syncQuizControls();nQ();});
+    body.appendChild(explore);
+    navBtn("Volver a lecciones",()=>{lpLesson=null;renderLessons();},true);
+  }
+}
 function renderLessons(){
-  const root=document.getElementById("lesson-list");if(!root)return;root.innerHTML="";
+  const root=document.getElementById("lesson-list");if(!root)return;
+  if(lpLesson){renderLessonStep();return;}
+  root.innerHTML="";
   const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
   const intro=document.createElement("div");intro.className="lesson-intro";
-  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} completadas</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-intro-text">Cada lección combina palabras, conversación y práctica oral. Avanza a tu ritmo.</div>`;
+  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} completadas · 🔥 ${dayInfo.streak} día${dayInfo.streak===1?"":"s"}</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-intro-text">Cada lección te lleva de escuchar a HABLAR: objetivo, palabras, producción oral, rol A/B y mini-quiz.</div>`;
   root.appendChild(intro);
+  let missedCount=0;
+  try{const s=JSON.parse(localStorage.getItem("esco-quiz-v1")||"{}");missedCount=s.missed?Object.keys(s.missed).length:0;}catch(e){}
+  const rep=document.createElement("div");rep.className="repaso-card";
+  rep.innerHTML=`<div class="repaso-title">🔁 Repaso de hoy</div><div class="repaso-text">${missedCount?missedCount+" cosa"+(missedCount===1?"":"s")+" por repasar de quizzes anteriores.":"Nada pendiente — ¡el quiz alimenta tu repaso!"}</div>`;
+  const rb=document.createElement("button");rb.type="button";rb.className="lp-nav-btn primary";rb.textContent="Practicar repaso";
+  rb.onclick=()=>{showPage("quiz");qMode="mixed";qCat="all";syncQuizControls();repasoLeft=10;nQ();};
+  rep.appendChild(rb);root.appendChild(rep);
   LESSONS.forEach((lesson,i)=>{
     const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"");
-    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${i+1}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div><div class="lesson-sub">${lesson.sub}</div></div><button type="button" class="lesson-check" aria-label="Marcar lección completa">${lessonProgress[lesson.id]?"✓":"○"}</button></div><div class="lesson-actions"><button type="button" data-action="learn">Aprende</button><button type="button" data-action="speak">Habla</button><button type="button" data-action="quiz">Quiz</button></div>`;
-    card.querySelector("[data-action=learn]").onclick=()=>{showPage("vocab");sCat(lesson.vocab);};
-    card.querySelector("[data-action=speak]").onclick=()=>{showPage("frases");const d=PHRASE_DIALOGUES.find(x=>x.title===lesson.dialogue);if(d)renderFraseDialogue(d);};
-    card.querySelector("[data-action=quiz]").onclick=()=>{showPage("quiz");qCat=lesson.quizCat;qMode=lesson.quizMode||"mixed";syncQuizControls();nQ();};
-    card.querySelector(".lesson-check").onclick=()=>{lessonProgress[lesson.id]=!lessonProgress[lesson.id];saveLessons();renderLessons();};
+    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${i+1}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div><div class="lesson-sub">${lesson.sub}</div></div><button type="button" class="lesson-check" aria-label="Marcar lección completa">${lessonProgress[lesson.id]?"✓":"○"}</button></div><div class="lesson-actions"><button type="button" data-action="start" class="lesson-start">▶️ Empezar lección</button></div>`;
+    card.querySelector("[data-action=start]").onclick=()=>openLesson(lesson);
+    card.querySelector(".lesson-check").onclick=()=>{if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();renderLessons();};
     root.appendChild(card);
   });
 }
@@ -630,6 +811,7 @@ const QS_KEY="esco-quiz-v1";
 let qStore={c:0,t:0,s:0,missed:{}};
 try{const raw=localStorage.getItem(QS_KEY);if(raw)qStore=Object.assign(qStore,JSON.parse(raw));}catch(e){}
 function saveQ(){try{localStorage.setItem(QS_KEY,JSON.stringify(qStore));}catch(e){}}
+let repasoLeft=0;
 let qCat="all",qMode="mixed",qC=qStore.c||0,qT=qStore.t||0,qS=qStore.s||0,cQ=null,an=false;
 document.getElementById("q-correct").textContent=qC;
 document.getElementById("q-total").textContent=qT;
@@ -674,6 +856,7 @@ function quizPool(){
   else if(qMode==="listening")pool=aQ.filter(q=>!q.kind).map(q=>({...q,answer:q.es,prompt:"🎧"}));
   else if(qMode==="es-en")pool=aQ.filter(q=>!q.kind||q.kind==="meaning").map(q=>({...q,answer:q.en,prompt:q.es}));
   else pool=aQ.map(q=>({...q,answer:q.en,prompt:q.kind==="listening"?"🎧":q.es}));
+  if(qMode==="blank"||qMode==="conversation")return pool; /* these have their own cats */
   return qCat==="all"?pool:pool.filter(q=>q.cat===qCat);
 }
 function spanishAnswer(q){
@@ -693,13 +876,17 @@ function nQ(){
   const base=quizPool();if(!base.length){document.getElementById("qc-word").textContent="—";return;}
   /* 35% of the time, re-serve a question you previously missed */
   const missedPool=base.filter(q=>qStore.missed&&qStore.missed[q.es+"|"+q.answer]);
-  const pickFrom=(missedPool.length&&Math.random()<0.35)?missedPool:base;
+  let pickFrom;
+  if(repasoLeft>0&&missedPool.length){pickFrom=missedPool;repasoLeft--;}
+  else{if(repasoLeft>0)repasoLeft=0;pickFrom=(missedPool.length&&Math.random()<0.35)?missedPool:base;}
   cQ=pickFrom[Math.floor(Math.random()*pickFrom.length)];
   /* Listening questions must not show the Spanish text — hide it and auto-play */
   document.getElementById("qc-word").textContent=qMode==="listening"||cQ.kind==="listening"?"🎧":cQ.prompt;
-  document.querySelector(".qc-label").textContent=qMode==="en-es"?"Traduce al español":qMode==="listening"?"Escucha y reconoce":qMode==="blank"?"Completa la frase":qMode==="conversation"?"Escoge la respuesta correcta":qMode==="es-en"?"Traduce al inglés":cQ.kind==="reply"?"Escoge la respuesta correcta":cQ.kind==="listening"?"Escucha y reconoce":cQ.kind==="tense"?"Reconoce el tiempo":"Elige la respuesta correcta";
+  document.querySelector(".qc-label").textContent=qMode==="en-es"?"Traduce al español":qMode==="listening"?"Escucha y reconoce":qMode==="blank"?"Completa la frase":qMode==="conversation"?"Escoge la respuesta correcta":qMode==="es-en"?"Traduce al inglés":cQ.kind==="reply"?"Escoge la respuesta correcta":cQ.kind==="listening"?"Escucha y reconoce":cQ.kind==="tense"?"Reconoce el tiempo":cQ.kind==="blank"?"Completa la frase":"Elige la respuesta correcta";
   if(qMode==="listening"||cQ.kind==="listening")setTimeout(()=>speak(cQ.tts,0.7),350);
-  const wrong=cQ.choices?cQ.choices.filter(x=>x!==cQ.answer).sort(()=>Math.random()-0.5).slice(0,3).map(answer=>({answer})):base.filter(q=>q.answer!==cQ.answer).sort(()=>Math.random()-0.5).slice(0,3);
+  const seen=new Set([cQ.answer]);const wrong=[];
+  const wrongPool=cQ.choices?cQ.choices.map(answer=>({answer})):base.slice().sort(()=>Math.random()-0.5);
+  for(const w of wrongPool){if(wrong.length>=3)break;if(!w.answer||seen.has(w.answer))continue;seen.add(w.answer);wrong.push({answer:w.answer});}
   const opts=[cQ,...wrong].sort(()=>Math.random()-0.5);
   const ow=document.getElementById("quiz-opts");ow.innerHTML="";
   opts.forEach(opt=>{const b=document.createElement("button");b.className="qopt";b.textContent=opt.answer;
@@ -716,7 +903,8 @@ function nQ(){
 }
 function quizHear(){
   if(!cQ)return;
-  /* For fill-in-the-blank, don't speak the answer word — pause at the blank instead */
+  if(an){speak(spanishAnswer(cQ),0.7);return;} /* after answering: hear the Spanish answer */
+  if(qMode==="en-es")return; /* pre-answer audio in EN→ES would speak the answer */
   if(cQ.kind==="blank"){speak(cQ.es.replace(/_+/g,","),0.7);return;}
   speak(cQ.tts,0.7);
 }

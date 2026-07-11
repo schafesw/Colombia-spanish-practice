@@ -8,14 +8,14 @@
 <meta name="apple-mobile-web-app-title" content="Español CO"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="styles.css?v=14"/>
+<link rel="stylesheet" href="styles.css?v=15"/>
 </head>
 <body>
 <div id="app">
 <div class="scroll">
 
 <!-- FONÉTICA: letras + sílabas, with the existing syllable layout preserved -->
-<div class="page active" id="page-fonetica">
+<div class="page" id="page-fonetica">
   <div class="ph"><div class="ph-label">Español Colombiano</div>
     <div class="ph-title" style="color:var(--teal)">Fonética</div>
     <div class="ph-sub">Escucha, mira y practica los sonidos</div></div>
@@ -55,7 +55,7 @@
 </div>
 
 <!-- LECCIONES -->
-<div class="page" id="page-lecciones">
+<div class="page active" id="page-lecciones">
   <div class="ph"><div class="ph-label">Tu camino</div>
     <div class="ph-title" style="color:var(--gold)">Lecciones</div>
     <div class="ph-sub">Un paso corto hacia una conversación real</div></div>
@@ -139,8 +139,8 @@
 
 <!-- 6-Tab Bar -->
 <div class="tab-bar">
-  <button class="tab-item active" id="tb-fonetica" onclick="showPage('fonetica')"><span class="ti">🔤</span><span>Fonética</span></button>
-  <button class="tab-item" id="tb-lecciones" onclick="showPage('lecciones')"><span class="ti">🎓</span><span>Lecciones</span></button>
+  <button class="tab-item" id="tb-fonetica" onclick="showPage('fonetica')"><span class="ti">🔤</span><span>Fonética</span></button>
+  <button class="tab-item active" id="tb-lecciones" onclick="showPage('lecciones')"><span class="ti">🎓</span><span>Lecciones</span></button>
   <button class="tab-item" id="tb-vocab" onclick="showPage('vocab')"><span class="ti">📚</span><span>Vocab</span></button>
   <button class="tab-item tfrases" id="tb-frases" onclick="showPage('frases')"><span class="ti">💬</span><span>Frases</span></button>
   <button class="tab-item tgram" id="tb-gram" onclick="showPage('gram')"><span class="ti">📖</span><span>Gram</span></button>
@@ -148,6 +148,6 @@
 </div>
 </div>
 
-<script src="data.js?v=14"></script><script src="app.js?v=14"></script>
+<script src="data.js?v=15"></script><script src="app.js?v=15"></script>
 </body>
 </html>
