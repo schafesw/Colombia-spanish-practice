@@ -140,6 +140,24 @@ function updateVocabNav(){
   vocabPrev.disabled=i<=0;vocabNext.disabled=i>=VC.length-1;
 }
 function sCat(id){document.querySelectorAll(".cat-pill").forEach((p,i)=>p.classList.toggle("active",VC[i].id===id));aC=id;updateVocabNav();hideVerbDetail();rV();document.querySelector(".scroll").scrollTop=0;}
+function escapeVocabHtml(value){return String(value||"").replace(/[&<>\"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;"}[ch]));}
+function getVocabExample(item,catId,index){
+  const raw=item.example||(VOCAB_EXAMPLES[catId]||[])[index];
+  if(Array.isArray(raw))return {es:raw[0],en:raw[1],tts:raw[0]};
+  if(raw)return {es:raw.es||item.word,en:raw.en||item.en,tts:raw.tts||raw.es||item.tts};
+  return {es:item.word,en:item.en,tts:item.tts||item.word};
+}
+function addVocabExample(card,item,catId,index){
+  const ex=getVocabExample(item,catId,index);
+  const toggle=document.createElement("button");
+  toggle.type="button";toggle.className="vc-example-toggle";toggle.textContent="📝 Ejemplo";toggle.setAttribute("aria-expanded","false");
+  const panel=document.createElement("div");panel.className="vc-example";panel.hidden=true;
+  panel.innerHTML=`<div class="vc-example-label">En contexto</div><div class="vc-example-es">${escapeVocabHtml(ex.es)}</div><div class="vc-example-en">${escapeVocabHtml(ex.en)}</div><button type="button" class="vc-example-speak">🔊 Escuchar la frase</button>`;
+  toggle.onclick=event=>{event.stopPropagation();const open=panel.hidden;panel.hidden=!open;toggle.classList.toggle("open",open);toggle.setAttribute("aria-expanded",String(open));};
+  panel.onclick=event=>event.stopPropagation();
+  panel.querySelector(".vc-example-speak").onclick=event=>{event.stopPropagation();speak(ex.tts||ex.es,0.75);};
+  card.appendChild(toggle);card.appendChild(panel);
+}
 function rV(){
   const cat=VC.find(c=>c.id===aC);const list=document.getElementById("vocab-list");list.innerHTML="";
   if(cat.type==="vocales"){rVocales(list);return;}
@@ -147,10 +165,14 @@ function rV(){
   if(cat.type==="preguntas"){rP(list);return;}
   if(cat.type==="verbos"){rVerbos(list);return;}
   if(cat.type==="colombianismos"){rCol(list);return;}
-  cat.items.forEach(item=>{const card=document.createElement("div");card.className="vc";
+  cat.items.forEach((item,index)=>{
+    const card=document.createElement("div");card.className="vc";
     card.innerHTML=`<div class="vc-icon" style="background:${item.color}22;color:${item.color}">${item.icon}</div>
       <div class="vc-info"><div class="vc-word">${item.word}</div><div class="vc-en">${item.en}</div><div class="vc-ph">${item.ph}</div></div>
-      <span class="vc-spk">🔊</span>`;card.onclick=()=>speak(item.tts,0.75);list.appendChild(card);});
+      <span class="vc-spk">🔊</span>`;
+    card.onclick=()=>speak(item.tts,0.75);
+    addVocabExample(card,item,cat.id,index);list.appendChild(card);
+  });
 }
 
 function rVocales(list){

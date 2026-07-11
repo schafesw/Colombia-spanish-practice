@@ -400,6 +400,18 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 /* v14: small, non-blocking Lento control */
 .lento-btn{left:14px;right:auto;bottom:calc(var(--tab-h) + var(--safe-bottom) + 8px);width:40px;height:40px;min-height:40px;padding:0;border-radius:50%;justify-content:center;font-size:1.05rem;}
 
+/* v15: expandable sentence context for every basic vocabulary card */
+.vc{flex-wrap:wrap;}
+.vc-example-toggle{min-height:34px;padding:6px 9px;border-radius:9px;background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.25);color:var(--teal);font-size:0.66rem;font-weight:800;white-space:nowrap;}
+.vc-example-toggle.open{background:rgba(232,180,74,0.13);border-color:rgba(232,180,74,0.3);color:var(--gold);}
+.vc-example{flex:0 0 100%;background:rgba(74,168,160,0.07);border:1px solid rgba(74,168,160,0.2);border-radius:12px;padding:11px 12px;margin-top:3px;}
+.vc-example[hidden]{display:none;}
+.vc-example-label{font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--teal);font-weight:800;margin-bottom:5px;}
+.vc-example-es{font-size:0.94rem;line-height:1.45;font-weight:900;color:#fff;}
+.vc-example-en{font-size:0.74rem;line-height:1.45;color:var(--muted);font-style:italic;margin-top:3px;}
+.vc-example-speak{margin-top:8px;min-height:34px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,0.07);border:1px solid var(--border);color:var(--text);font-size:0.66rem;font-weight:800;}
+.vc-example-speak:active{background:rgba(74,168,160,0.16);color:var(--teal);}
+
 /* v15: speaking practice (Frases dialogues) */
 .practice-bar{background:rgba(74,168,160,0.07);border:1px solid rgba(74,168,160,0.2);border-radius:14px;padding:12px 14px;margin-bottom:14px;}
 .practice-info{font-size:0.76rem;color:rgba(255,255,255,0.55);line-height:1.5;margin-bottom:10px;}
