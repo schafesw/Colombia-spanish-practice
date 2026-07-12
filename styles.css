@@ -375,6 +375,34 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 .vocab-nav-btn:disabled{opacity:0.28;}
 .vocab-position{min-width:55px;text-align:center;color:var(--muted);font-size:0.68rem;font-weight:800;}
 
+/* v18: Vocabulario landing page */
+#vocab-home[hidden],#vocab-category-view[hidden]{display:none;}
+.vocab-home-intro{background:rgba(74,168,160,0.08);border:1px solid rgba(74,168,160,0.22);border-radius:16px;padding:16px;margin-bottom:12px;}
+.vocab-home-kicker{font-size:0.58rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--teal);font-weight:900;margin-bottom:7px;}
+.vocab-home-title{font-size:1.22rem;font-weight:900;color:#fff;line-height:1.2;}
+.vocab-home-sub{font-size:0.76rem;color:var(--muted);line-height:1.55;margin-top:7px;}
+.vocab-continue-card{width:100%;display:flex;align-items:center;gap:11px;text-align:left;background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.3);border-radius:15px;padding:12px 13px;margin-bottom:16px;color:#fff;}
+.vocab-continue-card:active,.vocab-phonetic-card:active,.vocab-home-card:active{transform:scale(0.985);}
+.vocab-continue-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(232,180,74,0.22);color:var(--gold);font-size:0.8rem;flex-shrink:0;}
+.vocab-continue-copy{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;}
+.vocab-continue-label{font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);font-weight:900;}
+.vocab-continue-copy strong{font-size:0.94rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.vocab-continue-copy small{font-size:0.68rem;color:var(--muted);}
+.vocab-home-arrow{font-size:1.45rem;color:var(--muted);flex-shrink:0;}
+.vocab-phonetic-card{width:100%;display:flex;align-items:center;gap:11px;text-align:left;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.22);border-radius:15px;padding:12px 13px;margin-bottom:19px;color:#fff;}
+.vocab-phonetic-icon{font-size:1.35rem;flex-shrink:0;}
+.vocab-phonetic-card strong{display:block;font-size:0.9rem;}.vocab-phonetic-card small{display:block;font-size:0.69rem;color:var(--muted);margin-top:2px;}
+.vocab-home-group{margin-bottom:19px;}
+.vocab-home-group-title{font-size:0.77rem;font-weight:900;color:#fff;}
+.vocab-home-group-sub{font-size:0.68rem;color:var(--muted);margin-top:3px;margin-bottom:8px;}
+.vocab-home-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.vocab-home-card{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:8px;min-height:72px;text-align:left;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px 12px;color:#fff;}
+.vocab-home-card-title{font-size:0.78rem;font-weight:900;line-height:1.25;}
+.vocab-home-card-meta{width:100%;display:flex;justify-content:space-between;align-items:center;font-size:0.63rem;color:var(--muted);}
+.vocab-home-card-meta span{font-size:1.1rem;color:var(--teal);line-height:0.7;}
+.vocab-home-back{display:flex;align-items:center;gap:6px;background:transparent;color:var(--muted);font-size:0.76rem;font-weight:800;padding:2px 0 9px;min-height:32px;}
+.vocab-home-back:active{color:var(--teal);}
+
 /* v14: Lesson path */
 .lesson-intro{background:rgba(232,180,74,0.08);border:1px solid rgba(232,180,74,0.2);border-radius:16px;padding:15px;margin-bottom:15px;}
 .lesson-intro-title{font-size:0.76rem;font-weight:900;color:var(--gold);margin-bottom:9px;}

@@ -1,36 +1,70 @@
 ﻿// Spanish learning app behavior
 // ── Voice ─────────────────────────────────────────────────────────────────────
 let voices=[],selV=null;
+const VOICE_KEY="esco-selected-voice-v1";
+const VOICE_HOSTS=["fonetica","lecciones","vocab","frases","gram","quiz"];
+let savedVoiceKey="";
+try{savedVoiceKey=localStorage.getItem(VOICE_KEY)||"";}catch(e){}
+function voiceKey(v){return v?(v.voiceURI||`${v.name}::${v.lang}`):"";}
+function voiceLabel(v){return `${v.lang||"es"} · ${(v.name||"Spanish voice").replace("com.apple.","").replace("voice.","")}`;}
 function getSpanishVoices(){
-  voices=window.speechSynthesis.getVoices();
-  return voices.filter(v=>/^es(?:-|_)/i.test(v.lang));
+  if(!window.speechSynthesis)return [];
+  voices=window.speechSynthesis.getVoices()||[];
+  return voices.filter(v=>/^es(?:-|_|$)/i.test(String(v.lang||"")));
 }
 function chooseSpanishVoice(sp){
+  const saved=sp.find(v=>voiceKey(v)===savedVoiceKey||(`${v.name}::${v.lang}`===savedVoiceKey));
+  if(saved)return saved;
+  if(!savedVoiceKey){
+    for(const p of["es-CO","es-419","es-MX","es-US","es-AR","es-ES"]){
+      const v=sp.find(x=>String(x.lang||"").toUpperCase().startsWith(p.toUpperCase()));
+      if(v)return v;
+    }
+  }
   const kept=selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang);
   if(kept)return kept;
-  for(const p of["es-CO","es-419","es-MX","es-US","es-AR"]){
-    const v=sp.find(x=>x.lang.toUpperCase().startsWith(p));
-    if(v)return v;
-  }
   return sp[0]||null;
+}
+function rememberVoice(v){
+  if(!v)return;
+  selV=v;savedVoiceKey=voiceKey(v);
+  try{localStorage.setItem(VOICE_KEY,savedVoiceKey);}catch(e){}
+}
+function syncVoiceSelectors(){
+  const key=voiceKey(selV);
+  document.querySelectorAll(".voice-choice").forEach(s=>{if(key)s.value=key;});
 }
 function loadV(){
   const sp=getSpanishVoices();
   const next=chooseSpanishVoice(sp);
   if(next)selV=next;
-  buildVB(sp);
+  buildVoiceBars(sp);
 }
-function buildVB(sp=getSpanishVoices()){
-  if(!sp.length)return;
-  document.getElementById("voice-bar-letras").innerHTML=`<div class="voice-bar"><span class="voice-label">🎙️ Voz</span><select class="voice-select" onchange="chV(this.value)">${sp.map((v,i)=>`<option value="${i}" ${selV&&v.name===selV.name&&v.lang===selV.lang?"selected":""}>${v.lang} · ${v.name.replace("com.apple.","").replace("voice.","")}</option>`).join("")}</select><button class="voice-test" onclick="speak('Hola, buenos días Colombia',0.8)">Probar</button></div>`;
+function buildVoiceBars(sp=getSpanishVoices()){
+  VOICE_HOSTS.forEach(id=>{
+    const host=document.getElementById(`voice-bar-${id}`);if(!host)return;
+    host.innerHTML="";
+    const bar=document.createElement("div");bar.className="voice-bar";
+    const label=document.createElement("span");label.className="voice-label";label.textContent="🎙️ Voz";
+    const select=document.createElement("select");select.className="voice-select voice-choice";select.setAttribute("aria-label","Spanish voice");
+    if(sp.length){
+      sp.forEach(v=>{const option=document.createElement("option");option.value=voiceKey(v);option.textContent=voiceLabel(v);select.appendChild(option);});
+      if(selV)select.value=voiceKey(selV);
+    }else{
+      const option=document.createElement("option");option.textContent="Loading Spanish voices…";option.disabled=true;option.selected=true;select.appendChild(option);
+    }
+    select.onchange=()=>chV(select.value);
+    const test=document.createElement("button");test.type="button";test.className="voice-test";test.textContent="Probar";test.onclick=()=>speak("Hola, buenos días Colombia",0.8);
+    bar.append(label,select,test);host.appendChild(bar);
+  });
 }
-function chV(i){const sp=getSpanishVoices();selV=sp[i]||null;}
+function chV(key){const v=getSpanishVoices().find(x=>voiceKey(x)===key);if(v){rememberVoice(v);syncVoiceSelectors();}}
 function speak(t,r){
   if(!window.speechSynthesis)return;
   const sp=getSpanishVoices();
   const live=selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang);
   const voice=live||chooseSpanishVoice(sp);
-  if(voice)selV=voice;
+  if(voice)rememberVoice(voice);
   speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(t);
   if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
@@ -123,23 +157,85 @@ function rC(){
 rC();
 
 // ── Build Vocab ───────────────────────────────────────────────────────────────
-let aC="vocales";const cw=document.getElementById("cat-wrap");
+const VOCAB_CATS=VC.filter(cat=>cat.id!=="vocales");
+const VOCAB_LAST_KEY="esco-vocab-last-v1";
+const vocabHome=document.getElementById("vocab-home");
+const vocabCategoryView=document.getElementById("vocab-category-view");
+const vocabHomeBack=document.getElementById("vocab-home-back");
+const cw=document.getElementById("cat-wrap");
 const vocabJump=document.getElementById("vocab-jump");
 const vocabPosition=document.getElementById("vocab-position");
 const vocabPrev=document.getElementById("vocab-prev");
 const vocabNext=document.getElementById("vocab-next");
-VC.forEach(cat=>{const p=document.createElement("button");p.className="cat-pill"+(cat.id===aC?" active":"");p.textContent=cat.label;p.onclick=()=>sCat(cat.id);cw.appendChild(p);});
-vocabJump.innerHTML=VC.map(cat=>`<option value="${cat.id}">${cat.label}</option>`).join("");
+let aC="gustos";
+try{aC=localStorage.getItem(VOCAB_LAST_KEY)||aC;}catch(e){}
+if(!VOCAB_CATS.some(cat=>cat.id===aC))aC=VOCAB_CATS.some(cat=>cat.id==="gustos")?"gustos":(VOCAB_CATS[0]?.id||"");
+const VOCAB_GROUPS=[
+  {title:"Start with everyday speech",sub:"Useful words for talking about yourself",ids:["gustos","familia","verbos","tiempo","emociones","colombianismos"]},
+  {title:"Daily life",sub:"Home, food, clothing, and things around you",ids:["comida","casa","habitacion","bano","cocina","ropa","cuerpo"]},
+  {title:"Getting things done",sub:"Work, travel, directions, and technology",ids:["numeros","direcciones","lugares","trabajo","oficina","carropartes","tecnologia","tv"]},
+  {title:"Describe the world",sub:"People, places, weather, and details",ids:["colores","adjetivos","meses","dias","profesiones","animales","clima","preguntas"]}
+];
+VOCAB_CATS.forEach(cat=>{const p=document.createElement("button");p.className="cat-pill";p.textContent=cat.label;p.onclick=()=>sCat(cat.id);cw.appendChild(p);});
+vocabJump.innerHTML=VOCAB_CATS.map(cat=>`<option value="${cat.id}">${cat.label}</option>`).join("");
 vocabJump.onchange=()=>sCat(vocabJump.value);
-vocabPrev.onclick=()=>{const i=VC.findIndex(c=>c.id===aC);if(i>0)sCat(VC[i-1].id);};
-vocabNext.onclick=()=>{const i=VC.findIndex(c=>c.id===aC);if(i<VC.length-1)sCat(VC[i+1].id);};
-function updateVocabNav(){
-  const i=VC.findIndex(c=>c.id===aC);
-  vocabJump.value=aC;
-  vocabPosition.textContent=`${i+1} of ${VC.length}`;
-  vocabPrev.disabled=i<=0;vocabNext.disabled=i>=VC.length-1;
+vocabPrev.onclick=()=>{const i=VOCAB_CATS.findIndex(c=>c.id===aC);if(i>0)sCat(VOCAB_CATS[i-1].id);};
+vocabNext.onclick=()=>{const i=VOCAB_CATS.findIndex(c=>c.id===aC);if(i<VOCAB_CATS.length-1)sCat(VOCAB_CATS[i+1].id);};
+vocabHomeBack.onclick=()=>showVocabHome();
+function vocabCount(cat){
+  if(cat.type==="basic")return cat.items?.length||0;
+  if(cat.type==="verbos")return Object.keys(VERBS).length;
+  if(cat.type==="numeros")return N130.length+NT.length;
+  if(cat.type==="preguntas")return PQ.length;
+  if(cat.type==="colombianismos")return COLOMBIANISMOS.length;
+  return 0;
 }
-function sCat(id){document.querySelectorAll(".cat-pill").forEach((p,i)=>p.classList.toggle("active",VC[i].id===id));aC=id;updateVocabNav();hideVerbDetail();rV();document.querySelector(".scroll").scrollTop=0;}
+function vocabCard(cat,tag){
+  const b=document.createElement("button");b.type="button";b.className="vocab-home-card";
+  b.innerHTML=`<span class="vocab-home-card-title">${cat.label}</span><span class="vocab-home-card-meta">${vocabCount(cat)} ${tag||"words"} <span>›</span></span>`;
+  b.onclick=()=>sCat(cat.id);return b;
+}
+function renderVocabHome(){
+  if(!vocabHome)return;
+  vocabHome.innerHTML="";
+  const intro=document.createElement("div");intro.className="vocab-home-intro";
+  intro.innerHTML="<div class='vocab-home-kicker'>Choose a topic · Elige un tema</div><div class='vocab-home-title'>What do you want to practice?</div><div class='vocab-home-sub'>Tap a section to learn the word, hear the pronunciation, and see it used in a sentence.</div>";
+  vocabHome.appendChild(intro);
+  const last=VOCAB_CATS.find(cat=>cat.id===aC);
+  if(last){
+    const continueCard=document.createElement("button");continueCard.type="button";continueCard.className="vocab-continue-card";
+    continueCard.innerHTML=`<span class="vocab-continue-icon">▶</span><span class="vocab-continue-copy"><span class="vocab-continue-label">Continue / Continuar</span><strong>${last.label}</strong><small>${vocabCount(last)} words ready to practice</small></span><span class="vocab-home-arrow">›</span>`;
+    continueCard.onclick=()=>sCat(last.id);vocabHome.appendChild(continueCard);
+  }
+  const phon=document.createElement("button");phon.type="button";phon.className="vocab-phonetic-card";
+  phon.innerHTML="<span class='vocab-phonetic-icon'>🔤</span><span><strong>Fonética</strong><small>Vocales, consonantes, y sílabas</small></span><span class='vocab-home-arrow'>›</span>";
+  phon.onclick=()=>{showPage("fonetica");showPhonetic("letters");};vocabHome.appendChild(phon);
+  VOCAB_GROUPS.forEach(group=>{
+    const section=document.createElement("section");section.className="vocab-home-group";
+    section.innerHTML=`<div class="vocab-home-group-title">${group.title}</div><div class="vocab-home-group-sub">${group.sub}</div>`;
+    const grid=document.createElement("div");grid.className="vocab-home-grid";
+    group.ids.map(id=>VOCAB_CATS.find(cat=>cat.id===id)).filter(Boolean).forEach(cat=>grid.appendChild(vocabCard(cat)));
+    section.appendChild(grid);vocabHome.appendChild(section);
+  });
+}
+function showVocabHome(){
+  hideVerbDetail();
+  vocabHome.hidden=false;vocabCategoryView.hidden=true;renderVocabHome();
+}
+function showVocabCategory(){vocabHome.hidden=true;vocabCategoryView.hidden=false;}
+function updateVocabNav(){
+  const i=VOCAB_CATS.findIndex(c=>c.id===aC);
+  if(i<0)return;
+  vocabJump.value=aC;vocabPosition.textContent=`${i+1} of ${VOCAB_CATS.length}`;
+  vocabPrev.disabled=i<=0;vocabNext.disabled=i>=VOCAB_CATS.length-1;
+}
+function sCat(id){
+  if(id==="vocales"){showPage("fonetica");showPhonetic("letters");return;}
+  if(!VOCAB_CATS.some(cat=>cat.id===id))return;
+  document.querySelectorAll(".cat-pill").forEach((p,i)=>p.classList.toggle("active",VOCAB_CATS[i].id===id));
+  aC=id;try{localStorage.setItem(VOCAB_LAST_KEY,aC);}catch(e){}
+  showVocabCategory();updateVocabNav();hideVerbDetail();rV();document.querySelector(".scroll").scrollTop=0;
+}
 function escapeVocabHtml(value){return String(value||"").replace(/[&<>\"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;"}[ch]));}
 function getVocabExample(item,catId,index){
   const raw=item.example||(VOCAB_EXAMPLES[catId]||[])[index];
@@ -234,20 +330,34 @@ function micMatch(heardList,target){
 }
 function micListen(){
   if(!SR){renderMicPanel("idle","Speech recognition is not available on this device.");return;}
-  let rec=null,done=false;
-  try{rec=new SR();}catch(e){renderMicPanel("idle","Recognition is not available here. Use Record + your ear.");return;}
-  rec.lang="es-CO";rec.interimResults=false;rec.maxAlternatives=3;
-  renderMicPanel("listening","🎯 Listening… say: “"+micTarget+"”");
-  rec.onresult=e=>{
-    done=true;
-    const alts=[];for(let i=0;i<e.results[0].length;i++)alts.push(e.results[0][i].transcript);
-    const heard=alts[0]||"";
-    if(micMatch(alts,micTarget)){markPracticed(micTarget);renderMicPanel("idle","✅ Understood! I heard: “"+heard+"”");}
-    else renderMicPanel("idle","❌ I heard: “"+(heard||"…nothing")+"” — try again, slower and louder.");
+  const languages=["es-CO","es-419","es-MX"];
+  let attempt=0,done=false,retrying=false,current=null;
+  const start=()=>{
+    let rec=null;
+    try{rec=new SR();}catch(e){renderMicPanel("idle","Recognition is not available here. Use Record + your ear.");return;}
+    current=rec;rec.lang=languages[attempt]||"es-MX";rec.interimResults=false;rec.maxAlternatives=3;
+    renderMicPanel("listening","🎯 Listening… say: “"+micTarget+"”");
+    rec.onresult=e=>{
+      if(rec!==current)return;
+      done=true;
+      const alts=[];for(let i=0;i<e.results[0].length;i++)alts.push(e.results[0][i].transcript);
+      const heard=alts[0]||"";
+      if(micMatch(alts,micTarget)){markPracticed(micTarget);renderMicPanel("idle","✅ Understood! I heard: “"+heard+"”");}
+      else renderMicPanel("idle","❌ I heard: “"+(heard||"…nothing")+"” — try again, slower and louder.");
+    };
+    rec.onerror=e=>{
+      if(rec!==current||done)return;
+      const canRetry=(e.error==="language-not-supported"||e.error==="network")&&attempt<languages.length-1;
+      if(canRetry){retrying=true;attempt++;setTimeout(()=>{if(!done){retrying=false;start();}},180);return;}
+      done=true;renderMicPanel("idle","Recognition failed ("+(e.error||"error")+"). Use Record + compare by ear if this keeps happening.");
+    };
+    rec.onend=()=>{if(rec!==current||done||retrying)return;done=true;renderMicPanel("idle","I did not hear anything. Get closer to the mic and try again.");};
+    try{rec.start();}catch(e){
+      if(attempt<languages.length-1){attempt++;start();}
+      else{done=true;renderMicPanel("idle","Recognition is not available here.");}
+    }
   };
-  rec.onerror=e=>{if(!done){done=true;renderMicPanel("idle","Recognition failed ("+(e.error||"error")+"). It sometimes fails in home-screen apps — use Record and compare by ear.");}};
-  rec.onend=()=>{if(!done)renderMicPanel("idle","I did not hear anything. Get closer to the mic and try again.");};
-  try{rec.start();}catch(e){renderMicPanel("idle","Recognition is not available here.");}
+  start();
 }
 function markPracticed(target){
   try{
@@ -368,7 +478,7 @@ function rP(list){
       <div class="q-ph">[${item.ph}]</div><div class="q-example">💬 ${item.example}</div></div>
       <span class="q-spk">🔊</span>`;card.onclick=()=>speak(item.tts,0.75);list.appendChild(card);});
 }
-rV();updateVocabNav();
+rV();updateVocabNav();showVocabHome();
 
 // ── Verb Detail View ──────────────────────────────────────────────────────────
 function showVerbDetail(key,verb){
@@ -1122,6 +1232,7 @@ function showPage(id){
   PG.forEach(p=>{document.getElementById("page-"+p).classList.toggle("active",p===id);document.getElementById("tb-"+p).classList.toggle("active",p===id);});
   document.querySelector(".scroll").scrollTop=0;
   if(id!=="vocab")hideVerbDetail();
+  if(id==="vocab")showVocabHome();
 }
  
 
