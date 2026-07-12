@@ -136,7 +136,7 @@ vocabNext.onclick=()=>{const i=VC.findIndex(c=>c.id===aC);if(i<VC.length-1)sCat(
 function updateVocabNav(){
   const i=VC.findIndex(c=>c.id===aC);
   vocabJump.value=aC;
-  vocabPosition.textContent=`${i+1} de ${VC.length}`;
+  vocabPosition.textContent=`${i+1} of ${VC.length}`;
   vocabPrev.disabled=i<=0;vocabNext.disabled=i>=VC.length-1;
 }
 function sCat(id){document.querySelectorAll(".cat-pill").forEach((p,i)=>p.classList.toggle("active",VC[i].id===id));aC=id;updateVocabNav();hideVerbDetail();rV();document.querySelector(".scroll").scrollTop=0;}
@@ -150,14 +150,122 @@ function getVocabExample(item,catId,index){
 function addVocabExample(card,item,catId,index){
   const ex=getVocabExample(item,catId,index);
   const toggle=document.createElement("button");
-  toggle.type="button";toggle.className="vc-example-toggle";toggle.textContent="📝 Ejemplo";toggle.setAttribute("aria-expanded","false");
+  toggle.type="button";toggle.className="vc-example-toggle";toggle.textContent="📝 Example";toggle.setAttribute("aria-expanded","false");
   const panel=document.createElement("div");panel.className="vc-example";panel.hidden=true;
-  panel.innerHTML=`<div class="vc-example-label">En contexto</div><div class="vc-example-es">${escapeVocabHtml(ex.es)}</div><div class="vc-example-en">${escapeVocabHtml(ex.en)}</div><button type="button" class="vc-example-speak">🔊 Escuchar la frase</button>`;
+  panel.innerHTML=`<div class="vc-example-label">In context</div><div class="vc-example-es">${escapeVocabHtml(ex.es)}</div><div class="vc-example-en">${escapeVocabHtml(ex.en)}</div><button type="button" class="vc-example-speak">🔊 Hear the sentence</button>`;
   toggle.onclick=event=>{event.stopPropagation();const open=panel.hidden;panel.hidden=!open;toggle.classList.toggle("open",open);toggle.setAttribute("aria-expanded",String(open));};
   panel.onclick=event=>event.stopPropagation();
   panel.querySelector(".vc-example-speak").onclick=event=>{event.stopPropagation();speak(ex.tts||ex.es,0.75);};
   card.appendChild(toggle);card.appendChild(panel);
 }
+/* ═══════════════════════════════════════════════════════════════════════════
+   Pronunciation Practice (v17)
+   Tier 1: Record & Compare — always available when the mic works.
+   Tier 2: "¿Me entendió?" speech-recognition check.
+   KILL SWITCH: set SPEECH_CHECK_ENABLED=false to remove Tier 2 everywhere.
+   Tier 2 also auto-hides if the device doesn't support recognition.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const SPEECH_CHECK_ENABLED=true;
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition||null;
+let micPanel=null,micRecorder=null,micChunks=[],micUrl=null,micTarget="",micStream=null;
+function micSupported(){return !!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder);}
+function micStopStream(){if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null;}}
+function closeMicPanel(){if(micPanel)micPanel.style.display="none";micStopStream();try{if(micRecorder&&micRecorder.state==="recording")micRecorder.stop();}catch(e){}}
+function openMicPanel(target){
+  micTarget=target;
+  if(micUrl){URL.revokeObjectURL(micUrl);micUrl=null;}
+  if(!micPanel){micPanel=document.createElement("div");micPanel.className="mic-panel";document.body.appendChild(micPanel);}
+  renderMicPanel("idle");
+  micPanel.style.display="block";
+}
+function renderMicPanel(state,extra){
+  let h='<div class="mic-head"><div class="mic-target">🗣️ '+micTarget+'</div><button type="button" class="mic-close" onclick="closeMicPanel()">✕</button></div><div class="mic-row">';
+  if(state==="recording")h+='<button type="button" class="mic-btn rec" onclick="micStop()">⏹ Stop</button>';
+  else h+='<button type="button" class="mic-btn" onclick="micStart()">🔴 Record</button>';
+  h+='<button type="button" class="mic-btn" onclick="speak(micTarget,0.7)">🔊 Model</button>';
+  if(micUrl&&state!=="recording")h+='<button type="button" class="mic-btn teal" onclick="micPlay()">▶️ Your voice</button>';
+  if(SPEECH_CHECK_ENABLED&&SR&&state!=="recording")h+='<button type="button" class="mic-btn gold" onclick="micListen()">🎯 Check me</button>';
+  h+='</div>';
+  if(extra)h+='<div class="mic-result">'+extra+'</div>';
+  else if(state==="idle"&&!micUrl)h+='<div class="mic-hint">Say it out loud FIRST. Then record and compare with the model.</div>';
+  micPanel.innerHTML=h;
+}
+async function micStart(){
+  if(!micSupported()){renderMicPanel("idle","Recording is not available on this device. Use the Model button and your ear.");return;}
+  try{
+    micStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    micChunks=[];
+    micRecorder=new MediaRecorder(micStream);
+    micRecorder.ondataavailable=e=>{if(e.data&&e.data.size)micChunks.push(e.data);};
+    micRecorder.onstop=()=>{
+      const blob=new Blob(micChunks,{type:(micRecorder&&micRecorder.mimeType)||"audio/mp4"});
+      if(micUrl)URL.revokeObjectURL(micUrl);
+      micUrl=URL.createObjectURL(blob);
+      micStopStream();
+      markPracticed(micTarget);renderMicPanel("idle","Done ✅ — tap Your voice, then Model. Do they match?");
+    };
+    micRecorder.start();
+    renderMicPanel("recording","🔴 Recording… say: “"+micTarget+"”");
+  }catch(e){
+    micStopStream();
+    renderMicPanel("idle","Could not access the microphone. Check Settings, Safari, Microphone.");
+  }
+}
+function micStop(){try{if(micRecorder&&micRecorder.state==="recording")micRecorder.stop();}catch(e){renderMicPanel("idle","Error stopping the recording.");}}
+function micPlay(){if(micUrl){try{new Audio(micUrl).play();}catch(e){}}}
+function micNorm(t){return String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zñü ]/g,"").replace(/ +/g," ").trim();}
+function micLev(x,y){
+  const m=x.length,n=y.length;if(!m)return n;if(!n)return m;
+  let prev=Array.from({length:n+1},(_,j)=>j);
+  for(let i=1;i<=m;i++){const cur=[i];
+    for(let j=1;j<=n;j++)cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(x[i-1]===y[j-1]?0:1));
+    prev=cur;}
+  return prev[n];
+}
+function micMatch(heardList,target){
+  const t=micNorm(target);
+  return heardList.some(hRaw=>{
+    const h=micNorm(hRaw);
+    if(!h)return false;
+    if(h===t||h.includes(t))return true;
+    if(t.includes(h)&&h.length>=Math.max(3,Math.floor(t.length*0.6)))return true;
+    return micLev(h,t)<=Math.max(1,Math.floor(t.length*0.25));
+  });
+}
+function micListen(){
+  if(!SR){renderMicPanel("idle","Speech recognition is not available on this device.");return;}
+  let rec=null,done=false;
+  try{rec=new SR();}catch(e){renderMicPanel("idle","Recognition is not available here. Use Record + your ear.");return;}
+  rec.lang="es-CO";rec.interimResults=false;rec.maxAlternatives=3;
+  renderMicPanel("listening","🎯 Listening… say: “"+micTarget+"”");
+  rec.onresult=e=>{
+    done=true;
+    const alts=[];for(let i=0;i<e.results[0].length;i++)alts.push(e.results[0][i].transcript);
+    const heard=alts[0]||"";
+    if(micMatch(alts,micTarget)){markPracticed(micTarget);renderMicPanel("idle","✅ Understood! I heard: “"+heard+"”");}
+    else renderMicPanel("idle","❌ I heard: “"+(heard||"…nothing")+"” — try again, slower and louder.");
+  };
+  rec.onerror=e=>{if(!done){done=true;renderMicPanel("idle","Recognition failed ("+(e.error||"error")+"). It sometimes fails in home-screen apps — use Record and compare by ear.");}};
+  rec.onend=()=>{if(!done)renderMicPanel("idle","I did not hear anything. Get closer to the mic and try again.");};
+  try{rec.start();}catch(e){renderMicPanel("idle","Recognition is not available here.");}
+}
+function markPracticed(target){
+  try{
+    lpPracticed.add(target);
+    document.querySelectorAll(".pronun-row").forEach(r=>{
+      if(r.dataset.mt===target){r.classList.add("done");const ck=r.querySelector(".pronun-check");if(ck)ck.textContent="✅";}
+    });
+  }catch(e){}
+}
+function attachMic(container,target){
+  if(!target)return;
+  if(!micSupported()&&!(SPEECH_CHECK_ENABLED&&SR))return;
+  const b=document.createElement("button");
+  b.type="button";b.className="mic-mini";b.textContent="🎙️";b.title="Practice pronunciation";
+  b.onclick=e=>{e.stopPropagation();openMicPanel(target);};
+  container.appendChild(b);
+}
+
 function rV(){
   const cat=VC.find(c=>c.id===aC);const list=document.getElementById("vocab-list");list.innerHTML="";
   if(cat.type==="vocales"){rVocales(list);return;}
@@ -171,7 +279,7 @@ function rV(){
       <div class="vc-info"><div class="vc-word">${item.word}</div><div class="vc-en">${item.en}</div><div class="vc-ph">${item.ph}</div></div>
       <span class="vc-spk">🔊</span>`;
     card.onclick=()=>speak(item.tts,0.75);
-    addVocabExample(card,item,cat.id,index);list.appendChild(card);
+    addVocabExample(card,item,cat.id,index);attachMic(card,item.tts||item.word);list.appendChild(card);
   });
 }
 
@@ -347,7 +455,7 @@ function renderFraseMenu(){
   sel.className="voice-select frase-jump-select";
   const jumpTargets=[["frs-dialogos","🗣️ Diálogos y conversaciones"],["frs-titulos","Títulos · Sr. / Sra."],
     ...FRASES.filter(s=>s.section).map((s,i)=>["frs-sec-"+i,s.section])];
-  sel.innerHTML=`<option value="">🧭 Ir a sección…</option>`+jumpTargets.map(([id,label])=>`<option value="${id}">${label}</option>`).join("");
+  sel.innerHTML=`<option value="">🧭 Jump to section…</option>`+jumpTargets.map(([id,label])=>`<option value="${id}">${label}</option>`).join("");
   sel.onchange=()=>{
     const el=document.getElementById(sel.value);
     if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
@@ -389,21 +497,21 @@ function renderFraseSections(){
     const st=document.createElement("div");st.className="frase-title";st.style.cssText=sec.cls;st.textContent=sec.section;wrap.appendChild(st);
     sec.items.forEach(item=>{const card=document.createElement("div");card.className="frase-card";
       card.innerHTML=`<div class="frase-txt"><div class="f-es">${item.es}</div><div class="f-en">${item.en}</div></div><span class="f-spk">🔊</span>`;
-      card.onclick=()=>speak(item.es,0.75);wrap.appendChild(card);});fl.appendChild(wrap);});
+      card.onclick=()=>speak(item.es,0.75);attachMic(card,item.es);wrap.appendChild(card);});fl.appendChild(wrap);});
 }
 function renderFraseDialogue(dialogue){
   fl.dataset.view="dialogue";
   fl.innerHTML="";
   const back=document.createElement("button");
   back.type="button";back.className="phrase-back";
-  back.innerHTML="<span>‹</span><span>Volver a frases</span>";
+  back.innerHTML="<span>‹</span><span>Back to phrases</span>";
   back.onclick=renderFraseMenu;
   fl.appendChild(back);
   /* Speaking practice: hide one side, say the line out loud, tap to reveal */
   const bubbles=[];
   const pbar=document.createElement("div");pbar.className="practice-bar";
   const pInfo=document.createElement("div");pInfo.className="practice-info";
-  pInfo.textContent="🗣️ Practica hablando: esconde un lado, di la línea en voz alta y toca para revelar.";
+  pInfo.textContent="🗣️ Speaking practice: hide one side, say the line out loud, then tap to reveal.";
   const pBtns=document.createElement("div");pBtns.className="practice-btns";
   const mkPB=(label,who)=>{
     const b=document.createElement("button");b.type="button";b.className="practice-btn"+(who===null?" active":"");b.textContent=label;
@@ -414,9 +522,9 @@ function renderFraseDialogue(dialogue){
     };
     return b;
   };
-  pBtns.appendChild(mkPB("👀 Ver todo",null));
-  pBtns.appendChild(mkPB("Practicar A","A"));
-  pBtns.appendChild(mkPB("Practicar B","B"));
+  pBtns.appendChild(mkPB("👀 Show all",null));
+  pBtns.appendChild(mkPB("Practice A","A"));
+  pBtns.appendChild(mkPB("Practice B","B"));
   pbar.appendChild(pInfo);pbar.appendChild(pBtns);
   fl.appendChild(pbar);
   const box=document.createElement("div");
@@ -435,7 +543,7 @@ function renderFraseDialogue(dialogue){
       row.className="dlg-line"+(line.who==="B"?" right":"");
       row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${line.who}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
       const bub=row.querySelector(".dlg-bubble");
-      bubbles.push({who:line.who,el:bub});
+      bubbles.push({who:line.who,el:bub});attachMic(row,line.tts);
       bub.onclick=()=>{
         if(bub.classList.contains("dlg-hidden"))bub.classList.remove("dlg-hidden");
         speak(line.tts,0.75);
@@ -484,12 +592,12 @@ try{dayInfo=Object.assign(dayInfo,JSON.parse(localStorage.getItem(DAY_KEY)||"{}"
 })();
 
 /* Lesson player state */
-let lpLesson=null,lpSteps=[],lpStep=0,lpScore=0,lpQs=[],lpQi=0,lpAnswered=false;
+let lpLesson=null,lpSteps=[],lpStep=0,lpScore=0,lpQs=[],lpQi=0,lpAnswered=false,lpPracticed=new Set();
 function lessonDialogue(lesson){return PHRASE_DIALOGUES.find(x=>x.title===lesson.dialogue);}
 function openLesson(lesson){
-  lpLesson=lesson;lpStep=0;lpScore=0;lpQi=0;lpAnswered=false;
+  lpLesson=lesson;lpStep=0;lpScore=0;lpQi=0;lpAnswered=false;lpPracticed=new Set();
   const c=LESSON_CONTENT[lesson.id];
-  lpSteps=c?["objetivo","escucha","palabras","frases","hablaA","hablaB","quiz","fin"]:["fin"];
+  lpSteps=c?["objetivo","escucha","palabras","frases","hablaA","hablaB","pronun","quiz","fin"]:["fin"];
   if(c)buildLessonQuiz(lesson,c);
   renderLessonStep();
 }
@@ -501,7 +609,7 @@ function buildLessonQuiz(lesson,c){
   const globalEn=aQ.filter(q=>!q.kind).map(q=>q.en);
   shuffle(c.phrases).slice(0,2).forEach(p=>{
     const opts=pad([p.es,...shuffle(c.phrases.filter(x=>x.es!==p.es)).slice(0,3).map(x=>x.es)],globalEs,4);
-    lpQs.push({label:"Di y elige en español",prompt:p.en,answer:p.es,options:shuffle(opts),afterTts:p.es,revEs:p.es,revEn:p.en});
+    lpQs.push({label:"Say it, then pick the Spanish",prompt:p.en,answer:p.es,options:shuffle(opts),afterTts:p.es,revEs:p.es,revEn:p.en});
   });
   shuffle(c.words).slice(0,2).forEach(w=>{
     const opts=pad([w.es,...shuffle(c.words.filter(x=>x.es!==w.es)).slice(0,3).map(x=>x.es)],globalEs,4);
@@ -512,7 +620,7 @@ function buildLessonQuiz(lesson,c){
     const lines=d.versions[0].lines;
     const L=lines[Math.floor(Math.random()*lines.length)];
     const opts=pad([L.en,...shuffle(lines.filter(x=>x.en!==L.en)).map(x=>x.en).slice(0,3)],globalEn,4);
-    lpQs.push({label:"Escucha y reconoce",prompt:"🎧",answer:L.en,options:shuffle(opts),autoTts:L.tts,afterTts:L.tts,revEs:L.es,revEn:L.en});
+    lpQs.push({label:"Listen and recognize",prompt:"🎧",answer:L.en,options:shuffle(opts),autoTts:L.tts,afterTts:L.tts,revEs:L.es,revEn:L.en});
   }
 }
 function lpEl(cls,html){const d=document.createElement("div");d.className=cls;if(html!==undefined)d.innerHTML=html;return d;}
@@ -522,7 +630,7 @@ function renderLessonStep(){
   const c=LESSON_CONTENT[lpLesson.id];
   const step=lpSteps[lpStep];
   const back=document.createElement("button");back.type="button";back.className="phrase-back";
-  back.innerHTML="<span>‹</span><span>Volver a lecciones</span>";
+  back.innerHTML="<span>‹</span><span>Back to lessons</span>";
   back.onclick=()=>{lpLesson=null;renderLessons();};
   root.appendChild(back);
   root.appendChild(lpEl("lp-dots",lpSteps.map((s,i)=>`<span class="lp-dot${i===lpStep?" on":i<lpStep?" past":""}"></span>`).join("")));
@@ -535,49 +643,50 @@ function renderLessonStep(){
   const next=()=>{lpStep++;lpAnswered=false;renderLessonStep();};
   const prev=()=>{if(lpStep>0){lpStep--;renderLessonStep();}};
   if(step==="objetivo"){
-    title.textContent="🎯 Objetivo — al final vas a poder decir:";
+    title.textContent="🎯 Goal — by the end you will be able to say:";
     body.appendChild(lpEl("lp-goal-es",c.goal.es));
     body.appendChild(lpEl("lp-goal-en",c.goal.en));
     body.appendChild(lpSpeakBtn(c.goal.es));
-    body.appendChild(lpEl("lp-hint","Escúchala y dila en voz alta 2 veces antes de seguir."));
-    navBtn("Empezar →",next,true);
+    attachMic(body,c.goal.es);
+    body.appendChild(lpEl("lp-hint","Listen to it, then say it out loud twice before moving on."));
+    navBtn("Start →",next,true);
   }
   else if(step==="escucha"){
-    title.textContent="👂 Escucha la conversación";
+    title.textContent="👂 Listen to the conversation";
     const d=lessonDialogue(lpLesson);
     const lines=d?d.versions[0].lines:[];
     lines.forEach(L=>{
       const row=lpEl("lp-line","<strong>"+L.who+":</strong> "+L.es+"<div class='lp-line-en'>"+L.en+"</div>");
-      row.onclick=()=>speak(L.tts,0.75);
+      row.onclick=()=>speak(L.tts,0.75);attachMic(row,L.tts);
       body.appendChild(row);
     });
-    if(lines.length)body.appendChild(lpSpeakBtn(lines.map(l=>l.tts).join(". "),"▶️ Escuchar todo"));
-    navBtn("‹ Atrás",prev);navBtn("Siguiente →",next,true);
+    if(lines.length)body.appendChild(lpSpeakBtn(lines.map(l=>l.tts).join(". "),"▶️ Play all"));
+    navBtn("‹ Back",prev);navBtn("Next →",next,true);
   }
   else if(step==="palabras"){
-    title.textContent="🔑 Palabras clave — toca, escucha y repite";
+    title.textContent="🔑 Key words — tap, listen, repeat out loud";
     const grid=lpEl("lp-grid");
     c.words.forEach(w=>{
       const wc=lpEl("lp-word","<div class='lp-word-es'>"+w.es+"</div><div class='lp-word-en'>"+w.en+"</div><span>🔊</span>");
-      wc.onclick=()=>speak(w.es.replace(/\.\.\./g,""),0.75);
+      wc.onclick=()=>speak(w.es.replace(/\.\.\./g,""),0.75);attachMic(wc,w.es.replace(/\.\.\./g,""));
       grid.appendChild(wc);
     });
     body.appendChild(grid);
-    navBtn("‹ Atrás",prev);navBtn("Siguiente →",next,true);
+    navBtn("‹ Back",prev);navBtn("Next →",next,true);
   }
   else if(step==="frases"){
-    title.textContent="🗣️ ¿Cómo se dice? — DI la frase en español, luego toca para comprobar";
+    title.textContent="🗣️ ¿Cómo se dice? — SAY it in Spanish out loud, then tap to check";
     c.phrases.forEach(p=>{
       const pc=lpEl("lp-prod","<div class='lp-prod-en'>"+p.en+"</div><div class='lp-prod-es lp-blur'>"+p.es+"</div>");
-      pc.onclick=()=>{pc.querySelector(".lp-prod-es").classList.remove("lp-blur");speak(p.es,0.75);};
+      pc.onclick=()=>{pc.querySelector(".lp-prod-es").classList.remove("lp-blur");speak(p.es,0.75);};attachMic(pc,p.es);
       body.appendChild(pc);
     });
-    body.appendChild(lpEl("lp-hint","Primero dila TÚ en voz alta. Después toca para escuchar y comparar."));
-    navBtn("‹ Atrás",prev);navBtn("Siguiente →",next,true);
+    body.appendChild(lpEl("lp-hint","Say it YOURSELF out loud first. Then tap to hear and compare."));
+    navBtn("‹ Back",prev);navBtn("Next →",next,true);
   }
   else if(step==="hablaA"||step==="hablaB"){
     const who=step==="hablaA"?"A":"B";
-    title.textContent="🎭 Tu turno — eres Persona "+who+". Di tus líneas en voz alta, toca para comprobar";
+    title.textContent="🎭 Your turn — you are Person "+who+". Say your lines out loud, tap to check";
     const d=lessonDialogue(lpLesson);
     const lines=d?d.versions[0].lines:[];
     lines.forEach(L=>{
@@ -588,13 +697,31 @@ function renderLessonStep(){
         if(esEl.classList.contains("lp-blur"))esEl.classList.remove("lp-blur");
         speak(L.tts,0.75);
       };
+      attachMic(row,L.tts);
       body.appendChild(row);
     });
-    navBtn("‹ Atrás",prev);navBtn("Siguiente →",next,true);
+    navBtn("‹ Back",prev);navBtn("Next →",next,true);
+  }
+  else if(step==="pronun"){
+    title.textContent="🎙️ Pronunciation — say each phrase, then record & compare";
+    const items=[{es:c.goal.es,en:c.goal.en},...c.phrases];
+    items.forEach(p=>{
+      const done=lpPracticed.has(p.es);
+      const row=lpEl("pronun-row"+(done?" done":""));
+      row.dataset.mt=p.es;
+      row.innerHTML="<div class='pronun-check'>"+(done?"✅":"⭕")+"</div><div class='pronun-copy'><div class='pronun-es'>"+p.es+"</div><div class='pronun-en'>"+p.en+"</div></div>";
+      const mb=document.createElement("button");mb.type="button";mb.className="pronun-mic";mb.textContent="🎙️";
+      mb.onclick=e=>{e.stopPropagation();openMicPanel(p.es);};
+      row.appendChild(mb);
+      row.onclick=()=>speak(p.es,0.75);
+      body.appendChild(row);
+    });
+    body.appendChild(lpEl("lp-hint","Tap the mic on each phrase: record yourself, compare with the model. Green checks show what you practiced. You can continue anytime."));
+    navBtn("Back",prev);navBtn("Next",next,true);
   }
   else if(step==="quiz"){
     const q=lpQs[lpQi];
-    title.textContent="🧪 Mini-quiz "+(lpQi+1)+" de "+lpQs.length+" — "+q.label;
+    title.textContent="🧪 Mini-quiz "+(lpQi+1)+" of "+lpQs.length+" — "+q.label;
     body.appendChild(lpEl("lp-quiz-prompt",q.prompt));
     if(q.autoTts)setTimeout(()=>speak(q.autoTts,0.7),300);
     const fb=lpEl("lp-quiz-fb","");
@@ -604,8 +731,9 @@ function renderLessonStep(){
       b.onclick=()=>{
         if(lpAnswered)return;lpAnswered=true;
         if(opt===q.answer){b.classList.add("correct");lpScore++;fb.innerHTML="✅ ¡Correcto! <div class='lp-reveal'>📖 "+q.revEs+" — "+q.revEn+"</div>";speak(q.afterTts,0.75);}
-        else{b.classList.add("wrong");grid.querySelectorAll(".lp-opt").forEach(x=>{if(x.textContent===q.answer)x.classList.add("reveal");});fb.innerHTML="❌ Casi. <div class='lp-reveal'>📖 "+q.revEs+" — "+q.revEn+"</div>";}
-        navBtn(lpQi<lpQs.length-1?"Siguiente pregunta →":"Terminar →",()=>{
+        else{b.classList.add("wrong");grid.querySelectorAll(".lp-opt").forEach(x=>{if(x.textContent===q.answer)x.classList.add("reveal");});fb.innerHTML="❌ Not quite. <div class='lp-reveal'>📖 "+q.revEs+" — "+q.revEn+"</div>";}
+        attachMic(fb,q.revEs);
+        navBtn(lpQi<lpQs.length-1?"Next question →":"Finish →",()=>{
           if(lpQi<lpQs.length-1){lpQi++;lpAnswered=false;renderLessonStep();}
           else{lpStep++;lpAnswered=false;renderLessonStep();}
         },true);
@@ -615,17 +743,17 @@ function renderLessonStep(){
     body.appendChild(grid);body.appendChild(fb);
   }
   else{
-    title.textContent="🎉 ¡Lección completada!";
-    if(lpQs.length)body.appendChild(lpEl("lp-goal-es","Mini-quiz: "+lpScore+" de "+lpQs.length));
-    if(c){body.appendChild(lpEl("lp-hint","Ya puedes decir:"));body.appendChild(lpEl("lp-goal-es",c.goal.es));body.appendChild(lpSpeakBtn(c.goal.es));}
+    title.textContent="🎉 Lesson complete!";
+    if(lpQs.length)body.appendChild(lpEl("lp-goal-es","Mini-quiz: "+lpScore+" of "+lpQs.length));
+    if(c){body.appendChild(lpEl("lp-hint","You can now say:"));body.appendChild(lpEl("lp-goal-es",c.goal.es));body.appendChild(lpSpeakBtn(c.goal.es));attachMic(body,c.goal.es);}
     lessonProgress[lpLesson.id]=true;saveLessons();
-    const explore=lpEl("lp-explore","<div class='lp-hint'>Explora más:</div>");
+    const explore=lpEl("lp-explore","<div class='lp-hint'>Explore more:</div>");
     const mk=(label,fn)=>{const b=document.createElement("button");b.type="button";b.className="lp-nav-btn";b.textContent=label;b.onclick=fn;explore.appendChild(b);};
-    mk("📚 Vocabulario",()=>{showPage("vocab");sCat(lpLesson.vocab);});
-    mk("💬 Conversación completa",()=>{showPage("frases");const d=lessonDialogue(lpLesson);if(d)renderFraseDialogue(d);});
-    mk("🧪 Quiz completo",()=>{showPage("quiz");qCat=lpLesson.quizCat;qMode=lpLesson.quizMode||"mixed";syncQuizControls();nQ();});
+    mk("📚 Vocabulary",()=>{showPage("vocab");sCat(lpLesson.vocab);});
+    mk("💬 Full conversation",()=>{showPage("frases");const d=lessonDialogue(lpLesson);if(d)renderFraseDialogue(d);});
+    mk("🧪 Full quiz",()=>{showPage("quiz");qCat=lpLesson.quizCat;qMode=lpLesson.quizMode||"mixed";syncQuizControls();nQ();});
     body.appendChild(explore);
-    navBtn("Volver a lecciones",()=>{lpLesson=null;renderLessons();},true);
+    navBtn("Back to lessons",()=>{lpLesson=null;renderLessons();},true);
   }
 }
 function renderLessons(){
@@ -634,18 +762,41 @@ function renderLessons(){
   root.innerHTML="";
   const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
   const intro=document.createElement("div");intro.className="lesson-intro";
-  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} completadas · 🔥 ${dayInfo.streak} día${dayInfo.streak===1?"":"s"}</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-intro-text">Cada lección te lleva de escuchar a HABLAR: objetivo, palabras, producción oral, rol A/B y mini-quiz.</div>`;
+  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-intro-text">Each lesson takes you from listening to SPEAKING: goal, key words, saying it yourself, role-play A/B, pronunciation, and a mini-quiz.</div>`;
   root.appendChild(intro);
   let missedCount=0;
   try{const s=JSON.parse(localStorage.getItem("esco-quiz-v1")||"{}");missedCount=s.missed?Object.keys(s.missed).length:0;}catch(e){}
   const rep=document.createElement("div");rep.className="repaso-card";
-  rep.innerHTML=`<div class="repaso-title">🔁 Repaso de hoy</div><div class="repaso-text">${missedCount?missedCount+" cosa"+(missedCount===1?"":"s")+" por repasar de quizzes anteriores.":"Nada pendiente — ¡el quiz alimenta tu repaso!"}</div>`;
-  const rb=document.createElement("button");rb.type="button";rb.className="lp-nav-btn primary";rb.textContent="Practicar repaso";
+  rep.innerHTML=`<div class="repaso-title">🔁 Today's review</div><div class="repaso-text">${missedCount?missedCount+" item"+(missedCount===1?"":"s")+" to review from past quizzes.":"Nothing pending — quiz mistakes feed your review!"}</div>`;
+  const rb=document.createElement("button");rb.type="button";rb.className="lp-nav-btn primary";rb.textContent="Start review";
   rb.onclick=()=>{showPage("quiz");qMode="mixed";qCat="all";syncQuizControls();repasoLeft=10;nQ();};
   rep.appendChild(rb);root.appendChild(rep);
+  /* Backup / restore progress (v17) */
+  const bk=document.createElement("div");bk.className="backup-row";
+  const BK_KEYS=["esco-quiz-v1","esco-lesson-progress-v1","esco-days-v1"];
+  const b1=document.createElement("button");b1.type="button";b1.className="backup-btn";b1.textContent="💾 Copy backup";
+  b1.onclick=()=>{
+    const data={};BK_KEYS.forEach(k=>{const v=localStorage.getItem(k);if(v)data[k]=v;});
+    const txt="ESCO-BACKUP:"+JSON.stringify(data);
+    const done=()=>{b1.textContent="✅ Copied";setTimeout(()=>{b1.textContent="💾 Copy backup";},2000);};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,()=>prompt("Copy this text and save it somewhere safe:",txt));
+    else prompt("Copy this text and save it somewhere safe:",txt);
+  };
+  const b2=document.createElement("button");b2.type="button";b2.className="backup-btn";b2.textContent="📥 Restore";
+  b2.onclick=()=>{
+    const txt=prompt("Paste your backup here:");
+    if(!txt)return;
+    try{
+      const data=JSON.parse(txt.replace(/^ESCO-BACKUP:/,""));
+      Object.keys(data).forEach(k=>{if(BK_KEYS.includes(k))localStorage.setItem(k,data[k]);});
+      alert("✅ Backup restored. The app will reload.");
+      location.reload();
+    }catch(e){alert("⚠️ That does not look like a valid backup.");}
+  };
+  bk.appendChild(b1);bk.appendChild(b2);root.appendChild(bk);
   LESSONS.forEach((lesson,i)=>{
     const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"");
-    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${i+1}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div><div class="lesson-sub">${lesson.sub}</div></div><button type="button" class="lesson-check" aria-label="Marcar lección completa">${lessonProgress[lesson.id]?"✓":"○"}</button></div><div class="lesson-actions"><button type="button" data-action="start" class="lesson-start">▶️ Empezar lección</button></div>`;
+    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${i+1}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div><div class="lesson-sub">${lesson.sub}</div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div><div class="lesson-actions"><button type="button" data-action="start" class="lesson-start">▶️ Start lesson</button></div>`;
     card.querySelector("[data-action=start]").onclick=()=>openLesson(lesson);
     card.querySelector(".lesson-check").onclick=()=>{if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();renderLessons();};
     root.appendChild(card);
@@ -820,11 +971,39 @@ VC.forEach(cat=>{
 FRASES.filter(sec=>sec.section).forEach(sec=>{if(sec.items)sec.items.forEach(i=>aQ.push({es:i.es,en:i.en,tts:i.es,cat:"frases"}));});
 CONVERSATION_QUIZ.forEach(q=>aQ.push(q));
 FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
+/* ── AUTO-COMPLETAR (v17): every vocab example becomes a fill-in-the-blank ── */
+(function(){
+  const norm=t=>[...String(t)].map(ch=>{const d=ch.normalize("NFD");return d[0].toLowerCase();}).join("");
+  let made=0;
+  VC.forEach(cat=>{
+    if(!cat.items)return;
+    const sibs=[...new Set(cat.items.map(i=>i.tts||i.word).filter(Boolean))];
+    cat.items.forEach((item,ix)=>{
+      const ex=getVocabExample(item,cat.id,ix);
+      if(!ex||!ex.es||ex.es===item.word)return;
+      const target=item.tts||item.word;
+      if(!target)return;
+      const sEs=ex.es,sN=norm(sEs),tN=norm(target);
+      if(tN.length<3)return;
+      const pos=sN.indexOf(tN);
+      if(pos<0)return;
+      let end=pos+tN.length;
+      while(end<sEs.length&&/[a-záéíóúüñA-ZÁÉÍÓÚÜÑ]/.test(sEs[end]))end++;
+      const found=sEs.slice(pos,end);
+      const blanked=sEs.slice(0,pos)+"___"+sEs.slice(end);
+      const wrong=sibs.filter(w=>norm(w)!==tN).sort(()=>Math.random()-0.5).slice(0,3);
+      if(wrong.length<3)return;
+      aQ.push({kind:"blank",es:blanked,en:found,tts:sEs,cat:"completar",choices:[found,...wrong],trans:ex.en});
+      made++;
+    });
+  });
+  console.log("Auto-Completar generated:",made,"questions");
+})();
 
-const QC=[{id:"all",label:"Todo"},{id:"frases",label:"Frases"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"direcciones",label:"Direcciones"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
+const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"direcciones",label:"Direcciones"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
 const QUIZ_MODES=[
-  {id:"mixed",label:"Mixto"},{id:"es-en",label:"ES → EN"},{id:"en-es",label:"EN → ES"},
-  {id:"listening",label:"🎧 Escuchar"},{id:"blank",label:"✏️ Completar"},{id:"conversation",label:"💬 Conversación"}
+  {id:"mixed",label:"Mixed"},{id:"es-en",label:"ES → EN"},{id:"en-es",label:"EN → ES"},
+  {id:"listening",label:"🎧 Listening"},{id:"blank",label:"✏️ Fill blank"},{id:"conversation",label:"💬 Conversation"}
 ];
 
 /* ── Persistent score + missed-question tracking (NEW v13) ──────────────────
@@ -888,7 +1067,7 @@ function spanishAnswer(q){
   return q.es||q.tts;
 }
 function englishAnswer(q){
-  if(q.kind==="blank")return BLANK_EN[q.tts]||"";
+  if(q.kind==="blank")return q.trans||BLANK_EN[q.tts]||"";
   const lines=[...(typeof DIALOGUE!=="undefined"?DIALOGUE:[]),...CONVERSATIONS.flatMap(c=>c.lines||[])];
   const found=lines.find(line=>line.es===q.en||line.es===q.tts||line.es===q.es);
   return found?found.en:(q.en||"");
@@ -904,7 +1083,7 @@ function nQ(){
   cQ=pickFrom[Math.floor(Math.random()*pickFrom.length)];
   /* Listening questions must not show the Spanish text — hide it and auto-play */
   document.getElementById("qc-word").textContent=qMode==="listening"||cQ.kind==="listening"?"🎧":cQ.prompt;
-  document.querySelector(".qc-label").textContent=qMode==="en-es"?"Traduce al español":qMode==="listening"?"Escucha y reconoce":qMode==="blank"?"Completa la frase":qMode==="conversation"?"Escoge la respuesta correcta":qMode==="es-en"?"Traduce al inglés":cQ.kind==="reply"?"Escoge la respuesta correcta":cQ.kind==="listening"?"Escucha y reconoce":cQ.kind==="tense"?"Reconoce el tiempo":cQ.kind==="blank"?"Completa la frase":"Elige la respuesta correcta";
+  document.querySelector(".qc-label").textContent=qMode==="en-es"?"Translate to Spanish":qMode==="listening"?"Listen and recognize":qMode==="blank"?"Complete the sentence":qMode==="conversation"?"Choose the correct reply":qMode==="es-en"?"Translate to English":cQ.kind==="reply"?"Choose the correct reply":cQ.kind==="listening"?"Listen and recognize":cQ.kind==="tense"?"Which tense is it?":cQ.kind==="blank"?"Complete the sentence":"Choose the correct answer";
   if(qMode==="listening"||cQ.kind==="listening")setTimeout(()=>speak(cQ.tts,0.7),350);
   const seen=new Set([cQ.answer]);const wrong=[];
   const wrongPool=cQ.choices?cQ.choices.map(answer=>({answer})):base.slice().sort(()=>Math.random()-0.5);
@@ -920,6 +1099,7 @@ function nQ(){
       else{b.classList.add("wrong");qS=0;document.getElementById("q-streak").textContent="🔥 0";fb.textContent="❌ Incorrecto";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(x.textContent===cQ.answer)x.classList.add("reveal");});
         qStore.missed[mk]=(qStore.missed[mk]||0)+2;}
       document.getElementById("quiz-reveal").innerHTML=`<div>🇪🇸 <strong>${spanishAnswer(cQ)}</strong></div><div>🇬🇧 ${englishAnswer(cQ)}</div>`;
+      attachMic(document.getElementById("quiz-reveal"),spanishAnswer(cQ));
       qStore.c=qC;qStore.t=qT;qStore.s=qS;saveQ();
       document.getElementById("quiz-next").style.display="block";};ow.appendChild(b);});
 }
@@ -944,3 +1124,36 @@ function showPage(id){
   if(id!=="vocab")hideVerbDetail();
 }
  
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Startup Data Validator (v17) — catches silent data corruption on load.
+   ═══════════════════════════════════════════════════════════════════════════ */
+function runDataValidator(){
+  const issues=[];
+  try{
+    const seen=new Set();
+    VC.forEach(c=>{
+      if(seen.has(c.id))issues.push("Duplicate category id: "+c.id);
+      seen.add(c.id);
+      if(c.items&&typeof VOCAB_EXAMPLES!=="undefined"&&VOCAB_EXAMPLES[c.id]&&VOCAB_EXAMPLES[c.id].length!==c.items.length)
+        issues.push('Examples misaligned in "'+c.id+'": '+c.items.length+' words vs '+VOCAB_EXAMPLES[c.id].length+' examples');
+    });
+    LESSONS.forEach(l=>{
+      if(!VC.some(c=>c.id===l.vocab))issues.push('Lesson "'+l.id+'": vocab "'+l.vocab+'" does not exist');
+      if(!PHRASE_DIALOGUES.some(d=>d.title===l.dialogue))issues.push('Lesson "'+l.id+'": dialogue "'+l.dialogue+'" does not exist');
+      if(l.quizCat!=="all"&&!aQ.some(q=>q.cat===l.quizCat))issues.push('Lesson "'+l.id+'": quiz category "'+l.quizCat+'" is empty');
+      if(typeof LESSON_CONTENT!=="undefined"&&!LESSON_CONTENT[l.id])issues.push('Lesson "'+l.id+'": no LESSON_CONTENT entry');
+    });
+    CONVERSATIONS.forEach(c=>c.lines.forEach(L=>{if(!L.tts)issues.push('Conversation "'+c.title+'" ('+c.tense+'): line missing tts');}));
+    FRASES.forEach(s=>{if(s.id&&s.section)issues.push('FRASES "'+s.id+'": has BOTH id and section (breaks hybrid filters)');});
+  }catch(e){issues.push("Validator crashed: "+e.message);}
+  if(issues.length){
+    const b=document.createElement("div");b.className="data-warning";
+    b.innerHTML="⚠️ <strong>Data problems detected:</strong><br>"+issues.slice(0,6).join("<br>")+(issues.length>6?"<br>…and "+(issues.length-6)+" more (see console)":"");
+    document.body.appendChild(b);
+    console.warn("DATA VALIDATOR:",issues);
+  }
+  return issues;
+}
+runDataValidator();

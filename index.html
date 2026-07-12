@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Español CO"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="styles.css?v=16"/>
+<link rel="stylesheet" href="styles.css?v=17"/>
 </head>
 <body>
 <div id="app">
@@ -18,7 +18,7 @@
 <div class="page" id="page-fonetica">
   <div class="ph"><div class="ph-label">Español Colombiano</div>
     <div class="ph-title" style="color:var(--teal)">Fonética</div>
-    <div class="ph-sub">Escucha, mira y practica los sonidos</div></div>
+    <div class="ph-sub">Listen, watch, and practice the sounds</div></div>
   <div class="phonetic-tabs">
     <button class="phonetic-tab active" id="pt-letters" onclick="showPhonetic('letters')">🔤 Letras</button>
     <button class="phonetic-tab" id="pt-syllables" onclick="showPhonetic('syllables')">🔡 Sílabas</button>
@@ -39,7 +39,7 @@
       <div class="vbi"><div class="vbl">O</div><div class="vbs">oh</div></div>
       <div class="vbi"><div class="vbl">U</div><div class="vbs">oo</div></div>
     </div>
-    <div class="sl" style="color:var(--muted)">Filtrar por consonante</div>
+    <div class="sl" style="color:var(--muted)">Filter by consonant</div>
     <div class="fw" id="filter-wrap"></div>
     <div id="combo-groups"></div>
     <div class="rb">
@@ -56,9 +56,9 @@
 
 <!-- LECCIONES -->
 <div class="page active" id="page-lecciones">
-  <div class="ph"><div class="ph-label">Tu camino</div>
+  <div class="ph"><div class="ph-label">Your path</div>
     <div class="ph-title" style="color:var(--gold)">Lecciones</div>
-    <div class="ph-sub">Un paso corto hacia una conversación real</div></div>
+    <div class="ph-sub">One short step toward a real conversation</div></div>
   <div id="lesson-list"></div>
 </div>
 
@@ -66,13 +66,13 @@
 <div class="page" id="page-vocab">
   <div class="ph"><div class="ph-label">Español Colombiano</div>
     <div class="ph-title" style="color:var(--teal)">Vocabulario</div>
-    <div class="ph-sub">Toca cada palabra para escuchar</div></div>
+    <div class="ph-sub">Tap any word to hear it</div></div>
   <div class="vocab-nav">
-    <select class="voice-select vocab-jump" id="vocab-jump" aria-label="Ir a categoría"></select>
+    <select class="voice-select vocab-jump" id="vocab-jump" aria-label="Jump to category"></select>
     <div class="vocab-nav-row">
-      <button class="vocab-nav-btn" id="vocab-prev" type="button">‹ Anterior</button>
+      <button class="vocab-nav-btn" id="vocab-prev" type="button">‹ Prev</button>
       <span class="vocab-position" id="vocab-position"></span>
-      <button class="vocab-nav-btn" id="vocab-next" type="button">Siguiente ›</button>
+      <button class="vocab-nav-btn" id="vocab-next" type="button">Next ›</button>
     </div>
   </div>
   <div class="cat-wrap" id="cat-wrap"></div>
@@ -84,7 +84,7 @@
 <div class="page" id="page-frases">
   <div class="ph"><div class="ph-label">Español Colombiano</div>
     <div class="ph-title" style="color:var(--pink)">Frases</div>
-    <div class="ph-sub">Conversación diaria · Toca para escuchar</div></div>
+    <div class="ph-sub">Daily conversation · Tap to listen</div></div>
   <div id="frases-list"></div>
 </div>
 
@@ -92,7 +92,7 @@
 <div class="page" id="page-gram">
   <div class="ph"><div class="ph-label">Español Colombiano</div>
     <div class="ph-title" style="color:var(--purple)">Gramática</div>
-    <div class="ph-sub">Tiempos verbales · Trucos para recordar</div></div>
+    <div class="ph-sub">Verb tenses · Memory tricks</div></div>
   <div class="gram-tabs">
     <button class="gtab active" id="gt-presente" onclick="showGram('presente')">⚡ Presente</button>
     <button class="gtab" id="gt-pasado" onclick="showGram('pasado')">⏮️ Pasado</button>
@@ -111,28 +111,28 @@
 
 <!-- QUIZ -->
 <div class="page" id="page-quiz">
-  <div class="ph"><div class="ph-label">Practica</div>
+  <div class="ph"><div class="ph-label">Practice</div>
     <div class="ph-title"><span style="color:var(--gold)">Quiz</span></div>
-    <div class="ph-sub">¿Cuánto recuerdas?</div></div>
+    <div class="ph-sub">How much do you remember?</div></div>
   <div class="quiz-score-bar">
-    <div class="qs-item"><div class="qs-num" id="q-correct" style="color:var(--teal)">0</div><div class="qs-label">Correctas</div></div>
-    <div class="qs-item"><div class="qs-num" id="q-streak" style="color:var(--gold)">🔥 0</div><div class="qs-label">Racha</div></div>
+    <div class="qs-item"><div class="qs-num" id="q-correct" style="color:var(--teal)">0</div><div class="qs-label">Correct</div></div>
+    <div class="qs-item"><div class="qs-num" id="q-streak" style="color:var(--gold)">🔥 0</div><div class="qs-label">Streak</div></div>
     <div class="qs-item"><div class="qs-num" id="q-total" style="color:var(--muted)">0</div><div class="qs-label">Total</div></div>
   </div>
   <div class="quiz-mode-wrap">
-    <div class="quiz-control-label">Modo de práctica</div>
+    <div class="quiz-control-label">Practice mode</div>
     <div class="quiz-mode-row" id="qmode-wrap"></div>
   </div>
   <div class="quiz-cat-wrap" id="qcat-wrap"></div>
   <div class="quiz-card">
-    <div class="qc-label">Traducir al inglés</div>
+    <div class="qc-label">Translate to English</div>
     <div class="qc-word" id="qc-word">—</div>
-    <button class="qc-hear" onclick="quizHear()">🔊 Escuchar</button>
+    <button class="qc-hear" onclick="quizHear()">🔊 Listen</button>
   </div>
   <div class="quiz-feedback" id="quiz-fb"></div>
   <div class="quiz-reveal" id="quiz-reveal"></div>
   <div class="quiz-opts" id="quiz-opts"></div>
-  <button class="quiz-next" id="quiz-next" onclick="nQ()">Siguiente →</button>
+  <button class="quiz-next" id="quiz-next" onclick="nQ()">Next →</button>
 </div>
 
 </div>
@@ -148,6 +148,6 @@
 </div>
 </div>
 
-<script src="data.js?v=16"></script><script src="app.js?v=16"></script>
+<script src="data.js?v=17"></script><script src="app.js?v=17"></script>
 </body>
 </html>
