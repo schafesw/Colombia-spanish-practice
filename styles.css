@@ -463,3 +463,33 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 .repaso-card{background:rgba(96,165,250,0.07);border:1px solid rgba(96,165,250,0.22);border-radius:16px;padding:15px;margin-bottom:16px;}
 .repaso-title{font-size:0.8rem;font-weight:800;color:var(--blue);margin-bottom:5px;}
 .repaso-text{font-size:0.76rem;color:var(--muted);line-height:1.5;margin-bottom:11px;}
+
+/* v17: pronunciation practice */
+.mic-mini{flex-shrink:0;width:34px;height:34px;border-radius:50%;border:1px solid rgba(232,180,74,0.35);background:rgba(232,180,74,0.12);font-size:0.9rem;margin-left:6px;}
+.mic-mini:active{transform:scale(0.9);}
+.mic-panel{display:none;position:fixed;left:10px;right:10px;bottom:calc(var(--tab-h) + var(--safe-bottom) + 10px);z-index:999;background:#131b24;border:1px solid rgba(232,180,74,0.35);border-radius:18px;padding:14px;box-shadow:0 -6px 30px rgba(0,0,0,0.55);}
+.mic-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:11px;}
+.mic-target{font-size:0.95rem;font-weight:900;color:#fff;line-height:1.35;}
+.mic-close{flex-shrink:0;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);border:none;color:var(--muted);font-size:0.85rem;}
+.mic-row{display:flex;flex-wrap:wrap;gap:8px;}
+.mic-btn{flex:1;min-width:104px;padding:11px 8px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.06);color:#fff;font-weight:800;font-size:0.78rem;min-height:44px;}
+.mic-btn.rec{background:rgba(232,93,117,0.25);border-color:var(--pink);color:var(--pink);}
+.mic-btn.teal{background:rgba(74,168,160,0.18);border-color:rgba(74,168,160,0.4);color:var(--teal);}
+.mic-btn.gold{background:rgba(232,180,74,0.15);border-color:rgba(232,180,74,0.4);color:var(--gold);}
+.mic-result{margin-top:11px;font-size:0.82rem;font-weight:700;color:#fff;line-height:1.5;background:rgba(255,255,255,0.05);border-radius:10px;padding:10px 12px;}
+.mic-hint{margin-top:11px;font-size:0.73rem;color:var(--muted);line-height:1.5;}
+.pronun-row{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:13px;padding:11px 12px;margin-bottom:9px;cursor:pointer;}
+.pronun-row.done{border-color:rgba(74,168,160,0.45);background:rgba(74,168,160,0.08);}
+.pronun-check{flex-shrink:0;font-size:1rem;}
+.pronun-copy{flex:1;min-width:0;}
+.pronun-es{font-size:0.9rem;font-weight:900;color:#fff;line-height:1.35;}
+.pronun-en{font-size:0.7rem;color:var(--muted);font-style:italic;margin-top:2px;}
+.pronun-mic{flex-shrink:0;width:42px;height:42px;border-radius:50%;border:1px solid rgba(232,180,74,0.4);background:rgba(232,180,74,0.15);font-size:1.05rem;}
+
+/* v17: backup + validator */
+.backup-row{display:flex;gap:8px;margin-bottom:16px;}
+.backup-btn{flex:1;padding:10px;border-radius:11px;border:1px solid rgba(255,255,255,0.14);background:transparent;color:var(--muted);font-weight:800;font-size:0.72rem;min-height:40px;}
+.data-warning{position:fixed;top:calc(var(--safe-top) + 6px);left:10px;right:10px;z-index:1000;background:#3a1420;border:1px solid var(--pink);border-radius:12px;padding:11px 13px;font-size:0.72rem;color:#ffd7de;line-height:1.5;box-shadow:0 4px 16px rgba(0,0,0,0.5);}
+
+/* v17: English overlay text for hidden dialogue bubbles */
+.dlg-hidden::after{content:"🗣️ say it, then tap";}
