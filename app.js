@@ -62,9 +62,10 @@ function chV(key){const v=getSpanishVoices().find(x=>voiceKey(x)===key);if(v){re
 function speak(t,r){
   if(!window.speechSynthesis)return;
   const sp=getSpanishVoices();
-  const live=selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang);
+  const saved=savedVoiceKey&&sp.find(v=>voiceKey(v)===savedVoiceKey); /* saved pick wins the moment the list recovers */
+  const live=saved||(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang));
   const voice=live||chooseSpanishVoice(sp);
-  if(voice)rememberVoice(voice);
+  if(voice)selV=voice; /* use it, but do NOT persist — only an explicit dropdown pick (chV) saves, so a flaky iOS voice list can't overwrite the user's choice */
   speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(t);
   if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
