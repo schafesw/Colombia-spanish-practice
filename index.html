@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Español CO"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="styles.css?v=18"/>
+<link rel="stylesheet" href="styles.css?v=19"/>
 </head>
 <body>
 <div id="app">
@@ -69,6 +69,10 @@
     <div class="ph-title" style="color:var(--teal)">Vocabulario</div>
     <div class="ph-sub">Tap any word to hear it</div></div>
   <div id="voice-bar-vocab"></div>
+  <div class="vocab-home-jump" id="vocab-home-jump">
+    <div class="vocab-home-jump-label">Jump directly · Ir a una categoría</div>
+    <select class="voice-select vocab-home-jump-select" id="vocab-jump-home" aria-label="Jump directly to a vocabulary category"></select>
+  </div>
   <div id="vocab-home"></div>
   <div id="vocab-category-view" hidden>
     <button class="vocab-home-back" id="vocab-home-back" type="button">‹ All vocabulary topics</button>
@@ -157,6 +161,6 @@
 </div>
 </div>
 
-<script src="data.js?v=18"></script><script src="app.js?v=18"></script>
+<script src="data.js?v=19"></script><script src="app.js?v=19"></script>
 </body>
 </html>

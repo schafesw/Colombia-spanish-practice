@@ -160,6 +160,8 @@ rC();
 const VOCAB_CATS=VC.filter(cat=>cat.id!=="vocales");
 const VOCAB_LAST_KEY="esco-vocab-last-v1";
 const vocabHome=document.getElementById("vocab-home");
+const vocabHomeJump=document.getElementById("vocab-home-jump");
+const vocabJumpHome=document.getElementById("vocab-jump-home");
 const vocabCategoryView=document.getElementById("vocab-category-view");
 const vocabHomeBack=document.getElementById("vocab-home-back");
 const cw=document.getElementById("cat-wrap");
@@ -178,7 +180,9 @@ const VOCAB_GROUPS=[
 ];
 VOCAB_CATS.forEach(cat=>{const p=document.createElement("button");p.className="cat-pill";p.textContent=cat.label;p.onclick=()=>sCat(cat.id);cw.appendChild(p);});
 vocabJump.innerHTML=VOCAB_CATS.map(cat=>`<option value="${cat.id}">${cat.label}</option>`).join("");
+vocabJumpHome.innerHTML=`<option value="">Choose a category…</option>`+VOCAB_CATS.map(cat=>`<option value="${cat.id}">${cat.label}</option>`).join("");
 vocabJump.onchange=()=>sCat(vocabJump.value);
+vocabJumpHome.onchange=()=>{if(vocabJumpHome.value)sCat(vocabJumpHome.value);};
 vocabPrev.onclick=()=>{const i=VOCAB_CATS.findIndex(c=>c.id===aC);if(i>0)sCat(VOCAB_CATS[i-1].id);};
 vocabNext.onclick=()=>{const i=VOCAB_CATS.findIndex(c=>c.id===aC);if(i<VOCAB_CATS.length-1)sCat(VOCAB_CATS[i+1].id);};
 vocabHomeBack.onclick=()=>showVocabHome();
@@ -220,13 +224,13 @@ function renderVocabHome(){
 }
 function showVocabHome(){
   hideVerbDetail();
-  vocabHome.hidden=false;vocabCategoryView.hidden=true;renderVocabHome();
+  vocabHomeJump.hidden=false;vocabHome.hidden=false;vocabCategoryView.hidden=true;renderVocabHome();
 }
-function showVocabCategory(){vocabHome.hidden=true;vocabCategoryView.hidden=false;}
+function showVocabCategory(){vocabHomeJump.hidden=true;vocabHome.hidden=true;vocabCategoryView.hidden=false;}
 function updateVocabNav(){
   const i=VOCAB_CATS.findIndex(c=>c.id===aC);
   if(i<0)return;
-  vocabJump.value=aC;vocabPosition.textContent=`${i+1} of ${VOCAB_CATS.length}`;
+  vocabJump.value=aC;if(vocabJumpHome)vocabJumpHome.value=aC;vocabPosition.textContent=`${i+1} of ${VOCAB_CATS.length}`;
   vocabPrev.disabled=i<=0;vocabNext.disabled=i>=VOCAB_CATS.length-1;
 }
 function sCat(id){
