@@ -1,36 +1,71 @@
 ﻿// Spanish learning app behavior
 // ── Voice ─────────────────────────────────────────────────────────────────────
 let voices=[],selV=null;
+const VOICE_KEY="esco-selected-voice-v1";
+const VOICE_HOSTS=["fonetica","lecciones","vocab","frases","gram","quiz"];
+let savedVoiceKey="";
+try{savedVoiceKey=localStorage.getItem(VOICE_KEY)||"";}catch(e){}
+function voiceKey(v){return v?(v.voiceURI||`${v.name}::${v.lang}`):"";}
+function voiceLabel(v){return `${v.lang||"es"} · ${(v.name||"Spanish voice").replace("com.apple.","").replace("voice.","")}`;}
 function getSpanishVoices(){
-  voices=window.speechSynthesis.getVoices();
-  return voices.filter(v=>/^es(?:-|_)/i.test(v.lang));
+  if(!window.speechSynthesis)return [];
+  voices=window.speechSynthesis.getVoices()||[];
+  return voices.filter(v=>/^es(?:-|_|$)/i.test(String(v.lang||"")));
 }
 function chooseSpanishVoice(sp){
+  const saved=sp.find(v=>voiceKey(v)===savedVoiceKey||(`${v.name}::${v.lang}`===savedVoiceKey));
+  if(saved)return saved;
+  if(!savedVoiceKey){
+    for(const p of["es-CO","es-419","es-MX","es-US","es-AR","es-ES"]){
+      const v=sp.find(x=>String(x.lang||"").toUpperCase().startsWith(p.toUpperCase()));
+      if(v)return v;
+    }
+  }
   const kept=selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang);
   if(kept)return kept;
-  for(const p of["es-CO","es-419","es-MX","es-US","es-AR"]){
-    const v=sp.find(x=>x.lang.toUpperCase().startsWith(p));
-    if(v)return v;
-  }
   return sp[0]||null;
+}
+function rememberVoice(v){
+  if(!v)return;
+  selV=v;savedVoiceKey=voiceKey(v);
+  try{localStorage.setItem(VOICE_KEY,savedVoiceKey);}catch(e){}
+}
+function syncVoiceSelectors(){
+  const key=voiceKey(selV);
+  document.querySelectorAll(".voice-choice").forEach(s=>{if(key)s.value=key;});
 }
 function loadV(){
   const sp=getSpanishVoices();
   const next=chooseSpanishVoice(sp);
   if(next)selV=next;
-  buildVB(sp);
+  buildVoiceBars(sp);
 }
-function buildVB(sp=getSpanishVoices()){
-  if(!sp.length)return;
-  document.getElementById("voice-bar-letras").innerHTML=`<div class="voice-bar"><span class="voice-label">🎙️ Voz</span><select class="voice-select" onchange="chV(this.value)">${sp.map((v,i)=>`<option value="${i}" ${selV&&v.name===selV.name&&v.lang===selV.lang?"selected":""}>${v.lang} · ${v.name.replace("com.apple.","").replace("voice.","")}</option>`).join("")}</select><button class="voice-test" onclick="speak('Hola, buenos días Colombia',0.8)">Probar</button></div>`;
+function buildVoiceBars(sp=getSpanishVoices()){
+  VOICE_HOSTS.forEach(id=>{
+    const host=document.getElementById(`voice-bar-${id}`);if(!host)return;
+    host.innerHTML="";
+    const bar=document.createElement("div");bar.className="voice-bar";
+    const label=document.createElement("span");label.className="voice-label";label.textContent="🎙️ Voz";
+    const select=document.createElement("select");select.className="voice-select voice-choice";select.setAttribute("aria-label","Spanish voice");
+    if(sp.length){
+      sp.forEach(v=>{const option=document.createElement("option");option.value=voiceKey(v);option.textContent=voiceLabel(v);select.appendChild(option);});
+      if(selV)select.value=voiceKey(selV);
+    }else{
+      const option=document.createElement("option");option.textContent="Loading Spanish voices…";option.disabled=true;option.selected=true;select.appendChild(option);
+    }
+    select.onchange=()=>chV(select.value);
+    const test=document.createElement("button");test.type="button";test.className="voice-test";test.textContent="Probar";test.onclick=()=>speak("Hola, buenos días Colombia",0.8);
+    bar.append(label,select,test);host.appendChild(bar);
+  });
 }
-function chV(i){const sp=getSpanishVoices();selV=sp[i]||null;}
+function chV(key){const v=getSpanishVoices().find(x=>voiceKey(x)===key);if(v){rememberVoice(v);syncVoiceSelectors();}}
 function speak(t,r){
   if(!window.speechSynthesis)return;
   const sp=getSpanishVoices();
-  const live=selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang);
+  const saved=savedVoiceKey&&sp.find(v=>voiceKey(v)===savedVoiceKey); /* saved pick wins the moment the list recovers */
+  const live=saved||(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang));
   const voice=live||chooseSpanishVoice(sp);
-  if(voice)selV=voice;
+  if(voice)selV=voice; /* use it, but do NOT persist — only an explicit dropdown pick (chV) saves, so a flaky iOS voice list can't overwrite the user's choice */
   speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(t);
   if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
@@ -123,23 +158,89 @@ function rC(){
 rC();
 
 // ── Build Vocab ───────────────────────────────────────────────────────────────
-let aC="vocales";const cw=document.getElementById("cat-wrap");
+const VOCAB_CATS=VC.filter(cat=>cat.id!=="vocales");
+const VOCAB_LAST_KEY="esco-vocab-last-v1";
+const vocabHome=document.getElementById("vocab-home");
+const vocabHomeJump=document.getElementById("vocab-home-jump");
+const vocabJumpHome=document.getElementById("vocab-jump-home");
+const vocabCategoryView=document.getElementById("vocab-category-view");
+const vocabHomeBack=document.getElementById("vocab-home-back");
+const cw=document.getElementById("cat-wrap");
 const vocabJump=document.getElementById("vocab-jump");
 const vocabPosition=document.getElementById("vocab-position");
 const vocabPrev=document.getElementById("vocab-prev");
 const vocabNext=document.getElementById("vocab-next");
-VC.forEach(cat=>{const p=document.createElement("button");p.className="cat-pill"+(cat.id===aC?" active":"");p.textContent=cat.label;p.onclick=()=>sCat(cat.id);cw.appendChild(p);});
-vocabJump.innerHTML=VC.map(cat=>`<option value="${cat.id}">${cat.label}</option>`).join("");
+let aC="gustos";
+try{aC=localStorage.getItem(VOCAB_LAST_KEY)||aC;}catch(e){}
+if(!VOCAB_CATS.some(cat=>cat.id===aC))aC=VOCAB_CATS.some(cat=>cat.id==="gustos")?"gustos":(VOCAB_CATS[0]?.id||"");
+const VOCAB_GROUPS=[
+  {title:"Start with everyday speech",sub:"Useful words for talking about yourself",ids:["gustos","familia","verbos","tiempo","emociones","colombianismos"]},
+  {title:"Daily life",sub:"Home, food, clothing, and things around you",ids:["comida","casa","habitacion","bano","cocina","ropa","cuerpo"]},
+  {title:"Getting things done",sub:"Work, travel, directions, and technology",ids:["numeros","direcciones","lugares","trabajo","oficina","carropartes","tecnologia","tv"]},
+  {title:"Describe the world",sub:"People, places, weather, and details",ids:["colores","adjetivos","meses","dias","profesiones","animales","clima","preguntas"]}
+];
+VOCAB_CATS.forEach(cat=>{const p=document.createElement("button");p.className="cat-pill";p.textContent=cat.label;p.onclick=()=>sCat(cat.id);cw.appendChild(p);});
+vocabJump.innerHTML=VOCAB_CATS.map(cat=>`<option value="${cat.id}">${cat.label}</option>`).join("");
+vocabJumpHome.innerHTML=`<option value="">Choose a category…</option>`+VOCAB_CATS.map(cat=>`<option value="${cat.id}">${cat.label}</option>`).join("");
 vocabJump.onchange=()=>sCat(vocabJump.value);
-vocabPrev.onclick=()=>{const i=VC.findIndex(c=>c.id===aC);if(i>0)sCat(VC[i-1].id);};
-vocabNext.onclick=()=>{const i=VC.findIndex(c=>c.id===aC);if(i<VC.length-1)sCat(VC[i+1].id);};
-function updateVocabNav(){
-  const i=VC.findIndex(c=>c.id===aC);
-  vocabJump.value=aC;
-  vocabPosition.textContent=`${i+1} of ${VC.length}`;
-  vocabPrev.disabled=i<=0;vocabNext.disabled=i>=VC.length-1;
+vocabJumpHome.onchange=()=>{if(vocabJumpHome.value)sCat(vocabJumpHome.value);};
+vocabPrev.onclick=()=>{const i=VOCAB_CATS.findIndex(c=>c.id===aC);if(i>0)sCat(VOCAB_CATS[i-1].id);};
+vocabNext.onclick=()=>{const i=VOCAB_CATS.findIndex(c=>c.id===aC);if(i<VOCAB_CATS.length-1)sCat(VOCAB_CATS[i+1].id);};
+vocabHomeBack.onclick=()=>showVocabHome();
+function vocabCount(cat){
+  if(cat.type==="basic")return cat.items?.length||0;
+  if(cat.type==="verbos")return Object.keys(VERBS).length;
+  if(cat.type==="numeros")return N130.length+NT.length;
+  if(cat.type==="preguntas")return PQ.length;
+  if(cat.type==="colombianismos")return COLOMBIANISMOS.length;
+  return 0;
 }
-function sCat(id){document.querySelectorAll(".cat-pill").forEach((p,i)=>p.classList.toggle("active",VC[i].id===id));aC=id;updateVocabNav();hideVerbDetail();rV();document.querySelector(".scroll").scrollTop=0;}
+function vocabCard(cat,tag){
+  const b=document.createElement("button");b.type="button";b.className="vocab-home-card";
+  b.innerHTML=`<span class="vocab-home-card-title">${cat.label}</span><span class="vocab-home-card-meta">${vocabCount(cat)} ${tag||"words"} <span>›</span></span>`;
+  b.onclick=()=>sCat(cat.id);return b;
+}
+function renderVocabHome(){
+  if(!vocabHome)return;
+  vocabHome.innerHTML="";
+  const intro=document.createElement("div");intro.className="vocab-home-intro";
+  intro.innerHTML="<div class='vocab-home-kicker'>Choose a topic · Elige un tema</div><div class='vocab-home-title'>What do you want to practice?</div><div class='vocab-home-sub'>Tap a section to learn the word, hear the pronunciation, and see it used in a sentence.</div>";
+  vocabHome.appendChild(intro);
+  const last=VOCAB_CATS.find(cat=>cat.id===aC);
+  if(last){
+    const continueCard=document.createElement("button");continueCard.type="button";continueCard.className="vocab-continue-card";
+    continueCard.innerHTML=`<span class="vocab-continue-icon">▶</span><span class="vocab-continue-copy"><span class="vocab-continue-label">Continue / Continuar</span><strong>${last.label}</strong><small>${vocabCount(last)} words ready to practice</small></span><span class="vocab-home-arrow">›</span>`;
+    continueCard.onclick=()=>sCat(last.id);vocabHome.appendChild(continueCard);
+  }
+  const phon=document.createElement("button");phon.type="button";phon.className="vocab-phonetic-card";
+  phon.innerHTML="<span class='vocab-phonetic-icon'>🔤</span><span><strong>Fonética</strong><small>Vocales, consonantes, y sílabas</small></span><span class='vocab-home-arrow'>›</span>";
+  phon.onclick=()=>{showPage("fonetica");showPhonetic("letters");};vocabHome.appendChild(phon);
+  VOCAB_GROUPS.forEach(group=>{
+    const section=document.createElement("section");section.className="vocab-home-group";
+    section.innerHTML=`<div class="vocab-home-group-title">${group.title}</div><div class="vocab-home-group-sub">${group.sub}</div>`;
+    const grid=document.createElement("div");grid.className="vocab-home-grid";
+    group.ids.map(id=>VOCAB_CATS.find(cat=>cat.id===id)).filter(Boolean).forEach(cat=>grid.appendChild(vocabCard(cat)));
+    section.appendChild(grid);vocabHome.appendChild(section);
+  });
+}
+function showVocabHome(){
+  hideVerbDetail();
+  vocabHomeJump.hidden=false;vocabHome.hidden=false;vocabCategoryView.hidden=true;renderVocabHome();
+}
+function showVocabCategory(){vocabHomeJump.hidden=true;vocabHome.hidden=true;vocabCategoryView.hidden=false;}
+function updateVocabNav(){
+  const i=VOCAB_CATS.findIndex(c=>c.id===aC);
+  if(i<0)return;
+  vocabJump.value=aC;if(vocabJumpHome)vocabJumpHome.value=aC;vocabPosition.textContent=`${i+1} of ${VOCAB_CATS.length}`;
+  vocabPrev.disabled=i<=0;vocabNext.disabled=i>=VOCAB_CATS.length-1;
+}
+function sCat(id){
+  if(id==="vocales"){showPage("fonetica");showPhonetic("letters");return;}
+  if(!VOCAB_CATS.some(cat=>cat.id===id))return;
+  document.querySelectorAll(".cat-pill").forEach((p,i)=>p.classList.toggle("active",VOCAB_CATS[i].id===id));
+  aC=id;try{localStorage.setItem(VOCAB_LAST_KEY,aC);}catch(e){}
+  showVocabCategory();updateVocabNav();hideVerbDetail();rV();document.querySelector(".scroll").scrollTop=0;
+}
 function escapeVocabHtml(value){return String(value||"").replace(/[&<>\"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;"}[ch]));}
 function getVocabExample(item,catId,index){
   const raw=item.example||(VOCAB_EXAMPLES[catId]||[])[index];
@@ -234,20 +335,34 @@ function micMatch(heardList,target){
 }
 function micListen(){
   if(!SR){renderMicPanel("idle","Speech recognition is not available on this device.");return;}
-  let rec=null,done=false;
-  try{rec=new SR();}catch(e){renderMicPanel("idle","Recognition is not available here. Use Record + your ear.");return;}
-  rec.lang="es-CO";rec.interimResults=false;rec.maxAlternatives=3;
-  renderMicPanel("listening","🎯 Listening… say: “"+micTarget+"”");
-  rec.onresult=e=>{
-    done=true;
-    const alts=[];for(let i=0;i<e.results[0].length;i++)alts.push(e.results[0][i].transcript);
-    const heard=alts[0]||"";
-    if(micMatch(alts,micTarget)){markPracticed(micTarget);renderMicPanel("idle","✅ Understood! I heard: “"+heard+"”");}
-    else renderMicPanel("idle","❌ I heard: “"+(heard||"…nothing")+"” — try again, slower and louder.");
+  const languages=["es-CO","es-419","es-MX"];
+  let attempt=0,done=false,retrying=false,current=null;
+  const start=()=>{
+    let rec=null;
+    try{rec=new SR();}catch(e){renderMicPanel("idle","Recognition is not available here. Use Record + your ear.");return;}
+    current=rec;rec.lang=languages[attempt]||"es-MX";rec.interimResults=false;rec.maxAlternatives=3;
+    renderMicPanel("listening","🎯 Listening… say: “"+micTarget+"”");
+    rec.onresult=e=>{
+      if(rec!==current)return;
+      done=true;
+      const alts=[];for(let i=0;i<e.results[0].length;i++)alts.push(e.results[0][i].transcript);
+      const heard=alts[0]||"";
+      if(micMatch(alts,micTarget)){markPracticed(micTarget);renderMicPanel("idle","✅ Understood! I heard: “"+heard+"”");}
+      else renderMicPanel("idle","❌ I heard: “"+(heard||"…nothing")+"” — try again, slower and louder.");
+    };
+    rec.onerror=e=>{
+      if(rec!==current||done)return;
+      const canRetry=(e.error==="language-not-supported"||e.error==="network")&&attempt<languages.length-1;
+      if(canRetry){retrying=true;attempt++;setTimeout(()=>{if(!done){retrying=false;start();}},180);return;}
+      done=true;renderMicPanel("idle","Recognition failed ("+(e.error||"error")+"). Use Record + compare by ear if this keeps happening.");
+    };
+    rec.onend=()=>{if(rec!==current||done||retrying)return;done=true;renderMicPanel("idle","I did not hear anything. Get closer to the mic and try again.");};
+    try{rec.start();}catch(e){
+      if(attempt<languages.length-1){attempt++;start();}
+      else{done=true;renderMicPanel("idle","Recognition is not available here.");}
+    }
   };
-  rec.onerror=e=>{if(!done){done=true;renderMicPanel("idle","Recognition failed ("+(e.error||"error")+"). It sometimes fails in home-screen apps — use Record and compare by ear.");}};
-  rec.onend=()=>{if(!done)renderMicPanel("idle","I did not hear anything. Get closer to the mic and try again.");};
-  try{rec.start();}catch(e){renderMicPanel("idle","Recognition is not available here.");}
+  start();
 }
 function markPracticed(target){
   try{
@@ -368,7 +483,7 @@ function rP(list){
       <div class="q-ph">[${item.ph}]</div><div class="q-example">💬 ${item.example}</div></div>
       <span class="q-spk">🔊</span>`;card.onclick=()=>speak(item.tts,0.75);list.appendChild(card);});
 }
-rV();updateVocabNav();
+rV();updateVocabNav();showVocabHome();
 
 // ── Verb Detail View ──────────────────────────────────────────────────────────
 function showVerbDetail(key,verb){
@@ -629,6 +744,7 @@ function renderLessonStep(){
   const root=document.getElementById("lesson-list");if(!root||!lpLesson)return;root.innerHTML="";
   const c=LESSON_CONTENT[lpLesson.id];
   const step=lpSteps[lpStep];
+  saveResume();
   const back=document.createElement("button");back.type="button";back.className="phrase-back";
   back.innerHTML="<span>‹</span><span>Back to lessons</span>";
   back.onclick=()=>{lpLesson=null;renderLessons();};
@@ -756,6 +872,112 @@ function renderLessonStep(){
     navBtn("Back to lessons",()=>{lpLesson=null;renderLessons();},true);
   }
 }
+/* ═══════════════════════════════════════════════════════════════════════════
+   Lesson Resume (v21) — pick up exactly where you left off
+   ═══════════════════════════════════════════════════════════════════════════ */
+const RESUME_KEY="esco-lesson-resume-v1";
+function saveResume(){
+  try{
+    if(lpLesson&&lpSteps[lpStep]&&lpSteps[lpStep]!=="fin")
+      localStorage.setItem(RESUME_KEY,JSON.stringify({id:lpLesson.id,step:lpStep}));
+    else localStorage.removeItem(RESUME_KEY);
+  }catch(e){}
+}
+function loadResume(){
+  try{const r=JSON.parse(localStorage.getItem(RESUME_KEY)||"null");return r&&r.id?r:null;}catch(e){return null;}
+}
+function openLessonAt(lesson,step){
+  openLesson(lesson);
+  lpStep=Math.min(Math.max(step|0,0),lpSteps.length-1);
+  renderLessonStep();
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Reacción Rápida (v21) — answer OUT LOUD under mild time pressure.
+   Question bank auto-built from every question→answer pair in the conversations.
+   Forgiving by design: reveal early anytime, retry anytime, no grading.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const RR_BANK=[];
+(function(){
+  const seen=new Set();
+  PHRASE_DIALOGUES.forEach(d=>{(d.versions||[]).forEach(v=>{
+    for(let i=0;i<v.lines.length-1;i++){
+      const q=v.lines[i],ans=v.lines[i+1];
+      if(/\?\s*$/.test(q.es)&&ans&&ans.es&&!seen.has(q.es)){
+        seen.add(q.es);
+        RR_BANK.push({q:q.tts||q.es,qEs:q.es,qEn:q.en,aEs:ans.es,aTts:ans.tts||ans.es,aEn:ans.en});
+      }
+    }
+  });});
+})();
+let rrTimer=null,rrCurrent=null,rrSession=0;
+function rrStop(){if(rrTimer){clearInterval(rrTimer);rrTimer=null;}}
+function rrExit(){rrStop();renderLessons();}
+function renderRapida(keepSame){
+  rrStop();
+  const root=document.getElementById("lesson-list");if(!root)return;
+  if(!RR_BANK.length){renderLessons();return;}
+  if(!keepSame||!rrCurrent){rrCurrent=RR_BANK[Math.floor(Math.random()*RR_BANK.length)];rrSession++;}
+  root.innerHTML="";
+  const back=document.createElement("button");back.type="button";back.className="phrase-back";
+  back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=rrExit;
+  root.appendChild(back);
+  const card=lpEl("lp-card rr-card");
+  card.appendChild(lpEl("lp-step-title","⚡ Reacción Rápida — question "+rrSession+" this session"));
+  const qBox=lpEl("rr-question",rrCurrent.qEs);
+  qBox.onclick=()=>speak(rrCurrent.q,0.75);
+  card.appendChild(qBox);
+  card.appendChild(lpEl("rr-qen",rrCurrent.qEn||""));
+  const cd=lpEl("rr-countdown","5");
+  card.appendChild(cd);
+  card.appendChild(lpEl("lp-hint","🗣️ Answer OUT LOUD — any answer that fits. The model reveals when the timer ends."));
+  const controls=lpEl("lp-nav");
+  const revealBtn=document.createElement("button");revealBtn.type="button";revealBtn.className="lp-nav-btn";revealBtn.textContent="Reveal now";
+  revealBtn.onclick=()=>rrReveal();
+  controls.appendChild(revealBtn);
+  card.appendChild(controls);
+  root.appendChild(card);
+  speak(rrCurrent.q,0.75);
+  let n=5;
+  rrTimer=setInterval(()=>{
+    n--;
+    if(n<=0){rrReveal();return;}
+    cd.textContent=String(n);
+  },1000);
+}
+function rrReveal(){
+  rrStop();
+  const root=document.getElementById("lesson-list");if(!root||!rrCurrent)return;
+  root.innerHTML="";
+  const back=document.createElement("button");back.type="button";back.className="phrase-back";
+  back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=rrExit;
+  root.appendChild(back);
+  const card=lpEl("lp-card rr-card");
+  card.appendChild(lpEl("lp-step-title","⚡ Reacción Rápida — model answer"));
+  card.appendChild(lpEl("rr-question rr-q-small",rrCurrent.qEs));
+  const ans=lpEl("rr-answer",rrCurrent.aEs);
+  ans.onclick=()=>speak(rrCurrent.aTts,0.75);
+  card.appendChild(ans);
+  card.appendChild(lpEl("rr-qen",rrCurrent.aEn||""));
+  card.appendChild(lpEl("lp-hint","Did your answer get the idea across? That counts. Compare with the model, then try the same one again or grab the next."));
+  const row1=lpEl("lp-nav");
+  const hearB=document.createElement("button");hearB.type="button";hearB.className="lp-nav-btn";hearB.textContent="🔊 Model";
+  hearB.onclick=()=>speak(rrCurrent.aTts,0.75);
+  const micB=document.createElement("button");micB.type="button";micB.className="lp-nav-btn";micB.textContent="🎙️ Record & compare";
+  micB.onclick=()=>openMicPanel(rrCurrent.aTts);
+  row1.appendChild(hearB);row1.appendChild(micB);
+  card.appendChild(row1);
+  const row2=lpEl("lp-nav");
+  const sameB=document.createElement("button");sameB.type="button";sameB.className="lp-nav-btn";sameB.textContent="🔁 Try again";
+  sameB.onclick=()=>renderRapida(true);
+  const nextB=document.createElement("button");nextB.type="button";nextB.className="lp-nav-btn primary";nextB.textContent="➡️ Next question";
+  nextB.onclick=()=>renderRapida(false);
+  row2.appendChild(sameB);row2.appendChild(nextB);
+  card.appendChild(row2);
+  root.appendChild(card);
+  speak(rrCurrent.aTts,0.75);
+}
+
 function renderLessons(){
   const root=document.getElementById("lesson-list");if(!root)return;
   if(lpLesson){renderLessonStep();return;}
@@ -764,6 +986,28 @@ function renderLessons(){
   const intro=document.createElement("div");intro.className="lesson-intro";
   intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-intro-text">Each lesson takes you from listening to SPEAKING: goal, key words, saying it yourself, role-play A/B, pronunciation, and a mini-quiz.</div>`;
   root.appendChild(intro);
+  /* Continue / Start here (v21) */
+  const resume=loadResume();
+  const resLesson=resume&&LESSONS.find(l=>l.id===resume.id);
+  const nextLesson=LESSONS.find(l=>!lessonProgress[l.id]);
+  const cont=document.createElement("div");cont.className="continue-card";
+  let cTitle,cSub,cAction;
+  if(resLesson&&!lessonProgress[resLesson.id]){
+    cTitle="▶️ Continue: "+resLesson.title;
+    cSub="Step "+((resume.step|0)+1)+" of 9 — pick up where you left off";
+    cAction=()=>openLessonAt(resLesson,resume.step);
+  }else if(nextLesson){
+    cTitle=(done===0?"▶️ Start here: ":"▶️ Next lesson: ")+nextLesson.title;
+    cSub=nextLesson.sub;
+    cAction=()=>openLesson(nextLesson);
+  }else{
+    cTitle="🎉 All lessons complete";
+    cSub="Replay any lesson below, or drill with Reacción Rápida";
+    cAction=null;
+  }
+  cont.innerHTML=`<div class="continue-title">${cTitle}</div><div class="continue-sub">${cSub}</div>`;
+  if(cAction){cont.onclick=cAction;cont.classList.add("tappable");}
+  root.appendChild(cont);
   let missedCount=0;
   try{const s=JSON.parse(localStorage.getItem("esco-quiz-v1")||"{}");missedCount=s.missed?Object.keys(s.missed).length:0;}catch(e){}
   const rep=document.createElement("div");rep.className="repaso-card";
@@ -771,6 +1015,13 @@ function renderLessons(){
   const rb=document.createElement("button");rb.type="button";rb.className="lp-nav-btn primary";rb.textContent="Start review";
   rb.onclick=()=>{showPage("quiz");qMode="mixed";qCat="all";syncQuizControls();repasoLeft=10;nQ();};
   rep.appendChild(rb);root.appendChild(rep);
+  /* Reacción Rápida entry (v21) */
+  const rrE=document.createElement("div");rrE.className="rr-entry";
+  rrE.innerHTML=`<div class="rr-entry-title">⚡ Reacción Rápida</div><div class="rr-entry-text">${RR_BANK.length} Colombian-style questions. Hear one, answer OUT LOUD before the 5-second timer ends, then compare with the model.</div>`;
+  const rrB=document.createElement("button");rrB.type="button";rrB.className="lp-nav-btn primary";rrB.textContent="⚡ Start drill";
+  rrB.onclick=()=>{rrSession=0;renderRapida(false);};
+  rrE.appendChild(rrB);
+  root.appendChild(rrE);
   /* Backup / restore progress (v17) */
   const bk=document.createElement("div");bk.className="backup-row";
   const BK_KEYS=["esco-quiz-v1","esco-lesson-progress-v1","esco-days-v1"];
@@ -1122,6 +1373,7 @@ function showPage(id){
   PG.forEach(p=>{document.getElementById("page-"+p).classList.toggle("active",p===id);document.getElementById("tb-"+p).classList.toggle("active",p===id);});
   document.querySelector(".scroll").scrollTop=0;
   if(id!=="vocab")hideVerbDetail();
+  if(id==="vocab")showVocabHome();
 }
  
 

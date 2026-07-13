@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Español CO"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="styles.css?v=17"/>
+<link rel="stylesheet" href="styles.css?v=21"/>
 </head>
 <body>
 <div id="app">
@@ -23,8 +23,8 @@
     <button class="phonetic-tab active" id="pt-letters" onclick="showPhonetic('letters')">🔤 Letras</button>
     <button class="phonetic-tab" id="pt-syllables" onclick="showPhonetic('syllables')">🔡 Sílabas</button>
   </div>
+  <div id="voice-bar-fonetica"></div>
   <div class="phonetic-panel active" id="phonetic-letters">
-    <div id="voice-bar-letras"></div>
     <div class="sl" style="color:var(--pink)">Vocales</div>
     <div class="g5" id="vowel-grid"></div>
     <div class="sl" style="color:var(--teal)">Consonantes</div>
@@ -59,6 +59,7 @@
   <div class="ph"><div class="ph-label">Your path</div>
     <div class="ph-title" style="color:var(--gold)">Lecciones</div>
     <div class="ph-sub">One short step toward a real conversation</div></div>
+  <div id="voice-bar-lecciones"></div>
   <div id="lesson-list"></div>
 </div>
 
@@ -67,17 +68,26 @@
   <div class="ph"><div class="ph-label">Español Colombiano</div>
     <div class="ph-title" style="color:var(--teal)">Vocabulario</div>
     <div class="ph-sub">Tap any word to hear it</div></div>
-  <div class="vocab-nav">
-    <select class="voice-select vocab-jump" id="vocab-jump" aria-label="Jump to category"></select>
-    <div class="vocab-nav-row">
-      <button class="vocab-nav-btn" id="vocab-prev" type="button">‹ Prev</button>
-      <span class="vocab-position" id="vocab-position"></span>
-      <button class="vocab-nav-btn" id="vocab-next" type="button">Next ›</button>
-    </div>
+  <div id="voice-bar-vocab"></div>
+  <div class="vocab-home-jump" id="vocab-home-jump">
+    <div class="vocab-home-jump-label">Jump directly · Ir a una categoría</div>
+    <select class="voice-select vocab-home-jump-select" id="vocab-jump-home" aria-label="Jump directly to a vocabulary category"></select>
   </div>
-  <div class="cat-wrap" id="cat-wrap"></div>
-  <div id="vocab-list"></div>
-  <div class="verb-detail" id="verb-detail"></div>
+  <div id="vocab-home"></div>
+  <div id="vocab-category-view" hidden>
+    <button class="vocab-home-back" id="vocab-home-back" type="button">‹ All vocabulary topics</button>
+    <div class="vocab-nav">
+      <select class="voice-select vocab-jump" id="vocab-jump" aria-label="Jump to category"></select>
+      <div class="vocab-nav-row">
+        <button class="vocab-nav-btn" id="vocab-prev" type="button">‹ Prev</button>
+        <span class="vocab-position" id="vocab-position"></span>
+        <button class="vocab-nav-btn" id="vocab-next" type="button">Next ›</button>
+      </div>
+    </div>
+    <div class="cat-wrap" id="cat-wrap"></div>
+    <div id="vocab-list"></div>
+    <div class="verb-detail" id="verb-detail"></div>
+  </div>
 </div>
 
 <!-- FRASES -->
@@ -85,6 +95,7 @@
   <div class="ph"><div class="ph-label">Español Colombiano</div>
     <div class="ph-title" style="color:var(--pink)">Frases</div>
     <div class="ph-sub">Daily conversation · Tap to listen</div></div>
+  <div id="voice-bar-frases"></div>
   <div id="frases-list"></div>
 </div>
 
@@ -93,6 +104,7 @@
   <div class="ph"><div class="ph-label">Español Colombiano</div>
     <div class="ph-title" style="color:var(--purple)">Gramática</div>
     <div class="ph-sub">Verb tenses · Memory tricks</div></div>
+  <div id="voice-bar-gram"></div>
   <div class="gram-tabs">
     <button class="gtab active" id="gt-presente" onclick="showGram('presente')">⚡ Presente</button>
     <button class="gtab" id="gt-pasado" onclick="showGram('pasado')">⏮️ Pasado</button>
@@ -114,6 +126,7 @@
   <div class="ph"><div class="ph-label">Practice</div>
     <div class="ph-title"><span style="color:var(--gold)">Quiz</span></div>
     <div class="ph-sub">How much do you remember?</div></div>
+  <div id="voice-bar-quiz"></div>
   <div class="quiz-score-bar">
     <div class="qs-item"><div class="qs-num" id="q-correct" style="color:var(--teal)">0</div><div class="qs-label">Correct</div></div>
     <div class="qs-item"><div class="qs-num" id="q-streak" style="color:var(--gold)">🔥 0</div><div class="qs-label">Streak</div></div>
@@ -148,6 +161,6 @@
 </div>
 </div>
 
-<script src="data.js?v=17"></script><script src="app.js?v=17"></script>
+<script src="data.js?v=21"></script><script src="app.js?v=21"></script>
 </body>
 </html>
