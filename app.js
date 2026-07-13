@@ -560,59 +560,91 @@ const TENSE_BADGE={
   "Planes":{txt:"⏭️ Planes · voy a...",css:"color:var(--blue);background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.25)"},
   "Ayer":{txt:"⏮️ Ayer · pasado",css:"color:var(--pink);background:rgba(232,93,117,0.12);border:1px solid rgba(232,93,117,0.25)"},
 };
+function fraseSectionMeta(sec){
+  const m=String(sec.section||"").match(/^(\S+)\s+(.*)$/);
+  return m?{icon:m[1],name:m[2]}:{icon:"💬",name:sec.section||""};
+}
 function renderFraseMenu(){
   fl.dataset.view="menu";
   fl.innerHTML="";
-  /* Sticky jump navigation — pick a section without scrolling */
+  const sections=FRASES.filter(s=>s.section);
   const jump=document.createElement("div");
   jump.className="frase-jump";
   const sel=document.createElement("select");
   sel.className="voice-select frase-jump-select";
-  const jumpTargets=[["frs-dialogos","🗣️ Diálogos y conversaciones"],["frs-titulos","Títulos · Sr. / Sra."],
-    ...FRASES.filter(s=>s.section).map((s,i)=>["frs-sec-"+i,s.section])];
-  sel.innerHTML=`<option value="">🧭 Jump to section…</option>`+jumpTargets.map(([id,label])=>`<option value="${id}">${label}</option>`).join("");
+  let opts=`<option value="">🧭 Jump to…</option>`;
+  opts+=`<optgroup label="Conversations">`+PHRASE_DIALOGUES.map((d,i)=>`<option value="d:${i}">${d.title}</option>`).join("")+`</optgroup>`;
+  opts+=`<optgroup label="Phrase collections"><option value="t">Títulos · Sr. / Sra.</option>`+sections.map((s,i)=>`<option value="s:${i}">${s.section}</option>`).join("")+`</optgroup>`;
+  sel.innerHTML=opts;
   sel.onchange=()=>{
-    const el=document.getElementById(sel.value);
-    if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
-    sel.value="";
+    const v=sel.value;sel.value="";
+    if(!v)return;
+    if(v==="t")return renderFraseSection(-1);
+    const idx=parseInt(v.slice(2),10);
+    if(v[0]==="d"&&PHRASE_DIALOGUES[idx])renderFraseDialogue(PHRASE_DIALOGUES[idx]);
+    else if(v[0]==="s")renderFraseSection(idx);
   };
   jump.appendChild(sel);
   fl.appendChild(jump);
-  const note=document.createElement("div");
-  note.className="phrase-index-note";
-  note.id="frs-dialogos";
-  note.innerHTML=`<div class="phrase-index-title">Elige una situación</div><div class="phrase-index-text">Toca una frase para abrir un diálogo corto. Puedes practicar las dos personas: A y B.</div>`;
-  fl.appendChild(note);
-  const menu=document.createElement("div");
-  menu.className="phrase-menu";
-  PHRASE_DIALOGUES.forEach(dialogue=>{
-    const card=document.createElement("button");
-    card.type="button";
-    card.className="phrase-topic-card";
-    card.innerHTML=`<div class="phrase-topic-copy"><div class="phrase-topic-title">${dialogue.title}</div><div class="phrase-topic-preview">${dialogue.preview}</div><div class="phrase-topic-en">${dialogue.en}</div></div><span class="phrase-topic-arrow">›</span>`;
-    card.onclick=()=>renderFraseDialogue(dialogue);
-    menu.appendChild(card);
+  const h1=document.createElement("div");h1.className="fr-home-label";h1.textContent="💬 Conversations · practice both sides";
+  fl.appendChild(h1);
+  const g1=document.createElement("div");g1.className="fr-home-grid";
+  PHRASE_DIALOGUES.forEach(d=>{
+    const c=document.createElement("button");c.type="button";c.className="fr-home-card";
+    c.innerHTML=`<div class="fr-card-title">${d.title}</div><div class="fr-card-sub">${d.en||""}</div><div class="fr-card-meta">${(d.versions||[]).length} tenses ›</div>`;
+    c.onclick=()=>renderFraseDialogue(d);
+    g1.appendChild(c);
   });
-  fl.appendChild(menu);
-  renderFraseSections();
+  fl.appendChild(g1);
+  const h2=document.createElement("div");h2.className="fr-home-label";h2.textContent="📋 Phrase collections · tap to open";
+  fl.appendChild(h2);
+  const g2=document.createElement("div");g2.className="fr-home-grid";
+  const tit=document.createElement("button");tit.type="button";tit.className="fr-home-card fr-col";
+  tit.innerHTML=`<div class="fr-card-icon">🏷️</div><div class="fr-card-title">Títulos</div><div class="fr-card-meta">2 items ›</div>`;
+  tit.onclick=()=>renderFraseSection(-1);
+  g2.appendChild(tit);
+  sections.forEach((s,i)=>{
+    const meta=fraseSectionMeta(s);
+    const c=document.createElement("button");c.type="button";c.className="fr-home-card fr-col";
+    c.innerHTML=`<div class="fr-card-icon">${meta.icon}</div><div class="fr-card-title">${meta.name}</div><div class="fr-card-meta">${(s.items||[]).length} phrases ›</div>`;
+    c.onclick=()=>renderFraseSection(i);
+    g2.appendChild(c);
+  });
+  fl.appendChild(g2);
 }
-/* Classic phrase lists (Saludos, Compras, Restaurante, Gustos, etc.) below the dialogue menu */
-function renderFraseSections(){
-  const td=document.createElement("div");td.className="frase-section";td.id="frs-titulos";
-  const ttlEl=document.createElement("div");ttlEl.className="frase-title";
-  ttlEl.style.cssText="color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)";
-  ttlEl.textContent="Títulos · Titles";td.appendChild(ttlEl);
-  const tg=document.createElement("div");tg.className="titles-grid";
-  [{abbr:"Sr.",full:"Señor",en:"Mr."},{abbr:"Sra.",full:"Señora",en:"Mrs. / Ms."}].forEach(t=>{
-    const tc=document.createElement("div");tc.className="title-card";
-    tc.innerHTML=`<div class="title-abbr">${t.abbr}</div><div class="title-full">${t.full}</div><div class="title-en">${t.en}</div>`;
-    tc.onclick=()=>speak(t.full,0.75);tg.appendChild(tc);});
-  td.appendChild(tg);fl.appendChild(td);
-  FRASES.filter(s=>s.section).forEach((sec,i)=>{const wrap=document.createElement("div");wrap.className="frase-section";wrap.id="frs-sec-"+i;
-    const st=document.createElement("div");st.className="frase-title";st.style.cssText=sec.cls;st.textContent=sec.section;wrap.appendChild(st);
-    sec.items.forEach(item=>{const card=document.createElement("div");card.className="frase-card";
-      card.innerHTML=`<div class="frase-txt"><div class="f-es">${item.es}</div><div class="f-en">${item.en}</div></div><span class="f-spk">🔊</span>`;
-      card.onclick=()=>speak(item.es,0.75);attachMic(card,item.es);wrap.appendChild(card);});fl.appendChild(wrap);});
+function renderFraseSection(idx){
+  fl.dataset.view="section";
+  fl.innerHTML="";
+  const back=document.createElement("button");
+  back.type="button";back.className="phrase-back";
+  back.innerHTML="<span>‹</span><span>All phrases</span>";
+  back.onclick=renderFraseMenu;
+  fl.appendChild(back);
+  if(idx===-1){
+    const td=document.createElement("div");td.className="frase-section";
+    const ttlEl=document.createElement("div");ttlEl.className="frase-title";
+    ttlEl.style.cssText="color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)";
+    ttlEl.textContent="Títulos · Titles";td.appendChild(ttlEl);
+    const tg=document.createElement("div");tg.className="titles-grid";
+    [{abbr:"Sr.",full:"Señor",en:"Mr."},{abbr:"Sra.",full:"Señora",en:"Mrs. / Ms."}].forEach(t=>{
+      const tc=document.createElement("div");tc.className="title-card";
+      tc.innerHTML=`<div class="title-abbr">${t.abbr}</div><div class="title-full">${t.full}</div><div class="title-en">${t.en}</div>`;
+      tc.onclick=()=>speak(t.full,0.75);tg.appendChild(tc);});
+    td.appendChild(tg);fl.appendChild(td);
+    return;
+  }
+  const sec=FRASES.filter(s=>s.section)[idx];
+  if(!sec){renderFraseMenu();return;}
+  const wrap=document.createElement("div");wrap.className="frase-section";
+  const st=document.createElement("div");st.className="frase-title";st.style.cssText=sec.cls||"";st.textContent=sec.section;wrap.appendChild(st);
+  sec.items.forEach(item=>{
+    const card=document.createElement("div");card.className="frase-card";
+    card.innerHTML=`<div class="frase-txt"><div class="f-es">${item.es}</div><div class="f-en">${item.en}</div></div><span class="f-spk">🔊</span>`;
+    card.onclick=()=>speak(item.es,0.75);
+    attachMic(card,item.es);
+    wrap.appendChild(card);
+  });
+  fl.appendChild(wrap);
 }
 function renderFraseDialogue(dialogue){
   fl.dataset.view="dialogue";
@@ -984,7 +1016,7 @@ function renderLessons(){
   root.innerHTML="";
   const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
   const intro=document.createElement("div");intro.className="lesson-intro";
-  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-intro-text">Each lesson takes you from listening to SPEAKING: goal, key words, saying it yourself, role-play A/B, pronunciation, and a mini-quiz.</div>`;
+  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div>`;
   root.appendChild(intro);
   /* Continue / Start here (v21) */
   const resume=loadResume();
@@ -1010,18 +1042,27 @@ function renderLessons(){
   root.appendChild(cont);
   let missedCount=0;
   try{const s=JSON.parse(localStorage.getItem("esco-quiz-v1")||"{}");missedCount=s.missed?Object.keys(s.missed).length:0;}catch(e){}
-  const rep=document.createElement("div");rep.className="repaso-card";
-  rep.innerHTML=`<div class="repaso-title">🔁 Today's review</div><div class="repaso-text">${missedCount?missedCount+" item"+(missedCount===1?"":"s")+" to review from past quizzes.":"Nothing pending — quiz mistakes feed your review!"}</div>`;
-  const rb=document.createElement("button");rb.type="button";rb.className="lp-nav-btn primary";rb.textContent="Start review";
-  rb.onclick=()=>{showPage("quiz");qMode="mixed";qCat="all";syncQuizControls();repasoLeft=10;nQ();};
-  rep.appendChild(rb);root.appendChild(rep);
-  /* Reacción Rápida entry (v21) */
-  const rrE=document.createElement("div");rrE.className="rr-entry";
-  rrE.innerHTML=`<div class="rr-entry-title">⚡ Reacción Rápida</div><div class="rr-entry-text">${RR_BANK.length} Colombian-style questions. Hear one, answer OUT LOUD before the 5-second timer ends, then compare with the model.</div>`;
-  const rrB=document.createElement("button");rrB.type="button";rrB.className="lp-nav-btn primary";rrB.textContent="⚡ Start drill";
-  rrB.onclick=()=>{rrSession=0;renderRapida(false);};
-  rrE.appendChild(rrB);
-  root.appendChild(rrE);
+  /* Daily practice — one compact row (v22) */
+  const daily=document.createElement("div");daily.className="daily-row";
+  const dr1=document.createElement("button");dr1.type="button";dr1.className="daily-card";
+  dr1.innerHTML=`<div class="daily-icon">🔁</div><div class="daily-title">Review</div><div class="daily-sub">${missedCount?missedCount+" item"+(missedCount===1?"":"s")+" due":"nothing due"}</div>`;
+  dr1.onclick=()=>{showPage("quiz");qMode="mixed";qCat="all";syncQuizControls();repasoLeft=10;nQ();};
+  const dr2=document.createElement("button");dr2.type="button";dr2.className="daily-card";
+  dr2.innerHTML=`<div class="daily-icon">⚡</div><div class="daily-title">Rápida</div><div class="daily-sub">${RR_BANK.length} questions</div>`;
+  dr2.onclick=()=>{rrSession=0;renderRapida(false);};
+  daily.appendChild(dr1);daily.appendChild(dr2);
+  root.appendChild(daily);
+
+  LESSONS.forEach((lesson,i)=>{
+    const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"");
+    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${i+1}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div><div class="lesson-sub">${lesson.sub}</div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
+    card.onclick=()=>openLesson(lesson);
+    card.querySelector(".lesson-check").onclick=(e)=>{e.stopPropagation();if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();renderLessons();};
+    root.appendChild(card);
+  });
+  /* Progress backup lives at the bottom — rare-use utility (v22) */
+  const bkLabel=document.createElement("div");bkLabel.className="fr-home-label";bkLabel.textContent="💾 Progress backup";
+  root.appendChild(bkLabel);
   /* Backup / restore progress (v17) */
   const bk=document.createElement("div");bk.className="backup-row";
   const BK_KEYS=["esco-quiz-v1","esco-lesson-progress-v1","esco-days-v1"];
@@ -1045,13 +1086,6 @@ function renderLessons(){
     }catch(e){alert("⚠️ That does not look like a valid backup.");}
   };
   bk.appendChild(b1);bk.appendChild(b2);root.appendChild(bk);
-  LESSONS.forEach((lesson,i)=>{
-    const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"");
-    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${i+1}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div><div class="lesson-sub">${lesson.sub}</div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div><div class="lesson-actions"><button type="button" data-action="start" class="lesson-start">▶️ Start lesson</button></div>`;
-    card.querySelector("[data-action=start]").onclick=()=>openLesson(lesson);
-    card.querySelector(".lesson-check").onclick=()=>{if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();renderLessons();};
-    root.appendChild(card);
-  });
 }
 renderLessons();
 
@@ -1078,14 +1112,19 @@ function buildGram(id,data){
   const trick=document.createElement("div");trick.className="trick-box";
   trick.innerHTML=`<div class="trick-title">🧠 Memory Trick</div><div class="trick-text">${data.trick}</div>`;
   sec.appendChild(trick);
-  data.tables.forEach(table=>{
-    const ct=document.createElement("div");ct.className="conj-table";
-    ct.innerHTML=`<div class="conj-hdr"><div class="conj-hdr-title">${table.title}</div><div class="conj-hdr-sub">${table.sub}</div></div>`;
+  data.tables.forEach((table,ti)=>{
+    const ct=document.createElement("div");ct.className="conj-table"+(ti>0?" collapsed":"");
+    ct.innerHTML=`<div class="conj-hdr"><div><div class="conj-hdr-title">${table.title}</div><div class="conj-hdr-sub">${table.sub}</div></div><span class="conj-chevron">${ti>0?"▸":"▾"}</span></div>`;
+    ct.querySelector(".conj-hdr").onclick=()=>{
+      const closed=ct.classList.contains("collapsed");
+      ct.classList.toggle("collapsed",!closed);
+      ct.querySelector(".conj-chevron").textContent=closed?"▾":"▸";
+    };
     table.rows.forEach(row=>{
       const r=document.createElement("div");r.className="conj-row";
       r.innerHTML=`<span class="conj-pronoun">${row.pro}</span><span class="conj-verb">${row.verb}</span><span class="conj-en">${row.en}</span><span class="conj-spk">🔊</span>`;
       r.onclick=()=>speak(row.tts,0.75);ct.appendChild(r);});sec.appendChild(ct);});
-  const exLabel=document.createElement("div");exLabel.style.cssText="font-size:0.56rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:800;";exLabel.textContent="Ejemplos";sec.appendChild(exLabel);
+  const exLabel=document.createElement("div");exLabel.className="sl";exLabel.style.color="var(--muted)";exLabel.textContent="Ejemplos";sec.appendChild(exLabel);
   data.examples.forEach(ex=>{const card=document.createElement("div");card.className="example-card";
     card.innerHTML=`<div class="ex-info"><div class="ex-es">${ex.es}</div><div class="ex-en">${ex.en}</div></div><span class="ex-spk">🔊</span>`;
     card.onclick=()=>speak(ex.tts,0.75);sec.appendChild(card);});
@@ -1106,7 +1145,7 @@ function buildPronombres(sec){
   const trick=document.createElement("div");trick.className="trick-box";
   trick.innerHTML=`<div class="trick-title">🧠 Colombian Tip</div><div class="trick-text">${PRONOMBRES.trick}</div>`;
   sec.appendChild(trick);
-  const exLabel=document.createElement("div");exLabel.style.cssText="font-size:0.56rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:800;";exLabel.textContent="Ejemplos";sec.appendChild(exLabel);
+  const exLabel=document.createElement("div");exLabel.className="sl";exLabel.style.color="var(--muted)";exLabel.textContent="Ejemplos";sec.appendChild(exLabel);
   PRONOMBRES.examples.forEach(ex=>{const card=document.createElement("div");card.className="example-card";
     card.innerHTML=`<div class="ex-info"><div class="ex-es">${ex.es}</div><div class="ex-en">${ex.en}</div></div><span class="ex-spk">🔊</span>`;
     card.onclick=()=>speak(ex.tts,0.75);sec.appendChild(card);});
