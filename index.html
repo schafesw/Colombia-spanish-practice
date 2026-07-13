@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Español CO"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="styles.css?v=22"/>
+<link rel="stylesheet" href="styles.css?v=23"/>
 </head>
 <body>
 <div id="app">
@@ -105,14 +105,12 @@
     <div class="ph-title" style="color:var(--purple)">Gramática</div>
     <div class="ph-sub">Verb tenses · Memory tricks</div></div>
   <div id="voice-bar-gram"></div>
-  <div class="gram-tabs">
-    <button class="gtab active" id="gt-presente" onclick="showGram('presente')">⚡ Presente</button>
-    <button class="gtab" id="gt-pasado" onclick="showGram('pasado')">⏮️ Pasado</button>
-    <button class="gtab" id="gt-futuro" onclick="showGram('futuro')">⏭️ Futuro</button>
-    <button class="gtab" id="gt-pronombres" onclick="showGram('pronombres')">👤 Lo/Le</button>
-    <button class="gtab" id="gt-reflexivos" onclick="showGram('reflexivos')">🔄 Reflexivos</button>
-    <button class="gtab" id="gt-trucos" onclick="showGram('trucos')">🧠 Trucos</button>
+  <div class="gram-groups">
+    <button class="ggroup active" data-g="tiempos" onclick="showGramGroup('tiempos')">⏱️ Tiempos</button>
+    <button class="ggroup" data-g="pronombres" onclick="showGramGroup('pronombres')">👤 Pronombres</button>
+    <button class="ggroup" data-g="patrones" onclick="showGramGroup('patrones')">🧩 Patrones</button>
   </div>
+  <div class="gram-tabs" id="gram-sub"></div>
   <div class="gram-section active" id="gs-presente"></div>
   <div class="gram-section" id="gs-pasado"></div>
   <div class="gram-section" id="gs-futuro"></div>
@@ -161,6 +159,6 @@
 </div>
 </div>
 
-<script src="data.js?v=22"></script><script src="app.js?v=22"></script>
+<script src="data.js?v=23"></script><script src="app.js?v=23"></script>
 </body>
 </html>

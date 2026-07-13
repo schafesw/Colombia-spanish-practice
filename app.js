@@ -646,7 +646,7 @@ function renderFraseSection(idx){
   });
   fl.appendChild(wrap);
 }
-function renderFraseDialogue(dialogue){
+function renderFraseDialogue(dialogue,tense){
   fl.dataset.view="dialogue";
   fl.innerHTML="";
   const back=document.createElement("button");
@@ -654,6 +654,23 @@ function renderFraseDialogue(dialogue){
   back.innerHTML="<span>‹</span><span>Back to phrases</span>";
   back.onclick=renderFraseMenu;
   fl.appendChild(back);
+  /* Header: title + English + tense selector — one version at a time (v23) */
+  const versions=dialogue.versions||[];
+  const active=tense||(versions[0]&&versions[0].tense)||"Ahora";
+  const hdr=document.createElement("div");hdr.className="dlg-head";
+  hdr.innerHTML=`<div class="dlg-head-title">${dialogue.title}</div><div class="dlg-head-en">${dialogue.en||""}</div>`;
+  if(versions.length>1){
+    const trow=document.createElement("div");trow.className="dlg-tense-row";
+    versions.forEach(v=>{
+      const b=document.createElement("button");b.type="button";
+      b.className="dlg-tense-btn"+(v.tense===active?" active":"");
+      b.textContent=v.tense;
+      b.onclick=()=>renderFraseDialogue(dialogue,v.tense);
+      trow.appendChild(b);
+    });
+    hdr.appendChild(trow);
+  }
+  fl.appendChild(hdr);
   /* Speaking practice: hide one side, say the line out loud, tap to reveal */
   const bubbles=[];
   const pbar=document.createElement("div");pbar.className="practice-bar";
@@ -676,36 +693,29 @@ function renderFraseDialogue(dialogue){
   fl.appendChild(pbar);
   const box=document.createElement("div");
   box.className="dialogue phrase-dialogue";
-  box.innerHTML=`<div class="dlg-title">${dialogue.title} · Toca cada línea para escuchar</div>`;
-  dialogue.versions.forEach(version=>{
-    if(version.tense&&TENSE_BADGE[version.tense]){
-      const badge=document.createElement("div");
-      badge.className="conv-tense-badge";
-      badge.style.cssText=TENSE_BADGE[version.tense].css;
-      badge.textContent=TENSE_BADGE[version.tense].txt;
-      box.appendChild(badge);
-    }
+  box.innerHTML=`<div class="dlg-title">Tap any line to hear it</div>`;
+  const version=versions.find(v=>v.tense===active)||versions[0];
+  if(version){
     version.lines.forEach(line=>{
       const row=document.createElement("div");
       row.className="dlg-line"+(line.who==="B"?" right":"");
       row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${line.who}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
       const bub=row.querySelector(".dlg-bubble");
-      bubbles.push({who:line.who,el:bub});attachMic(row,line.tts);
+      bubbles.push({who:line.who,el:bub});
       bub.onclick=()=>{
         if(bub.classList.contains("dlg-hidden"))bub.classList.remove("dlg-hidden");
         speak(line.tts,0.75);
       };
+      attachMic(row,line.tts);
       box.appendChild(row);
     });
-  });
+  }
   fl.appendChild(box);
   const tip=document.createElement("div");
   tip.className="phrase-practice-note";
-  tip.textContent="Practice both sides: read Persona A, then Persona B. Tap any line to hear it.";
+  tip.textContent="Practice both sides: read Persona A, then Persona B. Switch tenses above to level up.";
   fl.appendChild(tip);
 }
-renderFraseMenu();
-
 // ── Build Lecciones — speaking-first lesson player (v15) ─────────────────────
 const LESSONS=[
   {id:"presentate",icon:"👋",title:"Preséntate",sub:"Tu nombre, tu ciudad y un saludo",vocab:"gustos",dialogue:"Presentación personal",quizCat:"all",quizMode:"conversation"},
@@ -911,16 +921,18 @@ const RESUME_KEY="esco-lesson-resume-v1";
 function saveResume(){
   try{
     if(lpLesson&&lpSteps[lpStep]&&lpSteps[lpStep]!=="fin")
-      localStorage.setItem(RESUME_KEY,JSON.stringify({id:lpLesson.id,step:lpStep}));
+      localStorage.setItem(RESUME_KEY,JSON.stringify({id:lpLesson.id,step:lpStep,qi:lpQi,score:lpScore}));
     else localStorage.removeItem(RESUME_KEY);
   }catch(e){}
 }
 function loadResume(){
   try{const r=JSON.parse(localStorage.getItem(RESUME_KEY)||"null");return r&&r.id?r:null;}catch(e){return null;}
 }
-function openLessonAt(lesson,step){
+function openLessonAt(lesson,step,qi,score){
   openLesson(lesson);
   lpStep=Math.min(Math.max(step|0,0),lpSteps.length-1);
+  lpQi=Math.min(Math.max(qi|0,0),Math.max(lpQs.length-1,0));
+  lpScore=Math.max(score|0,0);
   renderLessonStep();
 }
 
@@ -1016,7 +1028,7 @@ function renderLessons(){
   root.innerHTML="";
   const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
   const intro=document.createElement("div");intro.className="lesson-intro";
-  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div>`;
+  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-flow">Each lesson: 📖 Learn → 🗣️ Speak → 🧪 Quiz</div>`;
   root.appendChild(intro);
   /* Continue / Start here (v21) */
   const resume=loadResume();
@@ -1027,7 +1039,7 @@ function renderLessons(){
   if(resLesson&&!lessonProgress[resLesson.id]){
     cTitle="▶️ Continue: "+resLesson.title;
     cSub="Step "+((resume.step|0)+1)+" of 9 — pick up where you left off";
-    cAction=()=>openLessonAt(resLesson,resume.step);
+    cAction=()=>openLessonAt(resLesson,resume.step,resume.qi,resume.score);
   }else if(nextLesson){
     cTitle=(done===0?"▶️ Start here: ":"▶️ Next lesson: ")+nextLesson.title;
     cSub=nextLesson.sub;
@@ -1053,9 +1065,36 @@ function renderLessons(){
   daily.appendChild(dr1);daily.appendChild(dr2);
   root.appendChild(daily);
 
-  LESSONS.forEach((lesson,i)=>{
+  /* Lessons grouped into stages (v23) */
+  const LESSON_STAGES=[
+    {name:"🌱 Fundamentos",ids:["presentate","plata"]},
+    {name:"🏠 Vida diaria",ids:["casa","cocina","calle"]},
+    {name:"💬 Conversación",ids:["trabajo","gustos","planes","sentirse"]},
+    {name:"🇨🇴 Colombia",ids:["colombia"]}
+  ];
+  let lessonNum=0;
+  LESSON_STAGES.forEach(stage=>{
+    const stageLessons=stage.ids.map(id=>LESSONS.find(l=>l.id===id)).filter(Boolean);
+    if(!stageLessons.length)return;
+    const sDone=stageLessons.filter(l=>lessonProgress[l.id]).length;
+    const sh=document.createElement("div");sh.className="stage-label";
+    sh.innerHTML=`<span>${stage.name}</span><span class="stage-count">${sDone}/${stageLessons.length}</span>`;
+    root.appendChild(sh);
+    stageLessons.forEach(lesson=>{
+      lessonNum++;
+      const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"");
+      card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div><div class="lesson-sub">${lesson.sub}</div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
+      card.onclick=()=>openLesson(lesson);
+      card.querySelector(".lesson-check").onclick=(e)=>{e.stopPropagation();if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();renderLessons();};
+      root.appendChild(card);
+    });
+  });
+  /* Any lesson not assigned to a stage still shows (future-proofing weekly additions) */
+  const staged=new Set(LESSON_STAGES.flatMap(s=>s.ids));
+  LESSONS.filter(l=>!staged.has(l.id)).forEach(lesson=>{
+    lessonNum++;
     const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"");
-    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${i+1}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div><div class="lesson-sub">${lesson.sub}</div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
+    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div><div class="lesson-sub">${lesson.sub}</div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
     card.onclick=()=>openLesson(lesson);
     card.querySelector(".lesson-check").onclick=(e)=>{e.stopPropagation();if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();renderLessons();};
     root.appendChild(card);
@@ -1176,11 +1215,37 @@ function buildReflexivos(sec){
 ["presente","pasado","futuro","trucos"].forEach(id=>buildGram(id,GRAMMAR[id]));
 buildGram("pronombres");buildGram("reflexivos");
 
+/* Grouped grammar navigation (v23): Tiempos / Pronombres / Patrones */
+const GRAM_GROUPS={
+  tiempos:{label:"⏱️ Tiempos",items:[["presente","⚡ Presente"],["pasado","⏮️ Pasado"],["futuro","⏭️ Futuro"]]},
+  pronombres:{label:"👤 Pronombres",items:[["pronombres","Lo / La / Le"]]},
+  patrones:{label:"🧩 Patrones",items:[["reflexivos","🔄 Reflexivos"],["trucos","🧠 Trucos"]]}
+};
+let gramGroup="tiempos",gramSection="presente";
+function showGramGroup(g){
+  gramGroup=g;
+  document.querySelectorAll(".ggroup").forEach(b=>b.classList.toggle("active",b.dataset.g===g));
+  const sub=document.getElementById("gram-sub");
+  const items=GRAM_GROUPS[g].items;
+  sub.innerHTML="";
+  sub.style.display=items.length>1?"flex":"none";
+  items.forEach(([id,label])=>{
+    const b=document.createElement("button");b.type="button";b.className="gtab";b.textContent=label;
+    b.onclick=()=>showGram(id);
+    sub.appendChild(b);
+  });
+  showGram(items[0][0]);
+}
 function showGram(id){
+  gramSection=id;
   ["presente","pasado","futuro","pronombres","reflexivos","trucos"].forEach(g=>{
     document.getElementById("gs-"+g).classList.toggle("active",g===id);
-    document.getElementById("gt-"+g).classList.toggle("active",g===id);
   });
+  const sub=document.getElementById("gram-sub");
+  if(sub){
+    const items=GRAM_GROUPS[gramGroup].items;
+    Array.from(sub.children).forEach((b,i)=>b.classList.toggle("active",items[i]&&items[i][0]===id));
+  }
 }
 
 // ── Quiz ──────────────────────────────────────────────────────────────────────

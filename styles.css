@@ -569,3 +569,21 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 .conj-hdr{display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
 .conj-chevron{font-size:0.95rem;color:var(--muted);padding:0 4px;}
 .conj-table.collapsed .conj-row{display:none;}
+
+/* v23: dialogue tense selector */
+.dlg-head{margin-bottom:12px;}
+.dlg-head-title{font-size:1.05rem;font-weight:900;color:#fff;}
+.dlg-head-en{font-size:0.74rem;color:var(--muted);font-style:italic;margin:2px 0 10px;}
+.dlg-tense-row{display:flex;gap:7px;}
+.dlg-tense-btn{flex:1;padding:9px 6px;border-radius:11px;border:1px solid rgba(255,255,255,0.12);background:transparent;color:rgba(255,255,255,0.45);font-weight:800;font-size:0.76rem;min-height:40px;}
+.dlg-tense-btn.active{border-color:var(--gold);background:rgba(232,180,74,0.16);color:var(--gold);}
+
+/* v23: lesson stages */
+.lesson-flow{font-size:0.68rem;color:var(--muted);margin-top:7px;}
+.stage-label{display:flex;justify-content:space-between;align-items:center;font-size:0.66rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);font-weight:800;margin:16px 2px 9px;}
+.stage-count{color:var(--muted);letter-spacing:0;}
+
+/* v23: gram groups */
+.gram-groups{display:flex;gap:7px;margin-bottom:10px;}
+.ggroup{flex:1;padding:10px 6px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);background:transparent;color:rgba(255,255,255,0.45);font-weight:800;font-size:0.76rem;min-height:44px;}
+.ggroup.active{border-color:var(--purple);background:rgba(167,139,250,0.16);color:var(--purple);}
