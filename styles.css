@@ -524,3 +524,21 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 
 /* v17: English overlay text for hidden dialogue bubbles */
 .dlg-hidden::after{content:"🗣️ say it, then tap";}
+
+/* v21: Continue / Start Here card */
+.continue-card{background:linear-gradient(135deg,rgba(232,180,74,0.16),rgba(232,180,74,0.06));border:1px solid rgba(232,180,74,0.45);border-radius:16px;padding:15px 16px;margin-bottom:14px;}
+.continue-card.tappable{cursor:pointer;}
+.continue-card.tappable:active{transform:scale(0.985);}
+.continue-title{font-size:0.95rem;font-weight:900;color:var(--gold);margin-bottom:4px;}
+.continue-sub{font-size:0.74rem;color:var(--muted);line-height:1.45;}
+
+/* v21: Reacción Rápida */
+.rr-entry{background:rgba(232,93,117,0.07);border:1px solid rgba(232,93,117,0.28);border-radius:16px;padding:15px;margin-bottom:16px;}
+.rr-entry-title{font-size:0.85rem;font-weight:900;color:var(--pink);margin-bottom:5px;}
+.rr-entry-text{font-size:0.75rem;color:var(--muted);line-height:1.5;margin-bottom:11px;}
+.rr-card{text-align:center;}
+.rr-question{font-size:1.35rem;font-weight:900;color:#fff;line-height:1.35;margin:6px 0 4px;cursor:pointer;}
+.rr-q-small{font-size:0.95rem;color:var(--muted);}
+.rr-qen{font-size:0.78rem;color:var(--muted);font-style:italic;margin-bottom:12px;}
+.rr-countdown{font-size:3.4rem;font-weight:900;color:var(--pink);line-height:1;margin:10px 0 6px;}
+.rr-answer{font-size:1.2rem;font-weight:900;color:var(--teal);line-height:1.4;margin:10px 0 4px;cursor:pointer;}

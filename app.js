@@ -744,6 +744,7 @@ function renderLessonStep(){
   const root=document.getElementById("lesson-list");if(!root||!lpLesson)return;root.innerHTML="";
   const c=LESSON_CONTENT[lpLesson.id];
   const step=lpSteps[lpStep];
+  saveResume();
   const back=document.createElement("button");back.type="button";back.className="phrase-back";
   back.innerHTML="<span>‹</span><span>Back to lessons</span>";
   back.onclick=()=>{lpLesson=null;renderLessons();};
@@ -871,6 +872,112 @@ function renderLessonStep(){
     navBtn("Back to lessons",()=>{lpLesson=null;renderLessons();},true);
   }
 }
+/* ═══════════════════════════════════════════════════════════════════════════
+   Lesson Resume (v21) — pick up exactly where you left off
+   ═══════════════════════════════════════════════════════════════════════════ */
+const RESUME_KEY="esco-lesson-resume-v1";
+function saveResume(){
+  try{
+    if(lpLesson&&lpSteps[lpStep]&&lpSteps[lpStep]!=="fin")
+      localStorage.setItem(RESUME_KEY,JSON.stringify({id:lpLesson.id,step:lpStep}));
+    else localStorage.removeItem(RESUME_KEY);
+  }catch(e){}
+}
+function loadResume(){
+  try{const r=JSON.parse(localStorage.getItem(RESUME_KEY)||"null");return r&&r.id?r:null;}catch(e){return null;}
+}
+function openLessonAt(lesson,step){
+  openLesson(lesson);
+  lpStep=Math.min(Math.max(step|0,0),lpSteps.length-1);
+  renderLessonStep();
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Reacción Rápida (v21) — answer OUT LOUD under mild time pressure.
+   Question bank auto-built from every question→answer pair in the conversations.
+   Forgiving by design: reveal early anytime, retry anytime, no grading.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const RR_BANK=[];
+(function(){
+  const seen=new Set();
+  PHRASE_DIALOGUES.forEach(d=>{(d.versions||[]).forEach(v=>{
+    for(let i=0;i<v.lines.length-1;i++){
+      const q=v.lines[i],ans=v.lines[i+1];
+      if(/\?\s*$/.test(q.es)&&ans&&ans.es&&!seen.has(q.es)){
+        seen.add(q.es);
+        RR_BANK.push({q:q.tts||q.es,qEs:q.es,qEn:q.en,aEs:ans.es,aTts:ans.tts||ans.es,aEn:ans.en});
+      }
+    }
+  });});
+})();
+let rrTimer=null,rrCurrent=null,rrSession=0;
+function rrStop(){if(rrTimer){clearInterval(rrTimer);rrTimer=null;}}
+function rrExit(){rrStop();renderLessons();}
+function renderRapida(keepSame){
+  rrStop();
+  const root=document.getElementById("lesson-list");if(!root)return;
+  if(!RR_BANK.length){renderLessons();return;}
+  if(!keepSame||!rrCurrent){rrCurrent=RR_BANK[Math.floor(Math.random()*RR_BANK.length)];rrSession++;}
+  root.innerHTML="";
+  const back=document.createElement("button");back.type="button";back.className="phrase-back";
+  back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=rrExit;
+  root.appendChild(back);
+  const card=lpEl("lp-card rr-card");
+  card.appendChild(lpEl("lp-step-title","⚡ Reacción Rápida — question "+rrSession+" this session"));
+  const qBox=lpEl("rr-question",rrCurrent.qEs);
+  qBox.onclick=()=>speak(rrCurrent.q,0.75);
+  card.appendChild(qBox);
+  card.appendChild(lpEl("rr-qen",rrCurrent.qEn||""));
+  const cd=lpEl("rr-countdown","5");
+  card.appendChild(cd);
+  card.appendChild(lpEl("lp-hint","🗣️ Answer OUT LOUD — any answer that fits. The model reveals when the timer ends."));
+  const controls=lpEl("lp-nav");
+  const revealBtn=document.createElement("button");revealBtn.type="button";revealBtn.className="lp-nav-btn";revealBtn.textContent="Reveal now";
+  revealBtn.onclick=()=>rrReveal();
+  controls.appendChild(revealBtn);
+  card.appendChild(controls);
+  root.appendChild(card);
+  speak(rrCurrent.q,0.75);
+  let n=5;
+  rrTimer=setInterval(()=>{
+    n--;
+    if(n<=0){rrReveal();return;}
+    cd.textContent=String(n);
+  },1000);
+}
+function rrReveal(){
+  rrStop();
+  const root=document.getElementById("lesson-list");if(!root||!rrCurrent)return;
+  root.innerHTML="";
+  const back=document.createElement("button");back.type="button";back.className="phrase-back";
+  back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=rrExit;
+  root.appendChild(back);
+  const card=lpEl("lp-card rr-card");
+  card.appendChild(lpEl("lp-step-title","⚡ Reacción Rápida — model answer"));
+  card.appendChild(lpEl("rr-question rr-q-small",rrCurrent.qEs));
+  const ans=lpEl("rr-answer",rrCurrent.aEs);
+  ans.onclick=()=>speak(rrCurrent.aTts,0.75);
+  card.appendChild(ans);
+  card.appendChild(lpEl("rr-qen",rrCurrent.aEn||""));
+  card.appendChild(lpEl("lp-hint","Did your answer get the idea across? That counts. Compare with the model, then try the same one again or grab the next."));
+  const row1=lpEl("lp-nav");
+  const hearB=document.createElement("button");hearB.type="button";hearB.className="lp-nav-btn";hearB.textContent="🔊 Model";
+  hearB.onclick=()=>speak(rrCurrent.aTts,0.75);
+  const micB=document.createElement("button");micB.type="button";micB.className="lp-nav-btn";micB.textContent="🎙️ Record & compare";
+  micB.onclick=()=>openMicPanel(rrCurrent.aTts);
+  row1.appendChild(hearB);row1.appendChild(micB);
+  card.appendChild(row1);
+  const row2=lpEl("lp-nav");
+  const sameB=document.createElement("button");sameB.type="button";sameB.className="lp-nav-btn";sameB.textContent="🔁 Try again";
+  sameB.onclick=()=>renderRapida(true);
+  const nextB=document.createElement("button");nextB.type="button";nextB.className="lp-nav-btn primary";nextB.textContent="➡️ Next question";
+  nextB.onclick=()=>renderRapida(false);
+  row2.appendChild(sameB);row2.appendChild(nextB);
+  card.appendChild(row2);
+  root.appendChild(card);
+  speak(rrCurrent.aTts,0.75);
+}
+
 function renderLessons(){
   const root=document.getElementById("lesson-list");if(!root)return;
   if(lpLesson){renderLessonStep();return;}
@@ -879,6 +986,28 @@ function renderLessons(){
   const intro=document.createElement("div");intro.className="lesson-intro";
   intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-intro-text">Each lesson takes you from listening to SPEAKING: goal, key words, saying it yourself, role-play A/B, pronunciation, and a mini-quiz.</div>`;
   root.appendChild(intro);
+  /* Continue / Start here (v21) */
+  const resume=loadResume();
+  const resLesson=resume&&LESSONS.find(l=>l.id===resume.id);
+  const nextLesson=LESSONS.find(l=>!lessonProgress[l.id]);
+  const cont=document.createElement("div");cont.className="continue-card";
+  let cTitle,cSub,cAction;
+  if(resLesson&&!lessonProgress[resLesson.id]){
+    cTitle="▶️ Continue: "+resLesson.title;
+    cSub="Step "+((resume.step|0)+1)+" of 9 — pick up where you left off";
+    cAction=()=>openLessonAt(resLesson,resume.step);
+  }else if(nextLesson){
+    cTitle=(done===0?"▶️ Start here: ":"▶️ Next lesson: ")+nextLesson.title;
+    cSub=nextLesson.sub;
+    cAction=()=>openLesson(nextLesson);
+  }else{
+    cTitle="🎉 All lessons complete";
+    cSub="Replay any lesson below, or drill with Reacción Rápida";
+    cAction=null;
+  }
+  cont.innerHTML=`<div class="continue-title">${cTitle}</div><div class="continue-sub">${cSub}</div>`;
+  if(cAction){cont.onclick=cAction;cont.classList.add("tappable");}
+  root.appendChild(cont);
   let missedCount=0;
   try{const s=JSON.parse(localStorage.getItem("esco-quiz-v1")||"{}");missedCount=s.missed?Object.keys(s.missed).length:0;}catch(e){}
   const rep=document.createElement("div");rep.className="repaso-card";
@@ -886,6 +1015,13 @@ function renderLessons(){
   const rb=document.createElement("button");rb.type="button";rb.className="lp-nav-btn primary";rb.textContent="Start review";
   rb.onclick=()=>{showPage("quiz");qMode="mixed";qCat="all";syncQuizControls();repasoLeft=10;nQ();};
   rep.appendChild(rb);root.appendChild(rep);
+  /* Reacción Rápida entry (v21) */
+  const rrE=document.createElement("div");rrE.className="rr-entry";
+  rrE.innerHTML=`<div class="rr-entry-title">⚡ Reacción Rápida</div><div class="rr-entry-text">${RR_BANK.length} Colombian-style questions. Hear one, answer OUT LOUD before the 5-second timer ends, then compare with the model.</div>`;
+  const rrB=document.createElement("button");rrB.type="button";rrB.className="lp-nav-btn primary";rrB.textContent="⚡ Start drill";
+  rrB.onclick=()=>{rrSession=0;renderRapida(false);};
+  rrE.appendChild(rrB);
+  root.appendChild(rrE);
   /* Backup / restore progress (v17) */
   const bk=document.createElement("div");bk.className="backup-row";
   const BK_KEYS=["esco-quiz-v1","esco-lesson-progress-v1","esco-days-v1"];
