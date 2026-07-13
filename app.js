@@ -716,6 +716,7 @@ function renderFraseDialogue(dialogue,tense){
   tip.textContent="Practice both sides: read Persona A, then Persona B. Switch tenses above to level up.";
   fl.appendChild(tip);
 }
+renderFraseMenu();
 // ── Build Lecciones — speaking-first lesson player (v15) ─────────────────────
 const LESSONS=[
   {id:"presentate",icon:"👋",title:"Preséntate",sub:"Tu nombre, tu ciudad y un saludo",vocab:"gustos",dialogue:"Presentación personal",quizCat:"all",quizMode:"conversation"},
