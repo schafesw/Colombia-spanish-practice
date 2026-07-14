@@ -580,7 +580,9 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 
 /* v23: lesson stages */
 .lesson-flow{font-size:0.68rem;color:var(--muted);margin-top:7px;}
-.stage-label{display:flex;justify-content:space-between;align-items:center;font-size:0.66rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);font-weight:800;margin:16px 2px 9px;}
+.stage-label{display:block;font-size:0.66rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);font-weight:800;margin:16px 2px 9px;}
+.stage-label-main{display:flex;justify-content:space-between;align-items:center;}
+.stage-sub{font-size:0.7rem;letter-spacing:0;color:var(--muted);font-weight:600;line-height:1.4;margin-top:4px;text-transform:none;}
 .stage-count{color:var(--muted);letter-spacing:0;}
 
 /* v23: gram groups */

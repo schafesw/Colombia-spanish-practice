@@ -59,8 +59,8 @@ function buildVoiceBars(sp=getSpanishVoices()){
   });
 }
 function chV(key){const v=getSpanishVoices().find(x=>voiceKey(x)===key);if(v){rememberVoice(v);syncVoiceSelectors();}}
-function speak(t,r){
-  if(!window.speechSynthesis)return;
+function speak(t,r,onEnd){
+  if(!window.speechSynthesis){if(onEnd)onEnd();return;}
   const sp=getSpanishVoices();
   const saved=savedVoiceKey&&sp.find(v=>voiceKey(v)===savedVoiceKey); /* saved pick wins the moment the list recovers */
   const live=saved||(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang));
@@ -70,6 +70,7 @@ function speak(t,r){
   const u=new SpeechSynthesisUtterance(t);
   if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
   u.rate=r||0.8;
+  if(onEnd){let finished=false;const done=()=>{if(finished)return;finished=true;onEnd();};u.onend=done;u.onerror=done;}
   speechSynthesis.speak(u);
   rememberSpoken(t);
 }
@@ -955,11 +956,16 @@ const RR_BANK=[];
     }
   });});
 })();
-let rrTimer=null,rrCurrent=null,rrSession=0;
-function rrStop(){if(rrTimer){clearInterval(rrTimer);rrTimer=null;}}
+let rrTimer=null,rrCurrent=null,rrSession=0,rrPromptToken=0;
+function rrStop(){
+  rrPromptToken++;
+  if(rrTimer){clearInterval(rrTimer);rrTimer=null;}
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+}
 function rrExit(){rrStop();renderLessons();}
 function renderRapida(keepSame){
   rrStop();
+  const promptToken=rrPromptToken;
   const root=document.getElementById("lesson-list");if(!root)return;
   if(!RR_BANK.length){renderLessons();return;}
   if(!keepSame||!rrCurrent){rrCurrent=RR_BANK[Math.floor(Math.random()*RR_BANK.length)];rrSession++;}
@@ -973,22 +979,28 @@ function renderRapida(keepSame){
   qBox.onclick=()=>speak(rrCurrent.q,0.75);
   card.appendChild(qBox);
   card.appendChild(lpEl("rr-qen",rrCurrent.qEn||""));
-  const cd=lpEl("rr-countdown","5");
+  const cd=lpEl("rr-countdown","🎧");
   card.appendChild(cd);
-  card.appendChild(lpEl("lp-hint","🗣️ Answer OUT LOUD — any answer that fits. The model reveals when the timer ends."));
+  card.appendChild(lpEl("lp-hint","🗣️ Answer OUT LOUD — any answer that fits. You get 7 full seconds after the question finishes speaking."));
   const controls=lpEl("lp-nav");
   const revealBtn=document.createElement("button");revealBtn.type="button";revealBtn.className="lp-nav-btn";revealBtn.textContent="Reveal now";
   revealBtn.onclick=()=>rrReveal();
   controls.appendChild(revealBtn);
   card.appendChild(controls);
   root.appendChild(card);
-  speak(rrCurrent.q,0.75);
-  let n=5;
-  rrTimer=setInterval(()=>{
-    n--;
-    if(n<=0){rrReveal();return;}
+  let n=7;
+  cd.textContent=String(n);
+  const startCountdown=()=>{
+    if(promptToken!==rrPromptToken)return;
+    n=7;
     cd.textContent=String(n);
-  },1000);
+    rrTimer=setInterval(()=>{
+      n--;
+      if(n<=0){rrReveal();return;}
+      cd.textContent=String(n);
+    },1000);
+  };
+  speak(rrCurrent.q,0.75,startCountdown);
 }
 function rrReveal(){
   rrStop();
@@ -1029,7 +1041,7 @@ function renderLessons(){
   root.innerHTML="";
   const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
   const intro=document.createElement("div");intro.className="lesson-intro";
-  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-flow">Each lesson: 📖 Learn → 🗣️ Speak → 🧪 Quiz</div>`;
+  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-flow">Recommended path: Start Here → Build Conversation → Speak More Naturally<br>Each lesson: 📖 Learn → 🗣️ Speak → 🧪 Quiz</div>`;
   root.appendChild(intro);
   /* Continue / Start here (v21) */
   const resume=loadResume();
@@ -1066,12 +1078,11 @@ function renderLessons(){
   daily.appendChild(dr1);daily.appendChild(dr2);
   root.appendChild(daily);
 
-  /* Lessons grouped into stages (v23) */
+  /* Lessons grouped into a speaking-first progression */
   const LESSON_STAGES=[
-    {name:"🌱 Fundamentos",ids:["presentate","plata"]},
-    {name:"🏠 Vida diaria",ids:["casa","cocina","calle"]},
-    {name:"💬 Conversación",ids:["trabajo","gustos","planes","sentirse"]},
-    {name:"🇨🇴 Colombia",ids:["colombia"]}
+    {name:"🌱 Start Here",sub:"Simple sentences for introductions, numbers, and daily needs.",ids:["presentate","plata","casa","gustos"]},
+    {name:"🗣️ Build Conversation",sub:"Use more vocabulary to talk about everyday life.",ids:["trabajo","cocina","calle","planes","sentirse"]},
+    {name:"🇨🇴 Speak More Naturally",sub:"Colombian expressions, mixed practice, and speaking pressure.",ids:["colombia"]}
   ];
   let lessonNum=0;
   LESSON_STAGES.forEach(stage=>{
@@ -1079,7 +1090,7 @@ function renderLessons(){
     if(!stageLessons.length)return;
     const sDone=stageLessons.filter(l=>lessonProgress[l.id]).length;
     const sh=document.createElement("div");sh.className="stage-label";
-    sh.innerHTML=`<span>${stage.name}</span><span class="stage-count">${sDone}/${stageLessons.length}</span>`;
+    sh.innerHTML=`<div class="stage-label-main"><span>${stage.name}</span><span class="stage-count">${sDone}/${stageLessons.length}</span></div><div class="stage-sub">${stage.sub}</div>`;
     root.appendChild(sh);
     stageLessons.forEach(lesson=>{
       lessonNum++;
