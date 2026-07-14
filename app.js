@@ -175,7 +175,7 @@ let aC="gustos";
 try{aC=localStorage.getItem(VOCAB_LAST_KEY)||aC;}catch(e){}
 if(!VOCAB_CATS.some(cat=>cat.id===aC))aC=VOCAB_CATS.some(cat=>cat.id==="gustos")?"gustos":(VOCAB_CATS[0]?.id||"");
 const VOCAB_GROUPS=[
-  {title:"Start with everyday speech",sub:"Useful words for talking about yourself",ids:["gustos","familia","verbos","tiempo","emociones","colombianismos"]},
+  {title:"Start with everyday speech",sub:"Useful words for talking about yourself",ids:["gustos","familia","verbos","acciones","tiempo","emociones","colombianismos"]},
   {title:"Daily life",sub:"Home, food, clothing, and things around you",ids:["comida","casa","habitacion","bano","cocina","ropa","cuerpo"]},
   {title:"Getting things done",sub:"Work, travel, directions, and technology",ids:["numeros","direcciones","lugares","trabajo","oficina","carropartes","tecnologia","tv"]},
   {title:"Describe the world",sub:"People, places, weather, and details",ids:["colores","adjetivos","meses","dias","profesiones","animales","clima","preguntas"]}
@@ -957,14 +957,83 @@ const RR_BANK=[];
   });});
 })();
 let rrTimer=null,rrCurrent=null,rrSession=0,rrPromptToken=0;
+let rrRecorder=null,rrStream=null,rrChunks=[],rrUrl=null,rrSilenceTimer=null,rrMaxTimer=null,rrAudioContext=null,rrAnalyser=null,rrRated=false;
+const RR_STATS_KEY="esco-rapid-stats-v1";
+let rrStats={attempts:0,got:0,practice:0,skipped:0};
+try{rrStats=Object.assign(rrStats,JSON.parse(localStorage.getItem(RR_STATS_KEY)||"{}"));}catch(e){}
+function saveRRStats(){try{localStorage.setItem(RR_STATS_KEY,JSON.stringify(rrStats));}catch(e){}}
+function rrClearRecording(){if(rrUrl){try{URL.revokeObjectURL(rrUrl);}catch(e){}rrUrl=null;}rrChunks=[];}
+function rrStopStream(){if(rrStream){rrStream.getTracks().forEach(t=>t.stop());rrStream=null;}}
+function rrCloseAudio(){if(rrAudioContext){try{rrAudioContext.close();}catch(e){}rrAudioContext=null;}rrAnalyser=null;}
+function rrCancelRecording(){
+  if(rrSilenceTimer){clearInterval(rrSilenceTimer);rrSilenceTimer=null;}
+  if(rrMaxTimer){clearTimeout(rrMaxTimer);rrMaxTimer=null;}
+  if(rrRecorder){try{rrRecorder.onstop=null;if(rrRecorder.state==="recording")rrRecorder.stop();}catch(e){}rrRecorder=null;}
+  rrStopStream();rrCloseAudio();
+}
 function rrStop(){
   rrPromptToken++;
   if(rrTimer){clearInterval(rrTimer);rrTimer=null;}
+  rrCancelRecording();
   if(window.speechSynthesis)window.speechSynthesis.cancel();
 }
 function rrExit(){rrStop();renderLessons();}
+function rrSetStatus(text,cls){
+  const cd=document.querySelector("#lesson-list .rr-countdown");
+  const hint=document.querySelector("#lesson-list .rr-recording-note");
+  if(cd)cd.textContent=text;
+  if(hint){hint.textContent=cls==="recording"?"🔴 Grabando… habla de forma natural. Se detendrá después de una pausa.":text;hint.className="rr-recording-note "+(cls||"");}
+}
+function rrStopRecording(){
+  if(rrRecorder&&rrRecorder.state==="recording"){
+    rrSetStatus("⏳","recording");
+    try{rrRecorder.stop();}catch(e){rrReveal("mic-error");}
+  }
+}
+async function rrBeginRecording(token){
+  if(token!==rrPromptToken)return;
+  if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder)){rrReveal("mic-unavailable");return;}
+  rrSetStatus("🔴","recording");
+  try{
+    rrStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    if(token!==rrPromptToken){rrStopStream();return;}
+    rrChunks=[];
+    rrRecorder=new MediaRecorder(rrStream);
+    rrRecorder.ondataavailable=e=>{if(e.data&&e.data.size)rrChunks.push(e.data);};
+    rrRecorder.onstop=()=>{
+      const blob=new Blob(rrChunks,{type:(rrRecorder&&rrRecorder.mimeType)||"audio/mp4"});
+      rrUrl=URL.createObjectURL(blob);
+      rrRecorder=null;rrStopStream();rrCloseAudio();
+      if(rrSilenceTimer){clearInterval(rrSilenceTimer);rrSilenceTimer=null;}
+      if(rrMaxTimer){clearTimeout(rrMaxTimer);rrMaxTimer=null;}
+      if(token===rrPromptToken)rrReveal("recorded");else rrClearRecording();
+    };
+    rrRecorder.onerror=()=>{rrReveal("mic-error");};
+    rrRecorder.start();
+    const AudioCtx=window.AudioContext||window.webkitAudioContext;
+    let heard=false,lastLoud=Date.now();
+    if(AudioCtx){
+      try{
+        rrAudioContext=new AudioCtx();
+        const source=rrAudioContext.createMediaStreamSource(rrStream);
+        rrAnalyser=rrAudioContext.createAnalyser();rrAnalyser.fftSize=512;source.connect(rrAnalyser);
+        const data=new Uint8Array(rrAnalyser.fftSize);
+        rrSilenceTimer=setInterval(()=>{
+          if(!rrAnalyser||!rrRecorder||rrRecorder.state!=="recording")return;
+          rrAnalyser.getByteTimeDomainData(data);let sum=0;
+          for(let i=0;i<data.length;i++){const n=(data[i]-128)/128;sum+=n*n;}
+          const rms=Math.sqrt(sum/data.length);const now=Date.now();
+          if(rms>.035){heard=true;lastLoud=now;}
+          if(heard&&now-lastLoud>1100)rrStopRecording();
+        },100);
+      }catch(e){rrCloseAudio();}
+    }
+    rrMaxTimer=setTimeout(()=>rrStopRecording(),8000);
+  }catch(e){rrStopStream();rrCloseAudio();rrReveal("mic-error");}
+}
 function renderRapida(keepSame){
   rrStop();
+  rrClearRecording();rrRated=false;
   const promptToken=rrPromptToken;
   const root=document.getElementById("lesson-list");if(!root)return;
   if(!RR_BANK.length){renderLessons();return;}
@@ -981,12 +1050,16 @@ function renderRapida(keepSame){
   card.appendChild(lpEl("rr-qen",rrCurrent.qEn||""));
   const cd=lpEl("rr-countdown","🎧");
   card.appendChild(cd);
-  card.appendChild(lpEl("lp-hint","🗣️ Answer OUT LOUD — any answer that fits. You get 7 full seconds after the question finishes speaking."));
+  card.appendChild(lpEl("lp-hint","🗣️ Answer OUT LOUD — any answer that fits. First you get 7 seconds to think, then your microphone starts automatically."));
   const controls=lpEl("lp-nav");
-  const revealBtn=document.createElement("button");revealBtn.type="button";revealBtn.className="lp-nav-btn";revealBtn.textContent="Reveal now";
-  revealBtn.onclick=()=>rrReveal();
+  const repeatBtn=document.createElement("button");repeatBtn.type="button";repeatBtn.className="lp-nav-btn";repeatBtn.textContent="🔁 Repeat question";
+  repeatBtn.onclick=()=>renderRapida(true);
+  const revealBtn=document.createElement("button");revealBtn.type="button";revealBtn.className="lp-nav-btn";revealBtn.textContent="Reveal without recording";
+  revealBtn.onclick=()=>rrReveal("skipped");
+  controls.appendChild(repeatBtn);
   controls.appendChild(revealBtn);
   card.appendChild(controls);
+  const recNote=lpEl("rr-recording-note","After the countdown, recording starts automatically.");recNote.className="rr-recording-note";card.appendChild(recNote);
   root.appendChild(card);
   let n=7;
   cd.textContent=String(n);
@@ -996,13 +1069,13 @@ function renderRapida(keepSame){
     cd.textContent=String(n);
     rrTimer=setInterval(()=>{
       n--;
-      if(n<=0){rrReveal();return;}
+      if(n<=0){clearInterval(rrTimer);rrTimer=null;cd.textContent="🔴";rrBeginRecording(promptToken);return;}
       cd.textContent=String(n);
     },1000);
   };
   speak(rrCurrent.q,0.75,startCountdown);
 }
-function rrReveal(){
+function rrReveal(reason){
   rrStop();
   const root=document.getElementById("lesson-list");if(!root||!rrCurrent)return;
   root.innerHTML="";
@@ -1012,18 +1085,28 @@ function rrReveal(){
   const card=lpEl("lp-card rr-card");
   card.appendChild(lpEl("lp-step-title","⚡ Reacción Rápida — model answer"));
   card.appendChild(lpEl("rr-question rr-q-small",rrCurrent.qEs));
+  if(reason==="recorded"){
+    const mine=lpEl("rr-my-answer","✅ Your answer was recorded. Listen once, then compare with the model.");
+    const mineBtn=document.createElement("button");mineBtn.type="button";mineBtn.className="lp-nav-btn";mineBtn.textContent="▶️ Your answer";mineBtn.onclick=()=>{if(rrUrl)try{new Audio(rrUrl).play();}catch(e){}};
+    mine.appendChild(mineBtn);card.appendChild(mine);
+  }else if(reason==="mic-unavailable")card.appendChild(lpEl("rr-recording-note","Microphone recording is not available here, so this round stays honor-system. You can still answer out loud and compare with the model."));
+  else if(reason==="mic-error")card.appendChild(lpEl("rr-recording-note","I could not access the microphone. Check browser microphone permission, then try again."));
+  else if(reason==="skipped")card.appendChild(lpEl("rr-recording-note","You revealed the answer before recording. Try the next one when you are ready to speak."));
   const ans=lpEl("rr-answer",rrCurrent.aEs);
   ans.onclick=()=>speak(rrCurrent.aTts,0.75);
   card.appendChild(ans);
   card.appendChild(lpEl("rr-qen",rrCurrent.aEn||""));
-  card.appendChild(lpEl("lp-hint","Did your answer get the idea across? That counts. Compare with the model, then try the same one again or grab the next."));
+  card.appendChild(lpEl("lp-hint","There is no automatic grade: choose honestly. The goal is to respond naturally, not to repeat one perfect sentence."));
   const row1=lpEl("lp-nav");
   const hearB=document.createElement("button");hearB.type="button";hearB.className="lp-nav-btn";hearB.textContent="🔊 Model";
   hearB.onclick=()=>speak(rrCurrent.aTts,0.75);
-  const micB=document.createElement("button");micB.type="button";micB.className="lp-nav-btn";micB.textContent="🎙️ Record & compare";
-  micB.onclick=()=>openMicPanel(rrCurrent.aTts);
-  row1.appendChild(hearB);row1.appendChild(micB);
+  row1.appendChild(hearB);
   card.appendChild(row1);
+  const rating=lpEl("rr-rating");
+  [["got","✅ I got it"],["practice","🔁 Need more practice"],["skipped","⏭️ I didn’t answer"]].forEach(([kind,label])=>{
+    const b=document.createElement("button");b.type="button";b.textContent=label;b.onclick=()=>rrRate(kind);b.dataset.rate=kind;rating.appendChild(b);
+  });
+  card.appendChild(rating);card.appendChild(lpEl("rr-rate-status","Self-rating only — this never pretends to score your pronunciation."));
   const row2=lpEl("lp-nav");
   const sameB=document.createElement("button");sameB.type="button";sameB.className="lp-nav-btn";sameB.textContent="🔁 Try again";
   sameB.onclick=()=>renderRapida(true);
@@ -1033,6 +1116,12 @@ function rrReveal(){
   card.appendChild(row2);
   root.appendChild(card);
   speak(rrCurrent.aTts,0.75);
+}
+function rrRate(kind){
+  if(!rrRated){rrRated=true;rrStats.attempts++;if(kind==="got")rrStats.got++;if(kind==="practice")rrStats.practice++;if(kind==="skipped")rrStats.skipped++;saveRRStats();}
+  document.querySelectorAll(".rr-rating button").forEach(b=>b.classList.toggle("selected",b.dataset.rate===kind));
+  const status=document.querySelector(".rr-rate-status");
+  if(status)status.textContent=kind==="got"?"Nice — keep that response available for real conversation.":kind==="practice"?"Good choice. Try the same question again and say it a little more smoothly.":"No problem. Listen to the model, then take the next question when ready.";
 }
 
 function renderLessons(){
@@ -1259,6 +1348,7 @@ function showGram(id){
     Array.from(sub.children).forEach((b,i)=>b.classList.toggle("active",items[i]&&items[i][0]===id));
   }
 }
+showGramGroup("tiempos");
 
 // ── Quiz ──────────────────────────────────────────────────────────────────────
 const CONVERSATION_QUIZ=[
@@ -1293,7 +1383,10 @@ const CONVERSATION_QUIZ=[
   {kind:"meaning",es:"¿Dónde está el baño?",en:"Where is the bathroom?",tts:"¿Dónde está el baño?",cat:"conversaciones",choices:["Where is the bathroom?","Where is the bedroom?","Where was the towel?","Are you going to tidy the bedroom?"]},
   {kind:"reply",es:"¿Vas a arreglar la habitación?",en:"Sí, voy a cambiar la sábana y la cobija.",tts:"¿Vas a arreglar la habitación?",cat:"conversaciones",choices:["Sí, voy a cambiar la sábana y la cobija.","Está al lado de la habitación.","Ayer la dejé junto al lavamanos.","Siga derecho."]},
   {kind:"listening",es:"Ayer la dejé junto al lavamanos.",en:"Yesterday I left it next to the sink.",tts:"Ayer la dejé junto al lavamanos.",cat:"conversaciones",choices:["Yesterday I left it next to the sink.","It is next to the bedroom.","I'm going to change the sheet.","Where is the bathroom?"]},
-  {kind:"tense",es:"¿Cuál frase describe el presente?",en:"Está al lado de la habitación.",tts:"Está al lado de la habitación.",cat:"conversaciones",choices:["Está al lado de la habitación.","Voy a cambiar la sábana.","Ayer la dejé junto al lavamanos.","¿Dónde estaba la toalla?"]}
+  {kind:"tense",es:"¿Cuál frase describe el presente?",en:"Está al lado de la habitación.",tts:"Está al lado de la habitación.",cat:"conversaciones",choices:["Está al lado de la habitación.","Voy a cambiar la sábana.","Ayer la dejé junto al lavamanos.","¿Dónde estaba la toalla?"]},
+  {kind:"pronoun",es:"¿Me lo puede repetir, por favor?",en:"Sí, se lo repito despacio.",tts:"¿Me lo puede repetir, por favor?",cat:"pronombres",choices:["Sí, se lo repito despacio.","Sí, la tengo aquí.","No, pero me la puede enviar.","Sí, necesito ayuda."]},
+  {kind:"pronoun",es:"¿La dirección la tiene?",en:"Sí, la tengo aquí.",tts:"¿La dirección la tiene?",cat:"pronombres",choices:["Sí, la tengo aquí.","Sí, se lo repito despacio.","Sí, necesito ayuda.","La voy a buscar mañana."]},
+  {kind:"pronoun",es:"¿Le explicaste el problema?",en:"Sí, se lo expliqué al técnico.",tts:"¿Le explicaste el problema?",cat:"pronombres",choices:["Sí, se lo expliqué al técnico.","Sí, la tengo aquí.","No, pero me la puede enviar.","Sí, se lo repito despacio."]}
 ];
 /* ── Fill-in-the-blank Quiz Data (NEW v13) ──────────────────────────────────
    kind:"blank" — sentence with ___ ; choices are single words; tts = full sentence */
@@ -1335,7 +1428,7 @@ VC.forEach(cat=>{
   if(cat.type==="verbos")Object.entries(VERBS).forEach(([k,v])=>aQ.push({es:k,en:v.en,tts:k,cat:"verbos"}));
   if(cat.type==="colombianismos")COLOMBIANISMOS.forEach(c=>aQ.push({es:c.word,en:c.en,tts:c.tts,cat:"colombianismos"}));
 });
-FRASES.filter(sec=>sec.section).forEach(sec=>{if(sec.items)sec.items.forEach(i=>aQ.push({es:i.es,en:i.en,tts:i.es,cat:"frases"}));});
+FRASES.filter(sec=>sec.section).forEach(sec=>{if(sec.items)sec.items.forEach(i=>aQ.push({es:i.es,en:i.en,tts:i.es,cat:/Pronombres/i.test(sec.section)?"pronombres":"frases"}));});
 CONVERSATION_QUIZ.forEach(q=>aQ.push(q));
 FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
 /* ── AUTO-COMPLETAR (v17): every vocab example becomes a fill-in-the-blank ── */
@@ -1367,7 +1460,7 @@ FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
   console.log("Auto-Completar generated:",made,"questions");
 })();
 
-const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"direcciones",label:"Direcciones"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
+const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"direcciones",label:"Direcciones"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
 const QUIZ_MODES=[
   {id:"mixed",label:"Mixed"},{id:"es-en",label:"ES → EN"},{id:"en-es",label:"EN → ES"},
   {id:"listening",label:"🎧 Listening"},{id:"blank",label:"✏️ Fill blank"},{id:"conversation",label:"💬 Conversation"}
@@ -1429,7 +1522,7 @@ function quizPool(){
 }
 function spanishAnswer(q){
   if(qMode==="en-es")return q.es;
-  if(q.kind==="reply"||q.kind==="tense")return q.en;
+  if(q.kind==="reply"||q.kind==="tense"||q.kind==="pronoun")return q.en;
   if(q.kind==="blank")return q.tts;
   return q.es||q.tts;
 }

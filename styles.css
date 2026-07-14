@@ -542,6 +542,14 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 .rr-qen{font-size:0.78rem;color:var(--muted);font-style:italic;margin-bottom:12px;}
 .rr-countdown{font-size:3.4rem;font-weight:900;color:var(--pink);line-height:1;margin:10px 0 6px;}
 .rr-answer{font-size:1.2rem;font-weight:900;color:var(--teal);line-height:1.4;margin:10px 0 4px;cursor:pointer;}
+.rr-recording-note{font-size:0.76rem;color:var(--muted);line-height:1.5;margin:7px 0 13px;}
+.rr-recording-note.recording{color:var(--pink);font-weight:900;}
+.rr-my-answer{background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.25);border-radius:13px;padding:11px 12px;margin:10px 0;font-size:0.78rem;color:var(--teal);line-height:1.45;}
+.rr-my-answer .lp-nav-btn{display:block;width:100%;margin-top:9px;color:var(--teal);border-color:rgba(74,168,160,0.35);}
+.rr-rating{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin:5px 0 8px;}
+.rr-rating button{padding:10px 5px;border-radius:11px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--muted);font-size:0.72rem;font-weight:800;min-height:48px;}
+.rr-rating button.selected{border-color:var(--gold);background:rgba(232,180,74,0.16);color:var(--gold);}
+.rr-rate-status{font-size:0.68rem;color:var(--muted);line-height:1.45;margin-bottom:12px;}
 
 /* v22: Frases home grids */
 .fr-home-label{font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:6px 0 10px;}
