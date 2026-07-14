@@ -59,8 +59,8 @@ function buildVoiceBars(sp=getSpanishVoices()){
   });
 }
 function chV(key){const v=getSpanishVoices().find(x=>voiceKey(x)===key);if(v){rememberVoice(v);syncVoiceSelectors();}}
-function speak(t,r){
-  if(!window.speechSynthesis)return;
+function speak(t,r,onEnd){
+  if(!window.speechSynthesis){if(onEnd)onEnd();return;}
   const sp=getSpanishVoices();
   const saved=savedVoiceKey&&sp.find(v=>voiceKey(v)===savedVoiceKey); /* saved pick wins the moment the list recovers */
   const live=saved||(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang));
@@ -70,6 +70,7 @@ function speak(t,r){
   const u=new SpeechSynthesisUtterance(t);
   if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
   u.rate=r||0.8;
+  if(onEnd){let finished=false;const done=()=>{if(finished)return;finished=true;onEnd();};u.onend=done;u.onerror=done;}
   speechSynthesis.speak(u);
   rememberSpoken(t);
 }
@@ -560,61 +561,93 @@ const TENSE_BADGE={
   "Planes":{txt:"⏭️ Planes · voy a...",css:"color:var(--blue);background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.25)"},
   "Ayer":{txt:"⏮️ Ayer · pasado",css:"color:var(--pink);background:rgba(232,93,117,0.12);border:1px solid rgba(232,93,117,0.25)"},
 };
+function fraseSectionMeta(sec){
+  const m=String(sec.section||"").match(/^(\S+)\s+(.*)$/);
+  return m?{icon:m[1],name:m[2]}:{icon:"💬",name:sec.section||""};
+}
 function renderFraseMenu(){
   fl.dataset.view="menu";
   fl.innerHTML="";
-  /* Sticky jump navigation — pick a section without scrolling */
+  const sections=FRASES.filter(s=>s.section);
   const jump=document.createElement("div");
   jump.className="frase-jump";
   const sel=document.createElement("select");
   sel.className="voice-select frase-jump-select";
-  const jumpTargets=[["frs-dialogos","🗣️ Diálogos y conversaciones"],["frs-titulos","Títulos · Sr. / Sra."],
-    ...FRASES.filter(s=>s.section).map((s,i)=>["frs-sec-"+i,s.section])];
-  sel.innerHTML=`<option value="">🧭 Jump to section…</option>`+jumpTargets.map(([id,label])=>`<option value="${id}">${label}</option>`).join("");
+  let opts=`<option value="">🧭 Jump to…</option>`;
+  opts+=`<optgroup label="Conversations">`+PHRASE_DIALOGUES.map((d,i)=>`<option value="d:${i}">${d.title}</option>`).join("")+`</optgroup>`;
+  opts+=`<optgroup label="Phrase collections"><option value="t">Títulos · Sr. / Sra.</option>`+sections.map((s,i)=>`<option value="s:${i}">${s.section}</option>`).join("")+`</optgroup>`;
+  sel.innerHTML=opts;
   sel.onchange=()=>{
-    const el=document.getElementById(sel.value);
-    if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
-    sel.value="";
+    const v=sel.value;sel.value="";
+    if(!v)return;
+    if(v==="t")return renderFraseSection(-1);
+    const idx=parseInt(v.slice(2),10);
+    if(v[0]==="d"&&PHRASE_DIALOGUES[idx])renderFraseDialogue(PHRASE_DIALOGUES[idx]);
+    else if(v[0]==="s")renderFraseSection(idx);
   };
   jump.appendChild(sel);
   fl.appendChild(jump);
-  const note=document.createElement("div");
-  note.className="phrase-index-note";
-  note.id="frs-dialogos";
-  note.innerHTML=`<div class="phrase-index-title">Elige una situación</div><div class="phrase-index-text">Toca una frase para abrir un diálogo corto. Puedes practicar las dos personas: A y B.</div>`;
-  fl.appendChild(note);
-  const menu=document.createElement("div");
-  menu.className="phrase-menu";
-  PHRASE_DIALOGUES.forEach(dialogue=>{
-    const card=document.createElement("button");
-    card.type="button";
-    card.className="phrase-topic-card";
-    card.innerHTML=`<div class="phrase-topic-copy"><div class="phrase-topic-title">${dialogue.title}</div><div class="phrase-topic-preview">${dialogue.preview}</div><div class="phrase-topic-en">${dialogue.en}</div></div><span class="phrase-topic-arrow">›</span>`;
-    card.onclick=()=>renderFraseDialogue(dialogue);
-    menu.appendChild(card);
+  const h1=document.createElement("div");h1.className="fr-home-label";h1.textContent="💬 Conversations · practice both sides";
+  fl.appendChild(h1);
+  const g1=document.createElement("div");g1.className="fr-home-grid";
+  PHRASE_DIALOGUES.forEach(d=>{
+    const c=document.createElement("button");c.type="button";c.className="fr-home-card";
+    c.innerHTML=`<div class="fr-card-title">${d.title}</div><div class="fr-card-sub">${d.en||""}</div><div class="fr-card-meta">${(d.versions||[]).length} tenses ›</div>`;
+    c.onclick=()=>renderFraseDialogue(d);
+    g1.appendChild(c);
   });
-  fl.appendChild(menu);
-  renderFraseSections();
+  fl.appendChild(g1);
+  const h2=document.createElement("div");h2.className="fr-home-label";h2.textContent="📋 Phrase collections · tap to open";
+  fl.appendChild(h2);
+  const g2=document.createElement("div");g2.className="fr-home-grid";
+  const tit=document.createElement("button");tit.type="button";tit.className="fr-home-card fr-col";
+  tit.innerHTML=`<div class="fr-card-icon">🏷️</div><div class="fr-card-title">Títulos</div><div class="fr-card-meta">2 items ›</div>`;
+  tit.onclick=()=>renderFraseSection(-1);
+  g2.appendChild(tit);
+  sections.forEach((s,i)=>{
+    const meta=fraseSectionMeta(s);
+    const c=document.createElement("button");c.type="button";c.className="fr-home-card fr-col";
+    c.innerHTML=`<div class="fr-card-icon">${meta.icon}</div><div class="fr-card-title">${meta.name}</div><div class="fr-card-meta">${(s.items||[]).length} phrases ›</div>`;
+    c.onclick=()=>renderFraseSection(i);
+    g2.appendChild(c);
+  });
+  fl.appendChild(g2);
 }
-/* Classic phrase lists (Saludos, Compras, Restaurante, Gustos, etc.) below the dialogue menu */
-function renderFraseSections(){
-  const td=document.createElement("div");td.className="frase-section";td.id="frs-titulos";
-  const ttlEl=document.createElement("div");ttlEl.className="frase-title";
-  ttlEl.style.cssText="color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)";
-  ttlEl.textContent="Títulos · Titles";td.appendChild(ttlEl);
-  const tg=document.createElement("div");tg.className="titles-grid";
-  [{abbr:"Sr.",full:"Señor",en:"Mr."},{abbr:"Sra.",full:"Señora",en:"Mrs. / Ms."}].forEach(t=>{
-    const tc=document.createElement("div");tc.className="title-card";
-    tc.innerHTML=`<div class="title-abbr">${t.abbr}</div><div class="title-full">${t.full}</div><div class="title-en">${t.en}</div>`;
-    tc.onclick=()=>speak(t.full,0.75);tg.appendChild(tc);});
-  td.appendChild(tg);fl.appendChild(td);
-  FRASES.filter(s=>s.section).forEach((sec,i)=>{const wrap=document.createElement("div");wrap.className="frase-section";wrap.id="frs-sec-"+i;
-    const st=document.createElement("div");st.className="frase-title";st.style.cssText=sec.cls;st.textContent=sec.section;wrap.appendChild(st);
-    sec.items.forEach(item=>{const card=document.createElement("div");card.className="frase-card";
-      card.innerHTML=`<div class="frase-txt"><div class="f-es">${item.es}</div><div class="f-en">${item.en}</div></div><span class="f-spk">🔊</span>`;
-      card.onclick=()=>speak(item.es,0.75);attachMic(card,item.es);wrap.appendChild(card);});fl.appendChild(wrap);});
+function renderFraseSection(idx){
+  fl.dataset.view="section";
+  fl.innerHTML="";
+  const back=document.createElement("button");
+  back.type="button";back.className="phrase-back";
+  back.innerHTML="<span>‹</span><span>All phrases</span>";
+  back.onclick=renderFraseMenu;
+  fl.appendChild(back);
+  if(idx===-1){
+    const td=document.createElement("div");td.className="frase-section";
+    const ttlEl=document.createElement("div");ttlEl.className="frase-title";
+    ttlEl.style.cssText="color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)";
+    ttlEl.textContent="Títulos · Titles";td.appendChild(ttlEl);
+    const tg=document.createElement("div");tg.className="titles-grid";
+    [{abbr:"Sr.",full:"Señor",en:"Mr."},{abbr:"Sra.",full:"Señora",en:"Mrs. / Ms."}].forEach(t=>{
+      const tc=document.createElement("div");tc.className="title-card";
+      tc.innerHTML=`<div class="title-abbr">${t.abbr}</div><div class="title-full">${t.full}</div><div class="title-en">${t.en}</div>`;
+      tc.onclick=()=>speak(t.full,0.75);tg.appendChild(tc);});
+    td.appendChild(tg);fl.appendChild(td);
+    return;
+  }
+  const sec=FRASES.filter(s=>s.section)[idx];
+  if(!sec){renderFraseMenu();return;}
+  const wrap=document.createElement("div");wrap.className="frase-section";
+  const st=document.createElement("div");st.className="frase-title";st.style.cssText=sec.cls||"";st.textContent=sec.section;wrap.appendChild(st);
+  sec.items.forEach(item=>{
+    const card=document.createElement("div");card.className="frase-card";
+    card.innerHTML=`<div class="frase-txt"><div class="f-es">${item.es}</div><div class="f-en">${item.en}</div></div><span class="f-spk">🔊</span>`;
+    card.onclick=()=>speak(item.es,0.75);
+    attachMic(card,item.es);
+    wrap.appendChild(card);
+  });
+  fl.appendChild(wrap);
 }
-function renderFraseDialogue(dialogue){
+function renderFraseDialogue(dialogue,tense){
   fl.dataset.view="dialogue";
   fl.innerHTML="";
   const back=document.createElement("button");
@@ -622,6 +655,23 @@ function renderFraseDialogue(dialogue){
   back.innerHTML="<span>‹</span><span>Back to phrases</span>";
   back.onclick=renderFraseMenu;
   fl.appendChild(back);
+  /* Header: title + English + tense selector — one version at a time (v23) */
+  const versions=dialogue.versions||[];
+  const active=tense||(versions[0]&&versions[0].tense)||"Ahora";
+  const hdr=document.createElement("div");hdr.className="dlg-head";
+  hdr.innerHTML=`<div class="dlg-head-title">${dialogue.title}</div><div class="dlg-head-en">${dialogue.en||""}</div>`;
+  if(versions.length>1){
+    const trow=document.createElement("div");trow.className="dlg-tense-row";
+    versions.forEach(v=>{
+      const b=document.createElement("button");b.type="button";
+      b.className="dlg-tense-btn"+(v.tense===active?" active":"");
+      b.textContent=v.tense;
+      b.onclick=()=>renderFraseDialogue(dialogue,v.tense);
+      trow.appendChild(b);
+    });
+    hdr.appendChild(trow);
+  }
+  fl.appendChild(hdr);
   /* Speaking practice: hide one side, say the line out loud, tap to reveal */
   const bubbles=[];
   const pbar=document.createElement("div");pbar.className="practice-bar";
@@ -644,36 +694,30 @@ function renderFraseDialogue(dialogue){
   fl.appendChild(pbar);
   const box=document.createElement("div");
   box.className="dialogue phrase-dialogue";
-  box.innerHTML=`<div class="dlg-title">${dialogue.title} · Toca cada línea para escuchar</div>`;
-  dialogue.versions.forEach(version=>{
-    if(version.tense&&TENSE_BADGE[version.tense]){
-      const badge=document.createElement("div");
-      badge.className="conv-tense-badge";
-      badge.style.cssText=TENSE_BADGE[version.tense].css;
-      badge.textContent=TENSE_BADGE[version.tense].txt;
-      box.appendChild(badge);
-    }
+  box.innerHTML=`<div class="dlg-title">Tap any line to hear it</div>`;
+  const version=versions.find(v=>v.tense===active)||versions[0];
+  if(version){
     version.lines.forEach(line=>{
       const row=document.createElement("div");
       row.className="dlg-line"+(line.who==="B"?" right":"");
       row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${line.who}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
       const bub=row.querySelector(".dlg-bubble");
-      bubbles.push({who:line.who,el:bub});attachMic(row,line.tts);
+      bubbles.push({who:line.who,el:bub});
       bub.onclick=()=>{
         if(bub.classList.contains("dlg-hidden"))bub.classList.remove("dlg-hidden");
         speak(line.tts,0.75);
       };
+      attachMic(row,line.tts);
       box.appendChild(row);
     });
-  });
+  }
   fl.appendChild(box);
   const tip=document.createElement("div");
   tip.className="phrase-practice-note";
-  tip.textContent="Practice both sides: read Persona A, then Persona B. Tap any line to hear it.";
+  tip.textContent="Practice both sides: read Persona A, then Persona B. Switch tenses above to level up.";
   fl.appendChild(tip);
 }
 renderFraseMenu();
-
 // ── Build Lecciones — speaking-first lesson player (v15) ─────────────────────
 const LESSONS=[
   {id:"presentate",icon:"👋",title:"Preséntate",sub:"Tu nombre, tu ciudad y un saludo",vocab:"gustos",dialogue:"Presentación personal",quizCat:"all",quizMode:"conversation"},
@@ -879,16 +923,18 @@ const RESUME_KEY="esco-lesson-resume-v1";
 function saveResume(){
   try{
     if(lpLesson&&lpSteps[lpStep]&&lpSteps[lpStep]!=="fin")
-      localStorage.setItem(RESUME_KEY,JSON.stringify({id:lpLesson.id,step:lpStep}));
+      localStorage.setItem(RESUME_KEY,JSON.stringify({id:lpLesson.id,step:lpStep,qi:lpQi,score:lpScore}));
     else localStorage.removeItem(RESUME_KEY);
   }catch(e){}
 }
 function loadResume(){
   try{const r=JSON.parse(localStorage.getItem(RESUME_KEY)||"null");return r&&r.id?r:null;}catch(e){return null;}
 }
-function openLessonAt(lesson,step){
+function openLessonAt(lesson,step,qi,score){
   openLesson(lesson);
   lpStep=Math.min(Math.max(step|0,0),lpSteps.length-1);
+  lpQi=Math.min(Math.max(qi|0,0),Math.max(lpQs.length-1,0));
+  lpScore=Math.max(score|0,0);
   renderLessonStep();
 }
 
@@ -910,11 +956,16 @@ const RR_BANK=[];
     }
   });});
 })();
-let rrTimer=null,rrCurrent=null,rrSession=0;
-function rrStop(){if(rrTimer){clearInterval(rrTimer);rrTimer=null;}}
+let rrTimer=null,rrCurrent=null,rrSession=0,rrPromptToken=0;
+function rrStop(){
+  rrPromptToken++;
+  if(rrTimer){clearInterval(rrTimer);rrTimer=null;}
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+}
 function rrExit(){rrStop();renderLessons();}
 function renderRapida(keepSame){
   rrStop();
+  const promptToken=rrPromptToken;
   const root=document.getElementById("lesson-list");if(!root)return;
   if(!RR_BANK.length){renderLessons();return;}
   if(!keepSame||!rrCurrent){rrCurrent=RR_BANK[Math.floor(Math.random()*RR_BANK.length)];rrSession++;}
@@ -928,22 +979,28 @@ function renderRapida(keepSame){
   qBox.onclick=()=>speak(rrCurrent.q,0.75);
   card.appendChild(qBox);
   card.appendChild(lpEl("rr-qen",rrCurrent.qEn||""));
-  const cd=lpEl("rr-countdown","5");
+  const cd=lpEl("rr-countdown","🎧");
   card.appendChild(cd);
-  card.appendChild(lpEl("lp-hint","🗣️ Answer OUT LOUD — any answer that fits. The model reveals when the timer ends."));
+  card.appendChild(lpEl("lp-hint","🗣️ Answer OUT LOUD — any answer that fits. You get 7 full seconds after the question finishes speaking."));
   const controls=lpEl("lp-nav");
   const revealBtn=document.createElement("button");revealBtn.type="button";revealBtn.className="lp-nav-btn";revealBtn.textContent="Reveal now";
   revealBtn.onclick=()=>rrReveal();
   controls.appendChild(revealBtn);
   card.appendChild(controls);
   root.appendChild(card);
-  speak(rrCurrent.q,0.75);
-  let n=5;
-  rrTimer=setInterval(()=>{
-    n--;
-    if(n<=0){rrReveal();return;}
+  let n=7;
+  cd.textContent=String(n);
+  const startCountdown=()=>{
+    if(promptToken!==rrPromptToken)return;
+    n=7;
     cd.textContent=String(n);
-  },1000);
+    rrTimer=setInterval(()=>{
+      n--;
+      if(n<=0){rrReveal();return;}
+      cd.textContent=String(n);
+    },1000);
+  };
+  speak(rrCurrent.q,0.75,startCountdown);
 }
 function rrReveal(){
   rrStop();
@@ -984,7 +1041,7 @@ function renderLessons(){
   root.innerHTML="";
   const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
   const intro=document.createElement("div");intro.className="lesson-intro";
-  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-intro-text">Each lesson takes you from listening to SPEAKING: goal, key words, saying it yourself, role-play A/B, pronunciation, and a mini-quiz.</div>`;
+  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-flow">Recommended path: Start Here → Build Conversation → Speak More Naturally<br>Each lesson: 📖 Learn → 🗣️ Speak → 🧪 Quiz</div>`;
   root.appendChild(intro);
   /* Continue / Start here (v21) */
   const resume=loadResume();
@@ -995,7 +1052,7 @@ function renderLessons(){
   if(resLesson&&!lessonProgress[resLesson.id]){
     cTitle="▶️ Continue: "+resLesson.title;
     cSub="Step "+((resume.step|0)+1)+" of 9 — pick up where you left off";
-    cAction=()=>openLessonAt(resLesson,resume.step);
+    cAction=()=>openLessonAt(resLesson,resume.step,resume.qi,resume.score);
   }else if(nextLesson){
     cTitle=(done===0?"▶️ Start here: ":"▶️ Next lesson: ")+nextLesson.title;
     cSub=nextLesson.sub;
@@ -1010,18 +1067,53 @@ function renderLessons(){
   root.appendChild(cont);
   let missedCount=0;
   try{const s=JSON.parse(localStorage.getItem("esco-quiz-v1")||"{}");missedCount=s.missed?Object.keys(s.missed).length:0;}catch(e){}
-  const rep=document.createElement("div");rep.className="repaso-card";
-  rep.innerHTML=`<div class="repaso-title">🔁 Today's review</div><div class="repaso-text">${missedCount?missedCount+" item"+(missedCount===1?"":"s")+" to review from past quizzes.":"Nothing pending — quiz mistakes feed your review!"}</div>`;
-  const rb=document.createElement("button");rb.type="button";rb.className="lp-nav-btn primary";rb.textContent="Start review";
-  rb.onclick=()=>{showPage("quiz");qMode="mixed";qCat="all";syncQuizControls();repasoLeft=10;nQ();};
-  rep.appendChild(rb);root.appendChild(rep);
-  /* Reacción Rápida entry (v21) */
-  const rrE=document.createElement("div");rrE.className="rr-entry";
-  rrE.innerHTML=`<div class="rr-entry-title">⚡ Reacción Rápida</div><div class="rr-entry-text">${RR_BANK.length} Colombian-style questions. Hear one, answer OUT LOUD before the 5-second timer ends, then compare with the model.</div>`;
-  const rrB=document.createElement("button");rrB.type="button";rrB.className="lp-nav-btn primary";rrB.textContent="⚡ Start drill";
-  rrB.onclick=()=>{rrSession=0;renderRapida(false);};
-  rrE.appendChild(rrB);
-  root.appendChild(rrE);
+  /* Daily practice — one compact row (v22) */
+  const daily=document.createElement("div");daily.className="daily-row";
+  const dr1=document.createElement("button");dr1.type="button";dr1.className="daily-card";
+  dr1.innerHTML=`<div class="daily-icon">🔁</div><div class="daily-title">Review</div><div class="daily-sub">${missedCount?missedCount+" item"+(missedCount===1?"":"s")+" due":"nothing due"}</div>`;
+  dr1.onclick=()=>{showPage("quiz");qMode="mixed";qCat="all";syncQuizControls();repasoLeft=10;nQ();};
+  const dr2=document.createElement("button");dr2.type="button";dr2.className="daily-card";
+  dr2.innerHTML=`<div class="daily-icon">⚡</div><div class="daily-title">Rápida</div><div class="daily-sub">${RR_BANK.length} questions</div>`;
+  dr2.onclick=()=>{rrSession=0;renderRapida(false);};
+  daily.appendChild(dr1);daily.appendChild(dr2);
+  root.appendChild(daily);
+
+  /* Lessons grouped into a speaking-first progression */
+  const LESSON_STAGES=[
+    {name:"🌱 Start Here",sub:"Simple sentences for introductions, numbers, and daily needs.",ids:["presentate","plata","casa","gustos"]},
+    {name:"🗣️ Build Conversation",sub:"Use more vocabulary to talk about everyday life.",ids:["trabajo","cocina","calle","planes","sentirse"]},
+    {name:"🇨🇴 Speak More Naturally",sub:"Colombian expressions, mixed practice, and speaking pressure.",ids:["colombia"]}
+  ];
+  let lessonNum=0;
+  LESSON_STAGES.forEach(stage=>{
+    const stageLessons=stage.ids.map(id=>LESSONS.find(l=>l.id===id)).filter(Boolean);
+    if(!stageLessons.length)return;
+    const sDone=stageLessons.filter(l=>lessonProgress[l.id]).length;
+    const sh=document.createElement("div");sh.className="stage-label";
+    sh.innerHTML=`<div class="stage-label-main"><span>${stage.name}</span><span class="stage-count">${sDone}/${stageLessons.length}</span></div><div class="stage-sub">${stage.sub}</div>`;
+    root.appendChild(sh);
+    stageLessons.forEach(lesson=>{
+      lessonNum++;
+      const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"");
+      card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div><div class="lesson-sub">${lesson.sub}</div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
+      card.onclick=()=>openLesson(lesson);
+      card.querySelector(".lesson-check").onclick=(e)=>{e.stopPropagation();if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();renderLessons();};
+      root.appendChild(card);
+    });
+  });
+  /* Any lesson not assigned to a stage still shows (future-proofing weekly additions) */
+  const staged=new Set(LESSON_STAGES.flatMap(s=>s.ids));
+  LESSONS.filter(l=>!staged.has(l.id)).forEach(lesson=>{
+    lessonNum++;
+    const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"");
+    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div><div class="lesson-sub">${lesson.sub}</div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
+    card.onclick=()=>openLesson(lesson);
+    card.querySelector(".lesson-check").onclick=(e)=>{e.stopPropagation();if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();renderLessons();};
+    root.appendChild(card);
+  });
+  /* Progress backup lives at the bottom — rare-use utility (v22) */
+  const bkLabel=document.createElement("div");bkLabel.className="fr-home-label";bkLabel.textContent="💾 Progress backup";
+  root.appendChild(bkLabel);
   /* Backup / restore progress (v17) */
   const bk=document.createElement("div");bk.className="backup-row";
   const BK_KEYS=["esco-quiz-v1","esco-lesson-progress-v1","esco-days-v1"];
@@ -1045,13 +1137,6 @@ function renderLessons(){
     }catch(e){alert("⚠️ That does not look like a valid backup.");}
   };
   bk.appendChild(b1);bk.appendChild(b2);root.appendChild(bk);
-  LESSONS.forEach((lesson,i)=>{
-    const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"");
-    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${i+1}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div><div class="lesson-sub">${lesson.sub}</div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div><div class="lesson-actions"><button type="button" data-action="start" class="lesson-start">▶️ Start lesson</button></div>`;
-    card.querySelector("[data-action=start]").onclick=()=>openLesson(lesson);
-    card.querySelector(".lesson-check").onclick=()=>{if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();renderLessons();};
-    root.appendChild(card);
-  });
 }
 renderLessons();
 
@@ -1078,14 +1163,19 @@ function buildGram(id,data){
   const trick=document.createElement("div");trick.className="trick-box";
   trick.innerHTML=`<div class="trick-title">🧠 Memory Trick</div><div class="trick-text">${data.trick}</div>`;
   sec.appendChild(trick);
-  data.tables.forEach(table=>{
-    const ct=document.createElement("div");ct.className="conj-table";
-    ct.innerHTML=`<div class="conj-hdr"><div class="conj-hdr-title">${table.title}</div><div class="conj-hdr-sub">${table.sub}</div></div>`;
+  data.tables.forEach((table,ti)=>{
+    const ct=document.createElement("div");ct.className="conj-table"+(ti>0?" collapsed":"");
+    ct.innerHTML=`<div class="conj-hdr"><div><div class="conj-hdr-title">${table.title}</div><div class="conj-hdr-sub">${table.sub}</div></div><span class="conj-chevron">${ti>0?"▸":"▾"}</span></div>`;
+    ct.querySelector(".conj-hdr").onclick=()=>{
+      const closed=ct.classList.contains("collapsed");
+      ct.classList.toggle("collapsed",!closed);
+      ct.querySelector(".conj-chevron").textContent=closed?"▾":"▸";
+    };
     table.rows.forEach(row=>{
       const r=document.createElement("div");r.className="conj-row";
       r.innerHTML=`<span class="conj-pronoun">${row.pro}</span><span class="conj-verb">${row.verb}</span><span class="conj-en">${row.en}</span><span class="conj-spk">🔊</span>`;
       r.onclick=()=>speak(row.tts,0.75);ct.appendChild(r);});sec.appendChild(ct);});
-  const exLabel=document.createElement("div");exLabel.style.cssText="font-size:0.56rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:800;";exLabel.textContent="Ejemplos";sec.appendChild(exLabel);
+  const exLabel=document.createElement("div");exLabel.className="sl";exLabel.style.color="var(--muted)";exLabel.textContent="Ejemplos";sec.appendChild(exLabel);
   data.examples.forEach(ex=>{const card=document.createElement("div");card.className="example-card";
     card.innerHTML=`<div class="ex-info"><div class="ex-es">${ex.es}</div><div class="ex-en">${ex.en}</div></div><span class="ex-spk">🔊</span>`;
     card.onclick=()=>speak(ex.tts,0.75);sec.appendChild(card);});
@@ -1106,7 +1196,7 @@ function buildPronombres(sec){
   const trick=document.createElement("div");trick.className="trick-box";
   trick.innerHTML=`<div class="trick-title">🧠 Colombian Tip</div><div class="trick-text">${PRONOMBRES.trick}</div>`;
   sec.appendChild(trick);
-  const exLabel=document.createElement("div");exLabel.style.cssText="font-size:0.56rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:800;";exLabel.textContent="Ejemplos";sec.appendChild(exLabel);
+  const exLabel=document.createElement("div");exLabel.className="sl";exLabel.style.color="var(--muted)";exLabel.textContent="Ejemplos";sec.appendChild(exLabel);
   PRONOMBRES.examples.forEach(ex=>{const card=document.createElement("div");card.className="example-card";
     card.innerHTML=`<div class="ex-info"><div class="ex-es">${ex.es}</div><div class="ex-en">${ex.en}</div></div><span class="ex-spk">🔊</span>`;
     card.onclick=()=>speak(ex.tts,0.75);sec.appendChild(card);});
@@ -1137,11 +1227,37 @@ function buildReflexivos(sec){
 ["presente","pasado","futuro","trucos"].forEach(id=>buildGram(id,GRAMMAR[id]));
 buildGram("pronombres");buildGram("reflexivos");
 
+/* Grouped grammar navigation (v23): Tiempos / Pronombres / Patrones */
+const GRAM_GROUPS={
+  tiempos:{label:"⏱️ Tiempos",items:[["presente","⚡ Presente"],["pasado","⏮️ Pasado"],["futuro","⏭️ Futuro"]]},
+  pronombres:{label:"👤 Pronombres",items:[["pronombres","Lo / La / Le"]]},
+  patrones:{label:"🧩 Patrones",items:[["reflexivos","🔄 Reflexivos"],["trucos","🧠 Trucos"]]}
+};
+let gramGroup="tiempos",gramSection="presente";
+function showGramGroup(g){
+  gramGroup=g;
+  document.querySelectorAll(".ggroup").forEach(b=>b.classList.toggle("active",b.dataset.g===g));
+  const sub=document.getElementById("gram-sub");
+  const items=GRAM_GROUPS[g].items;
+  sub.innerHTML="";
+  sub.style.display=items.length>1?"flex":"none";
+  items.forEach(([id,label])=>{
+    const b=document.createElement("button");b.type="button";b.className="gtab";b.textContent=label;
+    b.onclick=()=>showGram(id);
+    sub.appendChild(b);
+  });
+  showGram(items[0][0]);
+}
 function showGram(id){
+  gramSection=id;
   ["presente","pasado","futuro","pronombres","reflexivos","trucos"].forEach(g=>{
     document.getElementById("gs-"+g).classList.toggle("active",g===id);
-    document.getElementById("gt-"+g).classList.toggle("active",g===id);
   });
+  const sub=document.getElementById("gram-sub");
+  if(sub){
+    const items=GRAM_GROUPS[gramGroup].items;
+    Array.from(sub.children).forEach((b,i)=>b.classList.toggle("active",items[i]&&items[i][0]===id));
+  }
 }
 
 // ── Quiz ──────────────────────────────────────────────────────────────────────
