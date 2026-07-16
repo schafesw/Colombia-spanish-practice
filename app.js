@@ -1378,7 +1378,7 @@ const CONVERSATION_QUIZ=[
   {kind:"listening",es:"Va a girar en la próxima esquina.",en:"You are going to turn at the next corner.",tts:"Va a girar en la próxima esquina.",cat:"conversaciones",choices:["You are going to turn at the next corner.","I went straight and asked at the corner.","Go straight and turn left.","The driver was very kind."]},
   {kind:"tense",es:"¿Cuál frase está en pasado?",en:"Seguí derecho y pregunté en la esquina.",tts:"Seguí derecho y pregunté en la esquina.",cat:"conversaciones",choices:["Seguí derecho y pregunté en la esquina.","Siga derecho y gire a la izquierda.","Va a girar en la próxima esquina.","¿Cómo voy a llegar al parqueadero?"]},
   {kind:"meaning",es:"¿Me lleva a esta dirección, por favor?",en:"Can you take me to this address, please?",tts:"¿Me lleva a esta dirección, por favor?",cat:"conversaciones",choices:["Can you take me to this address, please?","Are we going to request a car?","Did you take a taxi yesterday?","Where is the parking lot?"]},
-  {kind:"reply",es:"¿Vamos a pedir un carro?",en:"Sí, voy a pedir un taxi.",tts:"¿Vamos a pedir un carro?",cat:"conversaciones",choices:["Sí, voy a pedir un taxi.","Claro, con mucho gusto.","Trabajo como conductor.","Ayer trabajé en la oficina."]},
+  {kind:"reply",es:"¿Qué vas a pedir para llegar a la dirección?",en:"Voy a pedir un taxi.",tts:"¿Qué vas a pedir para llegar a la dirección?",cat:"conversaciones",choices:["Voy a pedir un taxi.","Claro, con mucho gusto.","Trabajo como conductor.","Ayer trabajé en la oficina."]},
   {kind:"listening",es:"Claro, con mucho gusto.",en:"Of course, with pleasure.",tts:"Claro, con mucho gusto.",cat:"conversaciones",choices:["Of course, with pleasure.","Yes, I'm going to request a taxi.","The driver was very kind.","I live near the park."]},
   {kind:"tense",es:"¿Cuál frase está en pasado?",en:"Sí, el conductor fue muy amable.",tts:"Sí, el conductor fue muy amable.",cat:"conversaciones",choices:["Sí, el conductor fue muy amable.","¿Me lleva a esta dirección?","Voy a pedir un taxi.","Vamos a pedir un carro."]},
   {kind:"meaning",es:"¿Cocinamos juntos?",en:"Shall we cook together?",tts:"¿Cocinamos juntos?",cat:"conversaciones",choices:["Shall we cook together?","What are we going to cook?","What did you cook yesterday?","I cut the vegetables."]},
@@ -1426,12 +1426,12 @@ const FILL_BLANK_QUIZ=[
   /* Vocabulario */
   {kind:"blank",es:"¿Me regala un ___ para tomar, por favor?",en:"tinto",tts:"¿Me regala un tinto para tomar, por favor?",cat:"completar",choices:["tinto","trancón","cuchillo","semáforo"]},
   {kind:"blank",es:"Gire a la ___ en la esquina.",en:"derecha",tts:"Gire a la derecha en la esquina.",cat:"completar",choices:["derecha","ducha","cuchara","almohada"]},
-  {kind:"blank",es:"Me ducho en la ___.",en:"ducha",tts:"Me ducho en la ducha.",cat:"completar",choices:["ducha","cama","olla","esquina"]},
-  {kind:"blank",es:"Hay mucho ___ y los carros no avanzan.",en:"trancón",tts:"Hay mucho trancón y los carros no avanzan.",cat:"completar",choices:["trancón","tinto","clóset","jabón"]},
-  {kind:"blank",es:"Corto la cebolla con el ___.",en:"cuchillo",tts:"Corto la cebolla con el cuchillo.",cat:"completar",choices:["cuchillo","sofá","semáforo","reloj"]},
-  {kind:"blank",es:"Me siento en el ___ para ver la película.",en:"sofá",tts:"Me siento en el sofá para ver la película.",cat:"completar",choices:["sofá","lavamanos","parqueadero","azúcar"]},
-  {kind:"blank",es:"No tengo ___ para el taxi.",en:"plata",tts:"No tengo plata para el taxi.",cat:"completar",choices:["plata","vaina","cobija","sartén"]},
-  {kind:"blank",es:"La ___ está sobre la cama.",en:"cobija",tts:"La cobija está sobre la cama.",cat:"completar",choices:["cobija","gasolina","luz","sal"]},
+  {kind:"blank",es:"Me ducho en la ___ y me seco con la toalla.",en:"ducha",tts:"Me ducho en la ducha y me seco con la toalla.",cat:"completar",choices:["ducha","cama","olla","esquina"]},
+  {kind:"blank",es:"Hay mucho ___ y los carros no avanzan por la avenida.",en:"trancón",tts:"Hay mucho trancón y los carros no avanzan por la avenida.",cat:"completar",choices:["trancón","tinto","clóset","jabón"]},
+  {kind:"blank",es:"Corto la cebolla con el ___ para picarla.",en:"cuchillo",tts:"Corto la cebolla con el cuchillo para picarla.",cat:"completar",choices:["cuchillo","sofá","semáforo","reloj"]},
+  {kind:"blank",es:"Me siento en el ___ de la sala para ver la película.",en:"sofá",tts:"Me siento en el sofá de la sala para ver la película.",cat:"completar",choices:["sofá","lavamanos","parqueadero","azúcar"]},
+  {kind:"blank",es:"No tengo suficiente ___ para pagar el taxi.",en:"plata",tts:"No tengo suficiente plata para pagar el taxi.",cat:"completar",choices:["plata","vaina","cobija","sartén"]},
+  {kind:"blank",es:"La ___ está sobre la cama y me abriga.",en:"cobija",tts:"La cobija está sobre la cama y me abriga.",cat:"completar",choices:["cobija","gasolina","luz","sal"]},
 ];
 
 /* Focus tags keep grammar practice separate from the broader topic filters. */
@@ -1446,6 +1446,107 @@ FILL_BLANK_QUIZ.push(
   {kind:"blank",focus:"pronombres",es:"A Juan, ___ doy el libro.",en:"le",tts:"A Juan, le doy el libro.",cat:"pronombres",choices:["le","lo","la","les"],trans:"To Juan, I give him the book."}
 );
 
+/* ── Approved vocabulary blanks ─────────────────────────────────────────────
+   These are authored prompts, not blanks generated from every example.
+   Each one has a tight context and fixed distractors so the learner is not
+   penalized when more than one answer would be natural. */
+const APPROVED_VOCAB_BLANKS=[
+  /* Cuerpo */
+  {kind:"blank",cat:"cuerpo",es:"Tengo dolor de ___ después de trabajar.",en:"cabeza",tts:"Tengo dolor de cabeza después de trabajar.",trans:"I have a headache after working.",choices:["cabeza","cargador","sal","puerta"]},
+  {kind:"blank",cat:"cuerpo",es:"Mi ___ derecho está rojo.",en:"ojo",tts:"Mi ojo derecho está rojo.",trans:"My right eye is red.",choices:["ojo","silla","azúcar","motor"]},
+  {kind:"blank",cat:"cuerpo",es:"Tengo la ___ tapada.",en:"nariz",tts:"Tengo la nariz tapada.",trans:"My nose is blocked.",choices:["nariz","plato","archivo","sartén"]},
+  {kind:"blank",cat:"cuerpo",es:"Me lavo la ___ después de comer.",en:"boca",tts:"Me lavo la boca después de comer.",trans:"I wash my mouth after eating.",choices:["boca","ventana","proyecto","gasolina"]},
+  {kind:"blank",cat:"cuerpo",es:"Llevo la mochila en el ___.",en:"hombro",tts:"Llevo la mochila en el hombro.",trans:"I carry the backpack on my shoulder.",choices:["hombro","cuchara","contraseña","parqueadero"]},
+  {kind:"blank",cat:"cuerpo",es:"Me golpeé el ___ con la puerta.",en:"brazo",tts:"Me golpeé el brazo con la puerta.",trans:"I hit my arm on the door.",choices:["brazo","lámpara","documento","tinto"]},
+  {kind:"blank",cat:"cuerpo",es:"Me corté el ___ al cocinar.",en:"dedo",tts:"Me corté el dedo al cocinar.",trans:"I cut my finger while cooking.",choices:["dedo","baúl","reunión","jabón"]},
+  {kind:"blank",cat:"cuerpo",es:"El ___ late rápido cuando corro.",en:"corazón",tts:"El corazón late rápido cuando corro.",trans:"My heart beats fast when I run.",choices:["corazón","escritorio","semáforo","arepa"]},
+  {kind:"blank",cat:"cuerpo",es:"Tengo el ___ lleno después de almorzar.",en:"estómago",tts:"Tengo el estómago lleno después de almorzar.",trans:"My stomach is full after lunch.",choices:["estómago","impresora","llanta","sábana"]},
+  {kind:"blank",cat:"cuerpo",es:"Me duele la ___ por estar sentado.",en:"espalda",tts:"Me duele la espalda por estar sentado.",trans:"My back hurts from sitting.",choices:["espalda","pantalla","sartén","negocio"]},
+
+  /* Casa, habitación y baño */
+  {kind:"blank",cat:"casa",es:"Me ducho en la ___ antes de trabajar.",en:"ducha",tts:"Me ducho en la ducha antes de trabajar.",trans:"I shower before going to work.",choices:["ducha","silla","archivo","gasolina"]},
+  {kind:"blank",cat:"casa",es:"Lavo mis manos en el ___.",en:"lavamanos",tts:"Lavo mis manos en el lavamanos.",trans:"I wash my hands in the sink.",choices:["lavamanos","motor","reunión","azúcar"]},
+  {kind:"blank",cat:"casa",es:"Me seco con la ___ después de bañarme.",en:"toalla",tts:"Me seco con la toalla después de bañarme.",trans:"I dry myself with the towel after bathing.",choices:["toalla","semáforo","proyecto","cuchara"]},
+  {kind:"blank",cat:"casa",es:"Uso el ___ para lavarme los dientes.",en:"cepillo de dientes",tts:"Uso el cepillo de dientes para lavarme los dientes.",trans:"I use the toothbrush to brush my teeth.",choices:["cepillo de dientes","volante","sueldo","película"]},
+  {kind:"blank",cat:"casa",es:"La ropa está en el ___.",en:"clóset",tts:"La ropa está en el clóset.",trans:"The clothes are in the closet.",choices:["clóset","hospital","cargador","sartén"]},
+  {kind:"blank",cat:"casa",es:"Enciendo la ___ cuando oscurece.",en:"luz",tts:"Enciendo la luz cuando oscurece.",trans:"I turn on the light when it gets dark.",choices:["luz","llanta","archivo","arepa"]},
+  {kind:"blank",cat:"casa",es:"La ___ está sobre la cama y me abriga.",en:"cobija",tts:"La cobija está sobre la cama y me abriga.",trans:"The blanket is on the bed and keeps me warm.",choices:["cobija","impresora","gasolina","cuchillo"]},
+  {kind:"blank",cat:"habitacion",es:"La ___ está junto a la cama y tiene una lámpara.",en:"mesita de noche",tts:"La mesita de noche está junto a la cama y tiene una lámpara.",trans:"The nightstand is next to the bed and has a lamp.",choices:["mesita de noche","farmacia","batería","sal"]},
+  {kind:"blank",cat:"habitacion",es:"La ___ está encendida junto a la cama.",en:"lámpara",tts:"La lámpara está encendida junto a la cama.",trans:"The lamp is on next to the bed.",choices:["lámpara","parqueadero","documento","jugo"]},
+  {kind:"blank",cat:"habitacion",es:"Me miro en el ___ antes de salir.",en:"espejo",tts:"Me miro en el espejo antes de salir.",trans:"I look at myself in the mirror before leaving.",choices:["espejo","trancón","horario","azúcar"]},
+  {kind:"blank",cat:"bano",es:"Necesito ___ para lavarme los dientes.",en:"pasta dental",tts:"Necesito pasta dental para lavarme los dientes.",trans:"I need toothpaste to brush my teeth.",choices:["pasta dental","carro","reunión","cobija"]},
+  {kind:"blank",cat:"bano",es:"El ___ está en el baño y se acaba rápido.",en:"papel higiénico",tts:"El papel higiénico está en el baño y se acaba rápido.",trans:"The toilet paper is in the bathroom and runs out quickly.",choices:["papel higiénico","volante","proyecto","café"]},
+  {kind:"blank",cat:"bano",es:"Necesito ___ para lavarme el pelo.",en:"champú",tts:"Necesito champú para lavarme el pelo.",trans:"I need shampoo to wash my hair.",choices:["champú","llanta","archivo","pan"]},
+  {kind:"blank",cat:"bano",es:"El ___ está limpio y tiene la tapa cerrada.",en:"inodoro",tts:"El inodoro está limpio y tiene la tapa cerrada.",trans:"The toilet is clean and the lid is closed.",choices:["inodoro","escritorio","gasolina","jugo"]},
+
+  /* Cocina */
+  {kind:"blank",cat:"cocina",es:"Voy a ___ las verduras para la sopa.",en:"cortar",tts:"Voy a cortar las verduras para la sopa.",trans:"I am going to cut the vegetables for the soup.",choices:["cortar","dormir","volante","sueldo"]},
+  {kind:"blank",cat:"cocina",es:"Voy a ___ la salsa en un tazón.",en:"mezclar",tts:"Voy a mezclar la salsa en un tazón.",trans:"I am going to mix the sauce in a bowl.",choices:["mezclar","trabajar","llanta","contraseña"]},
+  {kind:"blank",cat:"cocina",es:"Quiero ___ la sopa antes de servirla.",en:"probar",tts:"Quiero probar la sopa antes de servirla.",trans:"I want to taste the soup before serving it.",choices:["probar","cobija","semáforo","archivo"]},
+  {kind:"blank",cat:"cocina",es:"Voy a ___ el agua para el café.",en:"hervir",tts:"Voy a hervir el agua para el café.",trans:"I am going to boil the water for the coffee.",choices:["hervir","conducir","espejo","silla"]},
+  {kind:"blank",cat:"cocina",es:"Voy a ___ un huevo para el desayuno.",en:"freír",tts:"Voy a freír un huevo para el desayuno.",trans:"I am going to fry an egg for breakfast.",choices:["freír","leer","motor","ventana"]},
+  {kind:"blank",cat:"cocina",es:"La ___ sirve para cocinar la sopa.",en:"olla",tts:"La olla sirve para cocinar la sopa.",trans:"The pot is used to cook soup.",choices:["olla","pantalla","reunión","gasolina"]},
+  {kind:"blank",cat:"cocina",es:"La ___ sirve para freír un huevo.",en:"sartén",tts:"La sartén sirve para freír un huevo.",trans:"The frying pan is used to fry an egg.",choices:["sartén","puerta","documento","parqueadero"]},
+  {kind:"blank",cat:"cocina",es:"Uso la ___ para comer sopa.",en:"cuchara",tts:"Uso la cuchara para comer sopa.",trans:"I use the spoon to eat soup.",choices:["cuchara","llanta","contraseña","hotel"]},
+  {kind:"blank",cat:"cocina",es:"Pongo la comida en el ___.",en:"plato",tts:"Pongo la comida en el plato.",trans:"I put the food on the plate.",choices:["plato","motor","horario","cargador"]},
+  {kind:"blank",cat:"cocina",es:"No le pongas mucha ___ a la sopa.",en:"sal",tts:"No le pongas mucha sal a la sopa.",trans:"Do not add too much salt to the soup.",choices:["sal","silla","archivo","aeropuerto"]},
+  {kind:"blank",cat:"cocina",es:"Necesito ___ para el café.",en:"azúcar",tts:"Necesito azúcar para el café.",trans:"I need sugar for the coffee.",choices:["azúcar","freno","proyecto","ventana"]},
+  {kind:"blank",cat:"cocina",es:"Voy a ___ los platos después de comer.",en:"lavar",tts:"Voy a lavar los platos después de comer.",trans:"I am going to wash the dishes after eating.",choices:["lavar","correr","volante","sueldo"]},
+
+  /* Direcciones y carro */
+  {kind:"blank",cat:"direcciones",es:"El ___ está en rojo y debemos parar.",en:"semáforo",tts:"El semáforo está en rojo y debemos parar.",trans:"The traffic light is red and we have to stop.",choices:["semáforo","almohada","reunión","café"]},
+  {kind:"blank",cat:"direcciones",es:"Hay un ___ y los carros no avanzan.",en:"trancón",tts:"Hay un trancón y los carros no avanzan.",trans:"There is a traffic jam and the cars are not moving.",choices:["trancón","pasta dental","archivo","sábana"]},
+  {kind:"blank",cat:"direcciones",es:"El ___ está cerca; allí dejo el carro.",en:"parqueadero",tts:"El parqueadero está cerca; allí dejo el carro.",trans:"The parking lot is nearby; I leave the car there.",choices:["parqueadero","cuchara","proyecto","jabón"]},
+  {kind:"blank",cat:"direcciones",es:"Necesito ___ para llenar el tanque.",en:"gasolina",tts:"Necesito gasolina para llenar el tanque.",trans:"I need gas to fill the tank.",choices:["gasolina","lámpara","reunión","plato"]},
+  {kind:"blank",cat:"carropartes",es:"La ___ está baja y debo inflarla.",en:"llanta",tts:"La llanta está baja y debo inflarla.",trans:"The tire is low and I need to inflate it.",choices:["llanta","pantalla","sueldo","cobija"]},
+  {kind:"blank",cat:"carropartes",es:"El ___ sirve para controlar la dirección del carro.",en:"volante",tts:"El volante sirve para controlar la dirección del carro.",trans:"The steering wheel is used to control the car's direction.",choices:["volante","toalla","archivo","azúcar"]},
+  {kind:"blank",cat:"carropartes",es:"El ___ suena cuando freno.",en:"freno",tts:"El freno suena cuando freno.",trans:"The brake makes a noise when I brake.",choices:["freno","cuchara","contraseña","mesita de noche"]},
+  {kind:"blank",cat:"carropartes",es:"El equipaje está en el ___.",en:"baúl",tts:"El equipaje está en el baúl.",trans:"The luggage is in the trunk.",choices:["baúl","hospital","reunión","sal"]},
+  {kind:"blank",cat:"carropartes",es:"Abro el ___ para revisar el motor.",en:"capó",tts:"Abro el capó para revisar el motor.",trans:"I open the hood to check the engine.",choices:["capó","cama","proyecto","jugo"]},
+  {kind:"blank",cat:"carropartes",es:"Miro el ___ para ver los carros detrás.",en:"espejo retrovisor",tts:"Miro el espejo retrovisor para ver los carros detrás.",trans:"I look at the rearview mirror to see the cars behind me.",choices:["espejo retrovisor","cargador","sartén","entrevista"]},
+  {kind:"blank",cat:"direcciones",es:"El ___ tiene cuatro ruedas y dos puertas.",en:"carro",tts:"El carro tiene cuatro ruedas y dos puertas.",trans:"The car has four wheels and two doors.",choices:["carro","cobija","documento","sal"]},
+
+  /* Tecnología, oficina y trabajo */
+  {kind:"blank",cat:"tecnologia",es:"Mi ___ no tiene batería; necesito cargarlo.",en:"celular",tts:"Mi celular no tiene batería; necesito cargarlo.",trans:"My cell phone has no battery; I need to charge it.",choices:["celular","cuchillo","reunión","sábana"]},
+  {kind:"blank",cat:"tecnologia",es:"Necesito el ___ para cargar el celular.",en:"cargador",tts:"Necesito el cargador para cargar el celular.",trans:"I need the charger to charge the cell phone.",choices:["cargador","parqueadero","sal","proyecto"]},
+  {kind:"blank",cat:"tecnologia",es:"El ___ está encendido y tiene teclado.",en:"computador",tts:"El computador está encendido y tiene teclado.",trans:"The computer is on and has a keyboard.",choices:["computador","toalla","trancón","café"]},
+  {kind:"blank",cat:"tecnologia",es:"Descargué una ___ para estudiar español.",en:"aplicación",tts:"Descargué una aplicación para estudiar español.",trans:"I downloaded an app to study Spanish.",choices:["aplicación","llanta","cuchara","entrevista"]},
+  {kind:"blank",cat:"tecnologia",es:"Te mando un ___ por WhatsApp.",en:"mensaje",tts:"Te mando un mensaje por WhatsApp.",trans:"I am sending you a message on WhatsApp.",choices:["mensaje","motor","cobija","sartén"]},
+  {kind:"blank",cat:"tecnologia",es:"Tomé una ___ de la pantalla.",en:"foto",tts:"Tomé una foto de la pantalla.",trans:"I took a photo of the screen.",choices:["foto","freno","reunión","ducha"]},
+  {kind:"blank",cat:"tecnologia",es:"No recuerdo la ___.",en:"contraseña",tts:"No recuerdo la contraseña.",trans:"I do not remember the password.",choices:["contraseña","llanta","plato","sueldo"]},
+  {kind:"blank",cat:"tecnologia",es:"La ___ del celular está baja.",en:"batería",tts:"La batería del celular está baja.",trans:"The cell phone battery is low.",choices:["batería","cuchara","parqueadero","entrevista"]},
+  {kind:"blank",cat:"oficina",es:"La ___ no funciona; no puedo imprimir.",en:"impresora",tts:"La impresora no funciona; no puedo imprimir.",trans:"The printer does not work; I cannot print.",choices:["impresora","cobija","gasolina","arepa"]},
+  {kind:"blank",cat:"oficina",es:"Necesito el ___ para leer las instrucciones.",en:"documento",tts:"Necesito el documento para leer las instrucciones.",trans:"I need the document to read the instructions.",choices:["documento","llanta","sartén","tarde"]},
+  {kind:"blank",cat:"oficina",es:"Guarda el ___ en la carpeta.",en:"archivo",tts:"Guarda el archivo en la carpeta.",trans:"Save the file in the folder.",choices:["archivo","toalla","trancón","azúcar"]},
+  {kind:"blank",cat:"oficina",es:"Te mando un ___ con la información.",en:"correo electrónico",tts:"Te mando un correo electrónico con la información.",trans:"I am sending you an email with the information.",choices:["correo electrónico","cuchillo","cama","gasolina"]},
+  {kind:"blank",cat:"oficina",es:"Mi ___ está junto a la ventana; trabajo allí.",en:"escritorio",tts:"Mi escritorio está junto a la ventana; trabajo allí.",trans:"My desk is next to the window; I work there.",choices:["escritorio","semáforo","sal","cobija"]},
+  {kind:"blank",cat:"trabajo",es:"Tengo una ___ a las diez con mi jefe.",en:"reunión",tts:"Tengo una reunión a las diez con mi jefe.",trans:"I have a meeting with my boss at ten.",choices:["reunión","llanta","ducha","pan"]},
+  {kind:"blank",cat:"trabajo",es:"El ___ empieza hoy y termina el viernes.",en:"proyecto",tts:"El proyecto empieza hoy y termina el viernes.",trans:"The project starts today and ends on Friday.",choices:["proyecto","cuchara","baúl","champú"]},
+  {kind:"blank",cat:"trabajo",es:"Mi ___ cambia la próxima semana.",en:"horario",tts:"Mi horario cambia la próxima semana.",trans:"My schedule changes next week.",choices:["horario","espejo","trancón","arepa"]},
+  {kind:"blank",cat:"trabajo",es:"Recibo mi ___ el viernes.",en:"sueldo",tts:"Recibo mi sueldo el viernes.",trans:"I receive my salary on Friday.",choices:["sueldo","lavamanos","motor","cobija"]},
+  {kind:"blank",cat:"trabajo",es:"Tengo una ___ para el puesto mañana.",en:"entrevista",tts:"Tengo una entrevista para el puesto mañana.",trans:"I have an interview for the position tomorrow.",choices:["entrevista","plato","llanta","jabón"]},
+  {kind:"blank",cat:"trabajo",es:"Mi ___ está en el centro; vendo comida allí.",en:"negocio",tts:"Mi negocio está en el centro; vendo comida allí.",trans:"My business is downtown; I sell food there.",choices:["negocio","toalla","freno","cuchara"]},
+
+  /* Acciones, comida, clima y descanso */
+  {kind:"blank",cat:"acciones",es:"Voy a ___ la mesa antes de cenar.",en:"poner",tts:"Voy a poner la mesa antes de cenar.",trans:"I am going to set the table before dinner.",choices:["poner","llanta","sueldo","cobija"]},
+  {kind:"blank",cat:"acciones",es:"Puedes ___ la mochila aquí.",en:"dejar",tts:"Puedes dejar la mochila aquí.",trans:"You can leave the backpack here.",choices:["dejar","semáforo","contraseña","sartén"]},
+  {kind:"blank",cat:"acciones",es:"Voy a ___ la basura esta noche.",en:"sacar",tts:"Voy a sacar la basura esta noche.",trans:"I am going to take out the trash tonight.",choices:["sacar","cuchara","reunión","motor"]},
+  {kind:"blank",cat:"acciones",es:"Voy a ___ después del trabajo.",en:"volver",tts:"Voy a volver después del trabajo.",trans:"I am going to return after work.",choices:["volver","toalla","archivo","sal"]},
+  {kind:"blank",cat:"comida",es:"Quiero ___ fría, por favor.",en:"agua",tts:"Quiero agua fría, por favor.",trans:"I want cold water, please.",choices:["agua","llanta","documento","lámpara"]},
+  {kind:"blank",cat:"comida",es:"Tomo ___ en la mañana.",en:"café",tts:"Tomo café en la mañana.",trans:"I drink coffee in the morning.",choices:["café","parqueadero","cobija","freno"]},
+  {kind:"blank",cat:"comida",es:"¿Me regala un ___?",en:"tinto",tts:"¿Me regala un tinto?",trans:"Can I have a black coffee?",choices:["tinto","escritorio","llanta","pasta dental"]},
+  {kind:"blank",cat:"comida",es:"El ___ está maduro y lo pongo en la ensalada.",en:"aguacate",tts:"El aguacate está maduro y lo pongo en la ensalada.",trans:"The avocado is ripe and I put it in the salad.",choices:["aguacate","volante","reunión","toalla"]},
+  {kind:"blank",cat:"comida",es:"Me gusta la ___ con queso.",en:"arepa",tts:"Me gusta la arepa con queso.",trans:"I like arepa with cheese.",choices:["arepa","cargador","archivo","llanta"]},
+  {kind:"blank",cat:"comida",es:"Como ___ con huevo.",en:"pan",tts:"Como pan con huevo.",trans:"I eat bread with egg.",choices:["pan","semáforo","proyecto","lámpara"]},
+  {kind:"blank",cat:"clima",es:"Cayó un ___ muy fuerte en la tarde.",en:"aguacero",tts:"Cayó un aguacero muy fuerte en la tarde.",trans:"A very heavy downpour fell in the afternoon.",choices:["aguacero","escritorio","sueldo","cuchara"]},
+  {kind:"blank",cat:"clima",es:"Hoy ___ en Bogotá; ponte una chaqueta.",en:"hace frío",tts:"Hoy hace frío en Bogotá; ponte una chaqueta.",trans:"It is cold in Bogotá today; put on a jacket.",choices:["hace frío","cortar","llanta","archivo"]},
+  {kind:"blank",cat:"clima",es:"Está ___; necesitamos paraguas.",en:"lloviendo",tts:"Está lloviendo; necesitamos paraguas.",trans:"It is raining; we need umbrellas.",choices:["lloviendo","sueldo","cuchara","motor"]},
+  {kind:"blank",cat:"tv",es:"¿Dónde está el ___?",en:"control remoto",tts:"¿Dónde está el control remoto?",trans:"Where is the remote control?",choices:["control remoto","llanta","reunión","sal"]},
+  {kind:"blank",cat:"tv",es:"Estoy sentado en el ___ viendo una película.",en:"sofá",tts:"Estoy sentado en el sofá viendo una película.",trans:"I am sitting on the sofa watching a movie.",choices:["sofá","freno","archivo","azúcar"]},
+  {kind:"blank",cat:"tv",es:"Necesito ___ después de trabajar.",en:"descansar",tts:"Necesito descansar después de trabajar.",trans:"I need to rest after working.",choices:["descansar","cuchara","contraseña","parqueadero"]}
+];
+FILL_BLANK_QUIZ.push(...APPROVED_VOCAB_BLANKS);
+
 let aQ=[];
 VC.forEach(cat=>{
   if(cat.type==="basic")cat.items.forEach(i=>aQ.push({es:i.word,en:i.en,tts:i.tts,cat:cat.id}));
@@ -1458,49 +1559,8 @@ VC.forEach(cat=>{
 FRASES.filter(sec=>sec.section).forEach(sec=>{if(sec.items){const isPron=/Pronombres/i.test(sec.section);sec.items.forEach(i=>aQ.push({es:i.es,en:i.en,tts:i.es,cat:isPron?"pronombres":"frases",focus:isPron?"pronombres":undefined}));}});
 CONVERSATION_QUIZ.forEach(q=>aQ.push(q));
 FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
-/* ── AUTO-COMPLETAR: generate only one-answer blanks ────────────────────────
-   Older versions used same-category distractors. That made questions such as
-   "Voy a la ___" accept farmacia, hospital, casa, and baño. Distractors now
-   come from a different part of speech, so the sentence has one clear answer. */
-(function(){
-  const norm=t=>[...String(t)].map(ch=>{const d=ch.normalize("NFD");return d[0].toLowerCase();}).join("");
-  const VOCAB_POS={
-    colores:"adjective",adjetivos:"adjective",emociones:"adjective",
-    verbos:"verb",acciones:"verb",
-    meses:"noun",dias:"noun",numeros:"noun",familia:"noun",cuerpo:"noun",comida:"noun",lugares:"noun",profesiones:"noun",casa:"noun",habitacion:"noun",bano:"noun",trabajo:"noun",oficina:"noun",carropartes:"noun",tecnologia:"noun",
-    ropa:"mixed",direcciones:"mixed",cocina:"mixed",gustos:"mixed",tv:"mixed",clima:"mixed",tiempo:"mixed"
-  };
-  const candidates=[];
-  VC.forEach(cat=>{if(cat.items)cat.items.forEach(item=>candidates.push({word:item.tts||item.word,cat:cat.id,pos:VOCAB_POS[cat.id]||"noun"}));});
-  const isGoodDistractor=(candidate,targetPos)=>candidate.pos!==targetPos&&["noun","verb","adjective"].includes(candidate.pos);
-  let made=0;
-  VC.forEach(cat=>{
-    if(!cat.items)return;
-    cat.items.forEach((item,ix)=>{
-      const ex=getVocabExample(item,cat.id,ix);
-      if(!ex||!ex.es||ex.es===item.word)return;
-      const target=item.tts||item.word;
-      if(!target)return;
-      const sEs=ex.es,sN=norm(sEs),tN=norm(target);
-      if(tN.length<3)return;
-      const pos=sN.indexOf(tN);
-      if(pos<0)return;
-      let end=pos+tN.length;
-      while(end<sEs.length&&/[a-záéíóúüñA-ZÁÉÍÓÚÜÑ]/.test(sEs[end]))end++;
-      const found=sEs.slice(pos,end);
-      const blanked=sEs.slice(0,pos)+"___"+sEs.slice(end);
-      const targetPos=VOCAB_POS[cat.id]||"noun";
-      const wrong=[];const used=new Set([tN]);
-      candidates.filter(c=>c.cat!==cat.id&&isGoodDistractor(c,targetPos)&&c.word&&norm(c.word)!==tN).sort(()=>Math.random()-0.5).forEach(c=>{
-        const n=norm(c.word);if(used.has(n)||wrong.length>=3)return;used.add(n);wrong.push(c.word);
-      });
-      if(wrong.length<3)return;
-      aQ.push({kind:"blank",es:blanked,en:found,tts:sEs,cat:"completar",choices:[found,...wrong],trans:ex.en});
-      made++;
-    });
-  });
-  console.log("Auto-Completar generated:",made,"questions");
-})();
+/* Vocabulary examples remain in Vocab as full context. Only the authored
+   prompts above enter Fill blank; generic example sentences stay out. */
 
 const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"direcciones",label:"Direcciones"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
 const QUIZ_MODES=[
@@ -1566,7 +1626,7 @@ const BLANK_EN={
   "Yo vivo en Bogotá.":"I live in Bogotá.","¿Dónde vives tú?":"Where do you live?","Ella come arepa todos los días.":"She eats arepa every day.","Nosotros hablamos español.":"We speak Spanish.","Yo tengo dos hermanos.":"I have two siblings.","¿Usted habla inglés?":"Do you speak English?",
   "Mañana yo voy a trabajar.":"Tomorrow I am going to work.","¿Qué vas a comer tú?":"What are you going to eat?","Nosotros vamos a cocinar arepas.":"We are going to cook arepas.","Ella va a ver una película.":"She is going to watch a movie.",
   "Ayer yo fui al mercado.":"Yesterday I went to the market.","¿Qué comiste tú anoche?":"What did you eat last night?","Él trabajó hasta las seis.":"He worked until six.","Anoche yo dormí ocho horas.":"Last night I slept eight hours.",
-  "¿Me regala un tinto para tomar, por favor?":"Can I have a black coffee to drink, please?","Gire a la derecha en la esquina.":"Turn right at the corner.","Me ducho en la ducha.":"I shower in the shower.","Hay mucho trancón y los carros no avanzan.":"There is a lot of traffic and the cars are not moving.","Corto la cebolla con el cuchillo.":"I cut the onion with the knife.","Me siento en el sofá para ver la película.":"I sit on the sofa to watch the movie.","No tengo plata para el taxi.":"I don't have money for the taxi.","La cobija está sobre la cama.":"The blanket is on the bed."
+  "¿Me regala un tinto para tomar, por favor?":"Can I have a black coffee to drink, please?","Gire a la derecha en la esquina.":"Turn right at the corner.","Me ducho en la ducha y me seco con la toalla.":"I shower in the shower and dry myself with the towel.","Hay mucho trancón y los carros no avanzan por la avenida.":"There is a lot of traffic and the cars are not moving on the avenue.","Corto la cebolla con el cuchillo para picarla.":"I cut the onion with the knife to chop it.","Me siento en el sofá de la sala para ver la película.":"I sit on the living-room sofa to watch the movie.","No tengo suficiente plata para pagar el taxi.":"I don't have enough money to pay for the taxi.","La cobija está sobre la cama y me abriga.":"The blanket is on the bed and keeps me warm."
 };
 function quizPool(){
   let pool;
@@ -1578,6 +1638,7 @@ function quizPool(){
   else pool=aQ.map(q=>({...q,answer:q.en,prompt:q.kind==="listening"?"🎧":q.es}));
   if(qMode==="blank"){
     if(qCat==="pronombres")pool=pool.filter(q=>q.cat==="pronombres");
+    else if(qCat!=="all")pool=pool.filter(q=>q.cat===qCat);
   }else if(qMode==="conversation"){
     pool=qCat==="all"?pool:pool.filter(q=>q.cat===qCat);
   }else{
