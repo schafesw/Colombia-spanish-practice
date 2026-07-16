@@ -1399,7 +1399,7 @@ const FILL_BLANK_QUIZ=[
   {kind:"blank",es:"Yo ___ dos hermanos.",en:"tengo",tts:"Yo tengo dos hermanos.",cat:"completar",choices:["tengo","tienes","tiene","tenemos"]},
   {kind:"blank",es:"¿Usted ___ inglés?",en:"habla",tts:"¿Usted habla inglés?",cat:"completar",choices:["habla","hablo","hablamos","hablan"]},
   /* Futuro cercano — voy a... */
-  {kind:"blank",es:"Mañana ___ a trabajar.",en:"voy",tts:"Mañana voy a trabajar.",cat:"completar",choices:["voy","vas","va","vamos"]},
+  {kind:"blank",es:"Mañana yo ___ a trabajar.",en:"voy",tts:"Mañana yo voy a trabajar.",cat:"completar",choices:["voy","vas","va","vamos"]},
   {kind:"blank",es:"¿Qué ___ a comer tú?",en:"vas",tts:"¿Qué vas a comer tú?",cat:"completar",choices:["vas","voy","va","van"]},
   {kind:"blank",es:"Nosotros ___ a cocinar arepas.",en:"vamos",tts:"Nosotros vamos a cocinar arepas.",cat:"completar",choices:["vamos","voy","vas","van"]},
   {kind:"blank",es:"Ella ___ a ver una película.",en:"va",tts:"Ella va a ver una película.",cat:"completar",choices:["va","voy","vas","vamos"]},
@@ -1409,12 +1409,12 @@ const FILL_BLANK_QUIZ=[
   {kind:"blank",es:"Él ___ hasta las seis.",en:"trabajó",tts:"Él trabajó hasta las seis.",cat:"completar",choices:["trabajó","trabajé","trabajaste","trabajamos"]},
   {kind:"blank",es:"Anoche yo ___ ocho horas.",en:"dormí",tts:"Anoche yo dormí ocho horas.",cat:"completar",choices:["dormí","durmió","dormiste","dormimos"]},
   /* Vocabulario */
-  {kind:"blank",es:"¿Me regala un ___, por favor?",en:"tinto",tts:"¿Me regala un tinto, por favor?",cat:"completar",choices:["tinto","trancón","cuchillo","semáforo"]},
+  {kind:"blank",es:"¿Me regala un ___ para tomar, por favor?",en:"tinto",tts:"¿Me regala un tinto para tomar, por favor?",cat:"completar",choices:["tinto","trancón","cuchillo","semáforo"]},
   {kind:"blank",es:"Gire a la ___ en la esquina.",en:"derecha",tts:"Gire a la derecha en la esquina.",cat:"completar",choices:["derecha","ducha","cuchara","almohada"]},
-  {kind:"blank",es:"El jabón está en la ___.",en:"ducha",tts:"El jabón está en la ducha.",cat:"completar",choices:["ducha","cama","olla","esquina"]},
-  {kind:"blank",es:"Hay mucho ___ en la avenida.",en:"trancón",tts:"Hay mucho trancón en la avenida.",cat:"completar",choices:["trancón","tinto","clóset","jabón"]},
+  {kind:"blank",es:"Me ducho en la ___.",en:"ducha",tts:"Me ducho en la ducha.",cat:"completar",choices:["ducha","cama","olla","esquina"]},
+  {kind:"blank",es:"Hay mucho ___ y los carros no avanzan.",en:"trancón",tts:"Hay mucho trancón y los carros no avanzan.",cat:"completar",choices:["trancón","tinto","clóset","jabón"]},
   {kind:"blank",es:"Corto la cebolla con el ___.",en:"cuchillo",tts:"Corto la cebolla con el cuchillo.",cat:"completar",choices:["cuchillo","sofá","semáforo","reloj"]},
-  {kind:"blank",es:"Veo la película en el ___.",en:"sofá",tts:"Veo la película en el sofá.",cat:"completar",choices:["sofá","lavamanos","parqueadero","azúcar"]},
+  {kind:"blank",es:"Me siento en el ___ para ver la película.",en:"sofá",tts:"Me siento en el sofá para ver la película.",cat:"completar",choices:["sofá","lavamanos","parqueadero","azúcar"]},
   {kind:"blank",es:"No tengo ___ para el taxi.",en:"plata",tts:"No tengo plata para el taxi.",cat:"completar",choices:["plata","vaina","cobija","sartén"]},
   {kind:"blank",es:"La ___ está sobre la cama.",en:"cobija",tts:"La cobija está sobre la cama.",cat:"completar",choices:["cobija","gasolina","luz","sal"]},
 ];
@@ -1431,13 +1431,24 @@ VC.forEach(cat=>{
 FRASES.filter(sec=>sec.section).forEach(sec=>{if(sec.items)sec.items.forEach(i=>aQ.push({es:i.es,en:i.en,tts:i.es,cat:/Pronombres/i.test(sec.section)?"pronombres":"frases"}));});
 CONVERSATION_QUIZ.forEach(q=>aQ.push(q));
 FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
-/* ── AUTO-COMPLETAR (v17): every vocab example becomes a fill-in-the-blank ── */
+/* ── AUTO-COMPLETAR: generate only one-answer blanks ────────────────────────
+   Older versions used same-category distractors. That made questions such as
+   "Voy a la ___" accept farmacia, hospital, casa, and baño. Distractors now
+   come from a different part of speech, so the sentence has one clear answer. */
 (function(){
   const norm=t=>[...String(t)].map(ch=>{const d=ch.normalize("NFD");return d[0].toLowerCase();}).join("");
+  const VOCAB_POS={
+    colores:"adjective",adjetivos:"adjective",emociones:"adjective",
+    verbos:"verb",acciones:"verb",
+    meses:"noun",dias:"noun",numeros:"noun",familia:"noun",cuerpo:"noun",comida:"noun",lugares:"noun",profesiones:"noun",casa:"noun",habitacion:"noun",bano:"noun",trabajo:"noun",oficina:"noun",carropartes:"noun",tecnologia:"noun",
+    ropa:"mixed",direcciones:"mixed",cocina:"mixed",gustos:"mixed",tv:"mixed",clima:"mixed",tiempo:"mixed"
+  };
+  const candidates=[];
+  VC.forEach(cat=>{if(cat.items)cat.items.forEach(item=>candidates.push({word:item.tts||item.word,cat:cat.id,pos:VOCAB_POS[cat.id]||"noun"}));});
+  const isGoodDistractor=(candidate,targetPos)=>candidate.pos!==targetPos&&["noun","verb","adjective"].includes(candidate.pos);
   let made=0;
   VC.forEach(cat=>{
     if(!cat.items)return;
-    const sibs=[...new Set(cat.items.map(i=>i.tts||i.word).filter(Boolean))];
     cat.items.forEach((item,ix)=>{
       const ex=getVocabExample(item,cat.id,ix);
       if(!ex||!ex.es||ex.es===item.word)return;
@@ -1451,7 +1462,11 @@ FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
       while(end<sEs.length&&/[a-záéíóúüñA-ZÁÉÍÓÚÜÑ]/.test(sEs[end]))end++;
       const found=sEs.slice(pos,end);
       const blanked=sEs.slice(0,pos)+"___"+sEs.slice(end);
-      const wrong=sibs.filter(w=>norm(w)!==tN).sort(()=>Math.random()-0.5).slice(0,3);
+      const targetPos=VOCAB_POS[cat.id]||"noun";
+      const wrong=[];const used=new Set([tN]);
+      candidates.filter(c=>c.cat!==cat.id&&isGoodDistractor(c,targetPos)&&c.word&&norm(c.word)!==tN).sort(()=>Math.random()-0.5).forEach(c=>{
+        const n=norm(c.word);if(used.has(n)||wrong.length>=3)return;used.add(n);wrong.push(c.word);
+      });
       if(wrong.length<3)return;
       aQ.push({kind:"blank",es:blanked,en:found,tts:sEs,cat:"completar",choices:[found,...wrong],trans:ex.en});
       made++;
@@ -1510,9 +1525,9 @@ function syncQuizControls(){
 }
 const BLANK_EN={
   "Yo vivo en Bogotá.":"I live in Bogotá.","¿Dónde vives tú?":"Where do you live?","Ella come arepa todos los días.":"She eats arepa every day.","Nosotros hablamos español.":"We speak Spanish.","Yo tengo dos hermanos.":"I have two siblings.","¿Usted habla inglés?":"Do you speak English?",
-  "Mañana voy a trabajar.":"Tomorrow I am going to work.","¿Qué vas a comer tú?":"What are you going to eat?","Nosotros vamos a cocinar arepas.":"We are going to cook arepas.","Ella va a ver una película.":"She is going to watch a movie.",
+  "Mañana yo voy a trabajar.":"Tomorrow I am going to work.","¿Qué vas a comer tú?":"What are you going to eat?","Nosotros vamos a cocinar arepas.":"We are going to cook arepas.","Ella va a ver una película.":"She is going to watch a movie.",
   "Ayer yo fui al mercado.":"Yesterday I went to the market.","¿Qué comiste tú anoche?":"What did you eat last night?","Él trabajó hasta las seis.":"He worked until six.","Anoche yo dormí ocho horas.":"Last night I slept eight hours.",
-  "¿Me regala un tinto, por favor?":"Can I have a black coffee, please?","Gire a la derecha en la esquina.":"Turn right at the corner.","El jabón está en la ducha.":"The soap is in the shower.","Hay mucho trancón en la avenida.":"There is a lot of traffic on the avenue.","Corto la cebolla con el cuchillo.":"I cut the onion with the knife.","Veo la película en el sofá.":"I watch the movie on the sofa.","No tengo plata para el taxi.":"I don't have money for the taxi.","La cobija está sobre la cama.":"The blanket is on the bed."
+  "¿Me regala un tinto para tomar, por favor?":"Can I have a black coffee to drink, please?","Gire a la derecha en la esquina.":"Turn right at the corner.","Me ducho en la ducha.":"I shower in the shower.","Hay mucho trancón y los carros no avanzan.":"There is a lot of traffic and the cars are not moving.","Corto la cebolla con el cuchillo.":"I cut the onion with the knife.","Me siento en el sofá para ver la película.":"I sit on the sofa to watch the movie.","No tengo plata para el taxi.":"I don't have money for the taxi.","La cobija está sobre la cama.":"The blanket is on the bed."
 };
 function quizPool(){
   let pool;
