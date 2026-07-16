@@ -911,7 +911,7 @@ function renderLessonStep(){
     const mk=(label,fn)=>{const b=document.createElement("button");b.type="button";b.className="lp-nav-btn";b.textContent=label;b.onclick=fn;explore.appendChild(b);};
     mk("📚 Vocabulary",()=>{showPage("vocab");sCat(lpLesson.vocab);});
     mk("💬 Full conversation",()=>{showPage("frases");const d=lessonDialogue(lpLesson);if(d)renderFraseDialogue(d);});
-    mk("🧪 Full quiz",()=>{showPage("quiz");qCat=lpLesson.quizCat;qMode=lpLesson.quizMode||"mixed";syncQuizControls();nQ();});
+    mk("🧪 Full quiz",()=>{showPage("quiz");qCat=lpLesson.quizCat;qMode=lpLesson.quizMode||"mixed";repasoLeft=0;resetQuizRound();syncQuizControls();nQ();});
     body.appendChild(explore);
     navBtn("Back to lessons",()=>{lpLesson=null;renderLessons();},true);
   }
@@ -1474,6 +1474,10 @@ try{const raw=localStorage.getItem(QS_KEY);if(raw)qStore=Object.assign(qStore,JS
 function saveQ(){try{localStorage.setItem(QS_KEY,JSON.stringify(qStore));}catch(e){}}
 let repasoLeft=0;
 let qCat="all",qMode="mixed",qC=qStore.c||0,qT=qStore.t||0,qS=qStore.s||0,cQ=null,an=false;
+/* Normal quiz rounds do not repeat until the available pool is used. Missed
+   questions may still repeat intentionally through the explicit Repaso card. */
+let qRoundKey="",qRoundSeen=new Set();
+function resetQuizRound(){qRoundKey="";qRoundSeen.clear();}
 document.getElementById("q-correct").textContent=qC;
 document.getElementById("q-total").textContent=qT;
 document.getElementById("q-streak").textContent="🔥 "+qS;
@@ -1484,7 +1488,8 @@ document.getElementById("q-streak").textContent="🔥 "+qS;
   btn.type="button";btn.className="quiz-reset";
   btn.textContent="↺";btn.title="Reiniciar puntaje";btn.setAttribute("aria-label","Reiniciar puntaje");
   btn.onclick=()=>{
-    qC=0;qT=0;qS=0;qStore={c:0,t:0,s:0,missed:{}};saveQ();
+    qC=0;qT=0;qS=0;repasoLeft=0;qStore={c:0,t:0,s:0,missed:{}};saveQ();
+    resetQuizRound();
     document.getElementById("q-correct").textContent=0;
     document.getElementById("q-total").textContent=0;
     document.getElementById("q-streak").textContent="🔥 0";
@@ -1495,10 +1500,10 @@ document.getElementById("q-streak").textContent="🔥 "+qS;
 })();
 
 const qmw=document.getElementById("qmode-wrap");
-QUIZ_MODES.forEach(m=>{const b=document.createElement("button");b.type="button";b.className="qmode"+(m.id===qMode?" active":"");b.textContent=m.label;b.onclick=()=>{qMode=m.id;syncQuizControls();nQ();};qmw.appendChild(b);});
+QUIZ_MODES.forEach(m=>{const b=document.createElement("button");b.type="button";b.className="qmode"+(m.id===qMode?" active":"");b.textContent=m.label;b.onclick=()=>{qMode=m.id;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};qmw.appendChild(b);});
 const qcw=document.getElementById("qcat-wrap");
 QC.forEach(c=>{const b=document.createElement("button");b.className="qcat"+(c.id==="all"?" active":"");b.textContent=c.label;
-  b.onclick=()=>{qCat=c.id;syncQuizControls();nQ();};qcw.appendChild(b);});
+  b.onclick=()=>{qCat=c.id;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};qcw.appendChild(b);});
 function syncQuizControls(){
   document.querySelectorAll(".qcat").forEach((x,i)=>x.classList.toggle("active",QC[i].id===qCat));
   document.querySelectorAll(".qmode").forEach((x,i)=>x.classList.toggle("active",QUIZ_MODES[i].id===qMode));
@@ -1535,12 +1540,19 @@ function englishAnswer(q){
 function nQ(){
   an=false;document.getElementById("quiz-next").style.display="none";document.getElementById("quiz-fb").textContent="";document.getElementById("quiz-reveal").innerHTML="";
   const base=quizPool();if(!base.length){document.getElementById("qc-word").textContent="—";return;}
-  /* 35% of the time, re-serve a question you previously missed */
-  const missedPool=base.filter(q=>qStore.missed&&qStore.missed[q.es+"|"+q.answer]);
+  const roundKey=qMode+"|"+qCat;
+  if(roundKey!==qRoundKey){qRoundKey=roundKey;qRoundSeen.clear();}
+  let unseen=base.filter(q=>!qRoundSeen.has(q.es+"|"+q.answer));
+  if(!unseen.length){qRoundSeen.clear();unseen=base;}
+  /* Missed questions can repeat during an explicit Repaso session. In a
+     normal round, only unseen missed questions receive extra weighting. */
+  const missedAll=base.filter(q=>qStore.missed&&qStore.missed[q.es+"|"+q.answer]);
+  const missedPool=unseen.filter(q=>qStore.missed&&qStore.missed[q.es+"|"+q.answer]);
   let pickFrom;
-  if(repasoLeft>0&&missedPool.length){pickFrom=missedPool;repasoLeft--;}
-  else{if(repasoLeft>0)repasoLeft=0;pickFrom=(missedPool.length&&Math.random()<0.35)?missedPool:base;}
+  if(repasoLeft>0&&missedAll.length){pickFrom=missedAll;repasoLeft--;}
+  else{if(repasoLeft>0)repasoLeft=0;pickFrom=(missedPool.length&&Math.random()<0.35)?missedPool:unseen;}
   cQ=pickFrom[Math.floor(Math.random()*pickFrom.length)];
+  qRoundSeen.add(cQ.es+"|"+cQ.answer);
   /* Listening questions must not show the Spanish text — hide it and auto-play */
   document.getElementById("qc-word").textContent=qMode==="listening"||cQ.kind==="listening"?"🎧":cQ.prompt;
   document.querySelector(".qc-label").textContent=qMode==="en-es"?"Translate to Spanish":qMode==="listening"?"Listen and recognize":qMode==="blank"?"Complete the sentence":qMode==="conversation"?"Choose the correct reply":qMode==="es-en"?"Translate to English":cQ.kind==="reply"?"Choose the correct reply":cQ.kind==="listening"?"Listen and recognize":cQ.kind==="tense"?"Which tense is it?":cQ.kind==="blank"?"Complete the sentence":"Choose the correct answer";
@@ -1558,7 +1570,7 @@ function nQ(){
         if(qStore.missed[mk]){qStore.missed[mk]--;if(qStore.missed[mk]<=0)delete qStore.missed[mk];}}
       else{b.classList.add("wrong");qS=0;document.getElementById("q-streak").textContent="🔥 0";fb.textContent="❌ Incorrecto";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(x.textContent===cQ.answer)x.classList.add("reveal");});
         qStore.missed[mk]=(qStore.missed[mk]||0)+2;}
-      document.getElementById("quiz-reveal").innerHTML=`<div>🇪🇸 <strong>${spanishAnswer(cQ)}</strong></div><div>🇬🇧 ${englishAnswer(cQ)}</div>`;
+      document.getElementById("quiz-reveal").innerHTML=`<div>🇨🇴 <strong>${spanishAnswer(cQ)}</strong></div><div>🇺🇸 ${englishAnswer(cQ)}</div>`;
       attachMic(document.getElementById("quiz-reveal"),spanishAnswer(cQ));
       qStore.c=qC;qStore.t=qT;qStore.s=qS;saveQ();
       document.getElementById("quiz-next").style.display="block";};ow.appendChild(b);});

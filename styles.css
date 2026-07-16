@@ -457,6 +457,10 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 #page-quiz .quiz-next{position:fixed;left:70px;right:16px;bottom:calc(var(--tab-h) + var(--safe-bottom) + 10px);width:auto;z-index:997;box-shadow:0 6px 18px rgba(0,0,0,0.45);}
 #page-quiz{padding-bottom:70px;}
 
+/* Keep lesson navigation available while a tall lesson card is scrolled. */
+#page-lecciones{padding-bottom:78px;}
+#page-lecciones .lp-nav{position:sticky;bottom:calc(var(--tab-h) + var(--safe-bottom) + 8px);z-index:30;padding:8px;margin:0 -8px 12px;border:1px solid rgba(232,180,74,0.28);border-radius:14px;background:rgba(10,15,20,0.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
+
 /* v15: lesson player */
 .lp-dots{display:flex;gap:6px;justify-content:center;margin-bottom:14px;}
 .lp-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);}
