@@ -729,7 +729,11 @@ const LESSONS=[
   {id:"gustos",icon:"❤️",title:"Gustos y familia",sub:"Habla de las personas y cosas que te gustan",vocab:"gustos",dialogue:"Gustos y familia",quizCat:"gustos"},
   {id:"planes",icon:"📱",title:"Planes y teléfono",sub:"Organiza una salida y mantén el contacto",vocab:"tecnologia",dialogue:"Ver televisión",quizCat:"tecnologia"},
   {id:"sentirse",icon:"😊",title:"Cómo te sientes",sub:"Expresa necesidades, emociones y estados",vocab:"emociones",dialogue:"En casa",quizCat:"emociones"},
-  {id:"colombia",icon:"🇨🇴",title:"Colombianismos",sub:"Sonidos y palabras que escucharás en Colombia",vocab:"colombianismos",dialogue:"Carro y taxi",quizCat:"colombianismos"}
+  {id:"colombia",icon:"🇨🇴",title:"Colombianismos",sub:"Sonidos y palabras que escucharás en Colombia",vocab:"colombianismos",dialogue:"Carro y taxi",quizCat:"colombianismos"},
+  {id:"gram-presente",icon:"⚡",title:"Presente para hablar",sub:"Di quién eres, qué haces y cómo estás",vocab:"verbos",dialogue:"Presentación personal",quizCat:"all",quizMode:"conversation",quizFocus:"present"},
+  {id:"gram-futuro",icon:"⏭️",title:"Planes futuros",sub:"Usa voy a… para hablar de tus planes",vocab:"acciones",dialogue:"Trabajo y oficina",quizCat:"all",quizMode:"conversation",quizFocus:"future"},
+  {id:"gram-pasado",icon:"⏮️",title:"Hablar del pasado",sub:"Cuenta qué hiciste ayer y qué pasó",vocab:"acciones",dialogue:"Preparar la cocina",quizCat:"all",quizMode:"conversation",quizFocus:"past"},
+  {id:"gram-pronombres",icon:"👤",title:"Pronombres en conversación",sub:"Practica lo, la, le y las combinaciones comunes",vocab:"gustos",dialogue:"Pronombres en acción",quizCat:"pronombres",quizMode:"conversation",quizFocus:"pronombres"}
 ];
 const LESSON_KEY="esco-lesson-progress-v1";
 let lessonProgress={};
@@ -911,7 +915,7 @@ function renderLessonStep(){
     const mk=(label,fn)=>{const b=document.createElement("button");b.type="button";b.className="lp-nav-btn";b.textContent=label;b.onclick=fn;explore.appendChild(b);};
     mk("📚 Vocabulary",()=>{showPage("vocab");sCat(lpLesson.vocab);});
     mk("💬 Full conversation",()=>{showPage("frases");const d=lessonDialogue(lpLesson);if(d)renderFraseDialogue(d);});
-    mk("🧪 Full quiz",()=>{showPage("quiz");qCat=lpLesson.quizCat;qMode=lpLesson.quizMode||"mixed";repasoLeft=0;resetQuizRound();syncQuizControls();nQ();});
+    mk("🧪 Full quiz",()=>{showPage("quiz");qCat=lpLesson.quizCat;qMode=lpLesson.quizMode||"mixed";qFocus=lpLesson.quizFocus||"all";repasoLeft=0;resetQuizRound();syncQuizControls();nQ();});
     body.appendChild(explore);
     navBtn("Back to lessons",()=>{lpLesson=null;renderLessons();},true);
   }
@@ -1171,7 +1175,8 @@ function renderLessons(){
   const LESSON_STAGES=[
     {name:"🌱 Start Here",sub:"Simple sentences for introductions, numbers, and daily needs.",ids:["presentate","plata","casa","gustos"]},
     {name:"🗣️ Build Conversation",sub:"Use more vocabulary to talk about everyday life.",ids:["trabajo","cocina","calle","planes","sentirse"]},
-    {name:"🇨🇴 Speak More Naturally",sub:"Colombian expressions, mixed practice, and speaking pressure.",ids:["colombia"]}
+    {name:"🇨🇴 Speak More Naturally",sub:"Colombian expressions, mixed practice, and speaking pressure.",ids:["colombia"]},
+    {name:"🧩 Grammar for Conversation",sub:"Short speaking lessons for the patterns you need every day.",ids:["gram-presente","gram-futuro","gram-pasado","gram-pronombres"]}
   ];
   let lessonNum=0;
   LESSON_STAGES.forEach(stage=>{
@@ -1388,6 +1393,16 @@ const CONVERSATION_QUIZ=[
   {kind:"pronoun",es:"¿La dirección la tiene?",en:"Sí, la tengo aquí.",tts:"¿La dirección la tiene?",cat:"pronombres",choices:["Sí, la tengo aquí.","Sí, se lo repito despacio.","Sí, necesito ayuda.","La voy a buscar mañana."]},
   {kind:"pronoun",es:"¿Le explicaste el problema?",en:"Sí, se lo expliqué al técnico.",tts:"¿Le explicaste el problema?",cat:"pronombres",choices:["Sí, se lo expliqué al técnico.","Sí, la tengo aquí.","No, pero me la puede enviar.","Sí, se lo repito despacio."]}
 ];
+/* Tag the curated conversation bank so Focus can narrow it without removing
+   the existing topic/category choices. */
+CONVERSATION_QUIZ.forEach(q=>{
+  if(q.cat==="conversaciones")q.cat="frases";
+  const text=(q.es+" "+q.en).toLowerCase();
+  if(q.kind==="pronoun")q.focus="pronombres";
+  else if(/mañana|voy a|vas a|va a|vamos a|going to/.test(text))q.focus="future";
+  else if(/ayer|anoche|viví|trabajé|cené|hervimos|fue|seguí|yesterday|worked at|lived in/.test(text))q.focus="past";
+  else q.focus="present";
+});
 /* ── Fill-in-the-blank Quiz Data (NEW v13) ──────────────────────────────────
    kind:"blank" — sentence with ___ ; choices are single words; tts = full sentence */
 const FILL_BLANK_QUIZ=[
@@ -1419,6 +1434,18 @@ const FILL_BLANK_QUIZ=[
   {kind:"blank",es:"La ___ está sobre la cama.",en:"cobija",tts:"La cobija está sobre la cama.",cat:"completar",choices:["cobija","gasolina","luz","sal"]},
 ];
 
+/* Focus tags keep grammar practice separate from the broader topic filters. */
+FILL_BLANK_QUIZ.forEach((q,i)=>{
+  if(i<6)q.focus="present";
+  else if(i<10)q.focus="future";
+  else if(i<14)q.focus="past";
+});
+FILL_BLANK_QUIZ.push(
+  {kind:"blank",focus:"pronombres",es:"El número es masculino: ¿Tienes el número? Sí, ___ tengo aquí.",en:"lo",tts:"El número es masculino: ¿Tienes el número? Sí, lo tengo aquí.",cat:"pronombres",choices:["lo","la","le","los"],trans:"The number is masculine: Do you have the number? Yes, I have it here."},
+  {kind:"blank",focus:"pronombres",es:"La dirección es femenina: ¿Tienes la dirección? Sí, ___ tengo aquí.",en:"la",tts:"La dirección es femenina: ¿Tienes la dirección? Sí, la tengo aquí.",cat:"pronombres",choices:["la","lo","le","las"],trans:"The address is feminine: Do you have the address? Yes, I have it here."},
+  {kind:"blank",focus:"pronombres",es:"A Juan, ___ doy el libro.",en:"le",tts:"A Juan, le doy el libro.",cat:"pronombres",choices:["le","lo","la","les"],trans:"To Juan, I give him the book."}
+);
+
 let aQ=[];
 VC.forEach(cat=>{
   if(cat.type==="basic")cat.items.forEach(i=>aQ.push({es:i.word,en:i.en,tts:i.tts,cat:cat.id}));
@@ -1428,7 +1455,7 @@ VC.forEach(cat=>{
   if(cat.type==="verbos")Object.entries(VERBS).forEach(([k,v])=>aQ.push({es:k,en:v.en,tts:k,cat:"verbos"}));
   if(cat.type==="colombianismos")COLOMBIANISMOS.forEach(c=>aQ.push({es:c.word,en:c.en,tts:c.tts,cat:"colombianismos"}));
 });
-FRASES.filter(sec=>sec.section).forEach(sec=>{if(sec.items)sec.items.forEach(i=>aQ.push({es:i.es,en:i.en,tts:i.es,cat:/Pronombres/i.test(sec.section)?"pronombres":"frases"}));});
+FRASES.filter(sec=>sec.section).forEach(sec=>{if(sec.items){const isPron=/Pronombres/i.test(sec.section);sec.items.forEach(i=>aQ.push({es:i.es,en:i.en,tts:i.es,cat:isPron?"pronombres":"frases",focus:isPron?"pronombres":undefined}));}});
 CONVERSATION_QUIZ.forEach(q=>aQ.push(q));
 FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
 /* ── AUTO-COMPLETAR: generate only one-answer blanks ────────────────────────
@@ -1480,6 +1507,11 @@ const QUIZ_MODES=[
   {id:"mixed",label:"Mixed"},{id:"es-en",label:"ES → EN"},{id:"en-es",label:"EN → ES"},
   {id:"listening",label:"🎧 Listening"},{id:"blank",label:"✏️ Fill blank"},{id:"conversation",label:"💬 Conversation"}
 ];
+const QUIZ_FOCUS=[
+  {id:"all",label:"All patterns"},{id:"present",label:"Presente"},{id:"past",label:"Pasado"},
+  {id:"future",label:"Futuro"},{id:"pronombres",label:"Pronombres"}
+];
+const FOCUS_MODES=new Set(["mixed","blank","conversation"]);
 
 /* ── Persistent score + missed-question tracking (NEW v13) ──────────────────
    Saved in localStorage. Wrong answers get asked again more often. */
@@ -1488,7 +1520,7 @@ let qStore={c:0,t:0,s:0,missed:{}};
 try{const raw=localStorage.getItem(QS_KEY);if(raw)qStore=Object.assign(qStore,JSON.parse(raw));}catch(e){}
 function saveQ(){try{localStorage.setItem(QS_KEY,JSON.stringify(qStore));}catch(e){}}
 let repasoLeft=0;
-let qCat="all",qMode="mixed",qC=qStore.c||0,qT=qStore.t||0,qS=qStore.s||0,cQ=null,an=false;
+let qCat="all",qMode="mixed",qFocus="all",qC=qStore.c||0,qT=qStore.t||0,qS=qStore.s||0,cQ=null,an=false;
 /* Normal quiz rounds do not repeat until the available pool is used. Missed
    questions may still repeat intentionally through the explicit Repaso card. */
 let qRoundKey="",qRoundSeen=new Set();
@@ -1519,9 +1551,16 @@ QUIZ_MODES.forEach(m=>{const b=document.createElement("button");b.type="button";
 const qcw=document.getElementById("qcat-wrap");
 QC.forEach(c=>{const b=document.createElement("button");b.className="qcat"+(c.id==="all"?" active":"");b.textContent=c.label;
   b.onclick=()=>{qCat=c.id;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};qcw.appendChild(b);});
+const qfs=document.getElementById("qfocus-select");
+if(qfs)qfs.onchange=()=>{qFocus=qfs.value;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};
 function syncQuizControls(){
   document.querySelectorAll(".qcat").forEach((x,i)=>x.classList.toggle("active",QC[i].id===qCat));
   document.querySelectorAll(".qmode").forEach((x,i)=>x.classList.toggle("active",QUIZ_MODES[i].id===qMode));
+  const focusSupported=FOCUS_MODES.has(qMode);
+  if(!focusSupported)qFocus="all";
+  if(qfs){qfs.value=qFocus;qfs.disabled=!focusSupported;}
+  const note=document.getElementById("qfocus-note");
+  if(note){note.textContent=focusSupported?"Choose a grammar pattern, or leave All patterns.":"Choose Mixed, Fill blank, or Conversation to use Grammar focus.";note.classList.toggle("active",focusSupported&&qFocus!=="all");}
 }
 const BLANK_EN={
   "Yo vivo en Bogotá.":"I live in Bogotá.","¿Dónde vives tú?":"Where do you live?","Ella come arepa todos los días.":"She eats arepa every day.","Nosotros hablamos español.":"We speak Spanish.","Yo tengo dos hermanos.":"I have two siblings.","¿Usted habla inglés?":"Do you speak English?",
@@ -1537,8 +1576,15 @@ function quizPool(){
   else if(qMode==="listening")pool=aQ.filter(q=>!q.kind).map(q=>({...q,answer:q.es,prompt:"🎧"}));
   else if(qMode==="es-en")pool=aQ.filter(q=>!q.kind||q.kind==="meaning").map(q=>({...q,answer:q.en,prompt:q.es}));
   else pool=aQ.map(q=>({...q,answer:q.en,prompt:q.kind==="listening"?"🎧":q.es}));
-  if(qMode==="blank"||qMode==="conversation")return pool; /* these have their own cats */
-  return qCat==="all"?pool:pool.filter(q=>q.cat===qCat);
+  if(qMode==="blank"){
+    if(qCat==="pronombres")pool=pool.filter(q=>q.cat==="pronombres");
+  }else if(qMode==="conversation"){
+    pool=qCat==="all"?pool:pool.filter(q=>q.cat===qCat);
+  }else{
+    pool=qCat==="all"?pool:pool.filter(q=>q.cat===qCat);
+  }
+  if(FOCUS_MODES.has(qMode)&&qFocus!=="all")pool=pool.filter(q=>q.focus===qFocus);
+  return pool;
 }
 function spanishAnswer(q){
   if(qMode==="en-es")return q.es;
@@ -1554,8 +1600,14 @@ function englishAnswer(q){
 }
 function nQ(){
   an=false;document.getElementById("quiz-next").style.display="none";document.getElementById("quiz-fb").textContent="";document.getElementById("quiz-reveal").innerHTML="";
-  const base=quizPool();if(!base.length){document.getElementById("qc-word").textContent="—";return;}
-  const roundKey=qMode+"|"+qCat;
+  const base=quizPool();
+  if(!base.length){
+    document.querySelector(".qc-label").textContent="No matching questions";
+    document.getElementById("qc-word").textContent="Try All topics or All patterns";
+    document.getElementById("quiz-opts").innerHTML="";
+    return;
+  }
+  const roundKey=qMode+"|"+qCat+"|"+qFocus;
   if(roundKey!==qRoundKey){qRoundKey=roundKey;qRoundSeen.clear();}
   let unseen=base.filter(q=>!qRoundSeen.has(q.es+"|"+q.answer));
   if(!unseen.length){qRoundSeen.clear();unseen=base;}
