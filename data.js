@@ -361,6 +361,24 @@ const VC=[
     {word:"Enamorado/a",en:"In love",ph:"eh-nah-moh-RAH-doh",tts:"enamorado",icon:"😍",color:"#e85d75"},
     {word:"Asustado/a",en:"Scared",ph:"ah-soos-TAH-doh",tts:"asustado",icon:"😨",color:"#8b5cf6"},
   ]},
+  {id:"acciones",label:"🏃 Acciones diarias",type:"basic",items:[
+    {word:"Poner",en:"To put / place",ph:"poh-NEHR",tts:"poner",icon:"📍",color:"#4aa8a0"},
+    {word:"Quitar",en:"To remove / take off",ph:"kee-TAR",tts:"quitar",icon:"🧥",color:"#e85d75"},
+    {word:"Llevar",en:"To take / carry / wear",ph:"yeh-BAR",tts:"llevar",icon:"👜",color:"#60a5fa"},
+    {word:"Traer",en:"To bring",ph:"trah-ER",tts:"traer",icon:"📦",color:"#f59e0b"},
+    {word:"Dejar",en:"To leave / let",ph:"deh-HAR",tts:"dejar",icon:"🫳",color:"#a78bfa"},
+    {word:"Sacar",en:"To take out",ph:"sah-KAR",tts:"sacar",icon:"🗑️",color:"#34d399"},
+    {word:"Meter",en:"To put in",ph:"meh-TEHR",tts:"meter",icon:"📥",color:"#8b5cf6"},
+    {word:"Buscar",en:"To look for",ph:"boos-KAR",tts:"buscar",icon:"🔎",color:"#e8b44a"},
+    {word:"Encontrar",en:"To find",ph:"en-kon-TRAR",tts:"encontrar",icon:"✅",color:"#34d399"},
+    {word:"Esperar",en:"To wait / hope",ph:"ehs-peh-RAR",tts:"esperar",icon:"⏳",color:"#60a5fa"},
+    {word:"Ayudar",en:"To help",ph:"ah-yoo-DAR",tts:"ayudar",icon:"🤝",color:"#4aa8a0"},
+    {word:"Necesitar",en:"To need",ph:"neh-seh-see-TAR",tts:"necesitar",icon:"❗",color:"#e85d75"},
+    {word:"Quedar",en:"To be located / remain",ph:"keh-DAR",tts:"quedar",icon:"📌",color:"#a78bfa"},
+    {word:"Volver",en:"To return",ph:"bol-BEHR",tts:"volver",icon:"↩️",color:"#f59e0b"},
+    {word:"Seguir",en:"To continue / follow",ph:"seh-GEER",tts:"seguir",icon:"➡️",color:"#60a5fa"},
+    {word:"Usar",en:"To use",ph:"oo-SAR",tts:"usar",icon:"🛠️",color:"#34d399"}
+  ]},
 ];
 
 /* ── Vocabulary examples ─────────────────────────────────────────────────────
@@ -440,6 +458,9 @@ const VOCAB_EXAMPLES={
   ],
   carropartes:[
     ["El motor funciona bien.","The engine works well."],["La llanta está baja.","The tire is low."],["El volante está duro.","The steering wheel is stiff."],["El freno suena.","The brake makes a noise."],["La batería está baja.","The battery is low."],["El parabrisas está limpio.","The windshield is clean."],["Miro el espejo retrovisor.","I look at the rearview mirror."],["La placa está sucia.","The license plate is dirty."],["El equipaje está en el baúl.","The luggage is in the trunk."],["Abro el capó.","I open the hood."],["Cierro la puerta.","I close the door."]
+  ],
+  acciones:[
+    ["Voy a poner la mesa.","I am going to set the table."],["Quítate la chaqueta; hace calor.","Take off your jacket; it is hot."],["Llevo las llaves en el bolsillo.","I carry the keys in my pocket."],["¿Me traes un tinto, por favor?","Will you bring me a black coffee, please?"],["Puedes dejar la mochila aquí.","You can leave the backpack here."],["Voy a sacar la basura.","I am going to take out the trash."],["Mete la ropa en el clóset.","Put the clothes in the closet."],["Estoy buscando mi celular.","I am looking for my cell phone."],["Por fin encontré mis llaves.","I finally found my keys."],["Te espero en la esquina.","I will wait for you on the corner."],["¿Me ayudas con esta caja?","Can you help me with this box?"],["Necesito comprar mercado.","I need to buy groceries."],["El banco queda cerca.","The bank is nearby."],["Voy a volver después del trabajo.","I am going to return after work."],["Sigue derecho hasta la esquina.","Continue straight to the corner."],["Uso el celular para estudiar.","I use my cell phone to study."]
   ]
 };
 
@@ -489,6 +510,7 @@ const FRASES=[
   {section:"🩺 ¿Cómo Te Sientes?",cls:"color:var(--green);background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2)",items:[{es:"¿Cómo te sientes?",en:"How do you feel?"},{es:"Me siento bien.",en:"I feel good."},{es:"Me siento mal.",en:"I feel bad."},{es:"Tengo hambre.",en:"I'm hungry."},{es:"Tengo sed.",en:"I'm thirsty."},{es:"Tengo sueño.",en:"I'm sleepy."},{es:"Tengo frío.",en:"I'm cold."},{es:"Tengo calor.",en:"I'm hot."},{es:"Me duele la cabeza.",en:"My head hurts."},{es:"Me duele el estómago.",en:"My stomach hurts."},{es:"Estoy cansado/a.",en:"I'm tired."},{es:"Estoy enfermo/a.",en:"I'm sick."},{es:"Necesito descansar.",en:"I need to rest."},{es:"¡Que te mejores!",en:"Get well soon!"}]},
   /* ── NEW v13: Plata y Pagos ── */
   {section:"💰 Plata y Pagos",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[{es:"¿Cuánto le debo?",en:"How much do I owe you?"},{es:"¿Tiene cambio de cincuenta mil?",en:"Do you have change for fifty thousand?"},{es:"¿Puedo pagar con tarjeta?",en:"Can I pay by card?"},{es:"Pago en efectivo.",en:"I'll pay in cash."},{es:"¿Me hace la transferencia?",en:"Can you send me the transfer? (Nequi-style)"},{es:"Quedamos a mano.",en:"We're even."},{es:"¿Me rebaja algo?",en:"Can you lower the price a bit?"},{es:"Necesito sacar plata.",en:"I need to withdraw money. (Colombian!)"},{es:"¿Dónde hay un cajero?",en:"Where is there an ATM?"},{es:"A la orden.",en:"At your service / You're welcome. (Colombian!)"}]},
+  {section:"👤 Pronombres en acción",cls:"color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)",items:[{es:"¿Me lo puede repetir, por favor?",en:"Can you repeat it for me, please?"},{es:"Sí, se lo repito despacio.",en:"Yes, I'll repeat it slowly."},{es:"¿La dirección la tiene?",en:"Do you have the address?"},{es:"Sí, la tengo aquí.",en:"Yes, I have it here."},{es:"¿Le puedo ayudar?",en:"Can I help you?"},{es:"Sí, necesito ayuda.",en:"Yes, I need help."},{es:"¿Me la puede mandar?",en:"Can you send it to me?"},{es:"Se la mando en un momento.",en:"I'll send it to you in a moment."}]},
   {id:"habitacion",label:"🛏️ Habitación",type:"basic",items:[
     {word:"cama",en:"bed",ph:"KAH-mah",tts:"cama",icon:"🛏️",color:"#a78bfa"},{word:"almohada",en:"pillow",ph:"al-moh-AH-dah",tts:"almohada",icon:"🛌",color:"#ec4899"},{word:"cobija",en:"blanket",ph:"koh-BEE-hah",tts:"cobija",icon:"🧣",color:"#e85d75"},{word:"sábana",en:"sheet",ph:"SAH-bah-nah",tts:"sábana",icon:"🛏️",color:"#60a5fa"},{word:"clóset",en:"closet",ph:"KLOH-set",tts:"clóset",icon:"🚪",color:"#a78bfa"},{word:"mesita de noche",en:"nightstand",ph:"meh-SEE-tah deh NOH-cheh",tts:"mesita de noche",icon:"🛋️",color:"#e8b44a"},{word:"lámpara",en:"lamp",ph:"LAM-pah-rah",tts:"lámpara",icon:"💡",color:"#f59e0b"},{word:"espejo",en:"mirror",ph:"ehs-PEH-hoh",tts:"espejo",icon:"🪞",color:"#60a5fa"},{word:"cortina",en:"curtain",ph:"kor-TEE-nah",tts:"cortina",icon:"🪟",color:"#4aa8a0"},{word:"armario",en:"wardrobe",ph:"ar-MAH-ryoh",tts:"armario",icon:"🗄️",color:"#92400e"}
   ]},
@@ -583,7 +605,22 @@ const CONVERSATIONS=[
     {who:"A",es:"¿Qué cocinaste anoche?",en:"What did you cook last night?",tts:"¿Qué cocinaste anoche?"},
     {who:"B",es:"Hice una sopa. Herví las verduras en la olla.",en:"I made a soup. I boiled the vegetables in the pot.",tts:"Hice una sopa. Herví las verduras en la olla."},
     {who:"A",es:"¿Y probaste la salsa?",en:"And did you taste the sauce?",tts:"¿Y probaste la salsa?"},
-    {who:"B",es:"Sí, ¡quedó deliciosa!",en:"Yes, it turned out delicious!",tts:"Sí, ¡quedó deliciosa!"}]}
+    {who:"B",es:"Sí, ¡quedó deliciosa!",en:"Yes, it turned out delicious!",tts:"Sí, ¡quedó deliciosa!"}]},
+  {title:"Pronombres en acción",tense:"Ahora",lines:[
+    {who:"A",es:"¿Me lo puede repetir, por favor?",en:"Can you repeat it for me, please?",tts:"¿Me lo puede repetir, por favor?"},
+    {who:"B",es:"Sí, se lo repito despacio.",en:"Yes, I'll repeat it slowly.",tts:"Sí, se lo repito despacio."},
+    {who:"A",es:"¿La dirección la tiene?",en:"Do you have the address?",tts:"¿La dirección la tiene?"},
+    {who:"B",es:"Sí, la tengo aquí.",en:"Yes, I have it here.",tts:"Sí, la tengo aquí."}]},
+  {title:"Pronombres en acción",tense:"Planes",lines:[
+    {who:"A",es:"¿Me lo va a mandar hoy?",en:"Are you going to send it to me today?",tts:"¿Me lo va a mandar hoy?"},
+    {who:"B",es:"Sí, se lo voy a mandar en la tarde.",en:"Yes, I'm going to send it to you this afternoon.",tts:"Sí, se lo voy a mandar en la tarde."},
+    {who:"A",es:"¿La ubicación la tiene?",en:"Do you have the location?",tts:"¿La ubicación la tiene?"},
+    {who:"B",es:"No, pero me la puede enviar.",en:"No, but you can send it to me.",tts:"No, pero me la puede enviar."}]},
+  {title:"Pronombres en acción",tense:"Ayer",lines:[
+    {who:"A",es:"¿Le explicaste el problema?",en:"Did you explain the problem to him/her?",tts:"¿Le explicaste el problema?"},
+    {who:"B",es:"Sí, se lo expliqué al técnico.",en:"Yes, I explained it to the technician.",tts:"Sí, se lo expliqué al técnico."},
+    {who:"A",es:"¿La factura la guardaste?",en:"Did you save the invoice?",tts:"¿La factura la guardaste?"},
+    {who:"B",es:"Sí, la guardé en el archivo.",en:"Yes, I saved it in the file.",tts:"Sí, la guardé en el archivo."}]}
 ];
 
 // ── Grammar data ──────────────────────────────────────────────────────────────
@@ -676,4 +713,16 @@ const LESSON_CONTENT={
   colombia:{goal:{es:"¿Qué más, parce? — Todo bien, ¡qué bacano verte!",en:"What's up, buddy? — All good, so cool to see you!"},
     words:[{es:"Parce",en:"Buddy (Colombian!)"},{es:"Chévere",en:"Cool"},{es:"Bacano",en:"Awesome (Colombian!)"},{es:"El tinto",en:"Black coffee (Colombian!)"},{es:"La plata",en:"Money (Colombian!)"},{es:"¿Qué más?",en:"What's up? (Colombian!)"}],
     phrases:[{en:"What's up, buddy?",es:"¿Qué más, parce?"},{en:"How cool!",es:"¡Qué bacano!"},{en:"Can I have a coffee?",es:"¿Me regala un tinto?"},{en:"OK, got it.",es:"Listo."}]},
+  "gram-presente":{goal:{es:"Hablo español todos los días y vivo en Colombia.",en:"I speak Spanish every day and I live in Colombia."},
+    words:[{es:"Hablo",en:"I speak"},{es:"Vivo",en:"I live"},{es:"Tengo",en:"I have"},{es:"Soy",en:"I am (identity)"},{es:"Estoy",en:"I am (state/location)"},{es:"Me gusta",en:"I like"}],
+    phrases:[{en:"I speak a little Spanish.",es:"Hablo un poco de español."},{en:"I live in Colombia.",es:"Vivo en Colombia."},{en:"I have a question.",es:"Tengo una pregunta."},{en:"I like Colombian food.",es:"Me gusta la comida colombiana."}]},
+  "gram-futuro":{goal:{es:"Mañana voy a practicar español y voy a hablar con un colombiano.",en:"Tomorrow I am going to practice Spanish and talk with a Colombian."},
+    words:[{es:"Voy a...",en:"I am going to..."},{es:"Vas a...",en:"You are going to..."},{es:"Vamos a...",en:"We are going to..."},{es:"Mañana",en:"Tomorrow"},{es:"Después",en:"Later / afterward"},{es:"Te voy a llamar",en:"I am going to call you"}],
+    phrases:[{en:"I am going to study tonight.",es:"Voy a estudiar esta noche."},{en:"What are you going to do tomorrow?",es:"¿Qué vas a hacer mañana?"},{en:"We are going to go out after work.",es:"Vamos a salir después del trabajo."},{en:"I am going to call you later.",es:"Te voy a llamar más tarde."}]},
+  "gram-pasado":{goal:{es:"Ayer fui al mercado y compré comida.",en:"Yesterday I went to the market and bought food."},
+    words:[{es:"Ayer",en:"Yesterday"},{es:"Fui",en:"I went / I was"},{es:"Hice",en:"I did / made"},{es:"Tuve",en:"I had"},{es:"Comí",en:"I ate"},{es:"Hablé",en:"I spoke"}],
+    phrases:[{en:"Yesterday I went to the market.",es:"Ayer fui al mercado."},{en:"I ate an arepa.",es:"Comí una arepa."},{en:"I spoke with my friend.",es:"Hablé con mi amigo."},{en:"What did you do yesterday?",es:"¿Qué hiciste ayer?"}]},
+  "gram-pronombres":{goal:{es:"¿Me lo puede repetir? — Sí, se lo repito despacio.",en:"Can you repeat it for me? — Yes, I will repeat it slowly."},
+    words:[{es:"lo",en:"him / it (masculine)"},{es:"la",en:"her / it (feminine)"},{es:"le",en:"to him / to her"},{es:"me lo",en:"it to me (masculine)"},{es:"se lo",en:"it to him/her"},{es:"me la",en:"it to me (feminine)"}],
+    phrases:[{en:"Do you have the address? — Yes, I have it here.",es:"¿Tiene la dirección? — Sí, la tengo aquí."},{en:"Can you help me? — Yes, I will help you.",es:"¿Me puede ayudar? — Sí, le ayudo."},{en:"Can you repeat it for me? — Yes, I will repeat it slowly.",es:"¿Me lo puede repetir? — Sí, se lo repito despacio."},{en:"Can you send it to me? — Yes, I will send it.",es:"¿Me la puede mandar? — Sí, se la mando."}]},
 };
