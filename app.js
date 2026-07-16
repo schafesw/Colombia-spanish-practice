@@ -733,6 +733,10 @@ const LESSONS=[
   {id:"gram-presente",icon:"⚡",title:"Presente para hablar",sub:"Di quién eres, qué haces y cómo estás",vocab:"verbos",dialogue:"Presentación personal",quizCat:"all",quizMode:"conversation",quizFocus:"present"},
   {id:"gram-futuro",icon:"⏭️",title:"Planes futuros",sub:"Usa voy a… para hablar de tus planes",vocab:"acciones",dialogue:"Trabajo y oficina",quizCat:"all",quizMode:"conversation",quizFocus:"future"},
   {id:"gram-pasado",icon:"⏮️",title:"Hablar del pasado",sub:"Cuenta qué hiciste ayer y qué pasó",vocab:"acciones",dialogue:"Preparar la cocina",quizCat:"all",quizMode:"conversation",quizFocus:"past"},
+  {id:"gram-pasado-historia",icon:"🗣️",title:"Pasado para conversar",sub:"Cuenta qué hiciste y qué estaba pasando",vocab:"verbos",dialogue:"Contar lo que pasó",quizCat:"all",quizMode:"conversation",quizFocus:"past"},
+  {id:"gram-necesidades",icon:"🧱",title:"Necesidades y obligaciones",sub:"Di lo que querías, necesitabas y tenías que hacer",vocab:"acciones",dialogue:"Contar lo que pasó",quizCat:"all",quizMode:"conversation",quizFocus:"past"},
+  {id:"gram-conectores",icon:"🔗",title:"Conecta tus ideas",sub:"Usa pero, porque y entonces para sonar natural",vocab:"gustos",dialogue:"Contar lo que pasó",quizCat:"all",quizMode:"conversation"},
+  {id:"gram-groserias",icon:"⚠️",title:"Groserías colombianas",sub:"Reconócelas y aprende el contexto antes de usarlas",vocab:"colombianismos",dialogue:"Groserías colombianas",quizCat:"groserias",quizMode:"conversation"},
   {id:"gram-pronombres",icon:"👤",title:"Pronombres en conversación",sub:"Practica lo, la, le y las combinaciones comunes",vocab:"gustos",dialogue:"Pronombres en acción",quizCat:"pronombres",quizMode:"conversation",quizFocus:"pronombres"}
 ];
 const LESSON_KEY="esco-lesson-progress-v1";
@@ -1176,7 +1180,8 @@ function renderLessons(){
     {name:"🌱 Start Here",sub:"Simple sentences for introductions, numbers, and daily needs.",ids:["presentate","plata","casa","gustos"]},
     {name:"🗣️ Build Conversation",sub:"Use more vocabulary to talk about everyday life.",ids:["trabajo","cocina","calle","planes","sentirse"]},
     {name:"🇨🇴 Speak More Naturally",sub:"Colombian expressions, mixed practice, and speaking pressure.",ids:["colombia"]},
-    {name:"🧩 Grammar for Conversation",sub:"Short speaking lessons for the patterns you need every day.",ids:["gram-presente","gram-futuro","gram-pasado","gram-pronombres"]}
+    {name:"🧩 Grammar for Conversation",sub:"Short speaking lessons for the patterns you need every day.",ids:["gram-presente","gram-futuro","gram-pasado","gram-pasado-historia","gram-necesidades","gram-conectores","gram-pronombres"]},
+    {name:"⚠️ Colombian context",sub:"Recognize strong slang and learn when not to use it.",ids:["gram-groserias"]}
   ];
   let lessonNum=0;
   LESSON_STAGES.forEach(stage=>{
@@ -1391,7 +1396,22 @@ const CONVERSATION_QUIZ=[
   {kind:"tense",es:"¿Cuál frase describe el presente?",en:"Está al lado de la habitación.",tts:"Está al lado de la habitación.",cat:"conversaciones",choices:["Está al lado de la habitación.","Voy a cambiar la sábana.","Ayer la dejé junto al lavamanos.","¿Dónde estaba la toalla?"]},
   {kind:"pronoun",es:"¿Me lo puede repetir, por favor?",en:"Sí, se lo repito despacio.",tts:"¿Me lo puede repetir, por favor?",cat:"pronombres",choices:["Sí, se lo repito despacio.","Sí, la tengo aquí.","No, pero me la puede enviar.","Sí, necesito ayuda."]},
   {kind:"pronoun",es:"¿La dirección la tiene?",en:"Sí, la tengo aquí.",tts:"¿La dirección la tiene?",cat:"pronombres",choices:["Sí, la tengo aquí.","Sí, se lo repito despacio.","Sí, necesito ayuda.","La voy a buscar mañana."]},
-  {kind:"pronoun",es:"¿Le explicaste el problema?",en:"Sí, se lo expliqué al técnico.",tts:"¿Le explicaste el problema?",cat:"pronombres",choices:["Sí, se lo expliqué al técnico.","Sí, la tengo aquí.","No, pero me la puede enviar.","Sí, se lo repito despacio."]}
+  {kind:"pronoun",es:"¿Le explicaste el problema?",en:"Sí, se lo expliqué al técnico.",tts:"¿Le explicaste el problema?",cat:"pronombres",choices:["Sí, se lo expliqué al técnico.","Sí, la tengo aquí.","No, pero me la puede enviar.","Sí, se lo repito despacio."]},
+  {kind:"meaning",es:"Fui al mercado porque necesitaba comida.",en:"I went to the market because I needed food.",tts:"Fui al mercado porque necesitaba comida.",cat:"frases",choices:["I went to the market because I needed food.","I was going to cook, but I had to work.","I am at home and I have to finish a project.","I could not go because I was sick."]},
+  {kind:"reply",es:"¿Qué ibas a hacer?",en:"Iba a cocinar, pero tuve que trabajar.",tts:"¿Qué ibas a hacer?",cat:"frases",choices:["Iba a cocinar, pero tuve que trabajar.","Estaba en casa; quería descansar.","Fui al mercado porque necesitaba comida.","Estoy en casa y tengo que terminar un proyecto."]},
+  {kind:"listening",es:"Estaba en la oficina cuando me llamaste.",en:"I was at the office when you called me.",tts:"Estaba en la oficina cuando me llamaste.",cat:"frases",choices:["I was at the office when you called me.","I went to the market because I needed food.","I wanted to rest at home.","I was going to cook, but I had to work."]},
+  {kind:"tense",es:"¿Cuál frase describe una situación en progreso en el pasado?",en:"Estaba en casa cuando llamaste.",tts:"Estaba en casa cuando llamaste.",cat:"frases",choices:["Estaba en casa cuando llamaste.","Fui al mercado ayer.","Voy a cocinar esta noche.","Soy de Estados Unidos."]},
+  {kind:"meaning",es:"No podía ir porque estaba enfermo.",en:"I couldn't go because I was sick.",tts:"No podía ir porque estaba enfermo.",cat:"frases",choices:["I couldn't go because I was sick.","I had to work yesterday.","I was going to the market.","I wanted to cook dinner."]},
+  {kind:"reply",es:"¿Por qué no fuiste?",en:"No podía ir porque estaba enfermo.",tts:"¿Por qué no fuiste?",cat:"frases",choices:["No podía ir porque estaba enfermo.","Fui al mercado porque necesitaba comida.","Estaba en casa; quería descansar.","Iba a cocinar, pero tuve que trabajar."]},
+  {kind:"meaning",es:"¡No joda!",en:"No way! / Come on!",tts:"¡No joda!",cat:"groserias",choices:["No way! / Come on!","Darn, I'm late!","What a drag!","I don't give a fuck."]},
+  {kind:"meaning",es:"¡Juepucha, se me hizo tarde!",en:"Darn, I'm late!",tts:"¡Juepucha, se me hizo tarde!",cat:"groserias",choices:["Darn, I'm late!","What horrible traffic!","Don't be an idiot.","That's awesome!"]},
+  {kind:"meaning",es:"¡Qué gonorrea de tráfico!",en:"What horrible traffic!",tts:"¡Qué gonorrea de tráfico!",cat:"groserias",choices:["What horrible traffic!","What a drag!","No way! / Come on!","That guy is a jerk."]},
+  {kind:"meaning",es:"Ese man es un pirobo.",en:"That guy is a jerk.",tts:"Ese man es un pirobo.",cat:"groserias",choices:["That guy is a jerk.","That guy is very hardworking.","That guy is my friend.","That guy is late."]},
+  {kind:"meaning",es:"No sea güevón.",en:"Don't be an idiot.",tts:"No sea güevón.",cat:"groserias",choices:["Don't be an idiot.","Don't be late.","Don't be afraid.","Don't be formal."]},
+  {kind:"meaning",es:"¡Puta, se dañó el carro!",en:"Fuck, the car broke down.",tts:"¡Puta, se dañó el carro!",cat:"groserias",choices:["Fuck, the car broke down.","The car is very clean.","I am going to buy a car.","The car is nearby."]},
+  {kind:"meaning",es:"Me importa un culo.",en:"I don't give a fuck.",tts:"Me importa un culo.",cat:"groserias",choices:["I don't give a fuck.","I need a favor.","I care a lot.","I am very tired."]},
+  {kind:"meaning",es:"¡Ay, marica, qué susto!",en:"Dude, what a scare!",tts:"¡Ay, marica, qué susto!",cat:"groserias",choices:["Dude, what a scare!","Darn, I'm late!","What a delicious meal!","I am at the office."]},
+  {kind:"meaning",es:"Ese malparido me estafó.",en:"That bastard scammed me.",tts:"Ese malparido me estafó.",cat:"groserias",choices:["That bastard scammed me.","That friend helped me.","The driver called me.","I paid in cash."]}
 ];
 /* Tag the curated conversation bank so Focus can narrow it without removing
    the existing topic/category choices. */
@@ -1400,7 +1420,7 @@ CONVERSATION_QUIZ.forEach(q=>{
   const text=(q.es+" "+q.en).toLowerCase();
   if(q.kind==="pronoun")q.focus="pronombres";
   else if(/mañana|voy a|vas a|va a|vamos a|going to/.test(text))q.focus="future";
-  else if(/ayer|anoche|viví|trabajé|cené|hervimos|fue|seguí|yesterday|worked at|lived in/.test(text))q.focus="past";
+  else if(/ayer|anoche|fui|fuiste|fuimos|fueron|viví|trabajé|cené|hervimos|fue|seguí|estaba|estuve|era|tenía|tuve que|quería|necesitaba|podía|iba a|yesterday|worked at|lived in|was at|couldn't/.test(text))q.focus="past";
   else q.focus="present";
 });
 /* ── Fill-in-the-blank Quiz Data (NEW v13) ──────────────────────────────────
@@ -1545,6 +1565,17 @@ const APPROVED_VOCAB_BLANKS=[
   {kind:"blank",cat:"tv",es:"Estoy sentado en el ___ viendo una película.",en:"sofá",tts:"Estoy sentado en el sofá viendo una película.",trans:"I am sitting on the sofa watching a movie.",choices:["sofá","freno","archivo","azúcar"]},
   {kind:"blank",cat:"tv",es:"Necesito ___ después de trabajar.",en:"descansar",tts:"Necesito descansar después de trabajar.",trans:"I need to rest after working.",choices:["descansar","cuchara","contraseña","parqueadero"]}
 ];
+const CONVERSATION_FRAME_BLANKS=[
+  {kind:"blank",focus:"past",cat:"frases",es:"Ayer ___ al mercado.",en:"fui",tts:"Ayer fui al mercado.",trans:"Yesterday I went to the market.",choices:["fui","comí","dormí","hablé"]},
+  {kind:"blank",focus:"past",cat:"frases",es:"Cuando me llamaste, yo ___ en la oficina.",en:"estaba",tts:"Cuando me llamaste, yo estaba en la oficina.",trans:"When you called me, I was at the office.",choices:["estaba","fui","quería","tuve"]},
+  {kind:"blank",focus:"past",cat:"frases",es:"Antes ___ estudiante en Bogotá.",en:"era",tts:"Antes era estudiante en Bogotá.",trans:"Before, I was a student in Bogotá.",choices:["era","comí","dormí","hice"]},
+  {kind:"blank",focus:"past",cat:"frases",es:"Yo ___ a salir, pero empezó a llover.",en:"iba",tts:"Yo iba a salir, pero empezó a llover.",trans:"I was going to go out, but it started to rain.",choices:["iba","tuve","estaba","quería"]},
+  {kind:"blank",focus:"past",cat:"frases",es:"Ayer ___ que trabajar hasta tarde.",en:"tuve",tts:"Ayer tuve que trabajar hasta tarde.",trans:"Yesterday I had to work late.",choices:["tuve","fui","era","podía"]},
+  {kind:"blank",focus:"past",cat:"frases",es:"Yo ___ descansar, pero tenía una reunión.",en:"quería",tts:"Yo quería descansar, pero tenía una reunión.",trans:"I wanted to rest, but I had a meeting.",choices:["quería","fui","estuve","tuve"]},
+  {kind:"blank",focus:"past",cat:"frases",es:"___ ayuda para terminar el proyecto.",en:"necesitaba",tts:"Necesitaba ayuda para terminar el proyecto.",trans:"I needed help to finish the project.",choices:["necesitaba","estaba","fui","pude"]},
+  {kind:"blank",focus:"past",cat:"frases",es:"No ___ ir porque estaba enfermo.",en:"podía",tts:"No podía ir porque estaba enfermo.",trans:"I couldn't go because I was sick.",choices:["podía","era","tuve","fui"]}
+];
+FILL_BLANK_QUIZ.push(...CONVERSATION_FRAME_BLANKS);
 FILL_BLANK_QUIZ.push(...APPROVED_VOCAB_BLANKS);
 
 let aQ=[];
@@ -1556,13 +1587,13 @@ VC.forEach(cat=>{
   if(cat.type==="verbos")Object.entries(VERBS).forEach(([k,v])=>aQ.push({es:k,en:v.en,tts:k,cat:"verbos"}));
   if(cat.type==="colombianismos")COLOMBIANISMOS.forEach(c=>aQ.push({es:c.word,en:c.en,tts:c.tts,cat:"colombianismos"}));
 });
-FRASES.filter(sec=>sec.section).forEach(sec=>{if(sec.items){const isPron=/Pronombres/i.test(sec.section);sec.items.forEach(i=>aQ.push({es:i.es,en:i.en,tts:i.es,cat:isPron?"pronombres":"frases",focus:isPron?"pronombres":undefined}));}});
+FRASES.filter(sec=>sec.section).forEach(sec=>{if(sec.items){const isPron=/Pronombres/i.test(sec.section);const isBad=/Groserías/i.test(sec.section);sec.items.forEach(i=>aQ.push({es:i.es,en:i.en,tts:i.es,cat:isPron?"pronombres":isBad?"groserias":"frases",focus:isPron?"pronombres":undefined}));}});
 CONVERSATION_QUIZ.forEach(q=>aQ.push(q));
 FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
 /* Vocabulary examples remain in Vocab as full context. Only the authored
    prompts above enter Fill blank; generic example sentences stay out. */
 
-const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"direcciones",label:"Direcciones"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
+const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"groserias",label:"⚠️ Groserías"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"direcciones",label:"Direcciones"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
 const QUIZ_MODES=[
   {id:"mixed",label:"Mixed"},{id:"es-en",label:"ES → EN"},{id:"en-es",label:"EN → ES"},
   {id:"listening",label:"🎧 Listening"},{id:"blank",label:"✏️ Fill blank"},{id:"conversation",label:"💬 Conversation"}
