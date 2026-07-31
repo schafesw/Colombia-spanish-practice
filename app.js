@@ -161,6 +161,24 @@ rC();
 // ── Build Vocab ───────────────────────────────────────────────────────────────
 const VOCAB_CATS=VC.filter(cat=>cat.id!=="vocales");
 const VOCAB_LAST_KEY="esco-vocab-last-v1";
+const PRACTICE_KEY="esco-practice-v1";
+let practiceStore={vocab:{},phrases:{}};
+try{practiceStore=Object.assign(practiceStore,JSON.parse(localStorage.getItem(PRACTICE_KEY)||"{}"));practiceStore.vocab=practiceStore.vocab||{};practiceStore.phrases=practiceStore.phrases||{};}catch(e){practiceStore={vocab:{},phrases:{}};}
+function savePractice(){try{localStorage.setItem(PRACTICE_KEY,JSON.stringify(practiceStore));}catch(e){}}
+function practiceKey(value){return String(value||"").trim().toLowerCase();}
+function markPractice(type,value){const key=practiceKey(value);if(!key)return;const bucket=practiceStore[type]||(practiceStore[type]={});bucket[key]=(bucket[key]||0)+1;savePractice();}
+function practiced(type,value){return !!(practiceStore[type]&&practiceStore[type][practiceKey(value)]);}
+function practicedCount(type,values){return (values||[]).filter(v=>practiced(type,v)).length;}
+function vocabKeys(cat){
+  if(!cat)return [];
+  if(cat.type==="basic")return (cat.items||[]).map(i=>i.tts||i.word);
+  if(cat.type==="verbos")return Object.keys(VERBS);
+  if(cat.type==="numeros")return [...N130,...NT].map(n=>n.w);
+  if(cat.type==="preguntas")return PQ.map(p=>p.tts||p.word);
+  if(cat.type==="colombianismos")return COLOMBIANISMOS.map(c=>c.tts||c.word);
+  return [];
+}
+function phraseProgress(items){return practicedCount("phrases",[...new Set((items||[]).map(i=>i.es))]);}
 const vocabHome=document.getElementById("vocab-home");
 const vocabHomeJump=document.getElementById("vocab-home-jump");
 const vocabJumpHome=document.getElementById("vocab-jump-home");
@@ -171,6 +189,8 @@ const vocabJump=document.getElementById("vocab-jump");
 const vocabPosition=document.getElementById("vocab-position");
 const vocabPrev=document.getElementById("vocab-prev");
 const vocabNext=document.getElementById("vocab-next");
+const vocabSearch=document.getElementById("vocab-search");
+const vocabSearchView=document.getElementById("vocab-search-view");
 let aC="gustos";
 try{aC=localStorage.getItem(VOCAB_LAST_KEY)||aC;}catch(e){}
 if(!VOCAB_CATS.some(cat=>cat.id===aC))aC=VOCAB_CATS.some(cat=>cat.id==="gustos")?"gustos":(VOCAB_CATS[0]?.id||"");
@@ -198,7 +218,8 @@ function vocabCount(cat){
 }
 function vocabCard(cat,tag){
   const b=document.createElement("button");b.type="button";b.className="vocab-home-card";
-  b.innerHTML=`<span class="vocab-home-card-title">${cat.label}</span><span class="vocab-home-card-meta">${vocabCount(cat)} ${tag||"words"} <span>›</span></span>`;
+  const total=vocabCount(cat),done=practicedCount("vocab",vocabKeys(cat));
+  b.innerHTML=`<span class="vocab-home-card-title">${cat.label}</span><span class="vocab-home-card-meta">${total} ${tag||"words"} · ${done} practiced <span>›</span></span>`;
   b.onclick=()=>sCat(cat.id);return b;
 }
 function renderVocabHome(){
@@ -226,9 +247,10 @@ function renderVocabHome(){
 }
 function showVocabHome(){
   hideVerbDetail();
+  if(vocabSearchView)vocabSearchView.hidden=true;
   vocabHomeJump.hidden=false;vocabHome.hidden=false;vocabCategoryView.hidden=true;renderVocabHome();
 }
-function showVocabCategory(){vocabHomeJump.hidden=true;vocabHome.hidden=true;vocabCategoryView.hidden=false;}
+function showVocabCategory(){if(vocabSearchView)vocabSearchView.hidden=true;vocabHomeJump.hidden=true;vocabHome.hidden=true;vocabCategoryView.hidden=false;}
 function updateVocabNav(){
   const i=VOCAB_CATS.findIndex(c=>c.id===aC);
   if(i<0)return;
@@ -242,6 +264,23 @@ function sCat(id){
   aC=id;try{localStorage.setItem(VOCAB_LAST_KEY,aC);}catch(e){}
   showVocabCategory();updateVocabNav();hideVerbDetail();rV();document.querySelector(".scroll").scrollTop=0;
 }
+function renderVocabSearch(term){
+  if(!vocabSearchView)return;
+  const q=String(term||"").trim().toLowerCase();
+  if(!q){showVocabHome();return;}
+  vocabHomeJump.hidden=true;vocabHome.hidden=true;vocabCategoryView.hidden=true;vocabSearchView.hidden=false;vocabSearchView.innerHTML="";
+  const head=document.createElement("div");head.className="search-results-head";head.innerHTML=`<strong>Search results</strong><span>${q}</span>`;vocabSearchView.appendChild(head);
+  const rows=[];
+  VOCAB_CATS.forEach(cat=>{
+    if(cat.type==="basic")(cat.items||[]).forEach(item=>{if((item.word+" "+item.en).toLowerCase().includes(q))rows.push({word:item.word,en:item.en,tts:item.tts||item.word,cat:cat.label});});
+    if(cat.type==="verbos")Object.entries(VERBS).forEach(([word,v])=>{if((word+" "+v.en).toLowerCase().includes(q))rows.push({word,en:v.en,tts:word,cat:cat.label});});
+    if(cat.type==="colombianismos")COLOMBIANISMOS.forEach(item=>{if((item.word+" "+item.en+" "+item.usage+" "+item.example).toLowerCase().includes(q))rows.push({word:item.word,en:item.en,tts:item.tts||item.word,cat:cat.label,usage:item.usage,example:item.example});});
+  });
+  if(!rows.length){vocabSearchView.appendChild(lpEl("search-empty","No vocabulary matches yet. Try a Spanish or English word."));return;}
+  rows.slice(0,80).forEach(row=>{const card=document.createElement("button");card.type="button";card.className="search-result-card";card.innerHTML=`<span><strong>${escapeVocabHtml(row.word)}</strong><small>${escapeVocabHtml(row.en)}</small>${row.usage?`<em>${escapeVocabHtml(row.usage)}</em>`:""}${row.example?`<small>💬 ${escapeVocabHtml(row.example)}</small>`:""}</span><span>🔊</span>`;card.onclick=()=>{markPractice("vocab",row.tts);speak(row.tts,0.75);};vocabSearchView.appendChild(card);});
+  if(rows.length>80)vocabSearchView.appendChild(lpEl("search-empty",`Showing 80 of ${rows.length} matches.`));
+}
+if(vocabSearch)vocabSearch.oninput=()=>renderVocabSearch(vocabSearch.value);
 function escapeVocabHtml(value){return String(value||"").replace(/[&<>\"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;"}[ch]));}
 function getVocabExample(item,catId,index){
   const raw=item.example||(VOCAB_EXAMPLES[catId]||[])[index];
@@ -257,7 +296,7 @@ function addVocabExample(card,item,catId,index){
   panel.innerHTML=`<div class="vc-example-label">In context</div><div class="vc-example-es">${escapeVocabHtml(ex.es)}</div><div class="vc-example-en">${escapeVocabHtml(ex.en)}</div><button type="button" class="vc-example-speak">🔊 Hear the sentence</button>`;
   toggle.onclick=event=>{event.stopPropagation();const open=panel.hidden;panel.hidden=!open;toggle.classList.toggle("open",open);toggle.setAttribute("aria-expanded",String(open));};
   panel.onclick=event=>event.stopPropagation();
-  panel.querySelector(".vc-example-speak").onclick=event=>{event.stopPropagation();speak(ex.tts||ex.es,0.75);};
+  panel.querySelector(".vc-example-speak").onclick=event=>{event.stopPropagation();markPractice("vocab",item.tts||item.word);speak(ex.tts||ex.es,0.75);};
   card.appendChild(toggle);card.appendChild(panel);
 }
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -384,6 +423,7 @@ function attachMic(container,target){
 
 function rV(){
   const cat=VC.find(c=>c.id===aC);const list=document.getElementById("vocab-list");list.innerHTML="";
+  const keys=vocabKeys(cat);if(keys.length){const done=practicedCount("vocab",keys);const p=document.createElement("div");p.className="vocab-progress";p.innerHTML=`<strong>${done} of ${keys.length} practiced</strong> · Tap a word or record yourself to count it.<div class="vocab-progress-track"><div class="vocab-progress-fill" style="width:${Math.round(done/keys.length*100)}%"></div></div>`;list.appendChild(p);}
   if(cat.type==="vocales"){rVocales(list);return;}
   if(cat.type==="numeros"){rN(list);return;}
   if(cat.type==="preguntas"){rP(list);return;}
@@ -394,7 +434,7 @@ function rV(){
     card.innerHTML=`<div class="vc-icon" style="background:${item.color}22;color:${item.color}">${item.icon}</div>
       <div class="vc-info"><div class="vc-word">${item.word}</div><div class="vc-en">${item.en}</div><div class="vc-ph">${item.ph}</div></div>
       <span class="vc-spk">🔊</span>`;
-    card.onclick=()=>speak(item.tts,0.75);
+    card.onclick=()=>{markPractice("vocab",item.tts||item.word);speak(item.tts||item.word,0.75);};
     addVocabExample(card,item,cat.id,index);attachMic(card,item.tts||item.word);list.appendChild(card);
   });
 }
@@ -427,7 +467,7 @@ function rVerbos(list){
     card.innerHTML=`<div class="vc-icon" style="background:${verb.color}22;color:${verb.color}">${verb.icon}</div>
       <div class="vc-info"><div class="vc-word" style="color:${verb.color}">${key}</div><div class="vc-en">${verb.en}</div><div class="vc-ph" style="color:${verb.color}">${verb.type}</div></div>
       <span class="vc-arrow">›</span>`;
-    card.onclick=()=>showVerbDetail(key,verb);list.appendChild(card);});
+    card.onclick=()=>{markPractice("vocab",key);showVerbDetail(key,verb);};list.appendChild(card);});
 }
 
 function rCol(list){
@@ -442,7 +482,7 @@ function rCol(list){
       <div class="col-word-wrap"><div class="col-word">${item.word}</div><div class="col-en">${item.en}</div></div>
       <span class="col-spk">🔊</span></div>
       <div class="col-usage">${item.usage}<div class="col-example">💬 ${item.example}</div></div>`;
-    card.onclick=()=>speak(item.tts,0.75);list.appendChild(card);});
+    card.onclick=()=>{markPractice("vocab",item.tts||item.word);speak(item.tts||item.word,0.75);};list.appendChild(card);});
 }
 
 function rN(list){
@@ -556,6 +596,7 @@ const PHRASE_DIALOGUES=[
     return {title,preview:versions[0].lines[0].es,en:"Ahora · Planes · Ayer",versions};
   })
 ];
+let fraseSearchTerm="";
 const TENSE_BADGE={
   "Ahora":{txt:"⚡ Ahora · presente",css:"color:var(--teal);background:rgba(74,168,160,0.12);border:1px solid rgba(74,168,160,0.25)"},
   "Planes":{txt:"⏭️ Planes · voy a...",css:"color:var(--blue);background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.25)"},
@@ -587,12 +628,15 @@ function renderFraseMenu(){
   };
   jump.appendChild(sel);
   fl.appendChild(jump);
+  const search=document.createElement("input");search.type="search";search.className="content-search";search.placeholder="🔎 Search phrases or conversation lines…";search.setAttribute("aria-label","Search phrases");search.value=fraseSearchTerm;
+  const results=document.createElement("div");results.className="search-results";fl.appendChild(search);fl.appendChild(results);
   const h1=document.createElement("div");h1.className="fr-home-label";h1.textContent="💬 Conversations · practice both sides";
   fl.appendChild(h1);
   const g1=document.createElement("div");g1.className="fr-home-grid";
   PHRASE_DIALOGUES.forEach(d=>{
     const c=document.createElement("button");c.type="button";c.className="fr-home-card";
-    c.innerHTML=`<div class="fr-card-title">${d.title}</div><div class="fr-card-sub">${d.en||""}</div><div class="fr-card-meta">${(d.versions||[]).length} tenses ›</div>`;
+    const lines=[...(d.versions||[]).flatMap(v=>v.lines||[])];
+    c.innerHTML=`<div class="fr-card-title">${d.title}</div><div class="fr-card-sub">${d.en||""}</div><div class="fr-card-meta">${(d.versions||[]).length} tenses · ${phraseProgress(lines)} practiced ›</div>`;
     c.onclick=()=>renderFraseDialogue(d);
     g1.appendChild(c);
   });
@@ -607,11 +651,21 @@ function renderFraseMenu(){
   sections.forEach((s,i)=>{
     const meta=fraseSectionMeta(s);
     const c=document.createElement("button");c.type="button";c.className="fr-home-card fr-col";
-    c.innerHTML=`<div class="fr-card-icon">${meta.icon}</div><div class="fr-card-title">${meta.name}</div><div class="fr-card-meta">${(s.items||[]).length} phrases ›</div>`;
+    c.innerHTML=`<div class="fr-card-icon">${meta.icon}</div><div class="fr-card-title">${meta.name}</div><div class="fr-card-meta">${(s.items||[]).length} phrases · ${phraseProgress(s.items)} practiced ›</div>`;
     c.onclick=()=>renderFraseSection(i);
     g2.appendChild(c);
   });
   fl.appendChild(g2);
+  const blocks=[h1,g1,h2,g2];
+  function refreshPhraseSearch(){
+    const q=fraseSearchTerm.trim().toLowerCase();const active=!!q;blocks.forEach(el=>{el.hidden=active;});results.innerHTML="";results.hidden=!active;if(!active)return;
+    const matches=[];
+    PHRASE_DIALOGUES.forEach(d=>(d.versions||[]).forEach(v=>(v.lines||[]).forEach(line=>{if((line.es+" "+line.en).toLowerCase().includes(q))matches.push({title:d.title,kind:"dialogue",line,dialogue:d,tense:v.tense});})));
+    sections.forEach((s,i)=>(s.items||[]).forEach(item=>{if((item.es+" "+item.en).toLowerCase().includes(q))matches.push({title:s.section,kind:"section",item,index:i});}));
+    if(!matches.length){results.appendChild(lpEl("search-empty","No phrase matches yet. Try a Spanish or English word."));return;}
+    matches.slice(0,80).forEach(m=>{const card=document.createElement("button");card.type="button";card.className="search-result-card";if(m.kind==="dialogue"){card.innerHTML=`<span><strong>${escapeVocabHtml(m.line.es)}</strong><small>${escapeVocabHtml(m.line.en)}</small><em>💬 ${escapeVocabHtml(m.title)}</em></span><span>›</span>`;card.onclick=()=>renderFraseDialogue(m.dialogue,m.tense);}else{card.innerHTML=`<span><strong>${escapeVocabHtml(m.item.es)}</strong><small>${escapeVocabHtml(m.item.en)}</small><em>📋 ${escapeVocabHtml(m.title)}</em></span><span>🔊</span>`;card.onclick=()=>renderFraseSection(m.index);}results.appendChild(card);});
+  }
+  search.oninput=()=>{fraseSearchTerm=search.value;refreshPhraseSearch();};refreshPhraseSearch();
 }
 function renderFraseSection(idx){
   fl.dataset.view="section";
@@ -641,7 +695,7 @@ function renderFraseSection(idx){
   sec.items.forEach(item=>{
     const card=document.createElement("div");card.className="frase-card";
     card.innerHTML=`<div class="frase-txt"><div class="f-es">${item.es}</div><div class="f-en">${item.en}</div></div><span class="f-spk">🔊</span>`;
-    card.onclick=()=>speak(item.es,0.75);
+    card.onclick=()=>{markPractice("phrases",item.es);speak(item.es,0.75);};
     attachMic(card,item.es);
     wrap.appendChild(card);
   });
@@ -703,9 +757,10 @@ function renderFraseDialogue(dialogue,tense){
       row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${line.who}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
       const bub=row.querySelector(".dlg-bubble");
       bubbles.push({who:line.who,el:bub});
-      bub.onclick=()=>{
-        if(bub.classList.contains("dlg-hidden"))bub.classList.remove("dlg-hidden");
-        speak(line.tts,0.75);
+       bub.onclick=()=>{
+         if(bub.classList.contains("dlg-hidden"))bub.classList.remove("dlg-hidden");
+         markPractice("phrases",line.es);
+         speak(line.tts,0.75);
       };
       attachMic(row,line.tts);
       box.appendChild(row);
@@ -966,6 +1021,7 @@ const RR_BANK=[];
 })();
 let rrTimer=null,rrCurrent=null,rrSession=0,rrPromptToken=0;
 let rrRecorder=null,rrStream=null,rrChunks=[],rrUrl=null,rrSilenceTimer=null,rrMaxTimer=null,rrAudioContext=null,rrAnalyser=null,rrRated=false;
+const RR_THINK_SECONDS=8;
 const RR_STATS_KEY="esco-rapid-stats-v1";
 let rrStats={attempts:0,got:0,practice:0,skipped:0};
 try{rrStats=Object.assign(rrStats,JSON.parse(localStorage.getItem(RR_STATS_KEY)||"{}"));}catch(e){}
@@ -1058,7 +1114,7 @@ function renderRapida(keepSame){
   card.appendChild(lpEl("rr-qen",rrCurrent.qEn||""));
   const cd=lpEl("rr-countdown","🎧");
   card.appendChild(cd);
-  card.appendChild(lpEl("lp-hint","🗣️ Answer OUT LOUD — any answer that fits. First you get 7 seconds to think, then your microphone starts automatically."));
+  card.appendChild(lpEl("lp-hint",`🗣️ Answer OUT LOUD — any answer that fits. You get ${RR_THINK_SECONDS} seconds to think, then your microphone starts automatically.`));
   const controls=lpEl("lp-nav");
   const repeatBtn=document.createElement("button");repeatBtn.type="button";repeatBtn.className="lp-nav-btn";repeatBtn.textContent="🔁 Repeat question";
   repeatBtn.onclick=()=>renderRapida(true);
@@ -1069,11 +1125,11 @@ function renderRapida(keepSame){
   card.appendChild(controls);
   const recNote=lpEl("rr-recording-note","After the countdown, recording starts automatically.");recNote.className="rr-recording-note";card.appendChild(recNote);
   root.appendChild(card);
-  let n=7;
+  let n=RR_THINK_SECONDS;
   cd.textContent=String(n);
   const startCountdown=()=>{
     if(promptToken!==rrPromptToken)return;
-    n=7;
+    n=RR_THINK_SECONDS;
     cd.textContent=String(n);
     rrTimer=setInterval(()=>{
       n--;
@@ -1132,6 +1188,32 @@ function rrRate(kind){
   if(status)status.textContent=kind==="got"?"Nice — keep that response available for real conversation.":kind==="practice"?"Good choice. Try the same question again and say it a little more smoothly.":"No problem. Listen to the model, then take the next question when ready.";
 }
 
+/* v34 spaced repetition: due dates replace the old forever-missed weighting. */
+const SRS_KEY="esco-srs-v1";
+let srsStore={};
+try{srsStore=JSON.parse(localStorage.getItem(SRS_KEY)||"{}");if(!srsStore||typeof srsStore!=="object")srsStore={};}catch(e){srsStore={};}
+const SRS_INTERVALS=[1,3,7,14,30];
+function saveSrs(){try{localStorage.setItem(SRS_KEY,JSON.stringify(srsStore));}catch(e){}}
+function srsDue(key){const card=srsStore[key];return !!card&&(!card.due||card.due<=Date.now());}
+function srsDueCount(){return Object.keys(srsStore).filter(srsDue).length;}
+function recordSrs(key,correct){const card=srsStore[key]||{reps:0,interval:0,lapses:0,due:0};if(correct){card.reps=(card.reps||0)+1;card.interval=Math.min((card.interval||0)+1,SRS_INTERVALS.length);card.due=Date.now()+SRS_INTERVALS[card.interval-1]*86400000;}else{card.lapses=(card.lapses||0)+1;card.reps=0;card.interval=0;card.due=Date.now()+86400000;}srsStore[key]=card;saveSrs();}
+const MISSION_KEY="esco-mission-progress-v1";
+let missionProgress={};
+try{missionProgress=JSON.parse(localStorage.getItem(MISSION_KEY)||"{}");if(!missionProgress||typeof missionProgress!=="object")missionProgress={};}catch(e){missionProgress={};}
+function saveMissions(){try{localStorage.setItem(MISSION_KEY,JSON.stringify(missionProgress));}catch(e){}}
+function renderMission(mission){
+  if(typeof rrStop==="function")rrStop();
+  const root=document.getElementById("lesson-list");if(!root)return;root.innerHTML="";
+  const back=document.createElement("button");back.type="button";back.className="phrase-back";back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=renderLessons;root.appendChild(back);
+  const card=lpEl("lp-card mission-card");card.appendChild(lpEl("lp-step-title","🗣️ Conversation mission"));card.appendChild(lpEl("mission-title",mission.title));card.appendChild(lpEl("mission-scenario",mission.scenario));card.appendChild(lpEl("mission-prompt",mission.prompt));
+  const say=lpEl("mission-say","Answer out loud before looking at the examples.");card.appendChild(say);
+  const reveal=document.createElement("button");reveal.type="button";reveal.className="lp-nav-btn primary";reveal.textContent="👀 Reveal natural answers";
+  const models=document.createElement("div");models.className="mission-models";models.hidden=true;
+  reveal.onclick=()=>{say.textContent="Compare your idea with these natural Colombian answers:";reveal.remove();models.hidden=false;};card.appendChild(reveal);
+  (mission.models||[]).forEach((m,i)=>{const row=document.createElement("div");row.className="mission-model";row.innerHTML=`<div class="mission-model-label">Natural option ${i+1}</div><div class="mission-model-es">${escapeVocabHtml(m.es)}</div><div class="mission-model-en">${escapeVocabHtml(m.en)}</div>`;row.onclick=()=>{markPractice("phrases",m.es);speak(m.tts||m.es,0.75);};attachMic(row,m.es);models.appendChild(row);});
+  card.appendChild(models);
+  const done=document.createElement("button");done.type="button";done.className="lesson-start";done.textContent=missionProgress[mission.id]?"✅ Mission completed — practice again":"✅ I answered out loud";done.onclick=()=>{missionProgress[mission.id]=true;saveMissions();renderMission(mission);};card.appendChild(done);root.appendChild(card);
+}
 function renderLessons(){
   const root=document.getElementById("lesson-list");if(!root)return;
   if(lpLesson){renderLessonStep();return;}
@@ -1162,8 +1244,8 @@ function renderLessons(){
   cont.innerHTML=`<div class="continue-title">${cTitle}</div><div class="continue-sub">${cSub}</div>`;
   if(cAction){cont.onclick=cAction;cont.classList.add("tappable");}
   root.appendChild(cont);
-  let missedCount=0;
-  try{const s=JSON.parse(localStorage.getItem("esco-quiz-v1")||"{}");missedCount=s.missed?Object.keys(s.missed).length:0;}catch(e){}
+  let missedCount=srsDueCount();
+  if(!missedCount){try{const s=JSON.parse(localStorage.getItem("esco-quiz-v1")||"{}");missedCount=s.missed?Object.keys(s.missed).length:0;}catch(e){}}
   /* Daily practice — one compact row (v22) */
   const daily=document.createElement("div");daily.className="daily-row";
   const dr1=document.createElement("button");dr1.type="button";dr1.className="daily-card";
@@ -1174,6 +1256,11 @@ function renderLessons(){
   dr2.onclick=()=>{rrSession=0;renderRapida(false);};
   daily.appendChild(dr1);daily.appendChild(dr2);
   root.appendChild(daily);
+
+  const missionLabel=document.createElement("div");missionLabel.className="fr-home-label";missionLabel.textContent=`🗣️ Conversation missions · ${Object.keys(missionProgress).length}/${CONVERSATION_MISSIONS.length} completed`;root.appendChild(missionLabel);
+  const missionGrid=document.createElement("div");missionGrid.className="mission-grid";
+  CONVERSATION_MISSIONS.forEach(m=>{const b=document.createElement("button");b.type="button";b.className="mission-home-card";b.innerHTML=`<span class="mission-home-icon">${missionProgress[m.id]?"✅":"🗣️"}</span><span class="mission-home-copy"><strong>${m.title}</strong><small>${m.scenario}</small></span>`;b.onclick=()=>renderMission(m);missionGrid.appendChild(b);});
+  root.appendChild(missionGrid);
 
   /* Lessons grouped into a speaking-first progression */
   const LESSON_STAGES=[
@@ -1215,7 +1302,7 @@ function renderLessons(){
   root.appendChild(bkLabel);
   /* Backup / restore progress (v17) */
   const bk=document.createElement("div");bk.className="backup-row";
-  const BK_KEYS=["esco-quiz-v1","esco-lesson-progress-v1","esco-days-v1"];
+  const BK_KEYS=["esco-quiz-v1","esco-srs-v1","esco-lesson-progress-v1","esco-mission-progress-v1","esco-practice-v1","esco-days-v1"];
   const b1=document.createElement("button");b1.type="button";b1.className="backup-btn";b1.textContent="💾 Copy backup";
   b1.onclick=()=>{
     const data={};BK_KEYS.forEach(k=>{const v=localStorage.getItem(k);if(v)data[k]=v;});
@@ -1411,7 +1498,15 @@ const CONVERSATION_QUIZ=[
   {kind:"meaning",es:"¡Puta, se dañó el carro!",en:"Fuck, the car broke down.",tts:"¡Puta, se dañó el carro!",cat:"groserias",choices:["Fuck, the car broke down.","The car is very clean.","I am going to buy a car.","The car is nearby."]},
   {kind:"meaning",es:"Me importa un culo.",en:"I don't give a fuck.",tts:"Me importa un culo.",cat:"groserias",choices:["I don't give a fuck.","I need a favor.","I care a lot.","I am very tired."]},
   {kind:"meaning",es:"¡Ay, marica, qué susto!",en:"Dude, what a scare!",tts:"¡Ay, marica, qué susto!",cat:"groserias",choices:["Dude, what a scare!","Darn, I'm late!","What a delicious meal!","I am at the office."]},
-  {kind:"meaning",es:"Ese malparido me estafó.",en:"That bastard scammed me.",tts:"Ese malparido me estafó.",cat:"groserias",choices:["That bastard scammed me.","That friend helped me.","The driver called me.","I paid in cash."]}
+  {kind:"meaning",es:"Ese malparido me estafó.",en:"That bastard scammed me.",tts:"Ese malparido me estafó.",cat:"groserias",choices:["That bastard scammed me.","That friend helped me.","The driver called me.","I paid in cash."]},
+  {kind:"meaning",es:"Tengo que terminar el proyecto.",en:"I have to finish the project.",tts:"Tengo que terminar el proyecto.",cat:"frases",choices:["I have to finish the project.","I just finished the project.","I forgot the project.","I sent the project to her."]},
+  {kind:"meaning",es:"Acabo de llegar.",en:"I just arrived.",tts:"Acabo de llegar.",cat:"frases",choices:["I just arrived.","I am going to leave.","I have to arrive tomorrow.","I arrived yesterday."]},
+  {kind:"meaning",es:"Se me olvidó la dirección.",en:"I forgot the address.",tts:"Se me olvidó la dirección.",cat:"frases",choices:["I forgot the address.","I have the address.","I sent the address.","I need the address."]},
+  {kind:"meaning",es:"Se lo mando en un momento.",en:"I will send it to him/her in a moment.",tts:"Se lo mando en un momento.",cat:"frases",choices:["I will send it to him/her in a moment.","I sent her the address yesterday.","I need to send it to myself.","I am going to buy it."]},
+  {kind:"pronoun",es:"¿Tienes el documento? Sí, ___ tengo aquí.",en:"lo",tts:"¿Tienes el documento? Sí, lo tengo aquí.",cat:"pronombres",choices:["lo","la","le","las"]},
+  {kind:"pronoun",es:"¿Tienes la llave? Sí, ___ tengo aquí.",en:"la",tts:"¿Tienes la llave? Sí, la tengo aquí.",cat:"pronombres",choices:["la","lo","le","los"]},
+  {kind:"pronoun",es:"¿Le mandaste el mensaje? Sí, ___ mandé ayer.",en:"se lo",tts:"¿Le mandaste el mensaje? Sí, se lo mandé ayer.",cat:"pronombres",choices:["se lo","se la","lo le","la se"]},
+  {kind:"pronoun",es:"¿Le explicaste la situación? Sí, ___ expliqué despacio.",en:"se la",tts:"¿Le explicaste la situación? Sí, se la expliqué despacio.",cat:"pronombres",choices:["se la","se lo","la le","lo se"]}
 ];
 /* Tag the curated conversation bank so Focus can narrow it without removing
    the existing topic/category choices. */
@@ -1575,7 +1670,18 @@ const CONVERSATION_FRAME_BLANKS=[
   {kind:"blank",focus:"past",cat:"frases",es:"___ ayuda para terminar el proyecto.",en:"necesitaba",tts:"Necesitaba ayuda para terminar el proyecto.",trans:"I needed help to finish the project.",choices:["necesitaba","estaba","fui","pude"]},
   {kind:"blank",focus:"past",cat:"frases",es:"No ___ ir porque estaba enfermo.",en:"podía",tts:"No podía ir porque estaba enfermo.",trans:"I couldn't go because I was sick.",choices:["podía","era","tuve","fui"]}
 ];
+const PRONOUN_FRAME_BLANKS=[
+  {kind:"blank",focus:"pronombres",cat:"pronombres",es:"¿Tienes el documento? Sí, ___ tengo aquí.",en:"lo",tts:"¿Tienes el documento? Sí, lo tengo aquí.",trans:"Do you have the document? Yes, I have it here.",choices:["lo","la","le","las"]},
+  {kind:"blank",focus:"pronombres",cat:"pronombres",es:"¿Tienes la llave? Sí, ___ tengo aquí.",en:"la",tts:"¿Tienes la llave? Sí, la tengo aquí.",trans:"Do you have the key? Yes, I have it here.",choices:["la","lo","le","los"]},
+  {kind:"blank",focus:"pronombres",cat:"pronombres",es:"Le expliqué el problema: ___ expliqué despacio.",en:"se lo",tts:"Le expliqué el problema: se lo expliqué despacio.",trans:"I explained the problem to him/her: I explained it slowly.",choices:["se lo","se la","lo le","la se"]},
+  {kind:"blank",focus:"pronombres",cat:"pronombres",es:"Le mandé la ubicación: ___ mandé por mensaje.",en:"se la",tts:"Le mandé la ubicación: se la mandé por mensaje.",trans:"I sent him/her the location: I sent it by message.",choices:["se la","se lo","la le","lo se"]},
+  {kind:"blank",focus:"present",cat:"frases",es:"___ llegar a casa.",en:"Acabo de",tts:"Acabo de llegar a casa.",trans:"I just arrived home.",choices:["Acabo de","Tengo que","Voy a","Se me"]},
+  {kind:"blank",focus:"present",cat:"frases",es:"___ terminar el proyecto hoy.",en:"Tengo que",tts:"Tengo que terminar el proyecto hoy.",trans:"I have to finish the project today.",choices:["Tengo que","Acabo de","Se me","Lo"]},
+  {kind:"blank",focus:"present",cat:"frases",es:"___ olvidó la dirección.",en:"Se me",tts:"Se me olvidó la dirección.",trans:"I forgot the address.",choices:["Se me","Tengo que","Acabo de","La"]},
+  {kind:"blank",focus:"present",cat:"frases",es:"___ mando en un momento.",en:"Se lo",tts:"Se lo mando en un momento.",trans:"I will send it to him/her in a moment.",choices:["Se lo","Lo se","La le","Me la"]}
+];
 FILL_BLANK_QUIZ.push(...CONVERSATION_FRAME_BLANKS);
+FILL_BLANK_QUIZ.push(...PRONOUN_FRAME_BLANKS);
 FILL_BLANK_QUIZ.push(...APPROVED_VOCAB_BLANKS);
 
 let aQ=[];
@@ -1609,6 +1715,7 @@ const FOCUS_MODES=new Set(["mixed","blank","conversation"]);
 const QS_KEY="esco-quiz-v1";
 let qStore={c:0,t:0,s:0,missed:{}};
 try{const raw=localStorage.getItem(QS_KEY);if(raw)qStore=Object.assign(qStore,JSON.parse(raw));}catch(e){}
+if(!Object.keys(srsStore).length&&qStore.missed){Object.keys(qStore.missed).forEach(key=>{srsStore[key]={reps:0,interval:0,lapses:0,due:Date.now()};});saveSrs();}
 function saveQ(){try{localStorage.setItem(QS_KEY,JSON.stringify(qStore));}catch(e){}}
 let repasoLeft=0;
 let qCat="all",qMode="mixed",qFocus="all",qC=qStore.c||0,qT=qStore.t||0,qS=qStore.s||0,cQ=null,an=false;
@@ -1626,7 +1733,7 @@ document.getElementById("q-streak").textContent="🔥 "+qS;
   btn.type="button";btn.className="quiz-reset";
   btn.textContent="↺";btn.title="Reiniciar puntaje";btn.setAttribute("aria-label","Reiniciar puntaje");
   btn.onclick=()=>{
-    qC=0;qT=0;qS=0;repasoLeft=0;qStore={c:0,t:0,s:0,missed:{}};saveQ();
+    qC=0;qT=0;qS=0;repasoLeft=0;qStore={c:0,t:0,s:0,missed:{}};srsStore={};saveQ();saveSrs();
     resetQuizRound();
     document.getElementById("q-correct").textContent=0;
     document.getElementById("q-total").textContent=0;
@@ -1705,11 +1812,11 @@ function nQ(){
   if(!unseen.length){qRoundSeen.clear();unseen=base;}
   /* Missed questions can repeat during an explicit Repaso session. In a
      normal round, only unseen missed questions receive extra weighting. */
-  const missedAll=base.filter(q=>qStore.missed&&qStore.missed[q.es+"|"+q.answer]);
-  const missedPool=unseen.filter(q=>qStore.missed&&qStore.missed[q.es+"|"+q.answer]);
-  let pickFrom;
-  if(repasoLeft>0&&missedAll.length){pickFrom=missedAll;repasoLeft--;}
-  else{if(repasoLeft>0)repasoLeft=0;pickFrom=(missedPool.length&&Math.random()<0.35)?missedPool:unseen;}
+   const dueAll=base.filter(q=>srsDue(q.es+"|"+q.answer));
+   const duePool=unseen.filter(q=>srsDue(q.es+"|"+q.answer));
+   let pickFrom;
+   if(repasoLeft>0&&dueAll.length){pickFrom=dueAll;repasoLeft--;}
+   else{if(repasoLeft>0)repasoLeft=0;pickFrom=(duePool.length&&Math.random()<0.7)?duePool:unseen;}
   cQ=pickFrom[Math.floor(Math.random()*pickFrom.length)];
   qRoundSeen.add(cQ.es+"|"+cQ.answer);
   /* Listening questions must not show the Spanish text — hide it and auto-play */
@@ -1725,9 +1832,9 @@ function nQ(){
     b.onclick=()=>{if(an)return;an=true;qT++;document.getElementById("q-total").textContent=qT;
       const fb=document.getElementById("quiz-fb");
       const mk=cQ.es+"|"+cQ.answer;
-      if(opt.answer===cQ.answer){b.classList.add("correct");qC++;qS++;document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.textContent="✅ ¡Correcto!";fb.style.color="var(--teal)";speak(cQ.tts,0.75);
+       if(opt.answer===cQ.answer){b.classList.add("correct");qC++;qS++;recordSrs(mk,true);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.textContent="✅ ¡Correcto!";fb.style.color="var(--teal)";speak(cQ.tts,0.75);
         if(qStore.missed[mk]){qStore.missed[mk]--;if(qStore.missed[mk]<=0)delete qStore.missed[mk];}}
-      else{b.classList.add("wrong");qS=0;document.getElementById("q-streak").textContent="🔥 0";fb.textContent="❌ Incorrecto";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(x.textContent===cQ.answer)x.classList.add("reveal");});
+       else{b.classList.add("wrong");qS=0;recordSrs(mk,false);document.getElementById("q-streak").textContent="🔥 0";fb.textContent="❌ Incorrecto";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(x.textContent===cQ.answer)x.classList.add("reveal");});
         qStore.missed[mk]=(qStore.missed[mk]||0)+2;}
       document.getElementById("quiz-reveal").innerHTML=`<div>🇨🇴 <strong>${spanishAnswer(cQ)}</strong></div><div>🇺🇸 ${englishAnswer(cQ)}</div>`;
       attachMic(document.getElementById("quiz-reveal"),spanishAnswer(cQ));
@@ -1777,6 +1884,7 @@ function runDataValidator(){
       if(l.quizCat!=="all"&&!aQ.some(q=>q.cat===l.quizCat))issues.push('Lesson "'+l.id+'": quiz category "'+l.quizCat+'" is empty');
       if(typeof LESSON_CONTENT!=="undefined"&&!LESSON_CONTENT[l.id])issues.push('Lesson "'+l.id+'": no LESSON_CONTENT entry');
     });
+    CONVERSATION_MISSIONS.forEach(m=>{if(!m.id||!m.scenario||!m.prompt||!Array.isArray(m.models)||m.models.length<2)issues.push('Mission "'+(m.id||"?")+'": missing scenario, prompt, or model answers');});
     CONVERSATIONS.forEach(c=>c.lines.forEach(L=>{if(!L.tts)issues.push('Conversation "'+c.title+'" ('+c.tense+'): line missing tts');}));
     FRASES.forEach(s=>{if(s.id&&s.section)issues.push('FRASES "'+s.id+'": has BOTH id and section (breaks hybrid filters)');});
   }catch(e){issues.push("Validator crashed: "+e.message);}
