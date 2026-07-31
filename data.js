@@ -15,6 +15,22 @@ const X_EXAMPLES=[
   {word:"Examen",ph:"ek-SAH-men",tts:"examen",en:"exam"},
   {word:"Éxito",ph:"EK-see-toh",tts:"éxito",en:"success"},
 ];
+/* Special spelling patterns: these need their own lesson because a simple
+   consonant + vowel grid cannot show the silent U or the dieresis clearly. */
+const SPECIAL_SOUNDS=[
+  {id:"ge-gi",label:"GE / GI",sound:"j",tip:"G + E/I has the same strong breathy sound as Spanish J.",examples:[
+    {word:"gente",en:"people",ph:"HEN-teh",tts:"gente"},{word:"girar",en:"to turn",ph:"hee-RAR",tts:"girar"}]},
+  {id:"ga-go-gu",label:"GA / GO / GU",sound:"g",tip:"G + A/O/U keeps the hard G sound. In GU, the U is part of the spelling but is not a separate vowel sound.",examples:[
+    {word:"gato",en:"cat",ph:"GAH-toh",tts:"gato"},{word:"goma",en:"eraser",ph:"GOH-mah",tts:"goma"},{word:"gusano",en:"worm",ph:"goo-SAH-noh",tts:"gusano"}]},
+  {id:"gua",label:"GUA",sound:"gwa",tip:"GUA sounds like ‘gwa’: hard G + a quick U glide + A.",examples:[
+    {word:"agua",en:"water",ph:"AH-gwah",tts:"agua"},{word:"guante",en:"glove",ph:"GWAHN-teh",tts:"guante"},{word:"guardar",en:"to save / put away",ph:"gwar-DAR",tts:"guardar"}]},
+  {id:"gue-gui",label:"GUE / GUI",sound:"ge / gi",tip:"The U is silent. GUE is hard ‘ge’; GUI is hard ‘gi’. Compare them with GE/GI.",examples:[
+    {word:"guerra",en:"war",ph:"GEH-rrah",tts:"guerra"},{word:"guitarra",en:"guitar",ph:"gee-TAH-rrah",tts:"guitarra"},{word:"seguir",en:"to continue / follow",ph:"seh-GEER",tts:"seguir"}]},
+  {id:"gue-gui-dieresis",label:"GÜE / GÜI",sound:"gwe / gwi",tip:"The two dots make the U audible. Without Ü, the U is silent in GUE/GUI.",examples:[
+    {word:"pingüino",en:"penguin",ph:"peen-GWEE-noh",tts:"pingüino"},{word:"vergüenza",en:"shame / embarrassment",ph:"behr-GWEN-sah",tts:"vergüenza"},{word:"bilingüe",en:"bilingual",ph:"bee-leen-GWEH",tts:"bilingüe"}]},
+  {id:"que-qui",label:"QUE / QUI",sound:"k",tip:"The U is silent: QUE sounds ‘keh’ and QUI sounds ‘kee’.",examples:[
+    {word:"queso",en:"cheese",ph:"KEH-soh",tts:"queso"},{word:"quince",en:"fifteen",ph:"KEEN-seh",tts:"quince"},{word:"¿Qué?",en:"What?",ph:"keh",tts:"¿Qué?"}]}
+];
 function sylTTS(label,fallback){return SYL_TTS_FIX[label.toLowerCase()]||fallback||label.toLowerCase();}
 function speakSyl(label,fallback){
   speak(sylTTS(label,fallback),0.75);
@@ -657,6 +673,46 @@ const CONVERSATIONS=[
    {id:"planes-fin-semana",title:"Haz planes",scenario:"Ask a friend what they are going to do this weekend and suggest meeting for coffee.",prompt:"Propón un plan:",lesson:"planes",models:[{es:"¿Qué vas a hacer este fin de semana? ¿Nos vemos para un tinto?",en:"What are you going to do this weekend? Shall we meet for a coffee?",tts:"¿Qué vas a hacer este fin de semana? ¿Nos vemos para un tinto?"},{es:"¿Te parece si nos vemos el sábado para tomar un tinto?",en:"How about we meet Saturday for a coffee?",tts:"¿Te parece si nos vemos el sábado para tomar un tinto?"}]},
    {id:"direcciones-hospital",title:"Pide direcciones",scenario:"You are lost and need to find the hospital. Ask someone politely and repeat the key location.",prompt:"Pide ayuda:",lesson:"calle",models:[{es:"Disculpe, ¿dónde queda el hospital?",en:"Excuse me, where is the hospital?",tts:"Disculpe, ¿dónde queda el hospital?"},{es:"Perdón, estoy perdido. ¿Me regala la dirección del hospital?",en:"Sorry, I am lost. Could you give me the hospital's address?",tts:"Perdón, estoy perdido. ¿Me regala la dirección del hospital?"}]},
    {id:"como-te-sientes",title:"Explica cómo te sientes",scenario:"A friend asks how you feel. Say that you are tired, have a headache, and need to rest.",prompt:"Responde:",lesson:"sentirse",models:[{es:"Estoy cansado y me duele la cabeza. Necesito descansar.",en:"I am tired and my head hurts. I need to rest.",tts:"Estoy cansado y me duele la cabeza. Necesito descansar."},{es:"Me siento mal; tengo sueño y quiero descansar.",en:"I feel bad; I am sleepy and I want to rest.",tts:"Me siento mal; tengo sueño y quiero descansar."}]}
+ ];
+
+ /* Short readings: read for meaning first, then shadow each sentence aloud. */
+ const READINGS=[
+   {id:"lectura-cafe",level:"A1",title:"Un tinto en la mañana",lesson:"colombia",intro:"A simple Colombian café order.",lines:[
+     {es:"Por la mañana voy a una cafetería cerca de mi casa.",en:"In the morning I go to a café near my house.",tts:"Por la mañana voy a una cafetería cerca de mi casa."},
+     {es:"¿Me regala un tinto, por favor?",en:"Can I have a black coffee, please?",tts:"¿Me regala un tinto, por favor?"},
+     {es:"Sí, claro. ¿Lo quiere con azúcar?",en:"Yes, of course. Do you want it with sugar?",tts:"Sí, claro. ¿Lo quiere con azúcar?"},
+     {es:"No, gracias. Así está bien.",en:"No, thank you. It is fine like that.",tts:"No, gracias. Así está bien."}
+   ],questions:[{q:"¿Qué pide la persona?",choices:["Un tinto","Una cerveza","Un jugo"],answer:"Un tinto"}]},
+   {id:"lectura-mercado",level:"A1",title:"En el mercado",lesson:"plata",intro:"Useful words for buying food.",lines:[
+     {es:"Hoy necesito comprar mercado para la semana.",en:"Today I need to buy groceries for the week.",tts:"Hoy necesito comprar mercado para la semana."},
+     {es:"Compro arepas, huevos, arroz y aguacates.",en:"I buy arepas, eggs, rice, and avocados.",tts:"Compro arepas, huevos, arroz y aguacates."},
+     {es:"La señora me dice el precio y yo pago con tarjeta.",en:"The woman tells me the price and I pay by card.",tts:"La señora me dice el precio y yo pago con tarjeta."},
+     {es:"Después vuelvo a casa con las bolsas.",en:"Afterward I return home with the bags.",tts:"Después vuelvo a casa con las bolsas."}
+   ],questions:[{q:"¿Qué compra la persona?",choices:["Comida","Ropa","Un carro"],answer:"Comida"}]},
+   {id:"lectura-taxi",level:"A1",title:"Un taxi en Bogotá",lesson:"calle",intro:"Practice directions and polite requests.",lines:[
+     {es:"Salgo del hotel y busco un taxi.",en:"I leave the hotel and look for a taxi.",tts:"Salgo del hotel y busco un taxi."},
+     {es:"Buenas, ¿me lleva al aeropuerto, por favor?",en:"Hi, can you take me to the airport, please?",tts:"Buenas, ¿me lleva al aeropuerto, por favor?"},
+     {es:"Claro. Siga derecho y luego gire a la izquierda.",en:"Of course. Go straight and then turn left.",tts:"Claro. Siga derecho y luego gire a la izquierda."},
+     {es:"Hay un poco de trancón, pero llegamos a tiempo.",en:"There is a little traffic, but we will arrive on time.",tts:"Hay un poco de trancón, pero llegamos a tiempo."}
+   ],questions:[{q:"¿A dónde va la persona?",choices:["Al aeropuerto","Al mercado","A la oficina"],answer:"Al aeropuerto"}]},
+   {id:"lectura-trabajo",level:"A1",title:"Un día de trabajo",lesson:"trabajo",intro:"Present tense plus everyday speaking patterns.",lines:[
+     {es:"Trabajo en una oficina y llego a las ocho.",en:"I work in an office and arrive at eight.",tts:"Trabajo en una oficina y llego a las ocho."},
+     {es:"Tengo que terminar un proyecto antes del almuerzo.",en:"I have to finish a project before lunch.",tts:"Tengo que terminar un proyecto antes del almuerzo."},
+     {es:"A las diez tengo una reunión con mi jefe.",en:"At ten I have a meeting with my boss.",tts:"A las diez tengo una reunión con mi jefe."},
+     {es:"Después de trabajar, voy a descansar en casa.",en:"After working, I am going to rest at home.",tts:"Después de trabajar, voy a descansar en casa."}
+   ],questions:[{q:"¿Qué tiene la persona a las diez?",choices:["Una reunión","Un taxi","Una clase"],answer:"Una reunión"}]},
+   {id:"lectura-ayer",level:"A2",title:"Lo que hice ayer",lesson:"gram-pasado-historia",intro:"Tell a short story with past-tense verbs.",lines:[
+     {es:"Ayer fui al centro porque necesitaba comprar un regalo.",en:"Yesterday I went downtown because I needed to buy a gift.",tts:"Ayer fui al centro porque necesitaba comprar un regalo."},
+     {es:"Había mucho trancón, así que llegué un poco tarde.",en:"There was a lot of traffic, so I arrived a little late.",tts:"Había mucho trancón, así que llegué un poco tarde."},
+     {es:"Compré el regalo y después tomé un tinto.",en:"I bought the gift and afterward had a black coffee.",tts:"Compré el regalo y después tomé un tinto."},
+     {es:"Al final regresé a casa y descansé.",en:"In the end I returned home and rested.",tts:"Al final regresé a casa y descansé."}
+   ],questions:[{q:"¿Por qué fue al centro?",choices:["Para comprar un regalo","Para trabajar","Para tomar un taxi"],answer:"Para comprar un regalo"}]},
+   {id:"lectura-planes",level:"A2",title:"Planes para el sábado",lesson:"planes",intro:"Use future plans and natural Colombian responses.",lines:[
+     {es:"El viernes le escribo a mi amigo para hacer planes.",en:"On Friday I text my friend to make plans.",tts:"El viernes le escribo a mi amigo para hacer planes."},
+     {es:"¿Qué vas a hacer el sábado?",en:"What are you going to do Saturday?",tts:"¿Qué vas a hacer el sábado?"},
+     {es:"Voy a visitar a mi familia, pero podemos vernos en la tarde.",en:"I am going to visit my family, but we can meet in the afternoon.",tts:"Voy a visitar a mi familia, pero podemos vernos en la tarde."},
+     {es:"De una. Te aviso la hora después.",en:"I'm in. I will let you know the time later.",tts:"De una. Te aviso la hora después."}
+   ],questions:[{q:"¿Cuándo pueden verse?",choices:["En la tarde","En la mañana","La próxima semana"],answer:"En la tarde"}]}
  ];
 
  // ── Grammar data ──────────────────────────────────────────────────────────────

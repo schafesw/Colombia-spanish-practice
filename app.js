@@ -158,6 +158,27 @@ function rC(){
 }
 rC();
 
+// ── Special spelling sounds (v35) ────────────────────────────────────────────
+function renderSpecialSounds(){
+  const root=document.getElementById("special-sound-lab");
+  if(!root||typeof SPECIAL_SOUNDS==="undefined")return;
+  root.innerHTML="<div class='special-sound-head'><div class='rt'>🧩 Sonidos especiales</div><div class='special-sound-intro'>Tap a word, listen, then record yourself. Pay attention to the silent U and the two dots over Ü.</div></div>";
+  SPECIAL_SOUNDS.forEach(group=>{
+    const section=document.createElement("section");section.className="special-sound-group";
+    section.innerHTML=`<div class='special-sound-title'><strong>${group.label}</strong><span>${group.sound}</span></div><div class='special-sound-tip'>${group.tip}</div>`;
+    const grid=document.createElement("div");grid.className="special-sound-grid";
+    group.examples.forEach(ex=>{
+      const card=document.createElement("article");card.className="special-sound-card";
+      card.innerHTML=`<button type='button' class='special-sound-word'><strong>${escapeVocabHtml(ex.word)}</strong><small>${escapeVocabHtml(ex.ph)}</small><em>${escapeVocabHtml(ex.en)}</em><span>🔊</span></button>`;
+      card.querySelector(".special-sound-word").onclick=()=>speak(ex.tts,0.7);
+      const rec=document.createElement("button");rec.type="button";rec.className="special-sound-record";rec.textContent="🎙️ Record";rec.onclick=()=>openMicPanel(ex.tts);
+      card.appendChild(rec);grid.appendChild(card);
+    });
+    section.appendChild(grid);root.appendChild(section);
+  });
+}
+renderSpecialSounds();
+
 // ── Build Vocab ───────────────────────────────────────────────────────────────
 const VOCAB_CATS=VC.filter(cat=>cat.id!=="vocales");
 const VOCAB_LAST_KEY="esco-vocab-last-v1";
@@ -1214,6 +1235,84 @@ function renderMission(mission){
   card.appendChild(models);
   const done=document.createElement("button");done.type="button";done.className="lesson-start";done.textContent=missionProgress[mission.id]?"✅ Mission completed — practice again":"✅ I answered out loud";done.onclick=()=>{missionProgress[mission.id]=true;saveMissions();renderMission(mission);};card.appendChild(done);root.appendChild(card);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Lecturas (v35) — short Colombian paragraphs with listen, read-aloud, and
+   comprehension practice. Kept inside Lecciones so the six-tab layout stays.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const READING_KEY="esco-reading-progress-v1";
+let readingProgress={};
+try{readingProgress=JSON.parse(localStorage.getItem(READING_KEY)||"{}");if(!readingProgress||typeof readingProgress!=="object")readingProgress={};}catch(e){readingProgress={};}
+function saveReadings(){try{localStorage.setItem(READING_KEY,JSON.stringify(readingProgress));}catch(e){}}
+function renderReading(reading){
+  if(typeof rrStop==="function")rrStop();
+  const root=document.getElementById("lesson-list");if(!root)return;root.innerHTML="";
+  const back=document.createElement("button");back.type="button";back.className="phrase-back";back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=renderLessons;root.appendChild(back);
+  const card=lpEl("lp-card reading-card");
+  card.appendChild(lpEl("reading-kicker",`${reading.level} · LECTURA`));
+  card.appendChild(lpEl("lp-step-title",reading.title));
+  card.appendChild(lpEl("reading-intro",reading.intro));
+  const guide=lpEl("reading-guide","Read the Spanish aloud before revealing the English. Then listen and compare.");card.appendChild(guide);
+  const play=lpSpeakBtn(reading.lines.map(line=>line.tts||line.es).join(". "),"▶️ Listen to the whole reading");play.classList.add("reading-play");card.appendChild(play);
+  const lines=lpEl("reading-lines");
+  reading.lines.forEach((line,i)=>{
+    const row=document.createElement("article");row.className="reading-line";
+    row.innerHTML=`<div class='reading-line-num'>${i+1}</div><div class='reading-line-copy'><button type='button' class='reading-es'>${escapeVocabHtml(line.es)}</button><button type='button' class='reading-en' hidden>${escapeVocabHtml(line.en)}</button></div><div class='reading-actions'></div>`;
+    const es=row.querySelector(".reading-es"),en=row.querySelector(".reading-en");
+    es.onclick=()=>speak(line.tts||line.es,0.72);en.onclick=()=>{en.hidden=!en.hidden;};
+    const rec=document.createElement("button");rec.type="button";rec.className="reading-record";rec.textContent="🎙️";rec.title="Record yourself";rec.setAttribute("aria-label","Record yourself");rec.onclick=()=>openMicPanel(line.tts||line.es);
+    row.querySelector(".reading-actions").appendChild(rec);lines.appendChild(row);
+  });
+  card.appendChild(lines);
+  (reading.questions||[]).forEach(q=>{
+    const box=lpEl("reading-question");box.appendChild(lpEl("reading-question-text",q.q));
+    const opts=lpEl("reading-question-options");
+    q.choices.forEach(choice=>{const b=document.createElement("button");b.type="button";b.className="reading-choice";b.textContent=choice;b.onclick=()=>{opts.querySelectorAll("button").forEach(x=>x.disabled=true);b.classList.add(choice===q.answer?"correct":"wrong");if(choice!==q.answer)opts.querySelectorAll("button").forEach(x=>{if(x.textContent===q.answer)x.classList.add("reveal");});};opts.appendChild(b);});
+    box.appendChild(opts);card.appendChild(box);
+  });
+  const done=document.createElement("button");done.type="button";done.className="lesson-start";done.textContent=readingProgress[reading.id]?"✅ Reading complete — practice again":"✅ I read this aloud";done.onclick=()=>{readingProgress[reading.id]=true;saveReadings();renderReading(reading);};card.appendChild(done);root.appendChild(card);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Guided daily speaking routine (v35) — one small sequence using existing
+   features. The day and current step persist, but content remains replayable.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const ROUTINE_KEY="esco-routine-v1";
+const ROUTINE_STEPS=[
+  {id:"review",icon:"🔁",title:"Review",sub:"Practice anything due today."},
+  {id:"reading",icon:"📖",title:"Read aloud",sub:"Read one short Colombian paragraph."},
+  {id:"rapid",icon:"⚡",title:"React quickly",sub:"Answer one question under pressure."},
+  {id:"mission",icon:"🗣️",title:"Conversation mission",sub:"Say a complete response out loud."}
+];
+let routineState={date:"",step:0};
+try{routineState=Object.assign(routineState,JSON.parse(localStorage.getItem(ROUTINE_KEY)||"{}"));}catch(e){}
+function routineToday(){const today=new Date().toISOString().slice(0,10);if(routineState.date!==today){routineState={date:today,step:0};saveRoutine();}return routineState;}
+function saveRoutine(){try{localStorage.setItem(ROUTINE_KEY,JSON.stringify(routineState));}catch(e){}}
+function routineOpen(id){
+  if(id==="review"){showPage("quiz");qMode="mixed";qCat="all";qFocus="all";repasoLeft=10;resetQuizRound();syncQuizControls();nQ();}
+  else if(id==="reading"){renderReading(READINGS[routineState.step%READINGS.length]);}
+  else if(id==="rapid"){rrSession=0;renderRapida(false);}
+  else if(id==="mission"){const m=CONVERSATION_MISSIONS.find(x=>!missionProgress[x.id])||CONVERSATION_MISSIONS[0];if(m)renderMission(m);}
+}
+function routineComplete(){routineToday();routineState.step=Math.min(ROUTINE_STEPS.length,routineState.step+1);saveRoutine();renderLessons();}
+function renderRoutineCard(root){
+  routineToday();
+  const wrap=document.createElement("section");wrap.className="daily-routine-card";
+  const complete=routineState.step>=ROUTINE_STEPS.length;
+  const current=ROUTINE_STEPS[Math.min(routineState.step,ROUTINE_STEPS.length-1)];
+  wrap.innerHTML=`<div class='routine-top'><div><div class='routine-kicker'>🎓 DAILY SPEAKING PATH</div><div class='routine-title'>${complete?"Routine complete for today":"Your next 10-minute practice"}</div></div><div class='routine-count'>${complete?"4/4":`${routineState.step}/4`}</div></div><div class='routine-track'><span style='width:${Math.round(routineState.step/ROUTINE_STEPS.length*100)}%'></span></div>`;
+  if(!complete){
+    const step=lpEl("routine-current");step.innerHTML=`<span class='routine-current-icon'>${current.icon}</span><span><strong>${current.title}</strong><small>${current.sub}</small></span>`;
+    const actions=lpEl("routine-actions");
+    const open=document.createElement("button");open.type="button";open.className="lp-nav-btn primary";open.textContent="Open";open.onclick=()=>routineOpen(current.id);
+    const done=document.createElement("button");done.type="button";done.className="lp-nav-btn";done.textContent="Mark done";done.onclick=routineComplete;
+    actions.append(open,done);wrap.append(step,actions);
+  }else{
+    const replay=document.createElement("button");replay.type="button";replay.className="lp-nav-btn";replay.textContent="↻ Start again tomorrow";replay.disabled=true;wrap.appendChild(replay);
+  }
+  root.appendChild(wrap);
+}
+
 function renderLessons(){
   const root=document.getElementById("lesson-list");if(!root)return;
   if(lpLesson){renderLessonStep();return;}
@@ -1244,6 +1343,7 @@ function renderLessons(){
   cont.innerHTML=`<div class="continue-title">${cTitle}</div><div class="continue-sub">${cSub}</div>`;
   if(cAction){cont.onclick=cAction;cont.classList.add("tappable");}
   root.appendChild(cont);
+  renderRoutineCard(root);
   let missedCount=srsDueCount();
   if(!missedCount){try{const s=JSON.parse(localStorage.getItem("esco-quiz-v1")||"{}");missedCount=s.missed?Object.keys(s.missed).length:0;}catch(e){}}
   /* Daily practice — one compact row (v22) */
@@ -1261,6 +1361,11 @@ function renderLessons(){
   const missionGrid=document.createElement("div");missionGrid.className="mission-grid";
   CONVERSATION_MISSIONS.forEach(m=>{const b=document.createElement("button");b.type="button";b.className="mission-home-card";b.innerHTML=`<span class="mission-home-icon">${missionProgress[m.id]?"✅":"🗣️"}</span><span class="mission-home-copy"><strong>${m.title}</strong><small>${m.scenario}</small></span>`;b.onclick=()=>renderMission(m);missionGrid.appendChild(b);});
   root.appendChild(missionGrid);
+
+  const readingLabel=document.createElement("div");readingLabel.className="fr-home-label";readingLabel.textContent=`📖 Lecturas · ${Object.keys(readingProgress).length}/${READINGS.length} completed`;root.appendChild(readingLabel);
+  const readingGrid=document.createElement("div");readingGrid.className="reading-home-grid";
+  READINGS.forEach(reading=>{const b=document.createElement("button");b.type="button";b.className="reading-home-card";b.innerHTML=`<span class='reading-home-icon'>${readingProgress[reading.id]?"✅":"📖"}</span><span><strong>${reading.title}</strong><small>${reading.level} · ${reading.intro}</small></span><span>›</span>`;b.onclick=()=>renderReading(reading);readingGrid.appendChild(b);});
+  root.appendChild(readingGrid);
 
   /* Lessons grouped into a speaking-first progression */
   const LESSON_STAGES=[
@@ -1302,7 +1407,7 @@ function renderLessons(){
   root.appendChild(bkLabel);
   /* Backup / restore progress (v17) */
   const bk=document.createElement("div");bk.className="backup-row";
-  const BK_KEYS=["esco-quiz-v1","esco-srs-v1","esco-lesson-progress-v1","esco-mission-progress-v1","esco-practice-v1","esco-days-v1"];
+  const BK_KEYS=["esco-quiz-v1","esco-srs-v1","esco-lesson-progress-v1","esco-mission-progress-v1","esco-reading-progress-v1","esco-routine-v1","esco-practice-v1","esco-days-v1"];
   const b1=document.createElement("button");b1.type="button";b1.className="backup-btn";b1.textContent="💾 Copy backup";
   b1.onclick=()=>{
     const data={};BK_KEYS.forEach(k=>{const v=localStorage.getItem(k);if(v)data[k]=v;});
@@ -1885,6 +1990,8 @@ function runDataValidator(){
       if(typeof LESSON_CONTENT!=="undefined"&&!LESSON_CONTENT[l.id])issues.push('Lesson "'+l.id+'": no LESSON_CONTENT entry');
     });
     CONVERSATION_MISSIONS.forEach(m=>{if(!m.id||!m.scenario||!m.prompt||!Array.isArray(m.models)||m.models.length<2)issues.push('Mission "'+(m.id||"?")+'": missing scenario, prompt, or model answers');});
+    SPECIAL_SOUNDS.forEach(s=>{if(!s.id||!s.label||!s.tip||!Array.isArray(s.examples)||!s.examples.length)issues.push('Special sound "'+(s.id||"?")+ '": incomplete examples');});
+    READINGS.forEach(r=>{if(!r.id||!r.title||!Array.isArray(r.lines)||r.lines.length<3)issues.push('Reading "'+(r.id||"?")+ '": needs at least three lines');r.lines&&r.lines.forEach((line,i)=>{if(!line.es||!line.en||!line.tts)issues.push('Reading "'+r.id+'" line '+(i+1)+' missing Spanish, English, or tts');});});
     CONVERSATIONS.forEach(c=>c.lines.forEach(L=>{if(!L.tts)issues.push('Conversation "'+c.title+'" ('+c.tense+'): line missing tts');}));
     FRASES.forEach(s=>{if(s.id&&s.section)issues.push('FRASES "'+s.id+'": has BOTH id and section (breaks hybrid filters)');});
   }catch(e){issues.push("Validator crashed: "+e.message);}
