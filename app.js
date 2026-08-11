@@ -620,6 +620,7 @@ const PHRASE_DIALOGUES=[
   })
 ];
 let fraseSearchTerm="";
+let fraseView="all";
 const TENSE_BADGE={
   "Ahora":{txt:"⚡ Ahora · presente",css:"color:var(--teal);background:rgba(74,168,160,0.12);border:1px solid rgba(74,168,160,0.25)"},
   "Planes":{txt:"⏭️ Planes · voy a...",css:"color:var(--blue);background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.25)"},
@@ -628,6 +629,14 @@ const TENSE_BADGE={
 function fraseSectionMeta(sec){
   const m=String(sec.section||"").match(/^(\S+)\s+(.*)$/);
   return m?{icon:m[1],name:m[2]}:{icon:"💬",name:sec.section||""};
+}
+function phraseCollectionGroup(sec){
+  const n=String(sec.section||"").toLowerCase();
+  if(/groser|bad word|strong language/.test(n))return {id:"strong",label:"⚠️ Strong language / Entender primero"};
+  if(/direcciones|ubicación|uber|transporte|compras|restaurante|emergencias|ayuda|aclarar|plata|pagos/.test(n))return {id:"survival",label:"🧭 Survival & getting around / Para desenvolverse"};
+  if(/conectores|patrones|marcos|construir|contar historias|pronombres/.test(n))return {id:"build",label:"🧱 Build sentences / Construir frases"};
+  if(/saludo|gusto|conversación diaria|social|planes|teléfono|sientes|familia/.test(n))return {id:"social",label:"🤝 Daily conversation / Conversación diaria"};
+  return {id:"other",label:"📚 More useful phrases / Más frases"};
 }
 function renderFraseMenu(){
   fl.dataset.view="menu";
@@ -651,6 +660,12 @@ function renderFraseMenu(){
   };
   jump.appendChild(sel);
   fl.appendChild(jump);
+  const viewSwitch=document.createElement("div");viewSwitch.className="frase-view-switch";viewSwitch.setAttribute("aria-label","Filter phrase content");
+  [["all","All / Todo"],["phrases","Useful phrases / Frases"],["conversations","Conversations / Diálogos"]].forEach(([view,label])=>{
+    const b=document.createElement("button");b.type="button";b.className="fr-view-btn"+(fraseView===view?" active":"");b.textContent=label;
+    b.onclick=()=>{fraseView=view;renderFraseMenu();};viewSwitch.appendChild(b);
+  });
+  fl.appendChild(viewSwitch);
   const search=document.createElement("input");search.type="search";search.className="content-search";search.placeholder="🔎 Search phrases or conversation lines…";search.setAttribute("aria-label","Search phrases");search.value=fraseSearchTerm;
   const results=document.createElement("div");results.className="search-results";fl.appendChild(search);fl.appendChild(results);
   const h1=document.createElement("div");h1.className="fr-home-label";h1.textContent="💬 Conversations · practice both sides";
@@ -666,27 +681,45 @@ function renderFraseMenu(){
   fl.appendChild(g1);
   const h2=document.createElement("div");h2.className="fr-home-label";h2.textContent="📋 Phrase collections · tap to open";
   fl.appendChild(h2);
-  const g2=document.createElement("div");g2.className="fr-home-grid";
-  const tit=document.createElement("button");tit.type="button";tit.className="fr-home-card fr-col";
-  tit.innerHTML=`<div class="fr-card-icon">🏷️</div><div class="fr-card-title">Títulos</div><div class="fr-card-meta">2 items ›</div>`;
-  tit.onclick=()=>renderFraseSection(-1);
-  g2.appendChild(tit);
-  sections.forEach((s,i)=>{
+  const g2=document.createElement("div");g2.className="fr-collections-groups";
+  const groupOrder=["survival","social","build","strong","other"];
+  const groups=new Map();
+  const addCollection=(parent,s,i)=>{
     const meta=fraseSectionMeta(s);
     const c=document.createElement("button");c.type="button";c.className="fr-home-card fr-col";
     c.innerHTML=`<div class="fr-card-icon">${meta.icon}</div><div class="fr-card-title">${meta.name}</div><div class="fr-card-meta">${(s.items||[]).length} phrases · ${phraseProgress(s.items)} practiced ›</div>`;
-    c.onclick=()=>renderFraseSection(i);
-    g2.appendChild(c);
+    c.onclick=()=>renderFraseSection(i);parent.appendChild(c);
+  };
+  const titleGroup=document.createElement("div");titleGroup.className="fr-collection-group";titleGroup.dataset.group="titles";
+  titleGroup.innerHTML=`<div class="fr-group-label">🏷️ Names & polite titles / Títulos</div><div class="fr-home-grid"></div>`;
+  const titleGrid=titleGroup.querySelector(".fr-home-grid");
+  const tit=document.createElement("button");tit.type="button";tit.className="fr-home-card fr-col";
+  tit.innerHTML=`<div class="fr-card-icon">🏷️</div><div class="fr-card-title">Títulos</div><div class="fr-card-meta">2 items ›</div>`;
+  tit.onclick=()=>renderFraseSection(-1);titleGrid.appendChild(tit);g2.appendChild(titleGroup);
+  sections.forEach((s,i)=>{
+    const group=phraseCollectionGroup(s);if(!groups.has(group.id)){
+      const block=document.createElement("div");block.className="fr-collection-group";block.dataset.group=group.id;block.innerHTML=`<div class="fr-group-label">${group.label}</div><div class="fr-home-grid"></div>`;groups.set(group.id,block);
+    }
+    addCollection(groups.get(group.id).querySelector(".fr-home-grid"),s,i);
   });
+  groupOrder.forEach(id=>{const block=groups.get(id);if(block){g2.appendChild(block);}});
+  g2.appendChild(titleGroup);
   fl.appendChild(g2);
   const blocks=[h1,g1,h2,g2];
+  function applyFraseView(){
+    const q=fraseSearchTerm.trim();
+    if(q){blocks.forEach(el=>{el.hidden=true;});return;}
+    const showConversations=fraseView!=="phrases";const showPhrases=fraseView!=="conversations";
+    h1.hidden=g1.hidden=!showConversations;h2.hidden=g2.hidden=!showPhrases;
+    g2.querySelectorAll(".fr-collection-group").forEach(group=>{group.hidden=!showPhrases;});
+  }
   function refreshPhraseSearch(){
-    const q=fraseSearchTerm.trim().toLowerCase();const active=!!q;blocks.forEach(el=>{el.hidden=active;});results.innerHTML="";results.hidden=!active;if(!active)return;
+    const q=fraseSearchTerm.trim().toLowerCase();const active=!!q;results.innerHTML="";results.hidden=!active;applyFraseView();if(!active)return;
     const matches=[];
     PHRASE_DIALOGUES.forEach(d=>(d.versions||[]).forEach(v=>(v.lines||[]).forEach(line=>{if((line.es+" "+line.en).toLowerCase().includes(q))matches.push({title:d.title,kind:"dialogue",line,dialogue:d,tense:v.tense});})));
     sections.forEach((s,i)=>(s.items||[]).forEach(item=>{if((item.es+" "+item.en).toLowerCase().includes(q))matches.push({title:s.section,kind:"section",item,index:i});}));
     if(!matches.length){results.appendChild(lpEl("search-empty","No phrase matches yet. Try a Spanish or English word."));return;}
-    matches.slice(0,80).forEach(m=>{const card=document.createElement("button");card.type="button";card.className="search-result-card";if(m.kind==="dialogue"){card.innerHTML=`<span><strong>${escapeVocabHtml(m.line.es)}</strong><small>${escapeVocabHtml(m.line.en)}</small><em>💬 ${escapeVocabHtml(m.title)}</em></span><span>›</span>`;card.onclick=()=>renderFraseDialogue(m.dialogue,m.tense);}else{card.innerHTML=`<span><strong>${escapeVocabHtml(m.item.es)}</strong><small>${escapeVocabHtml(m.item.en)}</small><em>📋 ${escapeVocabHtml(m.title)}</em></span><span>🔊</span>`;card.onclick=()=>renderFraseSection(m.index);}results.appendChild(card);});
+    matches.slice(0,80).forEach(m=>{const card=document.createElement("button");card.type="button";card.className="search-result-card";if(m.kind==="dialogue"){card.innerHTML=`<span><strong>${escapeVocabHtml(m.line.es)}</strong><small>${escapeVocabHtml(m.line.en)}</small><em>💬 ${escapeVocabHtml(m.title)}</em></span><span>›</span>`;card.onclick=()=>renderFraseDialogue(m.dialogue,m.tense);}else{const register=m.item.register?`<b class="search-register">${escapeVocabHtml(m.item.register)}</b>`:"";card.innerHTML=`<span><strong>${escapeVocabHtml(m.item.es)}</strong><small>${escapeVocabHtml(m.item.en)}</small>${register}<em>📋 ${escapeVocabHtml(m.title)}</em></span><span>🔊</span>`;card.onclick=()=>renderFraseSection(m.index);}results.appendChild(card);});
   }
   search.oninput=()=>{fraseSearchTerm=search.value;refreshPhraseSearch();};refreshPhraseSearch();
 }
@@ -717,7 +750,8 @@ function renderFraseSection(idx){
   const st=document.createElement("div");st.className="frase-title";st.style.cssText=sec.cls||"";st.textContent=sec.section;wrap.appendChild(st);
   sec.items.forEach(item=>{
     const card=document.createElement("div");card.className="frase-card";
-    card.innerHTML=`<div class="frase-txt"><div class="f-es">${item.es}</div><div class="f-en">${item.en}</div></div><span class="f-spk">🔊</span>`;
+    const register=item.register?`<span class="f-register">${escapeVocabHtml(item.register)}</span>`:"";
+    card.innerHTML=`<div class="frase-txt"><div class="f-es">${item.es}</div><div class="f-en">${item.en}</div>${register}</div><span class="f-spk">🔊</span>`;
     card.onclick=()=>{markPractice("phrases",item.es);speak(item.es,0.75);};
     attachMic(card,item.es);
     wrap.appendChild(card);
@@ -2004,7 +2038,13 @@ function nQ(){
   document.querySelector(".qc-label").textContent=qMode==="en-es"?"Translate to Spanish":qMode==="listening"?"Listen and recognize":qMode==="blank"?"Complete the sentence":qMode==="conversation"?"Choose the correct reply":qMode==="es-en"?"Translate to English":cQ.kind==="reply"?"Choose the correct reply":cQ.kind==="listening"?"Listen and recognize":cQ.kind==="tense"?"Which tense is it?":cQ.kind==="blank"?"Complete the sentence":"Choose the correct answer";
   if(qMode==="listening"||cQ.kind==="listening")setTimeout(()=>speak(cQ.tts,0.7),350);
   const seen=new Set([cQ.answer]);const wrong=[];
-  const wrongPool=cQ.choices?cQ.choices.map(answer=>({answer})):base.slice().sort(()=>Math.random()-0.5);
+  /* Mixed mode contains several question families.  Do not use a Spanish
+     blank answer as a distractor for an English meaning question (or vice
+     versa); that makes some questions look like they have multiple answers. */
+  const questionFamily=q=>q.kind||"vocab";
+  let compatible=base.filter(q=>q!==cQ&&questionFamily(q)===questionFamily(cQ));
+  if(compatible.length<3)compatible=base.filter(q=>q!==cQ&&typeof q.answer===typeof cQ.answer);
+  const wrongPool=cQ.choices?cQ.choices.map(answer=>({answer})):compatible.sort(()=>Math.random()-0.5);
   for(const w of wrongPool){if(wrong.length>=3)break;if(!w.answer||seen.has(w.answer))continue;seen.add(w.answer);wrong.push({answer:w.answer});}
   const opts=[cQ,...wrong].sort(()=>Math.random()-0.5);
   const ow=document.getElementById("quiz-opts");ow.innerHTML="";
