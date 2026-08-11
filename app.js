@@ -701,6 +701,74 @@ const TENSE_BADGE={
   "Planes":{txt:"⏭️ Planes · voy a...",css:"color:var(--blue);background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.25)"},
   "Ayer":{txt:"⏮️ Ayer · pasado",css:"color:var(--pink);background:rgba(232,93,117,0.12);border:1px solid rgba(232,93,117,0.25)"},
 };
+const PHRASE_EN={
+  "💬 Saludos — Informal":"Informal greetings",
+  "🤝 Saludos — Formal":"Formal greetings",
+  "🛍️ De Compras":"Shopping",
+  "🍽️ En el Restaurante":"At the restaurant",
+  "🆘 Pidiendo Ayuda":"Asking for help",
+  "🚨 Emergencias":"Emergencies",
+  "🚕 Transporte":"Transportation",
+  "☀️ Conversación Diaria":"Everyday conversation",
+  "❤️ Gustos y conversación":"Likes and conversation",
+  "🧱 Frases para contar historias":"Phrases for telling stories",
+  "🧩 Conectores para sonar natural":"Connectors for natural speech",
+  "🧱 Patrones para hablar cada día":"Everyday speaking patterns",
+  "⚠️ Groserías colombianas — entender primero":"Colombian swear words · understand first",
+  "⚠️ Groserías colombianas — más para entender":"More Colombian swear words · understand first",
+  "📆 Haciendo Planes":"Making plans",
+  "📱 Por Teléfono / Mensajes":"Phone and messages",
+  "🩺 ¿Cómo Te Sientes?":"How are you feeling?",
+  "💰 Plata y Pagos":"Money and payments",
+  "👤 Pronombres en acción":"Pronouns in action",
+  "🧰 Comunicación para aclarar":"Communication repair",
+  "🧭 Direcciones y ubicación":"Directions and location",
+  "🚕 Uber y transporte real":"Real Uber and transportation",
+  "🔗 Conectores y palabras de unión":"Connectors and linking words",
+  "🗣️ Palabras para conversar — everyday glue":"Conversation glue",
+  "🧱 Marcos para construir frases":"Sentence-building frames",
+  "⚡ Acciones para hablar cada día":"Everyday action phrases",
+  "🇨🇴 Expresiones sociales colombianas":"Colombian social expressions"
+};
+const DIALOGUE_EN={
+  "Saludos formales":"Formal greetings and introductions",
+  "Presentación personal":"Personal introduction","Carro y taxi":"Car and taxi","Trabajo y oficina":"Work and office",
+  "La habitación":"The bedroom","Pedir direcciones":"Asking for directions","Preparar la cocina":"Preparing the kitchen",
+  "Gustos y familia":"Likes and family","Ver televisión":"Watching television","En casa":"At home",
+  "Groserías colombianas":"Colombian swear words","Pronombres en acción":"Pronouns in action",
+  "Uber: hablo poquito español":"Uber: I speak a little Spanish","Uber: confirmar la recogida":"Uber: confirming the pickup",
+  "Hotel: registrarse":"Hotel: checking in","Farmacia: explicar síntomas":"Pharmacy: explaining symptoms",
+  "Teléfono: mala señal":"Phone: bad signal","Contar lo que pasó":"Telling what happened",
+  "Planes de fin de semana":"Weekend plans","Palabras para conversar":"Conversation glue",
+  "Acciones de todos los días":"Everyday actions","Compañeros de trabajo":"Coworkers",
+  "Profesión":"Profession","¿Dónde vives?":"Where do you live?","Cocinar juntos":"Cooking together",
+  "El baño":"The bathroom","Partes del carro":"Car parts","Uber: pedir que repita":"Uber: asking for repetition",
+  "Uber: dirección equivocada":"Uber: wrong address","Restaurante: pedir y cambiar":"Restaurant: ordering and changing an order",
+  "Mercado: comprar comida":"Market: buying food","Problema con apartamento o carro":"Apartment or car problem"
+};
+function phraseEnglishTitle(title){return PHRASE_EN[title]||"Useful phrases";}
+function dialogueEnglishTitle(title){return DIALOGUE_EN[title]||"Practice conversation";}
+const PHRASE_RECENT_KEY="esco-frase-recent-v1";
+let fraseRecent=[];
+try{fraseRecent=JSON.parse(localStorage.getItem(PHRASE_RECENT_KEY)||"[]");if(!Array.isArray(fraseRecent))fraseRecent=[];}catch(e){fraseRecent=[];}
+function rememberFraseLocation(location){
+  if(!location||!location.kind)return;
+  fraseRecent=[location,...fraseRecent.filter(x=>!(x.kind===location.kind&&String(x.value)===String(location.value)))].slice(0,3);
+  try{localStorage.setItem(PHRASE_RECENT_KEY,JSON.stringify(fraseRecent));}catch(e){}
+}
+function renderRecentPhrase(root){
+  if(!fraseRecent.length)return;
+  const wrap=document.createElement("div");wrap.className="phrase-recent";
+  wrap.innerHTML="<div class='phrase-recent-label'>↩ Recently opened · Visto recientemente</div>";
+  const item=fraseRecent[0];
+  const b=document.createElement("button");b.type="button";b.className="phrase-recent-card";
+  b.innerHTML="<span class='phrase-recent-icon'>"+(item.kind==="dialogue"?"💬":"📋")+"</span><span class='phrase-recent-copy'><strong>"+escapeVocabHtml(item.title)+"</strong><small>"+escapeVocabHtml(item.subtitle||"Open where you left off")+"</small></span><span class='phrase-recent-arrow'>›</span>";
+  b.onclick=()=>{
+    if(item.kind==="dialogue"){const d=PHRASE_DIALOGUES.find(x=>x.title===item.value);if(d)renderFraseDialogue(d,item.tense);}
+    else renderFraseSection(Number(item.value));
+  };
+  wrap.appendChild(b);root.appendChild(wrap);
+}
 function fraseSectionMeta(sec){
   const m=String(sec.section||"").match(/^(\S+)\s+(.*)$/);
   return m?{icon:m[1],name:m[2]}:{icon:"💬",name:sec.section||""};
@@ -725,6 +793,12 @@ function renderFraseMenu(){
   opts+=`<optgroup label="Conversations">`+PHRASE_DIALOGUES.map((d,i)=>`<option value="d:${i}">${d.title}</option>`).join("")+`</optgroup>`;
   opts+=`<optgroup label="Phrase collections"><option value="t">Títulos · Sr. / Sra.</option>`+sections.map((s,i)=>`<option value="s:${i}">${s.section}</option>`).join("")+`</optgroup>`;
   sel.innerHTML=opts;
+  const groupsInSelect=sel.querySelectorAll("optgroup");if(groupsInSelect[0])groupsInSelect[0].label="Conversations / Conversaciones";if(groupsInSelect[1])groupsInSelect[1].label="Phrase collections / Colecciones";
+  Array.from(sel.options).forEach(option=>{
+    const value=option.value;
+    if(value.startsWith("d:")){const d=PHRASE_DIALOGUES[Number(value.slice(2))];if(d)option.textContent=d.title+" · "+dialogueEnglishTitle(d.title);}
+    if(value.startsWith("s:")){const s=sections[Number(value.slice(2))];if(s)option.textContent=s.section+" · "+phraseEnglishTitle(s.section);}
+  });
   sel.onchange=()=>{
     const v=sel.value;sel.value="";
     if(!v)return;
@@ -735,6 +809,10 @@ function renderFraseMenu(){
   };
   jump.appendChild(sel);
   fl.appendChild(jump);
+  const navNote=document.createElement("div");navNote.className="phrase-nav-note";
+  navNote.innerHTML="<strong>Start with a situation, then practice the phrases you need.</strong><span>Spanish stays first for speaking practice; English subtitles help you find the right section.</span>";
+  fl.appendChild(navNote);
+  renderRecentPhrase(fl);
   const viewSwitch=document.createElement("div");viewSwitch.className="frase-view-switch";viewSwitch.setAttribute("aria-label","Filter phrase content");
   [["all","All / Todo"],["phrases","Useful phrases / Frases"],["conversations","Conversations / Diálogos"]].forEach(([view,label])=>{
     const b=document.createElement("button");b.type="button";b.className="fr-view-btn"+(fraseView===view?" active":"");b.textContent=label;
@@ -750,6 +828,7 @@ function renderFraseMenu(){
     const c=document.createElement("button");c.type="button";c.className="fr-home-card";
     const lines=[...(d.versions||[]).flatMap(v=>v.lines||[])];
     c.innerHTML=`<div class="fr-card-title">${d.title}</div><div class="fr-card-sub">${d.en||""}</div><div class="fr-card-meta">${(d.versions||[]).length} tenses · ${phraseProgress(lines)} practiced ›</div>`;
+    const dialogueSub=c.querySelector(".fr-card-sub");if(dialogueSub)dialogueSub.textContent=dialogueEnglishTitle(d.title);
     c.onclick=()=>renderFraseDialogue(d);
     g1.appendChild(c);
   });
@@ -763,17 +842,25 @@ function renderFraseMenu(){
     const meta=fraseSectionMeta(s);
     const c=document.createElement("button");c.type="button";c.className="fr-home-card fr-col";
     c.innerHTML=`<div class="fr-card-icon">${meta.icon}</div><div class="fr-card-title">${meta.name}</div><div class="fr-card-meta">${(s.items||[]).length} phrases · ${phraseProgress(s.items)} practiced ›</div>`;
+    const collectionMeta=c.querySelector(".fr-card-meta");if(collectionMeta){const english=document.createElement("div");english.className="fr-card-sub";english.textContent=phraseEnglishTitle(s.section);c.insertBefore(english,collectionMeta);}
     c.onclick=()=>renderFraseSection(i);parent.appendChild(c);
   };
   const titleGroup=document.createElement("div");titleGroup.className="fr-collection-group";titleGroup.dataset.group="titles";
   titleGroup.innerHTML=`<div class="fr-group-label">🏷️ Names & polite titles / Títulos</div><div class="fr-home-grid"></div>`;
   const titleGrid=titleGroup.querySelector(".fr-home-grid");
+  const titleLabel=titleGroup.querySelector(".fr-group-label");titleLabel.setAttribute("role","button");titleLabel.tabIndex=0;titleLabel.setAttribute("aria-expanded","true");
+  const toggleTitles=()=>{const closed=titleGroup.classList.toggle("collapsed");titleLabel.setAttribute("aria-expanded",String(!closed));};
+  titleLabel.onclick=toggleTitles;titleLabel.onkeydown=e=>{if(e.key==="Enter"||e.key===" ")toggleTitles()};
   const tit=document.createElement("button");tit.type="button";tit.className="fr-home-card fr-col";
   tit.innerHTML=`<div class="fr-card-icon">🏷️</div><div class="fr-card-title">Títulos</div><div class="fr-card-meta">2 items ›</div>`;
   tit.onclick=()=>renderFraseSection(-1);titleGrid.appendChild(tit);g2.appendChild(titleGroup);
   sections.forEach((s,i)=>{
     const group=phraseCollectionGroup(s);if(!groups.has(group.id)){
-      const block=document.createElement("div");block.className="fr-collection-group";block.dataset.group=group.id;block.innerHTML=`<div class="fr-group-label">${group.label}</div><div class="fr-home-grid"></div>`;groups.set(group.id,block);
+      const block=document.createElement("div");block.className="fr-collection-group";block.dataset.group=group.id;block.innerHTML=`<div class="fr-group-label">${group.label}</div><div class="fr-home-grid"></div>`;
+      const groupLabel=block.querySelector(".fr-group-label");groupLabel.setAttribute("role","button");groupLabel.tabIndex=0;groupLabel.setAttribute("aria-expanded","true");
+      const toggleGroup=()=>{const closed=block.classList.toggle("collapsed");groupLabel.setAttribute("aria-expanded",String(!closed));};
+      groupLabel.onclick=toggleGroup;groupLabel.onkeydown=e=>{if(e.key==="Enter"||e.key===" ")toggleGroup()};
+      groups.set(group.id,block);
     }
     addCollection(groups.get(group.id).querySelector(".fr-home-grid"),s,i);
   });
@@ -803,7 +890,7 @@ function renderFraseSection(idx){
   fl.innerHTML="";
   const back=document.createElement("button");
   back.type="button";back.className="phrase-back";
-  back.innerHTML="<span>‹</span><span>All phrases</span>";
+  back.innerHTML="<span>‹</span><span>All phrases · Todas las frases</span>";
   back.onclick=renderFraseMenu;
   fl.appendChild(back);
   if(idx===-1){
@@ -822,7 +909,7 @@ function renderFraseSection(idx){
   const sec=FRASES.filter(s=>s.section)[idx];
   if(!sec){renderFraseMenu();return;}
   const wrap=document.createElement("div");wrap.className="frase-section";
-  const st=document.createElement("div");st.className="frase-title";st.style.cssText=sec.cls||"";st.textContent=sec.section;wrap.appendChild(st);
+  const st=document.createElement("div");st.className="frase-title";st.style.cssText=sec.cls||"";st.innerHTML="<span>"+escapeVocabHtml(sec.section)+"</span><small>"+escapeVocabHtml(phraseEnglishTitle(sec.section))+"</small>";wrap.appendChild(st);
   sec.items.forEach(item=>{
     const card=document.createElement("div");card.className="frase-card";
     const register=item.register?`<span class="f-register">${escapeVocabHtml(item.register)}</span>`:"";
@@ -832,18 +919,20 @@ function renderFraseSection(idx){
     wrap.appendChild(card);
   });
   fl.appendChild(wrap);
+  rememberFraseLocation({kind:"section",value:idx,title:sec.section,subtitle:phraseEnglishTitle(sec.section)});
 }
 function renderFraseDialogue(dialogue,tense){
   fl.dataset.view="dialogue";
   fl.innerHTML="";
   const back=document.createElement("button");
   back.type="button";back.className="phrase-back";
-  back.innerHTML="<span>‹</span><span>Back to phrases</span>";
+  back.innerHTML="<span>‹</span><span>Back to phrases · Volver a frases</span>";
   back.onclick=renderFraseMenu;
   fl.appendChild(back);
   /* Header: title + English + tense selector — one version at a time (v23) */
   const versions=dialogue.versions||[];
   const active=tense||(versions[0]&&versions[0].tense)||"Ahora";
+  rememberFraseLocation({kind:"dialogue",value:dialogue.title,title:dialogue.title,subtitle:dialogueEnglishTitle(dialogue.title),tense:active});
   const hdr=document.createElement("div");hdr.className="dlg-head";
   hdr.innerHTML=`<div class="dlg-head-title">${dialogue.title}</div><div class="dlg-head-en">${dialogue.en||""}</div>`;
   if(versions.length>1){

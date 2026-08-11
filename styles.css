@@ -715,3 +715,29 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 .dictation-input.wrong{border-color:var(--pink);background:rgba(232,93,117,.1);}
 .dictation-submit{align-self:center;min-height:44px;padding:10px 22px;border-radius:11px;background:var(--teal);color:#fff;font:900 .82rem 'Nunito',sans-serif;}
 .dictation-submit:disabled{opacity:.65;}
+
+/* v41: calmer Frases navigation */
+.phrase-nav-note{display:flex;flex-direction:column;gap:3px;margin:0 0 12px;padding:11px 12px;border:1px solid rgba(232,93,117,.2);border-radius:12px;background:rgba(232,93,117,.06);}
+.phrase-nav-note strong{font-size:.75rem;line-height:1.35;color:#fff;}
+.phrase-nav-note span{font-size:.66rem;line-height:1.4;color:var(--muted);}
+.phrase-recent{margin:0 0 16px;}
+.phrase-recent-label{font-size:.59rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:900;margin:0 2px 7px;}
+.phrase-recent-card{display:flex;align-items:center;gap:9px;width:100%;padding:10px 11px;text-align:left;border:1px solid rgba(232,180,74,.26);border-radius:12px;background:rgba(232,180,74,.08);color:#fff;}
+.phrase-recent-card:active{transform:scale(.985);}
+.phrase-recent-icon{font-size:1.05rem;flex-shrink:0;}
+.phrase-recent-copy{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;}
+.phrase-recent-copy strong{font-size:.78rem;line-height:1.3;}
+.phrase-recent-copy small{font-size:.65rem;color:var(--muted);font-style:italic;}
+.phrase-recent-arrow{font-size:1.25rem;color:var(--gold);}
+.frase-title{display:flex;flex-direction:column;gap:3px;letter-spacing:.08em;}
+.frase-title span{font-size:.66rem;}
+.frase-title small{font-size:.68rem;letter-spacing:0;text-transform:none;color:var(--muted);font-weight:700;font-style:italic;}
+.fr-group-label{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 9px;margin:8px 0 6px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(255,255,255,.025);}
+.fr-group-label:after{content:"⌄";font-size:.95rem;color:var(--muted);transition:transform .15s;}
+.fr-collection-group.collapsed .fr-group-label:after{transform:rotate(-90deg);}
+.fr-collection-group.collapsed .fr-home-grid{display:none;}
+.fr-collection-group.collapsed{margin-bottom:4px;}
+@media(max-width:430px){
+  .fr-home-grid{grid-template-columns:1fr;}
+  .fr-home-card{min-height:76px;padding:11px 12px;}
+}
