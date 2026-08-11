@@ -622,6 +622,22 @@ FRASES.push(
     {es:"¡Qué putas está pasando!",en:"What the hell is going on!",register:"Very strong · understand first"}
   ]}
 );
+/* v38: high-frequency conversation glue. These are the small words and
+   sentence frames that help a learner connect ideas instead of speaking in
+   isolated textbook fragments. */
+FRASES.push({section:"🗣️ Palabras para conversar — everyday glue",quizCat:"conectores",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[
+  {es:"De hecho...",en:"In fact...",register:"Everyday"},
+  {es:"En realidad...",en:"Actually...",register:"Everyday"},
+  {es:"Lo que pasa es que...",en:"The thing is...",register:"Everyday"},
+  {es:"El problema es que...",en:"The problem is that...",register:"Everyday"},
+  {es:"Ya casi.",en:"Almost / Almost there.",register:"Everyday"},
+  {es:"Por ahora.",en:"For now.",register:"Everyday"},
+  {es:"Al rato.",en:"Later / In a little while.",register:"Everyday · Colombia"},
+  {es:"En cuanto pueda...",en:"As soon as I can...",register:"Everyday"},
+  {es:"Aunque sea...",en:"Even if / At least...",register:"Everyday"},
+  {es:"Más bien...",en:"Rather / Instead...",register:"Everyday"},
+  {es:"Si no...",en:"If not...",register:"Everyday"}
+]});
 /* New home, work, office, and car categories are also available in Vocab. */
 VC.push(...FRASES.filter(section=>section.id&&section.type==="basic"));
 const DIALOGUE=[{who:"A",es:"Hola, ¿cómo está?",en:"Hi, how are you? (formal)",tts:"Hola, ¿cómo está?"},{who:"B",es:"Hola, estoy bien, gracias.",en:"Hi, I'm fine, thank you.",tts:"Hola, estoy bien, gracias."},{who:"A",es:"Soy David. ¡Gusto en conocerle!",en:"I'm David. Nice to meet you!",tts:"Soy David. ¡Gusto en conocerle!"},{who:"B",es:"Soy Roberto. ¡El gusto es mío!",en:"I'm Roberto. The pleasure is mine!",tts:"Soy Roberto. ¡El gusto es mío!"},{who:"A",es:"Mucho gusto, señor Roberto.",en:"Nice to meet you, Mr. Roberto.",tts:"Mucho gusto, señor Roberto."},{who:"B",es:"Igualmente, señor David.",en:"Likewise, Mr. David.",tts:"Igualmente, señor David."}];
@@ -787,6 +803,25 @@ const V36_CONVERSATIONS=[
   ])
 ];
 CONVERSATIONS.push(...V36_CONVERSATIONS);
+const V38_CONVERSATIONS=[
+  ...v36Conversation("Palabras para conversar","Using everyday glue words to keep a conversation moving",[
+    ["A","¿Qué vas a hacer después del trabajo?","What are you going to do after work?"],
+    ["B","Todavía no sé. De pronto voy a pasar por el mercado.","I don't know yet. Maybe I am going to stop by the market."],
+    ["A","Bueno, si tienes tiempo, me avisas.","Well, if you have time, let me know."],
+    ["B","De una. En cuanto pueda te escribo.","Sure. I will text you as soon as I can."]
+  ],[
+    ["A","¿Qué piensas hacer mañana?","What are you thinking of doing tomorrow?"],
+    ["B","Por ahora no tengo planes.","For now I don't have plans."],
+    ["A","Si no llueve, podemos ir a tomar un tinto.","If it doesn't rain, we can go have a coffee."],
+    ["B","Más bien nos vemos al rato, ¿te parece?","Instead, let's meet later. What do you think?"]
+  ],[
+    ["A","¿Qué pasó ayer?","What happened yesterday?"],
+    ["B","El problema es que había mucho trancón.","The problem is that there was a lot of traffic."],
+    ["A","¿Llegaste tarde?","Did you arrive late?"],
+    ["B","Sí, pero de hecho llegué a tiempo.","Yes, but in fact I arrived on time."]
+  ])
+];
+CONVERSATIONS.push(...V38_CONVERSATIONS);
 
  /* Speaking missions: situations first, with more than one natural answer. */
  const CONVERSATION_MISSIONS=[
@@ -1013,6 +1048,7 @@ Object.assign(LESSON_CONTENT,{
   "daily-repair":{goal:{es:"No entendí. La señal está mala, así que te escribo.",en:"I didn't understand. The signal is bad, so I will text you."},words:[{es:"¿Me escuchas?",en:"Can you hear me?"},{es:"la señal está mala",en:"the signal is bad"},{es:"se está cortando",en:"it is cutting out"},{es:"te escribo",en:"I will text you"},{es:"más tarde",en:"later"},{es:"un mensaje",en:"a message"}],phrases:[{en:"Can you hear me?",es:"¿Me escuchas?"},{en:"The call is cutting out.",es:"Se está cortando la llamada."},{en:"I will text you later.",es:"Te escribo más tarde."}]},
   "sentence-structure":{goal:{es:"Quiero aprender, así que practico un poco todos los días.",en:"I want to learn, so I practice a little every day."},words:[{es:"Quiero...",en:"I want..."},{es:"así que...",en:"so / therefore..."},{es:"porque...",en:"because..."},{es:"primero...",en:"first..."},{es:"después...",en:"afterward..."},{es:"al final...",en:"in the end..."}],phrases:[{en:"I need to practice because I want to speak.",es:"Necesito practicar porque quiero hablar."},{en:"First I listen, then I repeat.",es:"Primero escucho, después repito."},{en:"I was tired, but I practiced.",es:"Estaba cansado, pero practiqué."}]},
   "connectors-v36":{goal:{es:"Si puedo, te aviso; si no, no pasa nada.",en:"If I can, I will let you know; if not, it's okay."},words:[{es:"si",en:"if"},{es:"sí",en:"yes"},{es:"pero",en:"but"},{es:"porque",en:"because"},{es:"por qué",en:"why"},{es:"entonces",en:"so / then"},{es:"aunque",en:"although"},{es:"todavía no",en:"not yet"}],phrases:[{en:"I want to go, but I have to work.",es:"Quiero ir, pero tengo que trabajar."},{en:"Why are you late?",es:"¿Por qué llegas tarde?"},{en:"There is traffic, so I will arrive late.",es:"Hay trancón, entonces voy a llegar tarde."}]},
+  "function-words":{goal:{es:"Todavía no sé; si puedo, te aviso en cuanto pueda.",en:"I don't know yet; if I can, I will let you know as soon as I can."},words:[{es:"Todavía no",en:"Not yet"},{es:"De pronto",en:"Maybe (Colombian)"},{es:"En realidad",en:"Actually"},{es:"Lo que pasa es que",en:"The thing is"},{es:"Por ahora",en:"For now"},{es:"Al rato",en:"Later (Colombian)"}],phrases:[{en:"I don't know yet.",es:"Todavía no sé."},{en:"Maybe I will call you later.",es:"De pronto te llamo al rato."},{en:"The thing is, I have to work.",es:"Lo que pasa es que tengo que trabajar."},{en:"I will let you know as soon as I can.",es:"Te aviso en cuanto pueda."}]},
   "social-colombia-v36":{goal:{es:"¿Qué más? Todo bien. ¡Qué nota verte, parce!",en:"What's up? All good. How cool to see you, buddy!"},words:[{es:"¿Cómo te ha ido?",en:"How have things been?"},{es:"Hágale",en:"Go ahead / let's do it"},{es:"Qué pena",en:"Sorry / what a shame"},{es:"Qué nota",en:"How cool"},{es:"Bacano",en:"Awesome"},{es:"Parce",en:"Buddy"}],phrases:[{en:"How have things been?",es:"¿Cómo te ha ido?"},{en:"Don't worry.",es:"No se preocupe."},{en:"Let's do it.",es:"¡Hágale!"}]}
   ,"conversation-challenge":{goal:{es:"Puedo responder, pedir aclaración y mantener una conversación corta.",en:"I can respond, ask for clarification, and keep a short conversation going."},words:[{es:"No entendí.",en:"I didn't understand."},{es:"¿Puede repetir?",en:"Can you repeat?"},{es:"Voy a...",en:"I am going to..."},{es:"Ayer fui...",en:"Yesterday I went..."},{es:"Después...",en:"Afterward..."},{es:"¿Qué más?",en:"What's up?"}],phrases:[{en:"I speak a little Spanish, but I am practicing.",es:"Hablo poquito español, pero estoy practicando."},{en:"I am going to answer in Spanish.",es:"Voy a responder en español."},{en:"I did not understand, but I will try again.",es:"No entendí, pero voy a intentarlo otra vez."}]}
 });
@@ -1027,6 +1063,7 @@ const LESSON_META={
   "daily-repair":{stage:"Daily Life",difficulty:"Moderate",prereq:"Travel and Survival",dialogue:"Teléfono: mala señal",vocab:"tecnologia",quizCat:"reparar",quizMode:"conversation",readingId:"lectura-telefono"},
   "sentence-structure":{stage:"Build Sentences",difficulty:"Moderate",prereq:"Start Here",dialogue:"Compañeros de trabajo",vocab:"acciones",quizCat:"estructura",quizMode:"mixed",guideIds:["estructura","sujeto-omitido","presente"]},
   "connectors-v36":{stage:"Build Sentences",difficulty:"Moderate",prereq:"Sentence structure",dialogue:"Planes de fin de semana",vocab:"gustos",quizCat:"conectores",quizMode:"mixed",guideIds:["conectores"],missionId:"planes-fin-semana"},
+  "function-words":{stage:"Build Sentences",difficulty:"Moderate",prereq:"Connectors",dialogue:"Palabras para conversar",vocab:"gustos",quizCat:"conectores",quizMode:"mixed",guideIds:["conectores"],missionId:"planes-fin-semana"},
   "social-colombia-v36":{stage:"Speak More Naturally",difficulty:"Moderate",prereq:"Build Sentences",dialogue:"Compañeros de trabajo",vocab:"colombianismos",quizCat:"expresiones",quizMode:"conversation",guideIds:["conectores"],missionId:"saludo-parce"},
   "conversation-challenge":{stage:"Conversation Challenge",difficulty:"Challenge",prereq:"Speak More Naturally",dialogue:"Uber: confirmar la recogida",vocab:"gustos",quizCat:"all",quizMode:"conversation",readingId:"lectura-uber",missionId:"uber-habla-despacio",guideIds:["conectores","pronombres"]},
   "gram-presente":{stage:"Build Sentences",difficulty:"Moderate",prereq:"Start Here",guideIds:["presente","sujeto-omitido"]},

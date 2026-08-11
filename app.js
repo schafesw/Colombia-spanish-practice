@@ -857,6 +857,7 @@ const LESSONS=[
   {id:"daily-repair",icon:"📱",title:"Resolver una llamada",sub:"Repara la conversación cuando hay mala señal",vocab:"tecnologia",dialogue:"Teléfono: mala señal",quizCat:"reparar",quizMode:"conversation"},
   {id:"sentence-structure",icon:"🧱",title:"Construye tus frases",sub:"Une palabras en frases que puedas decir de verdad",vocab:"acciones",dialogue:"Compañeros de trabajo",quizCat:"estructura",quizMode:"mixed"},
   {id:"connectors-v36",icon:"🔗",title:"Conecta tus ideas",sub:"Usa si, pero, porque y entonces para sonar natural",vocab:"gustos",dialogue:"Planes de fin de semana",quizCat:"conectores",quizMode:"mixed"},
+  {id:"function-words",icon:"🗣️",title:"Palabras para conversar",sub:"Usa frases pequeñas para conectar ideas y mantener la charla",vocab:"gustos",dialogue:"Palabras para conversar",quizCat:"conectores",quizMode:"mixed"},
   {id:"social-colombia-v36",icon:"🇨🇴",title:"Habla más colombiano",sub:"Expresiones sociales con registro y contexto",vocab:"colombianismos",dialogue:"Compañeros de trabajo",quizCat:"expresiones",quizMode:"conversation"},
   {id:"conversation-challenge",icon:"🎯",title:"Reto de conversación",sub:"Combina lectura, reacción rápida y una misión",vocab:"gustos",dialogue:"Uber: confirmar la recogida",quizCat:"all",quizMode:"conversation"}
 ];
@@ -892,7 +893,9 @@ function lessonDialogue(lesson){return PHRASE_DIALOGUES.find(x=>x.title===lesson
 function openLesson(lesson){
   lpLesson=lesson;lpStep=0;lpScore=0;lpQi=0;lpAnswered=false;lpPracticed=new Set();
   const c=LESSON_CONTENT[lesson.id];
-  lpSteps=c?["objetivo","palabras","escucha","frases","estructura","hablaA","hablaB","pronun","quiz","lectura","mision","fin"]:["fin"];
+  /* Speaking-first order: hear a useful chunk, produce it, role-play it,
+     then study the grammar that explains what you just said. */
+  lpSteps=c?["objetivo","palabras","escucha","frases","hablaA","hablaB","estructura","pronun","lectura","quiz","mision","fin"]:["fin"];
   if(c)buildLessonQuiz(lesson,c);
   renderLessonStep();
 }
@@ -1301,6 +1304,7 @@ function saveSrs(){try{localStorage.setItem(SRS_KEY,JSON.stringify(srsStore));}c
 function srsDue(key){const card=srsStore[key];return !!card&&(!card.due||card.due<=Date.now());}
 function srsDueCount(){return Object.keys(srsStore).filter(srsDue).length;}
 function recordSrs(key,correct){const card=srsStore[key]||{reps:0,interval:0,lapses:0,due:0};if(correct){card.reps=(card.reps||0)+1;card.interval=Math.min((card.interval||0)+1,SRS_INTERVALS.length);card.due=Date.now()+SRS_INTERVALS[card.interval-1]*86400000;}else{card.lapses=(card.lapses||0)+1;card.reps=0;card.interval=0;card.due=Date.now()+86400000;}srsStore[key]=card;saveSrs();}
+function srsNextLabel(card){if(!card||!card.interval)return "tomorrow";const days=SRS_INTERVALS[Math.max(0,Math.min(SRS_INTERVALS.length-1,card.interval-1))];return days===1?"tomorrow":`in ${days} days`;}
 const MISSION_KEY="esco-mission-progress-v1";
 let missionProgress={};
 try{missionProgress=JSON.parse(localStorage.getItem(MISSION_KEY)||"{}");if(!missionProgress||typeof missionProgress!=="object")missionProgress={};}catch(e){missionProgress={};}
@@ -1396,14 +1400,27 @@ function renderRoutineCard(root){
   root.appendChild(wrap);
 }
 
+function renderProgressDashboard(root,done){
+  const vocabCount=Object.keys((practiceStore&&practiceStore.vocab)||{}).length;
+  const phraseCount=Object.keys((practiceStore&&practiceStore.phrases)||{}).length;
+  const activeCards=Object.keys(srsStore||{}).length;
+  const mastered=Object.values(srsStore||{}).filter(c=>(c.interval||0)>=SRS_INTERVALS.length).length;
+  const due=srsDueCount();
+  const rapid=rrStats.attempts||0;
+  const card=document.createElement("section");card.className="progress-dashboard";
+  card.innerHTML=`<div class="progress-dashboard-head"><div><div class="progress-kicker">📈 YOUR SPEAKING PROGRESS</div><div class="progress-title">Small steps become conversation</div></div><div class="progress-streak">🔥 ${dayInfo.streak}</div></div><div class="progress-metrics"><div><strong>${done}/${LESSONS.length}</strong><small>lessons</small></div><div><strong>${vocabCount}</strong><small>words practiced</small></div><div><strong>${phraseCount}</strong><small>phrases practiced</small></div><div><strong>${mastered}</strong><small>cards mastered</small></div></div><div class="progress-dashboard-note">${due?`🔁 ${due} review card${due===1?"":"s"} due today`:`✅ No review cards due today`} · ⚡ ${rapid} rapid response${rapid===1?"":"s"}</div>`;
+  root.appendChild(card);
+}
+
 function renderLessons(){
   const root=document.getElementById("lesson-list");if(!root)return;
   if(lpLesson){renderLessonStep();return;}
   root.innerHTML="";
   const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
   const intro=document.createElement("div");intro.className="lesson-intro";
-  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-flow">Recommended path: Start Here → Travel → Daily Life → Build Sentences → Speak Naturally<br>Each lesson: 🎯 Goal → 👂 Listen → 🗣️ Speak → 🧱 Structure → 📖 Read → 🧪 Quiz → 🎭 Mission</div>`;
+  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-flow">Recommended path: Start Here → Travel → Daily Life → Build Sentences → Speak Naturally<br>Each lesson: 🎯 Goal → 🔑 Words → 👂 Listen → 🗣️ Say it → 🎭 Role-play → 🧱 Understand → 📖 Read → 🧪 Quiz → 🎯 Mission</div>`;
   root.appendChild(intro);
+  renderProgressDashboard(root,done);
   /* Continue / Start here (v21) */
   const resume=loadResume();
   const resLesson=resume&&LESSONS.find(l=>l.id===resume.id);
@@ -1455,7 +1472,7 @@ function renderLessons(){
     {name:"🌱 Stage 1 · Start Here",sub:"Greetings, basic needs, numbers, and repairing misunderstandings.",ids:["presentate","plata","survival-communication","casa","gustos"]},
     {name:"🧭 Stage 2 · Travel and Survival",sub:"Uber, directions, hotels, food, shopping, and the pharmacy.",ids:["uber-ride","hotel-checkin","calle","cocina","farmacia"]},
     {name:"🏠 Stage 3 · Daily Life",sub:"Work, home, phone calls, feelings, and everyday routines.",ids:["trabajo","daily-repair","planes","sentirse"]},
-    {name:"🧱 Stage 4 · Build Sentences",sub:"Present, future, past, connectors, sentence structure, and pronouns.",ids:["sentence-structure","connectors-v36","gram-presente","gram-futuro","gram-pasado","gram-pasado-historia","gram-necesidades","gram-conectores","gram-pronombres"]},
+    {name:"🧱 Stage 4 · Build Sentences",sub:"Present, future, past, connectors, conversation glue, sentence structure, and pronouns.",ids:["sentence-structure","connectors-v36","function-words","gram-presente","gram-futuro","gram-pasado","gram-pasado-historia","gram-necesidades","gram-conectores","gram-pronombres"]},
     {name:"🇨🇴 Stage 5 · Speak More Naturally",sub:"Colombian everyday expressions, slang, register, and follow-up questions.",ids:["colombia","social-colombia-v36","gram-groserias"]},
     {name:"🎯 Stage 6 · Conversation Challenge",sub:"Read aloud, react quickly, and complete real speaking missions.",ids:["conversation-challenge"]}
   ];
@@ -2052,9 +2069,9 @@ function nQ(){
     b.onclick=()=>{if(an)return;an=true;qT++;document.getElementById("q-total").textContent=qT;
       const fb=document.getElementById("quiz-fb");
       const mk=cQ.es+"|"+cQ.answer;
-       if(opt.answer===cQ.answer){b.classList.add("correct");qC++;qS++;recordSrs(mk,true);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.textContent="✅ ¡Correcto!";fb.style.color="var(--teal)";speak(cQ.tts,0.75);
+       if(opt.answer===cQ.answer){b.classList.add("correct");qC++;qS++;recordSrs(mk,true);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.innerHTML=`✅ ¡Correcto! <small class="srs-next">Next review: ${srsNextLabel(srsStore[mk])}</small>`;fb.style.color="var(--teal)";speak(cQ.tts,0.75);
         if(qStore.missed[mk]){qStore.missed[mk]--;if(qStore.missed[mk]<=0)delete qStore.missed[mk];}}
-       else{b.classList.add("wrong");qS=0;recordSrs(mk,false);document.getElementById("q-streak").textContent="🔥 0";fb.textContent="❌ Incorrecto";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(x.textContent===cQ.answer)x.classList.add("reveal");});
+       else{b.classList.add("wrong");qS=0;recordSrs(mk,false);document.getElementById("q-streak").textContent="🔥 0";fb.innerHTML="❌ Incorrecto <small class='srs-next'>Review again tomorrow.</small>";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(x.textContent===cQ.answer)x.classList.add("reveal");});
         qStore.missed[mk]=(qStore.missed[mk]||0)+2;}
       document.getElementById("quiz-reveal").innerHTML=`<div>🇨🇴 <strong>${spanishAnswer(cQ)}</strong></div><div>🇺🇸 ${englishAnswer(cQ)}</div>`;
       attachMic(document.getElementById("quiz-reveal"),spanishAnswer(cQ));
@@ -2110,7 +2127,7 @@ function runDataValidator(){
     CONVERSATIONS.forEach(c=>c.lines.forEach(L=>{if(!L.tts)issues.push('Conversation "'+c.title+'" ('+c.tense+'): line missing tts');}));
     if(typeof SPEAKING_GUIDE!=="undefined")SPEAKING_GUIDE.forEach(g=>{if(!g.id||!g.title||!g.formula||!g.explain||!g.mistake||!g.exercise)issues.push('Speaking guide "'+(g.id||"?")+ '": incomplete explanation');(g.examples||[]).forEach((ex,i)=>{if(!ex.es||!ex.en||!ex.tts)issues.push('Speaking guide "'+g.id+'" example '+(i+1)+' missing Spanish, English, or tts');});});
     if(typeof LESSON_META!=="undefined")LESSONS.forEach(l=>{const m=LESSON_META[l.id];if(!m)return;(m.guideIds||[]).forEach(id=>{if(typeof SPEAKING_GUIDE!=="undefined"&&!SPEAKING_GUIDE.some(g=>g.id===id))issues.push('Lesson "'+l.id+'": guide "'+id+'" does not exist');});});
-    aQ.forEach((q,i)=>{if(!Array.isArray(q.choices))return;const choices=q.choices.map(String);if(new Set(choices).size!==choices.length)issues.push('Quiz question '+(i+1)+' has duplicate answer choices');if(q.en&&!choices.includes(String(q.en)))issues.push('Quiz question '+(i+1)+' correct answer is not in its choices');});
+    aQ.forEach((q,i)=>{if(!Array.isArray(q.choices))return;const choices=q.choices.map(String);const normalized=choices.map(v=>v.trim().toLowerCase().replace(/[.!?…]+$/g,""));if(choices.length!==4)issues.push('Quiz question '+(i+1)+' needs exactly four answer choices');if(new Set(normalized).size!==normalized.length)issues.push('Quiz question '+(i+1)+' has duplicate answer choices');if(q.en&&!normalized.includes(String(q.en).trim().toLowerCase().replace(/[.!?…]+$/g,"")))issues.push('Quiz question '+(i+1)+' correct answer is not in its choices');});
     FRASES.forEach(s=>{if(s.id&&s.section)issues.push('FRASES "'+s.id+'": has BOTH id and section (breaks hybrid filters)');});
   }catch(e){issues.push("Validator crashed: "+e.message);}
   if(issues.length){
