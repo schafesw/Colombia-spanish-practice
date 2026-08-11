@@ -858,6 +858,7 @@ const LESSONS=[
   {id:"sentence-structure",icon:"🧱",title:"Construye tus frases",sub:"Une palabras en frases que puedas decir de verdad",vocab:"acciones",dialogue:"Compañeros de trabajo",quizCat:"estructura",quizMode:"mixed"},
   {id:"connectors-v36",icon:"🔗",title:"Conecta tus ideas",sub:"Usa si, pero, porque y entonces para sonar natural",vocab:"gustos",dialogue:"Planes de fin de semana",quizCat:"conectores",quizMode:"mixed"},
   {id:"function-words",icon:"🗣️",title:"Palabras para conversar",sub:"Usa frases pequeñas para conectar ideas y mantener la charla",vocab:"gustos",dialogue:"Palabras para conversar",quizCat:"conectores",quizMode:"mixed"},
+  {id:"action-chunks",icon:"⚡",title:"Acciones de todos los días",sub:"Quiero, necesito, tengo que y voy a… para decir lo que haces",vocab:"acciones",dialogue:"Acciones de todos los días",quizCat:"acciones",quizMode:"conversation"},
   {id:"social-colombia-v36",icon:"🇨🇴",title:"Habla más colombiano",sub:"Expresiones sociales con registro y contexto",vocab:"colombianismos",dialogue:"Compañeros de trabajo",quizCat:"expresiones",quizMode:"conversation"},
   {id:"conversation-challenge",icon:"🎯",title:"Reto de conversación",sub:"Combina lectura, reacción rápida y una misión",vocab:"gustos",dialogue:"Uber: confirmar la recogida",quizCat:"all",quizMode:"conversation"}
 ];
@@ -1064,6 +1065,30 @@ function renderLessonStep(){
     const mission=CONVERSATION_MISSIONS.find(m=>m.id===lpLesson.missionId)||CONVERSATION_MISSIONS.find(m=>m.lesson===lpLesson.id)||CONVERSATION_MISSIONS[0];
     title.textContent="🗣️ Speaking mission — answer before looking";
     body.appendChild(lpEl("mission-title",mission.title));body.appendChild(lpEl("mission-scenario",mission.scenario));body.appendChild(lpEl("mission-prompt",mission.prompt));
+    /* v39: optional sentence builder. It gives a learner a bridge from
+       knowing words to producing a complete response, without replacing the
+       open-ended speaking mission. */
+    const target=(mission.models&&mission.models[0]&&mission.models[0].es)||"";
+    if(target){
+      const builder=lpEl("mission-builder");
+      builder.appendChild(lpEl("mission-builder-title","🧩 Optional: build the sentence first"));
+      builder.appendChild(lpEl("mission-builder-help","Tap the pieces in order, then say your sentence out loud. This is a speaking scaffold, not a spelling test."));
+      const builtBox=lpEl("mission-built","Your sentence will appear here…");
+      const chipBox=lpEl("mission-chips");
+      const words=target.trim().split(/\s+/).map((word,i)=>({word,i})).sort(()=>Math.random()-0.5);
+      const built=[];
+      const redraw=()=>{
+        builtBox.textContent=built.length?built.map(x=>x.word).join(" "):"Your sentence will appear here…";
+        chipBox.querySelectorAll("button").forEach(b=>b.disabled=built.some(x=>String(x.i)===b.dataset.i));
+      };
+      words.forEach(({word,i})=>{const b=document.createElement("button");b.type="button";b.className="mission-chip";b.textContent=word;b.dataset.i=String(i);b.onclick=()=>{built.push({word,i});redraw();};chipBox.appendChild(b);});
+      builder.appendChild(builtBox);builder.appendChild(chipBox);
+      const builderActions=lpEl("mission-builder-actions");
+      const clear=document.createElement("button");clear.type="button";clear.className="lp-nav-btn";clear.textContent="↩ Clear";clear.onclick=()=>{built.length=0;redraw();};
+      const hear=document.createElement("button");hear.type="button";hear.className="lp-nav-btn";hear.textContent="🔊 Hear model";hear.onclick=()=>speak(target,0.75);
+      const record=document.createElement("button");record.type="button";record.className="lp-nav-btn";record.textContent="🎙️ Compare";record.onclick=()=>openMicPanel(built.length?built.map(x=>x.word).join(" "):target);
+      builderActions.append(clear,hear,record);builder.appendChild(builderActions);body.appendChild(builder);
+    }
     const reveal=document.createElement("button");reveal.type="button";reveal.className="lp-nav-btn primary";reveal.textContent="👀 Reveal 2 natural answers";
     const models=lpEl("mission-models");models.hidden=true;
     reveal.onclick=()=>{models.hidden=false;reveal.remove();};body.appendChild(reveal);
@@ -1472,22 +1497,28 @@ function renderLessons(){
     {name:"🌱 Stage 1 · Start Here",sub:"Greetings, basic needs, numbers, and repairing misunderstandings.",ids:["presentate","plata","survival-communication","casa","gustos"]},
     {name:"🧭 Stage 2 · Travel and Survival",sub:"Uber, directions, hotels, food, shopping, and the pharmacy.",ids:["uber-ride","hotel-checkin","calle","cocina","farmacia"]},
     {name:"🏠 Stage 3 · Daily Life",sub:"Work, home, phone calls, feelings, and everyday routines.",ids:["trabajo","daily-repair","planes","sentirse"]},
-    {name:"🧱 Stage 4 · Build Sentences",sub:"Present, future, past, connectors, conversation glue, sentence structure, and pronouns.",ids:["sentence-structure","connectors-v36","function-words","gram-presente","gram-futuro","gram-pasado","gram-pasado-historia","gram-necesidades","gram-conectores","gram-pronombres"]},
+    {name:"🧱 Stage 4 · Build Sentences",sub:"Present, future, past, action chunks, connectors, conversation glue, sentence structure, and pronouns.",ids:["sentence-structure","action-chunks","connectors-v36","function-words","gram-presente","gram-futuro","gram-pasado","gram-pasado-historia","gram-necesidades","gram-conectores","gram-pronombres"]},
     {name:"🇨🇴 Stage 5 · Speak More Naturally",sub:"Colombian everyday expressions, slang, register, and follow-up questions.",ids:["colombia","social-colombia-v36","gram-groserias"]},
     {name:"🎯 Stage 6 · Conversation Challenge",sub:"Read aloud, react quickly, and complete real speaking missions.",ids:["conversation-challenge"]}
   ];
+  const roadmap=lpEl("lesson-roadmap");
+  roadmap.appendChild(lpEl("lesson-roadmap-title","🧭 Recommended path · browse any stage anytime"));
+  const roadmapRow=lpEl("lesson-roadmap-row");
+  LESSON_STAGES.forEach((stage,i)=>{const b=document.createElement("button");b.type="button";b.className="lesson-roadmap-btn";b.textContent=stage.name.replace(/^.*?Stage /,"Stage ");b.onclick=()=>{const target=document.getElementById("lesson-stage-"+i);if(target)target.scrollIntoView({behavior:"smooth",block:"start"});};roadmapRow.appendChild(b);});
+  roadmap.appendChild(roadmapRow);root.appendChild(roadmap);
   let lessonNum=0;
   LESSON_STAGES.forEach(stage=>{
     const stageLessons=stage.ids.map(id=>LESSONS.find(l=>l.id===id)).filter(Boolean);
     if(!stageLessons.length)return;
     const sDone=stageLessons.filter(l=>lessonProgress[l.id]).length;
-    const sh=document.createElement("div");sh.className="stage-label";
+    const sh=document.createElement("div");sh.className="stage-label";sh.id="lesson-stage-"+LESSON_STAGES.indexOf(stage);
     sh.innerHTML=`<div class="stage-label-main"><span>${stage.name}</span><span class="stage-count">${sDone}/${stageLessons.length}</span></div><div class="stage-sub">${stage.sub}</div>`;
     root.appendChild(sh);
     stageLessons.forEach(lesson=>{
       lessonNum++;
-      const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"");
-      card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div><div class="lesson-sub">${lesson.sub}</div><div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
+      const recommended=nextLesson&&nextLesson.id===lesson.id;
+      const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"")+(recommended?" recommended":"");
+      card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div><div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
       card.onclick=()=>openLesson(lesson);
       card.querySelector(".lesson-check").onclick=(e)=>{e.stopPropagation();if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();renderLessons();};
       root.appendChild(card);
@@ -1497,8 +1528,9 @@ function renderLessons(){
   const staged=new Set(LESSON_STAGES.flatMap(s=>s.ids));
   LESSONS.filter(l=>!staged.has(l.id)).forEach(lesson=>{
     lessonNum++;
-    const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"");
-    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div><div class="lesson-sub">${lesson.sub}</div><div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
+    const recommended=nextLesson&&nextLesson.id===lesson.id;
+    const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"")+(recommended?" recommended":"");
+    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div><div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
     card.onclick=()=>openLesson(lesson);
     card.querySelector(".lesson-check").onclick=(e)=>{e.stopPropagation();if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();renderLessons();};
     root.appendChild(card);
@@ -1739,8 +1771,9 @@ CONVERSATION_QUIZ.forEach(q=>{
 /* Add two authored translation checks per new practical dialogue.  The
    choices come from the same dialogue but are fixed, distinct answers, so a
    learner is never graded against two equally valid options. */
-if(typeof V36_CONVERSATIONS!=="undefined")V36_CONVERSATIONS.forEach(c=>{
-  const topicCat=/Uber/.test(c.title)?"uber":/Hotel/.test(c.title)?"hotel":/Farmacia/.test(c.title)?"farmacia":/Teléfono/.test(c.title)?"reparar":/dirección|edificio/i.test(c.title)?"direcciones":/Mercado/.test(c.title)?"compras":/Restaurante/.test(c.title)?"restaurante":/Planes/.test(c.title)?"frases":"frases";
+const PRACTICAL_DIALOGUES=(typeof V36_CONVERSATIONS!=="undefined"?V36_CONVERSATIONS:[]).concat(typeof V38_CONVERSATIONS!=="undefined"?V38_CONVERSATIONS:[],typeof V39_CONVERSATIONS!=="undefined"?V39_CONVERSATIONS:[]);
+PRACTICAL_DIALOGUES.forEach(c=>{
+  const topicCat=/Acciones/.test(c.title)?"acciones":/Uber/.test(c.title)?"uber":/Hotel/.test(c.title)?"hotel":/Farmacia/.test(c.title)?"farmacia":/Teléfono/.test(c.title)?"reparar":/dirección|edificio/i.test(c.title)?"direcciones":/Mercado/.test(c.title)?"compras":/Restaurante/.test(c.title)?"restaurante":/Planes/.test(c.title)?"frases":"frases";
   const lines=(c.lines||[]).slice(0,2);
   lines.forEach(line=>{
     const distractors=(c.lines||[]).filter(x=>x.en!==line.en).slice(0,3).map(x=>x.en);
@@ -2052,7 +2085,7 @@ function nQ(){
   qRoundSeen.add(cQ.es+"|"+cQ.answer);
   /* Listening questions must not show the Spanish text — hide it and auto-play */
   document.getElementById("qc-word").textContent=qMode==="listening"||cQ.kind==="listening"?"🎧":cQ.prompt;
-  document.querySelector(".qc-label").textContent=qMode==="en-es"?"Translate to Spanish":qMode==="listening"?"Listen and recognize":qMode==="blank"?"Complete the sentence":qMode==="conversation"?"Choose the correct reply":qMode==="es-en"?"Translate to English":cQ.kind==="reply"?"Choose the correct reply":cQ.kind==="listening"?"Listen and recognize":cQ.kind==="tense"?"Which tense is it?":cQ.kind==="blank"?"Complete the sentence":"Choose the correct answer";
+  document.querySelector(".qc-label").textContent=qMode==="en-es"?"Translate to Spanish":qMode==="listening"?"Listen and recognize":qMode==="blank"?"Complete the sentence":qMode==="conversation"?(cQ.kind==="reply"?"Choose the natural reply":cQ.kind==="meaning"?"Choose the English meaning":cQ.kind==="listening"?"Listen and recognize":cQ.kind==="tense"?"Choose the matching tense":"Choose the best answer"):qMode==="es-en"?"Translate to English":cQ.kind==="reply"?"Choose the correct reply":cQ.kind==="listening"?"Listen and recognize":cQ.kind==="tense"?"Which tense is it?":cQ.kind==="blank"?"Complete the sentence":"Choose the correct answer";
   if(qMode==="listening"||cQ.kind==="listening")setTimeout(()=>speak(cQ.tts,0.7),350);
   const seen=new Set([cQ.answer]);const wrong=[];
   /* Mixed mode contains several question families.  Do not use a Spanish
