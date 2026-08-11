@@ -19,8 +19,8 @@ const X_EXAMPLES=[
    the artificial syllables "he" and "hi" produces an English-like sound.
    Use real Spanish example words for the vowel sound, just as we do for X. */
 const H_SOUND_EXAMPLES={
-  e:{word:"eco",ph:"EH-koh",tts:"eco",en:"echo"},
-  i:{word:"isla",ph:"EES-lah",tts:"isla",en:"island"},
+  e:{word:"helado",ph:"eh-LAH-doh",tts:"helado",en:"ice cream"},
+  i:{word:"hijo",ph:"EE-hoh",tts:"hijo",en:"son"},
 };
 /* Special spelling patterns: these need their own lesson because a simple
    consonant + vowel grid cannot show the silent U or the dieresis clearly. */

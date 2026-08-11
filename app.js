@@ -192,7 +192,7 @@ function rC(){
   const c=document.getElementById("combo-groups");c.innerHTML="";
   (aF?[aF]:CN).forEach(con=>{
     const ch=con==="Ñ"?"ñ":con.toLowerCase();const g=document.createElement("div");g.className="cg";
-    const sub=con==="X"?"X casi siempre va entre vocales — palabras reales":"Toca para escuchar";
+    const sub=con==="X"?"X casi siempre va entre vocales — palabras reales":con==="H"?"H muda — E/I usan palabras reales":"Toca para escuchar";
     g.innerHTML=`<div class="cg-hdr"><button class="cg-badge" onclick="speak('${LI[con].tts}',0.7)">${con}</button>
       <div><div class="cg-title">${con==="X"?"X en palabras reales":con+" + vocal"}</div><div class="cg-sub">${sub}</div></div></div><div class="g5c" id="cg-${con}"></div>`;
     c.appendChild(g);const gr=g.querySelector(".g5c");
@@ -209,11 +209,12 @@ function rC(){
       });
       return;
     }
-    VW.forEach(v=>{const inf=gc(con,v);const d=ch+v;const ex=con==="H"?H_SOUND_EXAMPLES[v]:null;const chip=document.createElement("button");chip.className="cc";
+    VW.forEach(v=>{const inf=gc(con,v);const d=ch+v;const ex=con==="H"?H_SOUND_EXAMPLES[v]:null;const chip=document.createElement("button");chip.className="cc"+(ex?" h-example":"");
       const note=ex?`H muda · ejemplo: ${ex.word}`:inf.n;
       chip.innerHTML=`<span class="cc-big"><span style="color:var(--teal)">${d[0].toUpperCase()}</span><span style="color:var(--pink)">${d[1]}</span></span>
         <span class="cc-ph">${inf.p}</span>${note?`<span class="cc-note">${note}</span>`:""}
         <span style="font-size:0.8rem">🔊</span>`;
+      if(ex){chip.title=`${d} — example word: ${ex.word}`;chip.setAttribute("aria-label",`${d}; hear the example word ${ex.word}`);}
       const label=d;chip.onclick=()=>ex?speak(ex.tts,0.75):speakSyl(label,inf.t);gr.appendChild(chip);});});
 }
 rC();
@@ -410,7 +411,7 @@ function renderMicPanel(state,extra){
   if(SPEECH_CHECK_ENABLED&&SR&&state!=="recording")h+='<button type="button" class="mic-btn gold" onclick="micListen()">🎯 Check me</button>';
   h+='</div>';
   if(extra)h+='<div class="mic-result">'+extra+'</div>';
-  else if(state==="idle"&&!micUrl)h+='<div class="mic-hint">Say it out loud FIRST. Then record and compare with the model.</div>';
+  else if(state==="idle"&&!micUrl)h+='<div class="mic-hint">Say it out loud FIRST. “Check me” depends on the browser; Record + compare is the reliable fallback.</div>';
   micPanel.innerHTML=h;
 }
 async function micStart(){
@@ -452,13 +453,32 @@ function micMatch(heardList,target){
     if(!h)return false;
     if(h===t||h.includes(t))return true;
     if(t.includes(h)&&h.length>=Math.max(3,Math.floor(t.length*0.6)))return true;
-    return micLev(h,t)<=Math.max(1,Math.floor(t.length*0.25));
+    if(micLev(h,t)<=Math.max(1,Math.floor(t.length*0.25)))return true;
+    /* Browser recognition often drops a short word or slightly misspells one
+       word. Accept a close phrase when at least 75% of its content matches. */
+    const tw=t.split(" ").filter(Boolean),hw=h.split(" ").filter(Boolean);
+    if(tw.length>=2){
+      const matched=tw.filter(word=>hw.some(other=>other===word||(word.length>=4&&micLev(other,word)<=1))).length;
+      if(matched/tw.length>=0.75)return true;
+    }
+    return false;
   });
+}
+function micErrorMessage(code){
+  const messages={
+    "not-allowed":"Microphone permission is blocked. Allow microphone access for this site, then try again.",
+    "service-not-allowed":"This browser does not allow its speech-check service right now. Use Record + compare by ear.",
+    network:"The browser speech service is unavailable. Use Record + compare by ear instead.",
+    "audio-capture":"No microphone was available. Check the phone microphone and browser permission.",
+    "no-speech":"I did not hear a clear answer. Move closer, speak a little louder, and try again.",
+    aborted:"The speech check stopped. Try again when you are ready.",
+  };
+  return messages[code]||`Speech check unavailable (${code||"unknown error"}). Record yourself and compare by ear.`;
 }
 function micListen(){
   if(!SR){renderMicPanel("idle","Speech recognition is not available on this device.");return;}
-  const languages=["es-CO","es-419","es-MX"];
-  let attempt=0,done=false,retrying=false,current=null;
+  const languages=["es-CO","es-419","es-MX","es-ES"];
+  let attempt=0,done=false,retrying=false,current=null,noSpeechRetried=false;
   const start=()=>{
     let rec=null;
     try{rec=new SR();}catch(e){renderMicPanel("idle","Recognition is not available here. Use Record + your ear.");return;}
@@ -474,14 +494,15 @@ function micListen(){
     };
     rec.onerror=e=>{
       if(rec!==current||done)return;
-      const canRetry=(e.error==="language-not-supported"||e.error==="network")&&attempt<languages.length-1;
-      if(canRetry){retrying=true;attempt++;setTimeout(()=>{if(!done){retrying=false;start();}},180);return;}
-      done=true;renderMicPanel("idle","Recognition failed ("+(e.error||"error")+"). Use Record + compare by ear if this keeps happening.");
+      const code=e.error||"error";
+      if(code==="language-not-supported"&&attempt<languages.length-1){retrying=true;attempt++;setTimeout(()=>{if(!done){retrying=false;start();}},180);return;}
+      if(code==="no-speech"&&!noSpeechRetried){noSpeechRetried=true;retrying=true;setTimeout(()=>{if(!done){retrying=false;start();}},250);return;}
+      done=true;renderMicPanel("idle",micErrorMessage(code));
     };
-    rec.onend=()=>{if(rec!==current||done||retrying)return;done=true;renderMicPanel("idle","I did not hear anything. Get closer to the mic and try again.");};
+    rec.onend=()=>{if(rec!==current||done||retrying)return;done=true;renderMicPanel("idle",micErrorMessage("no-speech"));};
     try{rec.start();}catch(e){
       if(attempt<languages.length-1){attempt++;start();}
-      else{done=true;renderMicPanel("idle","Recognition is not available here.");}
+      else{done=true;renderMicPanel("idle",micErrorMessage("service-not-allowed"));}
     }
   };
   start();
@@ -1103,6 +1124,9 @@ function renderLessonStep(){
   back.innerHTML="<span>‹</span><span>Back to lessons</span>";
   back.onclick=()=>{lpLesson=null;renderLessons();};
   root.appendChild(back);
+  const progress=lpEl("lp-progress-head");
+  progress.innerHTML=`<span>${escapeVocabHtml(lpLesson.title||"Lesson")}</span><strong>Step ${lpStep+1} of ${lpSteps.length}</strong>`;
+  root.appendChild(progress);
   root.appendChild(lpEl("lp-dots",lpSteps.map((s,i)=>`<span class="lp-dot${i===lpStep?" on":i<lpStep?" past":""}"></span>`).join("")));
   const card=lpEl("lp-card");
   const title=lpEl("lp-step-title");
@@ -2226,7 +2250,7 @@ function quizPool(){
     pool=qCat==="all"?pool:pool.filter(q=>q.cat===qCat);
   }
   if(FOCUS_MODES.has(qMode)&&qFocus!=="all")pool=pool.filter(q=>q.focus===qFocus);
-  return pool;
+  return cleanQuizPool(pool);
 }
 function spanishAnswer(q){
   if(qMode==="en-es")return q.es;
@@ -2244,6 +2268,20 @@ function normalizeDictation(text,stripAccents){
   let s=String(text||"").toLowerCase().trim().replace(/[¿?¡!.,;:…]+/g,"").replace(/\s+/g," ");
   return stripAccents?s.normalize("NFD").replace(/[\u0300-\u036f]/g,""):s;
 }
+function normalizeQuizText(text){return String(text||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[¿?¡!.,;:…]+/g,"").replace(/\s+/g," ").trim();}
+function quizItemKey(q){return normalizeQuizText(`${q.kind||""}|${q.es}|${q.answer}`);}
+function cleanQuizPool(pool){
+  const seen=new Set();
+  return pool.filter(q=>{
+    if(!q||!q.es||q.answer===undefined)return false;
+    const key=quizItemKey(q);if(seen.has(key))return false;seen.add(key);
+    if(!Array.isArray(q.choices))return true;
+    const choices=[];const seenChoices=new Set();
+    q.choices.forEach(choice=>{const text=String(choice||"").trim();const ck=normalizeQuizText(text);if(text&&ck&&!seenChoices.has(ck)){seenChoices.add(ck);choices.push(text);}});
+    q.choices=choices;
+    return choices.some(choice=>normalizeQuizText(choice)===normalizeQuizText(q.answer));
+  });
+}
 function nQ(){
   an=false;document.getElementById("quiz-next").style.display="none";document.getElementById("quiz-fb").textContent="";document.getElementById("quiz-reveal").innerHTML="";
   const base=quizPool();
@@ -2255,7 +2293,7 @@ function nQ(){
   }
   const roundKey=qMode+"|"+qCat+"|"+qFocus;
   if(roundKey!==qRoundKey){qRoundKey=roundKey;qRoundSeen.clear();}
-  let unseen=base.filter(q=>!qRoundSeen.has(q.es+"|"+q.answer));
+  let unseen=base.filter(q=>!qRoundSeen.has(quizItemKey(q)));
   if(!unseen.length){qRoundSeen.clear();unseen=base;}
   /* Missed questions can repeat during an explicit Repaso session. In a
      normal round, only unseen missed questions receive extra weighting. */
@@ -2265,7 +2303,7 @@ function nQ(){
    if(repasoLeft>0&&dueAll.length){pickFrom=dueAll;repasoLeft--;}
    else{if(repasoLeft>0)repasoLeft=0;pickFrom=(duePool.length&&Math.random()<0.7)?duePool:unseen;}
   cQ=pickFrom[Math.floor(Math.random()*pickFrom.length)];
-  qRoundSeen.add(cQ.es+"|"+cQ.answer);
+  qRoundSeen.add(quizItemKey(cQ));
   if(qMode==="dictation"){
     document.getElementById("qc-word").textContent="🎧";
     document.querySelector(".qc-label").textContent="Listen, then type the Spanish";
@@ -2305,7 +2343,7 @@ function nQ(){
   document.getElementById("qc-word").textContent=qMode==="listening"||cQ.kind==="listening"?"🎧":cQ.prompt;
   document.querySelector(".qc-label").textContent=qMode==="en-es"?"Translate to Spanish":qMode==="listening"?"Listen and recognize":qMode==="blank"?"Complete the sentence":qMode==="conversation"?(cQ.kind==="reply"?"Choose the natural reply":cQ.kind==="meaning"?"Choose the English meaning":cQ.kind==="listening"?"Listen and recognize":cQ.kind==="tense"?"Choose the matching tense":"Choose the best answer"):qMode==="es-en"?"Translate to English":cQ.kind==="reply"?"Choose the correct reply":cQ.kind==="listening"?"Listen and recognize":cQ.kind==="tense"?"Which tense is it?":cQ.kind==="blank"?"Complete the sentence":"Choose the correct answer";
   if(qMode==="listening"||cQ.kind==="listening")setTimeout(()=>speak(cQ.tts,0.7),350);
-  const seen=new Set([cQ.answer]);const wrong=[];
+  const seen=new Set([normalizeQuizText(cQ.answer)]);const wrong=[];
   /* Mixed mode contains several question families.  Do not use a Spanish
      blank answer as a distractor for an English meaning question (or vice
      versa); that makes some questions look like they have multiple answers. */
@@ -2313,16 +2351,16 @@ function nQ(){
   let compatible=base.filter(q=>q!==cQ&&questionFamily(q)===questionFamily(cQ));
   if(compatible.length<3)compatible=base.filter(q=>q!==cQ&&typeof q.answer===typeof cQ.answer);
   const wrongPool=cQ.choices?cQ.choices.map(answer=>({answer})):compatible.sort(()=>Math.random()-0.5);
-  for(const w of wrongPool){if(wrong.length>=3)break;if(!w.answer||seen.has(w.answer))continue;seen.add(w.answer);wrong.push({answer:w.answer});}
+  for(const w of wrongPool){if(wrong.length>=3)break;if(!w.answer)continue;const wk=normalizeQuizText(w.answer);if(!wk||seen.has(wk))continue;seen.add(wk);wrong.push({answer:w.answer});}
   const opts=[cQ,...wrong].sort(()=>Math.random()-0.5);
   const ow=document.getElementById("quiz-opts");ow.innerHTML="";
   opts.forEach(opt=>{const b=document.createElement("button");b.className="qopt";b.textContent=opt.answer;
     b.onclick=()=>{if(an)return;an=true;qT++;document.getElementById("q-total").textContent=qT;
       const fb=document.getElementById("quiz-fb");
       const mk=cQ.es+"|"+cQ.answer;
-       if(opt.answer===cQ.answer){b.classList.add("correct");qC++;qS++;recordSrs(mk,true);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.innerHTML=`✅ ¡Correcto! <small class="srs-next">Next review: ${srsNextLabel(srsStore[mk])}</small>`;fb.style.color="var(--teal)";speak(cQ.tts,0.75);
+       if(normalizeQuizText(opt.answer)===normalizeQuizText(cQ.answer)){b.classList.add("correct");qC++;qS++;recordSrs(mk,true);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.innerHTML=`✅ ¡Correcto! <small class="srs-next">Next review: ${srsNextLabel(srsStore[mk])}</small>`;fb.style.color="var(--teal)";speak(cQ.tts,0.75);
         if(qStore.missed[mk]){qStore.missed[mk]--;if(qStore.missed[mk]<=0)delete qStore.missed[mk];}}
-       else{b.classList.add("wrong");qS=0;recordSrs(mk,false);document.getElementById("q-streak").textContent="🔥 0";fb.innerHTML="❌ Incorrecto <small class='srs-next'>Review again tomorrow.</small>";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(x.textContent===cQ.answer)x.classList.add("reveal");});
+       else{b.classList.add("wrong");qS=0;recordSrs(mk,false);document.getElementById("q-streak").textContent="🔥 0";fb.innerHTML="❌ Incorrecto <small class='srs-next'>Review again tomorrow.</small>";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(normalizeQuizText(x.textContent)===normalizeQuizText(cQ.answer))x.classList.add("reveal");});
         qStore.missed[mk]=(qStore.missed[mk]||0)+2;}
       document.getElementById("quiz-reveal").innerHTML=`<div>🇨🇴 <strong>${spanishAnswer(cQ)}</strong></div><div>🇺🇸 ${englishAnswer(cQ)}</div>`;
       attachMic(document.getElementById("quiz-reveal"),spanishAnswer(cQ));
@@ -2379,7 +2417,7 @@ function runDataValidator(){
     CONVERSATIONS.forEach(c=>c.lines.forEach(L=>{if(!L.tts)issues.push('Conversation "'+c.title+'" ('+c.tense+'): line missing tts');}));
     if(typeof SPEAKING_GUIDE!=="undefined")SPEAKING_GUIDE.forEach(g=>{if(!g.id||!g.title||!g.formula||!g.explain||!g.mistake||!g.exercise)issues.push('Speaking guide "'+(g.id||"?")+ '": incomplete explanation');(g.examples||[]).forEach((ex,i)=>{if(!ex.es||!ex.en||!ex.tts)issues.push('Speaking guide "'+g.id+'" example '+(i+1)+' missing Spanish, English, or tts');});});
     if(typeof LESSON_META!=="undefined")LESSONS.forEach(l=>{const m=LESSON_META[l.id];if(!m)return;(m.guideIds||[]).forEach(id=>{if(typeof SPEAKING_GUIDE!=="undefined"&&!SPEAKING_GUIDE.some(g=>g.id===id))issues.push('Lesson "'+l.id+'": guide "'+id+'" does not exist');});});
-    aQ.forEach((q,i)=>{if(!Array.isArray(q.choices))return;const choices=q.choices.map(String);const normalized=choices.map(v=>v.trim().toLowerCase().replace(/[.!?…]+$/g,""));if(choices.length!==4)issues.push('Quiz question '+(i+1)+' needs exactly four answer choices');if(new Set(normalized).size!==normalized.length)issues.push('Quiz question '+(i+1)+' has duplicate answer choices');if(q.en&&!normalized.includes(String(q.en).trim().toLowerCase().replace(/[.!?…]+$/g,"")))issues.push('Quiz question '+(i+1)+' correct answer is not in its choices');});
+    aQ.forEach((q,i)=>{if(!Array.isArray(q.choices))return;const choices=q.choices.map(String);const normalized=choices.map(normalizeQuizText);if(choices.length!==4)issues.push('Quiz question '+(i+1)+' needs exactly four answer choices');if(new Set(normalized).size!==normalized.length)issues.push('Quiz question '+(i+1)+' has duplicate answer choices');if(q.en&&!normalized.includes(normalizeQuizText(q.en)))issues.push('Quiz question '+(i+1)+' correct answer is not in its choices');if(q.kind==="blank"&&!String(q.es).includes("___"))issues.push('Quiz question '+(i+1)+' is marked blank but has no blank in its Spanish prompt');});
     FRASES.forEach(s=>{if(s.id&&s.section)issues.push('FRASES "'+s.id+'": has BOTH id and section (breaks hybrid filters)');});
   }catch(e){issues.push("Validator crashed: "+e.message);}
   if(issues.length){
