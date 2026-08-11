@@ -209,11 +209,12 @@ function rC(){
       });
       return;
     }
-    VW.forEach(v=>{const inf=gc(con,v);const d=ch+v;const chip=document.createElement("button");chip.className="cc";
+    VW.forEach(v=>{const inf=gc(con,v);const d=ch+v;const ex=con==="H"?H_SOUND_EXAMPLES[v]:null;const chip=document.createElement("button");chip.className="cc";
+      const note=ex?`H muda · ejemplo: ${ex.word}`:inf.n;
       chip.innerHTML=`<span class="cc-big"><span style="color:var(--teal)">${d[0].toUpperCase()}</span><span style="color:var(--pink)">${d[1]}</span></span>
-        <span class="cc-ph">${inf.p}</span>${inf.n?`<span class="cc-note">${inf.n}</span>`:""}
+        <span class="cc-ph">${inf.p}</span>${note?`<span class="cc-note">${note}</span>`:""}
         <span style="font-size:0.8rem">🔊</span>`;
-      const label=d;chip.onclick=()=>speakSyl(label,inf.t);gr.appendChild(chip);});});
+      const label=d;chip.onclick=()=>ex?speak(ex.tts,0.75):speakSyl(label,inf.t);gr.appendChild(chip);});});
 }
 rC();
 
@@ -781,7 +782,9 @@ function phraseCollectionGroup(sec){
   if(/saludo|gusto|conversación diaria|social|planes|teléfono|sientes|familia/.test(n))return {id:"social",label:"🤝 Daily conversation / Conversación diaria"};
   return {id:"other",label:"📚 More useful phrases / Más frases"};
 }
+function resetFraseScroll(){const sc=document.querySelector(".scroll");if(sc)sc.scrollTop=0;}
 function renderFraseMenu(){
+  resetFraseScroll();
   fl.dataset.view="menu";
   fl.innerHTML="";
   const sections=FRASES.filter(s=>s.section);
@@ -822,7 +825,6 @@ function renderFraseMenu(){
   const search=document.createElement("input");search.type="search";search.className="content-search";search.placeholder="🔎 Search phrases or conversation lines…";search.setAttribute("aria-label","Search phrases");search.value=fraseSearchTerm;
   const results=document.createElement("div");results.className="search-results";fl.appendChild(search);fl.appendChild(results);
   const h1=document.createElement("div");h1.className="fr-home-label";h1.textContent="💬 Conversations · practice both sides";
-  fl.appendChild(h1);
   const g1=document.createElement("div");g1.className="fr-home-grid";
   PHRASE_DIALOGUES.forEach(d=>{
     const c=document.createElement("button");c.type="button";c.className="fr-home-card";
@@ -832,9 +834,8 @@ function renderFraseMenu(){
     c.onclick=()=>renderFraseDialogue(d);
     g1.appendChild(c);
   });
-  fl.appendChild(g1);
+  const conversationGroup=document.createElement("section");conversationGroup.className="fr-conversation-group";conversationGroup.append(h1,g1);
   const h2=document.createElement("div");h2.className="fr-home-label";h2.textContent="📋 Phrase collections · tap to open";
-  fl.appendChild(h2);
   const g2=document.createElement("div");g2.className="fr-collections-groups";
   const groupOrder=["survival","social","build","strong","other"];
   const groups=new Map();
@@ -866,14 +867,15 @@ function renderFraseMenu(){
   });
   groupOrder.forEach(id=>{const block=groups.get(id);if(block){g2.appendChild(block);}});
   g2.appendChild(titleGroup);
-  fl.appendChild(g2);
-  const blocks=[h1,g1,h2,g2];
+  const phraseCollectionsGroup=document.createElement("section");phraseCollectionsGroup.className="fr-phrase-collections-group";phraseCollectionsGroup.append(h2,g2);
+  fl.appendChild(phraseCollectionsGroup);
+  fl.appendChild(conversationGroup);
+  const blocks=[phraseCollectionsGroup,conversationGroup];
   function applyFraseView(){
     const q=fraseSearchTerm.trim();
     if(q){blocks.forEach(el=>{el.hidden=true;});return;}
     const showConversations=fraseView!=="phrases";const showPhrases=fraseView!=="conversations";
-    h1.hidden=g1.hidden=!showConversations;h2.hidden=g2.hidden=!showPhrases;
-    g2.querySelectorAll(".fr-collection-group").forEach(group=>{group.hidden=!showPhrases;});
+    conversationGroup.hidden=!showConversations;g2.hidden=!showPhrases;
   }
   function refreshPhraseSearch(){
     const q=fraseSearchTerm.trim().toLowerCase();const active=!!q;results.innerHTML="";results.hidden=!active;applyFraseView();if(!active)return;
@@ -886,6 +888,7 @@ function renderFraseMenu(){
   search.oninput=()=>{fraseSearchTerm=search.value;refreshPhraseSearch();};refreshPhraseSearch();
 }
 function renderFraseSection(idx){
+  resetFraseScroll();
   fl.dataset.view="section";
   fl.innerHTML="";
   const back=document.createElement("button");
@@ -922,6 +925,7 @@ function renderFraseSection(idx){
   rememberFraseLocation({kind:"section",value:idx,title:sec.section,subtitle:phraseEnglishTitle(sec.section)});
 }
 function renderFraseDialogue(dialogue,tense){
+  resetFraseScroll();
   fl.dataset.view="dialogue";
   fl.innerHTML="";
   const back=document.createElement("button");
