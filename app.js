@@ -1,5 +1,64 @@
 ﻿// Spanish learning app behavior
 // ── Voice ─────────────────────────────────────────────────────────────────────
+// ── Local profiles ──────────────────────────────────────────────────────────
+// Profiles are intentionally local to this browser/device. They keep quiz,
+// lesson, SRS, streak, and practice state separate without requiring accounts.
+const nativeStorage=window.localStorage;
+const PROFILE_LIST_KEY="esco-profiles-v1";
+const ACTIVE_PROFILE_KEY="esco-active-profile-v1";
+const PROFILE_MIGRATION_KEY="esco-profile-migrated-v1";
+const DEFAULT_PROFILES=[{id:"seth",label:"Seth",emoji:"🧑‍🎓"},{id:"guest",label:"Guest",emoji:"👤"}];
+let profileList=DEFAULT_PROFILES.slice();
+let activeProfileId="seth";
+try{
+  const savedProfiles=JSON.parse(nativeStorage.getItem(PROFILE_LIST_KEY)||"null");
+  if(Array.isArray(savedProfiles)&&savedProfiles.length)profileList=savedProfiles;
+  const savedActive=nativeStorage.getItem(ACTIVE_PROFILE_KEY);
+  if(profileList.some(p=>p.id===savedActive))activeProfileId=savedActive;
+}catch(e){}
+/* Preserve the existing single-profile app the first time profiles are used. */
+try{
+  if(!nativeStorage.getItem(PROFILE_MIGRATION_KEY)){
+    for(let i=0;i<nativeStorage.length;i++){
+      const key=nativeStorage.key(i);
+      if(!key||!key.startsWith("esco-")||key.startsWith("esco-profile-")||[PROFILE_LIST_KEY,ACTIVE_PROFILE_KEY,PROFILE_MIGRATION_KEY].includes(key))continue;
+      const destination="esco-profile-seth-"+key;
+      if(nativeStorage.getItem(destination)===null)nativeStorage.setItem(destination,nativeStorage.getItem(key));
+    }
+    nativeStorage.setItem(PROFILE_MIGRATION_KEY,"1");
+  }
+  nativeStorage.setItem(PROFILE_LIST_KEY,JSON.stringify(profileList));
+  nativeStorage.setItem(ACTIVE_PROFILE_KEY,activeProfileId);
+}catch(e){}
+const profileStorage={
+  getItem:key=>nativeStorage.getItem("esco-profile-"+activeProfileId+"-"+key),
+  setItem:(key,value)=>nativeStorage.setItem("esco-profile-"+activeProfileId+"-"+key,value),
+  removeItem:key=>nativeStorage.removeItem("esco-profile-"+activeProfileId+"-"+key),
+  key:index=>{const prefix="esco-profile-"+activeProfileId+"-";const keys=[];for(let i=0;i<nativeStorage.length;i++){const k=nativeStorage.key(i);if(k&&k.startsWith(prefix))keys.push(k.slice(prefix.length));}return keys[index]||null;},
+  get length(){const prefix="esco-profile-"+activeProfileId+"-";let n=0;for(let i=0;i<nativeStorage.length;i++){const k=nativeStorage.key(i);if(k&&k.startsWith(prefix))n++;}return n;}
+};
+// Existing app code can continue using localStorage; this proxy scopes it.
+const localStorage=profileStorage;
+function buildProfileBar(){
+  const host=document.getElementById("profile-host");if(!host)return;
+  host.innerHTML="";
+  const bar=document.createElement("div");bar.className="profile-bar";
+  const label=document.createElement("span");label.className="profile-label";label.textContent="👤 Profile";
+  const select=document.createElement("select");select.className="profile-select";select.setAttribute("aria-label","Choose local profile");
+  profileList.forEach(p=>{const o=document.createElement("option");o.value=p.id;o.textContent=(p.emoji||"👤")+" "+p.label;select.appendChild(o);});
+  select.value=activeProfileId;
+  select.onchange=()=>{activeProfileId=select.value;nativeStorage.setItem(ACTIVE_PROFILE_KEY,activeProfileId);location.reload();};
+  const reset=document.createElement("button");reset.type="button";reset.className="profile-reset";reset.textContent="Reset Guest";reset.title="Clear Guest progress only";
+  reset.onclick=()=>{
+    if(!confirm("Clear the Guest profile's saved progress? Seth's profile will not change."))return;
+    const prefix="esco-profile-guest-";const keys=[];
+    for(let i=0;i<nativeStorage.length;i++){const k=nativeStorage.key(i);if(k&&k.startsWith(prefix))keys.push(k);}
+    keys.forEach(k=>nativeStorage.removeItem(k));
+    if(activeProfileId==="guest")location.reload();else reset.textContent="Guest reset";
+  };
+  bar.append(label,select,reset);host.appendChild(bar);
+}
+buildProfileBar();
 let voices=[],selV=null;
 const VOICE_KEY="esco-selected-voice-v1";
 const VOICE_HOSTS=["fonetica","lecciones","vocab","frases","gram","quiz"];
@@ -493,6 +552,21 @@ function rVerbos(list){
     card.onclick=()=>{markPractice("vocab",key);showVerbDetail(key,verb);};list.appendChild(card);});
 }
 
+function registerTone(item){
+  const group=String(item&&item.registerGroup||"").toLowerCase();
+  if(group==="danger")return "danger";
+  if(group==="informal")return "informal";
+  if(group==="formal")return "formal";
+  if(group==="everyday")return "everyday";
+  const value=String(item&&((item.registerGroup||"")+" "+(item.register||""))).toLowerCase();
+  if(/danger|strong|vulgar|insult|understand|context/.test(value))return "danger";
+  if(/informal|colombian/.test(value))return "informal";
+  if(/formal|polite/.test(value))return "formal";
+  return "everyday";
+}
+function registerBadge(item){
+  return item&&item.register?'<span class="f-register register-'+registerTone(item)+'">'+escapeVocabHtml(item.register)+'</span>':"";
+}
 function rCol(list){
   const note=document.createElement("div");note.className="intro-note";
   note.innerHTML=`<div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:800">🇨🇴 Colombianismos</div>
@@ -505,6 +579,7 @@ function rCol(list){
       <div class="col-word-wrap"><div class="col-word">${item.word}</div><div class="col-en">${item.en}</div></div>
       <span class="col-spk">🔊</span></div>
       <div class="col-usage">${item.usage}<div class="col-example">💬 ${item.example}</div></div>`;
+    if(item.register){const badge=document.createElement("span");badge.className="f-register register-"+registerTone(item);badge.textContent=item.register;const usage=card.querySelector(".col-usage");if(usage){usage.prepend(badge);if(item.registerNote){const note=document.createElement("div");note.className="col-register-note";note.textContent="ⓘ "+item.registerNote;usage.appendChild(note);}}}
     card.onclick=()=>{markPractice("vocab",item.tts||item.word);speak(item.tts||item.word,0.75);};list.appendChild(card);});
 }
 
@@ -846,6 +921,8 @@ const LESSONS=[
   {id:"gram-futuro",icon:"⏭️",title:"Planes futuros",sub:"Usa voy a… para hablar de tus planes",vocab:"acciones",dialogue:"Trabajo y oficina",quizCat:"all",quizMode:"conversation",quizFocus:"future"},
   {id:"gram-pasado",icon:"⏮️",title:"Hablar del pasado",sub:"Cuenta qué hiciste ayer y qué pasó",vocab:"acciones",dialogue:"Preparar la cocina",quizCat:"all",quizMode:"conversation",quizFocus:"past"},
   {id:"gram-pasado-historia",icon:"🗣️",title:"Pasado para conversar",sub:"Cuenta qué hiciste y qué estaba pasando",vocab:"verbos",dialogue:"Contar lo que pasó",quizCat:"all",quizMode:"conversation",quizFocus:"past"},
+  {id:"gram-pasado-contraste",icon:"🎞️",title:"Pasado: evento vs. contexto",sub:"Fui, iba, estaba y era para contar historias",vocab:"acciones",dialogue:"Contar lo que pasó",quizCat:"frases",quizMode:"blank",quizFocus:"past"},
+  {id:"gram-subjuntivo",icon:"🌱",title:"Deseos y recomendaciones",sub:"Quiero que…, espero que…, es importante que…",vocab:"acciones",dialogue:"Planes de fin de semana",quizCat:"subjuntivo",quizMode:"blank",quizFocus:"subjuntivo"},
   {id:"gram-necesidades",icon:"🧱",title:"Necesidades y obligaciones",sub:"Di lo que querías, necesitabas y tenías que hacer",vocab:"acciones",dialogue:"Contar lo que pasó",quizCat:"all",quizMode:"conversation",quizFocus:"past"},
   {id:"gram-conectores",icon:"🔗",title:"Conecta tus ideas",sub:"Usa pero, porque y entonces para sonar natural",vocab:"gustos",dialogue:"Contar lo que pasó",quizCat:"all",quizMode:"conversation"},
   {id:"gram-groserias",icon:"⚠️",title:"Groserías colombianas",sub:"Reconócelas y aprende el contexto antes de usarlas",vocab:"colombianismos",dialogue:"Groserías colombianas",quizCat:"groserias",quizMode:"conversation"},
@@ -1497,7 +1574,7 @@ function renderLessons(){
     {name:"🌱 Stage 1 · Start Here",sub:"Greetings, basic needs, numbers, and repairing misunderstandings.",ids:["presentate","plata","survival-communication","casa","gustos"]},
     {name:"🧭 Stage 2 · Travel and Survival",sub:"Uber, directions, hotels, food, shopping, and the pharmacy.",ids:["uber-ride","hotel-checkin","calle","cocina","farmacia"]},
     {name:"🏠 Stage 3 · Daily Life",sub:"Work, home, phone calls, feelings, and everyday routines.",ids:["trabajo","daily-repair","planes","sentirse"]},
-    {name:"🧱 Stage 4 · Build Sentences",sub:"Present, future, past, action chunks, connectors, conversation glue, sentence structure, and pronouns.",ids:["sentence-structure","action-chunks","connectors-v36","function-words","gram-presente","gram-futuro","gram-pasado","gram-pasado-historia","gram-necesidades","gram-conectores","gram-pronombres"]},
+    {name:"🧱 Stage 4 · Build Sentences",sub:"Present, future, past, contrast, subjunctive, action chunks, connectors, sentence structure, and pronouns.",ids:["sentence-structure","action-chunks","connectors-v36","function-words","gram-presente","gram-futuro","gram-pasado","gram-pasado-historia","gram-pasado-contraste","gram-subjuntivo","gram-necesidades","gram-conectores","gram-pronombres"]},
     {name:"🇨🇴 Stage 5 · Speak More Naturally",sub:"Colombian everyday expressions, slang, register, and follow-up questions.",ids:["colombia","social-colombia-v36","gram-groserias"]},
     {name:"🎯 Stage 6 · Conversation Challenge",sub:"Read aloud, react quickly, and complete real speaking missions.",ids:["conversation-challenge"]}
   ];
@@ -1658,15 +1735,15 @@ function buildSpeakingGuide(){
     const drill=document.createElement("div");drill.className="speaking-guide-drill";drill.textContent="🗣️ Try it: "+g.exercise;card.appendChild(drill);sec.appendChild(card);
   });
 }
-["presente","pasado","futuro","trucos"].forEach(id=>buildGram(id,GRAMMAR[id]));
+["presente","pasado","futuro","pasado-contraste","subjuntivo","trucos"].forEach(id=>buildGram(id,GRAMMAR[id]));
 buildGram("pronombres");buildGram("reflexivos");
 buildSpeakingGuide();
 
 /* Grouped grammar navigation (v23): Tiempos / Pronombres / Patrones */
 const GRAM_GROUPS={
-  tiempos:{label:"⏱️ Tiempos",items:[["presente","⚡ Presente"],["pasado","⏮️ Pasado"],["futuro","⏭️ Futuro"]]},
+  tiempos:{label:"⏱️ Tiempos",items:[["presente","⚡ Presente"],["pasado","⏮️ Pasado"],["pasado-contraste","🎞️ Evento vs. contexto"],["futuro","⏭️ Futuro"]]},
   pronombres:{label:"👤 Pronombres",items:[["pronombres","Lo / La / Le"]]},
-  patrones:{label:"🧩 Patrones",items:[["reflexivos","🔄 Reflexivos"],["trucos","🧠 Trucos"]]},
+  patrones:{label:"🧩 Patrones",items:[["reflexivos","🔄 Reflexivos"],["subjuntivo","🌱 Subjuntivo"],["trucos","🧠 Trucos"]]},
   estructura:{label:"🧱 Hablar",items:[["estructura","🧱 Estructura"]]}
 };
 let gramGroup="tiempos",gramSection="presente";
@@ -1686,7 +1763,7 @@ function showGramGroup(g){
 }
 function showGram(id){
   gramSection=id;
-  ["presente","pasado","futuro","pronombres","reflexivos","trucos","estructura"].forEach(g=>{
+  ["presente","pasado","pasado-contraste","futuro","pronombres","reflexivos","subjuntivo","trucos","estructura"].forEach(g=>{
     document.getElementById("gs-"+g).classList.toggle("active",g===id);
   });
   const sub=document.getElementById("gram-sub");
@@ -1945,6 +2022,14 @@ const PRONOUN_FRAME_BLANKS=[
 FILL_BLANK_QUIZ.push(...CONVERSATION_FRAME_BLANKS);
 FILL_BLANK_QUIZ.push(...PRONOUN_FRAME_BLANKS);
 FILL_BLANK_QUIZ.push(...APPROVED_VOCAB_BLANKS);
+FILL_BLANK_QUIZ.push(
+  {kind:"blank",focus:"past",cat:"frases",es:"Cuando era niño, ___ en Cali.",en:"vivía",tts:"Cuando era niño, vivía en Cali.",trans:"When I was a child, I used to live in Cali.",choices:["vivía","viví","vivo","voy"]},
+  {kind:"blank",focus:"past",cat:"frases",es:"Ayer ___ al mercado.",en:"fui",tts:"Ayer fui al mercado.",trans:"Yesterday I went to the market.",choices:["fui","iba","voy","era"]},
+  {kind:"blank",focus:"past",cat:"frases",es:"Mientras ___, me llamaste.",en:"cocinaba",tts:"Mientras cocinaba, me llamaste.",trans:"While I was cooking, you called me.",choices:["cocinaba","cociné","cocino","cocinaré"]},
+  {kind:"blank",focus:"subjuntivo",cat:"subjuntivo",es:"Quiero que ___ mañana.",en:"vengas",tts:"Quiero que vengas mañana.",trans:"I want you to come tomorrow.",choices:["vengas","vienes","venir","viniste"]},
+  {kind:"blank",focus:"subjuntivo",cat:"subjuntivo",es:"Espero que ___ bien.",en:"estés",tts:"Espero que estés bien.",trans:"I hope you are well.",choices:["estés","estás","estar","estuviste"]},
+  {kind:"blank",focus:"subjuntivo",cat:"subjuntivo",es:"Es importante que ___ despacio.",en:"hables",tts:"Es importante que hables despacio.",trans:"It is important that you speak slowly.",choices:["hables","hablas","hablar","hablaste"]}
+);
 
 let aQ=[];
 VC.forEach(cat=>{
@@ -1956,23 +2041,23 @@ VC.forEach(cat=>{
   if(cat.type==="colombianismos")COLOMBIANISMOS.forEach(c=>aQ.push({es:c.word,en:c.en,tts:c.tts,cat:"colombianismos"}));
 });
 SPECIAL_SOUNDS.forEach(sound=>sound.examples.forEach(ex=>aQ.push({es:ex.word,en:ex.en,tts:ex.tts,cat:"pronunciacion"})));
-SPEAKING_GUIDE.forEach(guide=>guide.examples.forEach(ex=>aQ.push({es:ex.es,en:ex.en,tts:ex.tts,cat:"estructura",focus:guide.id==="pasado"?"past":guide.id==="futuro"?"future":guide.id==="pronombres"?"pronombres":"present"})));
+SPEAKING_GUIDE.forEach(guide=>guide.examples.forEach(ex=>aQ.push({es:ex.es,en:ex.en,tts:ex.tts,cat:"estructura",focus:guide.id==="pasado"||guide.id==="pasado-contraste"?"past":guide.id==="futuro"?"future":guide.id==="pronombres"?"pronombres":guide.id==="subjuntivo"?"subjuntivo":"present"})));
 FRASES.filter(sec=>sec.section).forEach(sec=>{if(sec.items){const isPron=/Pronombres/i.test(sec.section);const isBad=/Groserías/i.test(sec.section);const quizCat=sec.quizCat||(isPron?"pronombres":isBad?"groserias":"frases");sec.items.forEach(i=>aQ.push({es:i.es,en:i.en,tts:i.es,cat:quizCat,focus:isPron?"pronombres":undefined}));}});
 CONVERSATION_QUIZ.forEach(q=>aQ.push(q));
 FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
 /* Vocabulary examples remain in Vocab as full context. Only the authored
    prompts above enter Fill blank; generic example sentences stay out. */
 
-const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"reparar",label:"🧰 Repair"},{id:"conectores",label:"🔗 Connectors"},{id:"direcciones",label:"🧭 Directions"},{id:"uber",label:"🚕 Uber"},{id:"hotel",label:"🏨 Hotel"},{id:"restaurante",label:"🍽️ Restaurant"},{id:"compras",label:"🛒 Shopping"},{id:"farmacia",label:"💊 Pharmacy"},{id:"expresiones",label:"🇨🇴 Expressions"},{id:"estructura",label:"🧱 Structure"},{id:"pronunciacion",label:"🔊 Sounds"},{id:"groserias",label:"⚠️ Groserías"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
+const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"reparar",label:"🧰 Repair"},{id:"conectores",label:"🔗 Connectors"},{id:"direcciones",label:"🧭 Directions"},{id:"uber",label:"🚕 Uber"},{id:"hotel",label:"🏨 Hotel"},{id:"restaurante",label:"🍽️ Restaurant"},{id:"compras",label:"🛒 Shopping"},{id:"farmacia",label:"💊 Pharmacy"},{id:"expresiones",label:"🇨🇴 Expressions"},{id:"estructura",label:"🧱 Structure"},{id:"subjuntivo",label:"🌱 Subjuntivo"},{id:"pronunciacion",label:"🔊 Sounds"},{id:"groserias",label:"⚠️ Groserías"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
 const QUIZ_MODES=[
   {id:"mixed",label:"Mixed"},{id:"es-en",label:"ES → EN"},{id:"en-es",label:"EN → ES"},
-  {id:"listening",label:"🎧 Listening"},{id:"blank",label:"✏️ Fill blank"},{id:"conversation",label:"💬 Conversation"}
+  {id:"listening",label:"🎧 Listening"},{id:"dictation",label:"⌨️ Dictation"},{id:"blank",label:"✏️ Fill blank"},{id:"conversation",label:"💬 Conversation"}
 ];
 const QUIZ_FOCUS=[
   {id:"all",label:"All patterns"},{id:"present",label:"Presente"},{id:"past",label:"Pasado"},
-  {id:"future",label:"Futuro"},{id:"pronombres",label:"Pronombres"}
+  {id:"future",label:"Futuro"},{id:"pronombres",label:"Pronombres"},{id:"subjuntivo",label:"Subjuntivo"}
 ];
-const FOCUS_MODES=new Set(["mixed","blank","conversation"]);
+const FOCUS_MODES=new Set(["mixed","blank","conversation","dictation"]);
 
 /* ── Persistent score + missed-question tracking (NEW v13) ──────────────────
    Saved in localStorage. Wrong answers get asked again more often. */
@@ -2034,6 +2119,7 @@ function quizPool(){
   let pool;
   if(qMode==="blank")pool=FILL_BLANK_QUIZ.map(q=>({...q,answer:q.en,prompt:q.es}));
   else if(qMode==="conversation")pool=CONVERSATION_QUIZ.map(q=>({...q,answer:q.en,prompt:q.es}));
+  else if(qMode==="dictation")pool=aQ.filter(q=>!q.kind&&q.es&&q.tts).map(q=>({...q,answer:q.es,prompt:"🎧",dictation:true}));
   else if(qMode==="en-es")pool=aQ.filter(q=>!q.kind).map(q=>({...q,answer:q.es,prompt:q.en}));
   else if(qMode==="listening")pool=aQ.filter(q=>!q.kind).map(q=>({...q,answer:q.es,prompt:"🎧"}));
   else if(qMode==="es-en")pool=aQ.filter(q=>!q.kind||q.kind==="meaning").map(q=>({...q,answer:q.en,prompt:q.es}));
@@ -2061,6 +2147,10 @@ function englishAnswer(q){
   const found=lines.find(line=>line.es===q.en||line.es===q.tts||line.es===q.es);
   return found?found.en:(q.en||"");
 }
+function normalizeDictation(text,stripAccents){
+  let s=String(text||"").toLowerCase().trim().replace(/[¿?¡!.,;:…]+/g,"").replace(/\s+/g," ");
+  return stripAccents?s.normalize("NFD").replace(/[\u0300-\u036f]/g,""):s;
+}
 function nQ(){
   an=false;document.getElementById("quiz-next").style.display="none";document.getElementById("quiz-fb").textContent="";document.getElementById("quiz-reveal").innerHTML="";
   const base=quizPool();
@@ -2083,6 +2173,41 @@ function nQ(){
    else{if(repasoLeft>0)repasoLeft=0;pickFrom=(duePool.length&&Math.random()<0.7)?duePool:unseen;}
   cQ=pickFrom[Math.floor(Math.random()*pickFrom.length)];
   qRoundSeen.add(cQ.es+"|"+cQ.answer);
+  if(qMode==="dictation"){
+    document.getElementById("qc-word").textContent="🎧";
+    document.querySelector(".qc-label").textContent="Listen, then type the Spanish";
+    const ow=document.getElementById("quiz-opts");ow.innerHTML="";
+    const box=document.createElement("div");box.className="quiz-dictation";
+    box.innerHTML="<div class='dictation-hint'>Listen first. Type the full Spanish sentence or phrase from memory.</div>";
+    const input=document.createElement("input");input.type="text";input.className="dictation-input";input.placeholder="Escribe en español…";input.autocomplete="off";input.autocapitalize="sentences";
+    const submit=document.createElement("button");submit.type="button";submit.className="dictation-submit";submit.textContent="Check →";
+    const finish=()=>{
+      if(an)return;
+      const raw=input.value.trim();if(!raw){input.focus();return;}
+      an=true;qT++;document.getElementById("q-total").textContent=qT;
+      const expected=String(cQ.answer||cQ.es),strict=normalizeDictation(raw,false)===normalizeDictation(expected,false);
+      const loose=normalizeDictation(raw,true)===normalizeDictation(expected,true);
+      const correct=strict||loose,fb=document.getElementById("quiz-fb"),mk=cQ.es+"|"+cQ.answer;
+      submit.disabled=true;input.classList.add(correct?"correct":"wrong");
+      if(correct){
+        qC++;qS++;recordSrs(mk,true);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;
+        fb.innerHTML=(strict?"✅ ¡Correcto!":"✅ Correcto — check the accent marks.")+" <small class='srs-next'>Next review: "+srsNextLabel(srsStore[mk])+"</small>";fb.style.color="var(--teal)";speak(cQ.tts,0.75);
+        if(qStore.missed[mk]){qStore.missed[mk]--;if(qStore.missed[mk]<=0)delete qStore.missed[mk];}
+      }else{
+        qS=0;recordSrs(mk,false);document.getElementById("q-streak").textContent="🔥 0";
+        fb.innerHTML="❌ Not quite <small class='srs-next'>Review again tomorrow.</small>";fb.style.color="var(--pink)";
+        input.value=expected;
+        qStore.missed[mk]=(qStore.missed[mk]||0)+2;
+      }
+      document.getElementById("quiz-reveal").innerHTML="<div>🇨🇴 <strong>"+spanishAnswer(cQ)+"</strong></div><div>🇺🇸 "+englishAnswer(cQ)+"</div>";
+      attachMic(document.getElementById("quiz-reveal"),spanishAnswer(cQ));
+      qStore.c=qC;qStore.t=qT;qStore.s=qS;saveQ();
+      document.getElementById("quiz-next").style.display="block";
+    };
+    submit.onclick=finish;input.onkeydown=e=>{if(e.key==="Enter")finish();};
+    box.append(input,submit);ow.appendChild(box);setTimeout(()=>{input.focus();speak(cQ.tts,0.7);},350);
+    return;
+  }
   /* Listening questions must not show the Spanish text — hide it and auto-play */
   document.getElementById("qc-word").textContent=qMode==="listening"||cQ.kind==="listening"?"🎧":cQ.prompt;
   document.querySelector(".qc-label").textContent=qMode==="en-es"?"Translate to Spanish":qMode==="listening"?"Listen and recognize":qMode==="blank"?"Complete the sentence":qMode==="conversation"?(cQ.kind==="reply"?"Choose the natural reply":cQ.kind==="meaning"?"Choose the English meaning":cQ.kind==="listening"?"Listen and recognize":cQ.kind==="tense"?"Choose the matching tense":"Choose the best answer"):qMode==="es-en"?"Translate to English":cQ.kind==="reply"?"Choose the correct reply":cQ.kind==="listening"?"Listen and recognize":cQ.kind==="tense"?"Which tense is it?":cQ.kind==="blank"?"Complete the sentence":"Choose the correct answer";
@@ -2114,6 +2239,7 @@ function nQ(){
 function quizHear(){
   if(!cQ)return;
   if(an){speak(spanishAnswer(cQ),0.7);return;} /* after answering: hear the Spanish answer */
+  if(qMode==="dictation"){speak(cQ.tts,0.7);return;}
   if(qMode==="en-es")return; /* pre-answer audio in EN→ES would speak the answer */
   if(cQ.kind==="blank"){speak(cQ.es.replace(/_+/g,","),0.7);return;}
   speak(cQ.tts,0.7);

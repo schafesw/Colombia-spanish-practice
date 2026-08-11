@@ -3,7 +3,7 @@ html{font-size:18px;width:100%;height:100%;-webkit-text-size-adjust:none;text-si
 :root{
   --teal:#4aa8a0;--pink:#e85d75;--gold:#e8b44a;--purple:#a78bfa;--green:#34d399;--blue:#60a5fa;
   --bg:#0a0f14;--card:rgba(255,255,255,0.06);--border:rgba(255,255,255,0.1);
-  --text:rgba(255,255,255,0.92);--muted:rgba(255,255,255,0.42);
+  --text:rgba(255,255,255,0.92);--muted:rgba(255,255,255,0.56);
   --safe-top:env(safe-area-inset-top,54px);--safe-bottom:env(safe-area-inset-bottom,34px);--tab-h:80px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -689,3 +689,29 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
   .vocab-home-grid{grid-template-columns:1fr 1fr;gap:7px;}
   .cat-pill{padding-left:12px;padding-right:12px;}
 }
+
+/* v40: local profile switcher */
+.profile-bar{display:flex;align-items:center;gap:8px;margin:-7px 0 16px;padding:8px 10px;border:1px solid rgba(96,165,250,.18);border-radius:12px;background:rgba(96,165,250,.06);}
+.profile-label{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);font-weight:900;white-space:nowrap;}
+.profile-select{flex:1;min-width:0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:7px 9px;color:#fff;font:700 .72rem 'Nunito',sans-serif;}
+.profile-select option{background:#1a2030;color:#fff;}
+.profile-reset{padding:7px 8px;border:1px solid rgba(232,93,117,.28);border-radius:8px;background:rgba(232,93,117,.08);color:#f6c8cf;font:800 .62rem 'Nunito',sans-serif;white-space:nowrap;}
+
+/* v40: register badges make Colombian slang safe to scan */
+.f-register,.search-register{display:inline-block;margin-top:6px;padding:3px 7px;border-radius:999px;border:1px solid rgba(255,255,255,.15);font-size:.58rem;font-weight:900;line-height:1.2;}
+.f-register.register-everyday,.search-register.register-everyday{color:var(--teal);background:rgba(74,168,160,.12);border-color:rgba(74,168,160,.28);}
+.f-register.register-informal,.search-register.register-informal{color:var(--gold);background:rgba(232,180,74,.12);border-color:rgba(232,180,74,.3);}
+.f-register.register-formal,.search-register.register-formal{color:var(--blue);background:rgba(96,165,250,.12);border-color:rgba(96,165,250,.28);}
+.f-register.register-danger,.search-register.register-danger{color:#ff9caf;background:rgba(232,93,117,.14);border-color:rgba(232,93,117,.35);}
+.col-register-note{margin-top:6px;font-size:.66rem;line-height:1.4;color:#f6c8cf;}
+.col-usage>.f-register{display:block;width:max-content;margin-top:8px;}
+
+/* v40: cold dictation */
+.quiz-dictation{display:flex;flex-direction:column;gap:9px;margin:0 auto 14px;max-width:560px;}
+.dictation-hint{font-size:.72rem;line-height:1.45;color:var(--muted);text-align:center;}
+.dictation-input{width:100%;min-height:52px;padding:12px 14px;border-radius:12px;border:2px solid rgba(74,168,160,.35);background:rgba(255,255,255,.07);color:#fff;font:700 .92rem 'Nunito',sans-serif;}
+.dictation-input:focus{border-color:var(--teal);outline:none;box-shadow:0 0 0 3px rgba(74,168,160,.14);}
+.dictation-input.correct{border-color:var(--teal);background:rgba(74,168,160,.12);}
+.dictation-input.wrong{border-color:var(--pink);background:rgba(232,93,117,.1);}
+.dictation-submit{align-self:center;min-height:44px;padding:10px 22px;border-radius:11px;background:var(--teal);color:#fff;font:900 .82rem 'Nunito',sans-serif;}
+.dictation-submit:disabled{opacity:.65;}
