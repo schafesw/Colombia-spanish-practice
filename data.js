@@ -7,7 +7,7 @@ const LI={A:{name:"a",phonetic:"ah",tts:"a"},B:{name:"be",phonetic:"beh",tts:"be
 const VS={a:"ah",e:"eh",i:"ee",o:"oh",u:"oo"};
 /* Spanish orthography on purpose: these strings are read by a SPANISH voice,
    so "dó/quí/só" come out right, while English-style "doh/kee/soh" would not. */
-const SYL_TTS_FIX={do:"dó",go:"gó",qi:"quí",to:"tó",ro:"ró",wu:"wú",zo:"só"};
+const SYL_TTS_FIX={do:"dó",go:"gó",qi:"quí",to:"tó",ro:"ró",wu:"wú",zo:"só",ha:"a",he:"e",hi:"i",ho:"o",hu:"u"};
 /* X almost never starts a syllable in real Spanish — it lives between vowels.
    So instead of fake X+vowel syllables, the Sílabas tab shows real example words. */
 const X_EXAMPLES=[
@@ -15,12 +15,14 @@ const X_EXAMPLES=[
   {word:"Examen",ph:"ek-SAH-men",tts:"examen",en:"exam"},
   {word:"Éxito",ph:"EK-see-toh",tts:"éxito",en:"success"},
 ];
-/* H is silent in Spanish.  On some phones, asking the browser voice to say
-   the artificial syllables "he" and "hi" produces an English-like sound.
-   Use real Spanish example words for the vowel sound, just as we do for X. */
-const H_SOUND_EXAMPLES={
-  e:{word:"helado",ph:"eh-LAH-doh",tts:"helado",en:"ice cream"},
-  i:{word:"hijo",ph:"EE-hoh",tts:"hijo",en:"son"},
+/* H is silent in Spanish. Keep HA/HE/HI/HO/HU visible for comparison, but
+   send only the vowel to speechSynthesis so the learner hears the real sound. */
+const RR_SOUND_EXAMPLES={
+  a:{word:"arriba",ph:"ah-RREE-bah",tts:"arriba",en:"up / above"},
+  e:{word:"arreglo",ph:"ah-RREH-gloh",tts:"arreglo",en:"repair / arrangement"},
+  i:{word:"barriga",ph:"bah-RREE-gah",tts:"barriga",en:"stomach / belly"},
+  o:{word:"arroyo",ph:"ah-RROH-yoh",tts:"arroyo",en:"stream"},
+  u:{word:"arruga",ph:"ah-RROO-gah",tts:"arruga",en:"wrinkle"},
 };
 /* Special spelling patterns: these need their own lesson because a simple
    consonant + vowel grid cannot show the silent U or the dieresis clearly. */
@@ -47,6 +49,15 @@ SPECIAL_SOUNDS.push(
   {id:"h-silent",label:"H muda",sound:"silent",tip:"H is silent at the start of Spanish words.",examples:[{word:"hola",en:"hello",ph:"OH-lah",tts:"hola"},{word:"hotel",en:"hotel",ph:"oh-TEL",tts:"hotel"},{word:"hacer",en:"to do / make",ph:"ah-SEHR",tts:"hacer"}]},
   {id:"v-b",label:"V / B",sound:"b",tip:"V and B are pronounced alike in Colombian Spanish; focus on the word, not an English V.",examples:[{word:"vaca",en:"cow",ph:"BAH-kah",tts:"vaca"},{word:"vivir",en:"to live",ph:"bee-BEER",tts:"vivir"},{word:"bebé",en:"baby",ph:"beh-BEH",tts:"bebé"}]}
 );
+const TONGUE_TWISTERS=[
+  {id:"rr-1",target:"RR",title:"RR fuerte · nivel 1",text:"Rosa corre rápido alrededor del carro rojo.",en:"Rosa runs quickly around the red car.",tts:"Rosa corre rápido alrededor del carro rojo."},
+  {id:"rr-2",target:"RR",title:"RR fuerte · nivel 2",text:"El perro de Roberto corre por el barrio.",en:"Roberto's dog runs through the neighborhood.",tts:"El perro de Roberto corre por el barrio."},
+  {id:"rr-3",target:"RR",title:"RR fuerte · reto",text:"Raúl arregla la rueda rota del carro rojo.",en:"Raúl repairs the red car's broken wheel.",tts:"Raúl arregla la rueda rota del carro rojo."},
+  {id:"ene-1",target:"Ñ",title:"Ñ · nivel 1",text:"La niña come piña en la mañana.",en:"The girl eats pineapple in the morning.",tts:"La niña come piña en la mañana."},
+  {id:"ene-2",target:"Ñ",title:"Ñ · nivel 2",text:"Mañana, Toño sueña con una montaña pequeña.",en:"Tomorrow, Toño dreams about a small mountain.",tts:"Mañana, Toño sueña con una montaña pequeña."},
+  {id:"ge-gi-1",target:"J / GE-GI",title:"J y GE/GI",text:"Jorge gira y recoge la guitarra.",en:"Jorge turns and picks up the guitar.",tts:"Jorge gira y recoge la guitarra."},
+  {id:"b-v-1",target:"B / V",title:"B y V",text:"Vivi bebe vino, pero Beto bebe agua.",en:"Vivi drinks wine, but Beto drinks water.",tts:"Vivi bebe vino, pero Beto bebe agua."},
+];
 function sylTTS(label,fallback){return SYL_TTS_FIX[label.toLowerCase()]||fallback||label.toLowerCase();}
 function speakSyl(label,fallback){
   speak(sylTTS(label,fallback),0.75);
