@@ -227,6 +227,68 @@ function rC(){
 }
 rC();
 
+function renderPhoneticWarmup(){
+  const root=document.getElementById("phonetic-warmup");
+  if(!root||typeof PHONETIC_WARMUP==="undefined")return;
+  root.innerHTML="";
+  PHONETIC_WARMUP.forEach(step=>{
+    const row=document.createElement("div");row.className="warmup-row";
+    row.innerHTML=`<div class='warmup-copy'><strong>${escapeVocabHtml(step.label)}</strong><span>${escapeVocabHtml(step.detail)}</span><small>${escapeVocabHtml(step.note)}</small></div><div class='warmup-actions'></div>`;
+    const actions=row.querySelector(".warmup-actions");
+    const listen=document.createElement("button");listen.type="button";listen.className="warmup-btn";listen.textContent="🔊 Listen";listen.onclick=()=>{markPractice("phrases",step.target);speak(step.tts,0.68);};
+    const record=document.createElement("button");record.type="button";record.className="warmup-btn warmup-record";record.textContent="🎙️ Say it";record.onclick=()=>openMicPanel(step.target);
+    actions.append(listen,record);root.appendChild(row);
+  });
+}
+function renderEnglishInterference(){
+  const root=document.getElementById("english-interference-list");
+  if(!root||typeof ENGLISH_INTERFERENCE==="undefined")return;
+  root.innerHTML="";
+  ENGLISH_INTERFERENCE.forEach(item=>{
+    const card=document.createElement("button");card.type="button";card.className="interference-card";card.title="Listen to the Spanish example";
+    card.innerHTML=`<span class='interference-pattern'>${escapeVocabHtml(item.pattern)}</span><strong>${escapeVocabHtml(item.spanish)}</strong><small>${escapeVocabHtml(item.english)}</small><em>${escapeVocabHtml(item.example)} · ${escapeVocabHtml(item.en)}</em><span class='interference-speak'>🔊</span>`;
+    card.onclick=()=>speak(item.tts,0.72);root.appendChild(card);
+  });
+}
+function renderMinimalPairs(){
+  const root=document.getElementById("minimal-pairs-list");
+  if(!root||typeof MINIMAL_PAIRS==="undefined")return;
+  root.innerHTML="";
+  MINIMAL_PAIRS.forEach(pair=>{
+    const card=document.createElement("article");card.className="minimal-pair-card";
+    card.innerHTML=`<div class='minimal-pair-words'><button type='button' class='minimal-word'><strong>${escapeVocabHtml(pair.a)}</strong><small>${escapeVocabHtml(pair.aEn)}</small></button><span class='minimal-vs'>vs.</span><button type='button' class='minimal-word'><strong>${escapeVocabHtml(pair.b)}</strong><small>${escapeVocabHtml(pair.bEn)}</small></button></div><div class='minimal-pair-tip'>${escapeVocabHtml(pair.tip)}</div><div class='minimal-pair-actions'></div>`;
+    card.querySelectorAll(".minimal-word").forEach((button,i)=>button.onclick=()=>speak(i===0?pair.a:pair.b,0.72));
+    const actions=card.querySelector(".minimal-pair-actions");
+    const listen=document.createElement("button");listen.type="button";listen.className="twister-btn";listen.textContent="🔊 Hear both";listen.onclick=()=>speak(pair.tts,0.68);
+    const record=document.createElement("button");record.type="button";record.className="twister-btn gold";record.textContent="🎙️ Compare";record.onclick=()=>openMicPanel(`${pair.a}, ${pair.b}`);
+    actions.append(listen,record);root.appendChild(card);
+  });
+}
+function renderSpanishThinking(){
+  const root=document.getElementById("spanish-thinking");
+  if(!root||typeof SPANISH_THINKING_PROMPTS==="undefined")return;
+  let index=0,revealed=false;
+  const draw=()=>{
+    const item=SPANISH_THINKING_PROMPTS[index%SPANISH_THINKING_PROMPTS.length];
+    root.innerHTML=`<div class='thinking-intent'>${escapeVocabHtml(item.intent)}</div><div class='thinking-model' ${revealed?"":"hidden"}>${escapeVocabHtml(item.model)}</div><div class='thinking-actions'></div>`;
+    const actions=root.querySelector(".thinking-actions");
+    const reveal=document.createElement("button");reveal.type="button";reveal.className="warmup-btn";reveal.textContent=revealed?"✅ Model shown":"👀 Reveal model";reveal.onclick=()=>{revealed=true;draw();};
+    const hear=document.createElement("button");hear.type="button";hear.className="warmup-btn";hear.textContent="🔊 Hear";hear.onclick=()=>speak(item.tts,0.72);
+    const say=document.createElement("button");say.type="button";say.className="warmup-btn warmup-record";say.textContent="🎙️ Say it";say.onclick=()=>openMicPanel(item.model);
+    const next=document.createElement("button");next.type="button";next.className="warmup-btn warmup-next";next.textContent="Next →";next.onclick=()=>{index=(index+1)%SPANISH_THINKING_PROMPTS.length;revealed=false;draw();};
+    actions.append(reveal,hear,say,next);
+  };
+  draw();
+}
+function setupPhoneticLinks(){
+  document.querySelectorAll(".phonetic-map-links a").forEach(link=>link.onclick=event=>{
+    const target=document.getElementById(link.getAttribute("href").slice(1));
+    if(target&&target.tagName.toLowerCase()==="details")target.open=true;
+    if(target){event.preventDefault();setTimeout(()=>target.scrollIntoView({behavior:"smooth",block:"start"}),20);}
+  });
+}
+renderPhoneticWarmup();renderEnglishInterference();renderMinimalPairs();renderSpanishThinking();setupPhoneticLinks();
+
 // ── Special spelling sounds (v35) ────────────────────────────────────────────
 function renderSpecialSounds(){
   const root=document.getElementById("special-sound-lab");
@@ -2452,6 +2514,10 @@ function runDataValidator(){
     CONVERSATIONS.forEach(c=>c.lines.forEach(L=>{if(!L.tts)issues.push('Conversation "'+c.title+'" ('+c.tense+'): line missing tts');}));
     if(typeof TONGUE_TWISTERS!=="undefined")TONGUE_TWISTERS.forEach(t=>{if(!t.id||!t.target||!t.text||!t.en||!t.tts)issues.push('Tongue twister "'+(t.id||"?")+'": incomplete Spanish, English, or audio text');});
     if(typeof PRONUNCIATION_TIPS!=="undefined")PRONUNCIATION_TIPS.forEach(t=>{if(!t.target||!t.title||!t.sound||!Array.isArray(t.steps)||!t.steps.length||!t.avoid)issues.push('Pronunciation tip "'+(t.target||"?")+'": incomplete coaching content');});
+    if(typeof PHONETIC_WARMUP!=="undefined")PHONETIC_WARMUP.forEach(s=>{if(!s.id||!s.label||!s.detail||!s.tts||!s.target||!s.note)issues.push('Warm-up step "'+(s.id||"?")+'": incomplete practice content');});
+    if(typeof ENGLISH_INTERFERENCE!=="undefined")ENGLISH_INTERFERENCE.forEach(s=>{if(!s.pattern||!s.spanish||!s.english||!s.example||!s.en||!s.tts)issues.push('English interference card "'+(s.pattern||"?")+'": incomplete content');});
+    if(typeof MINIMAL_PAIRS!=="undefined")MINIMAL_PAIRS.forEach(s=>{if(!s.a||!s.aEn||!s.b||!s.bEn||!s.tip||!s.tts)issues.push('Minimal pair "'+(s.a||"?")+'": incomplete content');});
+    if(typeof SPANISH_THINKING_PROMPTS!=="undefined")SPANISH_THINKING_PROMPTS.forEach(s=>{if(!s.intent||!s.model||!s.tts)issues.push('Spanish-thinking prompt missing intent, model, or tts');});
     if(typeof SPEAKING_GUIDE!=="undefined")SPEAKING_GUIDE.forEach(g=>{if(!g.id||!g.title||!g.formula||!g.explain||!g.mistake||!g.exercise)issues.push('Speaking guide "'+(g.id||"?")+ '": incomplete explanation');(g.examples||[]).forEach((ex,i)=>{if(!ex.es||!ex.en||!ex.tts)issues.push('Speaking guide "'+g.id+'" example '+(i+1)+' missing Spanish, English, or tts');});});
     if(typeof LESSON_META!=="undefined")LESSONS.forEach(l=>{const m=LESSON_META[l.id];if(!m)return;(m.guideIds||[]).forEach(id=>{if(typeof SPEAKING_GUIDE!=="undefined"&&!SPEAKING_GUIDE.some(g=>g.id===id))issues.push('Lesson "'+l.id+'": guide "'+id+'" does not exist');});});
     aQ.forEach((q,i)=>{if(!Array.isArray(q.choices))return;const choices=q.choices.map(String);const normalized=choices.map(normalizeQuizText);if(choices.length!==4)issues.push('Quiz question '+(i+1)+' needs exactly four answer choices');if(new Set(normalized).size!==normalized.length)issues.push('Quiz question '+(i+1)+' has duplicate answer choices');if(q.en&&!normalized.includes(normalizeQuizText(q.en)))issues.push('Quiz question '+(i+1)+' correct answer is not in its choices');if(q.kind==="blank"&&!String(q.es).includes("___"))issues.push('Quiz question '+(i+1)+' is marked blank but has no blank in its Spanish prompt');});
