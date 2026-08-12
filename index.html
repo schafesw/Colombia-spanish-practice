@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Español CO"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="styles.css?v=45"/>
+<link rel="stylesheet" href="styles.css?v=46"/>
 </head>
 <body>
 <div id="app">
@@ -39,20 +39,36 @@
       <div class="vbi"><div class="vbl">O</div><div class="vbs">oh</div></div>
       <div class="vbi"><div class="vbl">U</div><div class="vbs">oo</div></div>
     </div>
+    <section class="phonetic-start-card" id="phonetic-start">
+      <div class="phonetic-start-kicker">🎯 START HERE · 3-MINUTE WARM-UP</div>
+      <div class="phonetic-start-title">Train your mouth before the hard drills</div>
+      <div class="phonetic-start-sub">Listen once, say it twice, then record yourself if you want feedback from your own ear.</div>
+      <div id="phonetic-warmup"></div>
+      <details class="thinking-mini">
+        <summary><span>💭 Think in Spanish</span><small>Try first · reveal later</small></summary>
+        <div id="spanish-thinking"></div>
+      </details>
+    </section>
     <div class="sl" style="color:var(--muted)">Filter by consonant</div>
     <div class="fw" id="filter-wrap"></div>
     <div id="combo-groups"></div>
     <div class="phonetic-practice-map">
-      <div class="phonetic-map-kicker">🧭 PRONUNCIATION PRACTICE</div>
-      <div class="phonetic-map-title">Choose a practice tool</div>
-      <div class="phonetic-map-sub">Use the quick rules first, then listen and record with the sound drills.</div>
+      <div class="phonetic-map-kicker">🧭 GO DEEPER WHEN READY</div>
+      <div class="phonetic-map-title">Your pronunciation toolkit</div>
+      <div class="phonetic-map-sub">The quick warm-up comes first. These sections keep the detailed coaching available without putting everything on screen at once.</div>
       <nav class="phonetic-map-links" aria-label="Pronunciation practice sections">
+        <a href="#phonetic-english">🚧 English habits</a>
         <a href="#phonetic-rules">⚡ Rules</a>
-        <a href="#phonetic-special">🧩 Special sounds</a>
-        <a href="#phonetic-twisters">🗣️ Tongue twisters</a>
+        <a href="#phonetic-minimal">👂 Compare</a>
+        <a href="#phonetic-special">🧩 Sounds</a>
+        <a href="#phonetic-twisters">🗣️ Twisters</a>
       </nav>
     </div>
-    <details class="phonetic-fold" id="phonetic-rules" open>
+    <details class="phonetic-fold" id="phonetic-english">
+      <summary><span>🚧 English habits to replace</span><small>Common interference</small></summary>
+      <div class="phonetic-fold-body"><div class="interference-grid" id="english-interference-list"></div></div>
+    </details>
+    <details class="phonetic-fold" id="phonetic-rules">
       <summary><span>⚡ Reglas especiales</span><small>Quick reference</small></summary>
       <div class="phonetic-fold-body">
         <div class="rb">
@@ -65,6 +81,10 @@
           <div class="rr"><span class="rtag">Z</span><span class="rdesc">Suena 's'. Ej: zapato</span></div>
         </div>
       </div>
+    </details>
+    <details class="phonetic-fold" id="phonetic-minimal">
+      <summary><span>👂 Minimal pairs</span><small>Hear the difference</small></summary>
+      <div class="phonetic-fold-body"><div class="minimal-pairs-list" id="minimal-pairs-list"></div></div>
     </details>
     <details class="phonetic-fold" id="phonetic-special">
       <summary><span>🧩 Sonidos especiales</span><small>GUA · GUE · GUI · Ü</small></summary>
@@ -201,6 +221,6 @@
 </div>
 </div>
 
-<script src="data.js?v=45"></script><script src="app.js?v=45"></script>
+<script src="data.js?v=46"></script><script src="app.js?v=46"></script>
 </body>
 </html>

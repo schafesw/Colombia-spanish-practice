@@ -63,6 +63,37 @@ const PRONUNCIATION_TIPS=[
   {target:"RR",title:"RR: make the tongue vibrate",sound:"Not the English R",steps:["Keep the tip of your tongue relaxed just behind your upper teeth, where you would say Spanish D/T.","Let air flow over the relaxed tip. Do not curl the tongue back like an English R and do not force the vibration.","Build it slowly: t-ra → d-ra → rra, then rra/rre/rri/rro/rru → perro, carro, arriba."],avoid:"If it sounds like an English R, relax the tongue more and add steady air. A short tap is a useful step, but RR needs repeated vibration."},
   {target:"Ñ",title:"Ñ: one sound, one syllable",sound:"Like the ny in canyon",steps:["Lift the middle of your tongue toward the hard roof of your mouth, while the sides stay near the upper teeth.","Keep Ñ together as one consonant sound. Do not pronounce it as two separate sounds: ni-ño should flow as nee-nyoh.","Build it slowly: ña/ñe/ñi/ño/ñu → niño, mañana, año → a full sentence."],avoid:"Do not replace Ñ with an English N or add an extra vowel. Listen for the smooth ‘ny’ sound in the middle of the word."},
 ];
+const PHONETIC_WARMUP=[
+  {id:"vowels",label:"Pure vowels",detail:"A · E · I · O · U",tts:"a, e, i, o, u",target:"a e i o u",note:"Keep each vowel short and steady; do not turn it into an English diphthong."},
+  {id:"rr",label:"RR vibration",detail:"RRA · RRE · RRI · RRO · RRU",tts:"arriba, arreglo, barriga, arroyo, arruga",target:"arriba, arreglo, barriga, arroyo, arruga",note:"Relax the tongue tip and let the air create the vibration."},
+  {id:"ene",label:"Ñ connection",detail:"ÑA · ÑE · ÑI · ÑO · ÑU",tts:"mañana, pequeño, niño, sueño, ñu",target:"mañana, pequeño, niño, sueño, ñu",note:"Keep Ñ as one smooth consonant; do not separate it into N plus a new syllable."},
+  {id:"pairs",label:"Hear the contrast",detail:"PERO ↔ PERRO",tts:"pero, perro, pero, perro",target:"pero, perro",note:"Single R is a quick tap; RR is a stronger vibration."},
+];
+const ENGLISH_INTERFERENCE=[
+  {pattern:"A",spanish:"ah",english:"not ‘ay’",example:"casa",en:"house",tts:"casa"},
+  {pattern:"E",spanish:"eh",english:"not ‘ee’",example:"mesa",en:"table",tts:"mesa"},
+  {pattern:"I",spanish:"ee",english:"not English ‘eye’",example:"vino",en:"wine / came",tts:"vino"},
+  {pattern:"O",spanish:"short oh",english:"do not add ‘oo’",example:"rojo",en:"red",tts:"rojo"},
+  {pattern:"H",spanish:"silent",english:"never an English H",example:"hola",en:"hello",tts:"hola"},
+  {pattern:"J / GE / GI",spanish:"strong breathy sound",english:"not English J",example:"gente",en:"people",tts:"gente"},
+  {pattern:"B / V",spanish:"both use Spanish B",english:"not English V",example:"vivir",en:"to live",tts:"vivir"},
+  {pattern:"R / RR",spanish:"tap / trill",english:"not English R",example:"pero / perro",en:"but / dog",tts:"pero, perro"},
+];
+const MINIMAL_PAIRS=[
+  {a:"pero",aEn:"but",b:"perro",bEn:"dog",tip:"One quick tap vs. a trill",tts:"pero, perro"},
+  {a:"caro",aEn:"expensive",b:"carro",bEn:"car",tip:"Keep the double R vibrating",tts:"caro, carro"},
+  {a:"cero",aEn:"zero",b:"cerro",bEn:"hill",tip:"S stays the same; R changes",tts:"cero, cerro"},
+  {a:"para",aEn:"for / in order to",b:"parra",bEn:"grapevine",tip:"A perfect bridge to the long drill",tts:"para, parra"},
+  {a:"coro",aEn:"choir",b:"corro",bEn:"I run",tip:"Short R vs. RR in the middle",tts:"coro, corro"},
+];
+const SPANISH_THINKING_PROMPTS=[
+  {intent:"Say that you need to practice today.",model:"Necesito practicar hoy.",tts:"Necesito practicar hoy."},
+  {intent:"Say that you are going to call later.",model:"Voy a llamar más tarde.",tts:"Voy a llamar más tarde."},
+  {intent:"Say that you did not understand.",model:"No entendí.",tts:"No entendí."},
+  {intent:"Ask someone to repeat slowly.",model:"¿Puede repetir despacio?",tts:"¿Puede repetir despacio?"},
+  {intent:"Say that the car is over there.",model:"El carro está allá.",tts:"El carro está allá."},
+  {intent:"Say that you want to speak Spanish.",model:"Quiero hablar español.",tts:"Quiero hablar español."},
+];
 function sylTTS(label,fallback){return SYL_TTS_FIX[label.toLowerCase()]||fallback||label.toLowerCase();}
 function speakSyl(label,fallback){
   speak(sylTTS(label,fallback),0.75);
