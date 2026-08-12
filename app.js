@@ -184,7 +184,7 @@ function sel(l){
 }
 
 // ── Build Sílabas ─────────────────────────────────────────────────────────────
-const SYL_CONS=[...CN,"RR"];
+const SYL_CONS=CN.flatMap(l=>l==="R"?[l,"RR"]:[l]);
 let aF=null;const fw=document.getElementById("filter-wrap");
 const fab=document.createElement("button");fab.className="fb active";fab.id="fb-all";fab.textContent="Todas";fab.onclick=()=>sF(null);fw.appendChild(fab);
 SYL_CONS.forEach(l=>{const b=document.createElement("button");b.className="fb";b.id="fb-"+l;b.textContent=l;b.onclick=()=>sF(l);fw.appendChild(b);});
@@ -231,7 +231,7 @@ rC();
 function renderSpecialSounds(){
   const root=document.getElementById("special-sound-lab");
   if(!root||typeof SPECIAL_SOUNDS==="undefined")return;
-  root.innerHTML="<div class='special-sound-head'><div class='rt'>🧩 Sonidos especiales</div><div class='special-sound-intro'>Tap a word, listen, then record yourself. Pay attention to the silent U and the two dots over Ü.</div></div>";
+  root.innerHTML="<div class='special-sound-intro'>Tap a word, listen, then record yourself. Pay attention to the silent U and the two dots over Ü.</div>";
   SPECIAL_SOUNDS.forEach(group=>{
     const section=document.createElement("section");section.className="special-sound-group";
     section.innerHTML=`<div class='special-sound-title'><strong>${group.label}</strong><span>${group.sound}</span></div><div class='special-sound-tip'>${group.tip}</div>`;
@@ -251,9 +251,15 @@ renderSpecialSounds();
 function renderTongueTwisters(){
   const root=document.getElementById("tongue-twister-lab");
   if(!root||typeof TONGUE_TWISTERS==="undefined")return;
-  root.innerHTML="<div class='special-sound-head'><div class='rt'>🗣️ Traba-lenguas · speaking drills</div><div class='special-sound-intro'>Round 1: listen slowly. Round 2: repeat at a natural speed. Round 3: record yourself and compare. Accuracy comes before speed.</div></div>";
+  root.innerHTML="<div class='special-sound-intro'>Round 1: listen slowly. Round 2: repeat at a natural speed. Round 3: record yourself and compare. Accuracy comes before speed.</div>";
   const filters=document.createElement("div");filters.className="twister-filters";
   const list=document.createElement("div");list.className="twister-list";
+  const tips=document.createElement("div");tips.className="sound-tips";
+  if(typeof PRONUNCIATION_TIPS!=="undefined")PRONUNCIATION_TIPS.forEach(t=>{
+    const card=document.createElement("article");card.className="sound-tip-card";
+    card.innerHTML=`<div class='sound-tip-head'><span class='twister-target'>${escapeVocabHtml(t.target)}</span><strong>${escapeVocabHtml(t.title)}</strong></div><div class='sound-tip-sound'>${escapeVocabHtml(t.sound)}</div><ol>${t.steps.map(step=>`<li>${escapeVocabHtml(step)}</li>`).join("")}</ol><div class='sound-tip-avoid'><strong>Watch for:</strong> ${escapeVocabHtml(t.avoid)}</div>`;
+    tips.appendChild(card);
+  });
   const groups=["ALL",...new Set(TONGUE_TWISTERS.map(x=>x.target))];
   const render=(filter)=>{list.innerHTML="";TONGUE_TWISTERS.filter(x=>filter==="ALL"||x.target===filter).forEach(item=>{
     const card=document.createElement("article");card.className="twister-card";
@@ -265,7 +271,7 @@ function renderTongueTwisters(){
     actions.append(listen,slow,record);list.appendChild(card);
   });};
   groups.forEach((group,i)=>{const b=document.createElement("button");b.type="button";b.className="fb twister-filter"+(i===0?" active":"");b.textContent=group;b.onclick=()=>{filters.querySelectorAll(".twister-filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");render(group);};filters.appendChild(b);});
-  root.append(filters,list);render("ALL");
+  root.append(tips,filters,list);render("ALL");
 }
 renderTongueTwisters();
 
@@ -2445,6 +2451,7 @@ function runDataValidator(){
     READINGS.forEach(r=>{if(!r.id||!r.title||!Array.isArray(r.lines)||r.lines.length<3)issues.push('Reading "'+(r.id||"?")+ '": needs at least three lines');r.lines&&r.lines.forEach((line,i)=>{if(!line.es||!line.en||!line.tts)issues.push('Reading "'+r.id+'" line '+(i+1)+' missing Spanish, English, or tts');});});
     CONVERSATIONS.forEach(c=>c.lines.forEach(L=>{if(!L.tts)issues.push('Conversation "'+c.title+'" ('+c.tense+'): line missing tts');}));
     if(typeof TONGUE_TWISTERS!=="undefined")TONGUE_TWISTERS.forEach(t=>{if(!t.id||!t.target||!t.text||!t.en||!t.tts)issues.push('Tongue twister "'+(t.id||"?")+'": incomplete Spanish, English, or audio text');});
+    if(typeof PRONUNCIATION_TIPS!=="undefined")PRONUNCIATION_TIPS.forEach(t=>{if(!t.target||!t.title||!t.sound||!Array.isArray(t.steps)||!t.steps.length||!t.avoid)issues.push('Pronunciation tip "'+(t.target||"?")+'": incomplete coaching content');});
     if(typeof SPEAKING_GUIDE!=="undefined")SPEAKING_GUIDE.forEach(g=>{if(!g.id||!g.title||!g.formula||!g.explain||!g.mistake||!g.exercise)issues.push('Speaking guide "'+(g.id||"?")+ '": incomplete explanation');(g.examples||[]).forEach((ex,i)=>{if(!ex.es||!ex.en||!ex.tts)issues.push('Speaking guide "'+g.id+'" example '+(i+1)+' missing Spanish, English, or tts');});});
     if(typeof LESSON_META!=="undefined")LESSONS.forEach(l=>{const m=LESSON_META[l.id];if(!m)return;(m.guideIds||[]).forEach(id=>{if(typeof SPEAKING_GUIDE!=="undefined"&&!SPEAKING_GUIDE.some(g=>g.id===id))issues.push('Lesson "'+l.id+'": guide "'+id+'" does not exist');});});
     aQ.forEach((q,i)=>{if(!Array.isArray(q.choices))return;const choices=q.choices.map(String);const normalized=choices.map(normalizeQuizText);if(choices.length!==4)issues.push('Quiz question '+(i+1)+' needs exactly four answer choices');if(new Set(normalized).size!==normalized.length)issues.push('Quiz question '+(i+1)+' has duplicate answer choices');if(q.en&&!normalized.includes(normalizeQuizText(q.en)))issues.push('Quiz question '+(i+1)+' correct answer is not in its choices');if(q.kind==="blank"&&!String(q.es).includes("___"))issues.push('Quiz question '+(i+1)+' is marked blank but has no blank in its Spanish prompt');});

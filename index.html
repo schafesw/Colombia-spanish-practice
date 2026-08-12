@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Español CO"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="styles.css?v=44"/>
+<link rel="stylesheet" href="styles.css?v=45"/>
 </head>
 <body>
 <div id="app">
@@ -42,17 +42,38 @@
     <div class="sl" style="color:var(--muted)">Filter by consonant</div>
     <div class="fw" id="filter-wrap"></div>
     <div id="combo-groups"></div>
-    <div class="rb">
-      <div class="rt">⚡ Reglas especiales (Colombia)</div>
-      <div class="rr"><span class="rtag">C+e/i</span><span class="rdesc">Suena 's'. Ej: cena, ciudad</span></div>
-      <div class="rr"><span class="rtag">G+e/i</span><span class="rdesc">Suena 'j'. Ej: gente, girasol</span></div>
-      <div class="rr"><span class="rtag">H</span><span class="rdesc">Siempre muda. Ej: hola, huevo</span></div>
-      <div class="rr"><span class="rtag">Ñ</span><span class="rdesc">Sonido 'ny'. Ej: niño, mañana</span></div>
-      <div class="rr"><span class="rtag">V = B</span><span class="rdesc">V suena como B. Ej: vo = "bo", vaca = "baca"</span></div>
-      <div class="rr"><span class="rtag">Z</span><span class="rdesc">Suena 's'. Ej: zapato</span></div>
+    <div class="phonetic-practice-map">
+      <div class="phonetic-map-kicker">🧭 PRONUNCIATION PRACTICE</div>
+      <div class="phonetic-map-title">Choose a practice tool</div>
+      <div class="phonetic-map-sub">Use the quick rules first, then listen and record with the sound drills.</div>
+      <nav class="phonetic-map-links" aria-label="Pronunciation practice sections">
+        <a href="#phonetic-rules">⚡ Rules</a>
+        <a href="#phonetic-special">🧩 Special sounds</a>
+        <a href="#phonetic-twisters">🗣️ Tongue twisters</a>
+      </nav>
     </div>
-    <div class="special-sound-lab" id="special-sound-lab"></div>
-    <div class="tongue-twister-lab" id="tongue-twister-lab"></div>
+    <details class="phonetic-fold" id="phonetic-rules" open>
+      <summary><span>⚡ Reglas especiales</span><small>Quick reference</small></summary>
+      <div class="phonetic-fold-body">
+        <div class="rb">
+          <div class="rt">Colombian pronunciation rules</div>
+          <div class="rr"><span class="rtag">C+e/i</span><span class="rdesc">Suena 's'. Ej: cena, ciudad</span></div>
+          <div class="rr"><span class="rtag">G+e/i</span><span class="rdesc">Suena 'j'. Ej: gente, girasol</span></div>
+          <div class="rr"><span class="rtag">H</span><span class="rdesc">Siempre muda. Ej: hola, huevo</span></div>
+          <div class="rr"><span class="rtag">Ñ</span><span class="rdesc">Sonido 'ny'. Ej: niño, mañana</span></div>
+          <div class="rr"><span class="rtag">V = B</span><span class="rdesc">V suena como B. Ej: vo = "bo", vaca = "baca"</span></div>
+          <div class="rr"><span class="rtag">Z</span><span class="rdesc">Suena 's'. Ej: zapato</span></div>
+        </div>
+      </div>
+    </details>
+    <details class="phonetic-fold" id="phonetic-special">
+      <summary><span>🧩 Sonidos especiales</span><small>GUA · GUE · GUI · Ü</small></summary>
+      <div class="phonetic-fold-body"><div class="special-sound-lab" id="special-sound-lab"></div></div>
+    </details>
+    <details class="phonetic-fold" id="phonetic-twisters">
+      <summary><span>🗣️ Traba-lenguas</span><small>RR · Ñ · J · B/V</small></summary>
+      <div class="phonetic-fold-body"><div class="tongue-twister-lab" id="tongue-twister-lab"></div></div>
+    </details>
   </div>
 </div>
 
@@ -180,6 +201,6 @@
 </div>
 </div>
 
-<script src="data.js?v=44"></script><script src="app.js?v=44"></script>
+<script src="data.js?v=45"></script><script src="app.js?v=45"></script>
 </body>
 </html>
