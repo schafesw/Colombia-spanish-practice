@@ -7,7 +7,7 @@ const LI={A:{name:"a",phonetic:"ah",tts:"a"},B:{name:"be",phonetic:"beh",tts:"be
 const VS={a:"ah",e:"eh",i:"ee",o:"oh",u:"oo"};
 /* Spanish orthography on purpose: these strings are read by a SPANISH voice,
    so "dó/quí/só" come out right, while English-style "doh/kee/soh" would not. */
-const SYL_TTS_FIX={do:"dó",go:"gó",he:"é",hi:"í",qi:"quí",to:"tó",ro:"ró",wu:"wú",zo:"só"};
+const SYL_TTS_FIX={do:"dó",go:"gó",qi:"quí",to:"tó",ro:"ró",wu:"wú",zo:"só"};
 /* X almost never starts a syllable in real Spanish — it lives between vowels.
    So instead of fake X+vowel syllables, the Sílabas tab shows real example words. */
 const X_EXAMPLES=[
@@ -15,6 +15,13 @@ const X_EXAMPLES=[
   {word:"Examen",ph:"ek-SAH-men",tts:"examen",en:"exam"},
   {word:"Éxito",ph:"EK-see-toh",tts:"éxito",en:"success"},
 ];
+/* H is silent in Spanish.  On some phones, asking the browser voice to say
+   the artificial syllables "he" and "hi" produces an English-like sound.
+   Use real Spanish example words for the vowel sound, just as we do for X. */
+const H_SOUND_EXAMPLES={
+  e:{word:"helado",ph:"eh-LAH-doh",tts:"helado",en:"ice cream"},
+  i:{word:"hijo",ph:"EE-hoh",tts:"hijo",en:"son"},
+};
 /* Special spelling patterns: these need their own lesson because a simple
    consonant + vowel grid cannot show the silent U or the dieresis clearly. */
 const SPECIAL_SOUNDS=[
