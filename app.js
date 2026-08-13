@@ -48,13 +48,14 @@ function buildProfileBar(){
   profileList.forEach(p=>{const o=document.createElement("option");o.value=p.id;o.textContent=(p.emoji||"👤")+" "+p.label;select.appendChild(o);});
   select.value=activeProfileId;
   select.onchange=()=>{activeProfileId=select.value;nativeStorage.setItem(ACTIVE_PROFILE_KEY,activeProfileId);location.reload();};
-  const reset=document.createElement("button");reset.type="button";reset.className="profile-reset";reset.textContent="Reset Guest";reset.title="Clear Guest progress only";
+  const currentProfile=profileList.find(p=>p.id===activeProfileId)||{label:activeProfileId};
+  const reset=document.createElement("button");reset.type="button";reset.className="profile-reset";reset.textContent=`Reset ${currentProfile.label}`;reset.title=`Clear ${currentProfile.label} progress only`;
   reset.onclick=()=>{
-    if(!confirm("Clear the Guest profile's saved progress? Seth's profile will not change."))return;
-    const prefix="esco-profile-guest-";const keys=[];
+    if(!confirm(`Clear the ${currentProfile.label} profile's saved progress? Other profiles will not change.`))return;
+    const prefix=`esco-profile-${activeProfileId}-`;const keys=[];
     for(let i=0;i<nativeStorage.length;i++){const k=nativeStorage.key(i);if(k&&k.startsWith(prefix))keys.push(k);}
     keys.forEach(k=>nativeStorage.removeItem(k));
-    if(activeProfileId==="guest")location.reload();else reset.textContent="Guest reset";
+    location.reload();
   };
   bar.append(label,select,reset);host.appendChild(bar);
 }
@@ -310,6 +311,13 @@ function renderSpecialSounds(){
 }
 renderSpecialSounds();
 
+let routineTwisterSelection=null;
+function getDailyTwisterSelection(){
+  const rr=TONGUE_TWISTERS.filter(x=>x.target==="RR");
+  const ene=TONGUE_TWISTERS.filter(x=>x.target==="Ñ");
+  const now=new Date();const day=Math.floor(Date.UTC(now.getFullYear(),now.getMonth(),now.getDate())/86400000);
+  return [rr[day%rr.length],ene[day%ene.length]].filter(Boolean);
+}
 function renderTongueTwisters(){
   const root=document.getElementById("tongue-twister-lab");
   if(!root||typeof TONGUE_TWISTERS==="undefined")return;
@@ -324,7 +332,7 @@ function renderTongueTwisters(){
   });
   const groups=["ALL",...new Set(TONGUE_TWISTERS.map(x=>x.target))];
   const render=(filter)=>{list.innerHTML="";TONGUE_TWISTERS.filter(x=>filter==="ALL"||x.target===filter).forEach(item=>{
-    const card=document.createElement("article");card.className="twister-card";
+    const card=document.createElement("article");card.className="twister-card";card.dataset.twisterId=item.id;
     card.innerHTML=`<div class='twister-top'><span class='twister-target'>${item.target}</span><strong>${item.title}</strong></div><div class='twister-es'>${escapeVocabHtml(item.text)}</div><div class='twister-en'>${escapeVocabHtml(item.en)}</div><div class='twister-actions'></div>`;
     const actions=card.querySelector(".twister-actions");
     const listen=document.createElement("button");listen.type="button";listen.className="twister-btn";listen.textContent="🔊 Listen";listen.onclick=()=>{markPractice("phrases",item.text);speak(item.tts,0.65);};
@@ -763,7 +771,10 @@ function showVerbDetail(key,verb){
     </div>`;
   vd.appendChild(hdr);
   // Conjugation tables
-  [["⚡ Presente","present","rgba(74,168,160,0.2)","var(--teal)"],["⏮️ Pasado","past","rgba(232,93,117,0.2)","var(--pink)"],["⏭️ Futuro","future","rgba(96,165,250,0.2)","var(--blue)"]].forEach(([title,tense,bg,color])=>{
+  const tenseRows=[["⚡ Presente","present","rgba(74,168,160,0.2)","var(--teal)"],["⏮️ Pasado","past","rgba(232,93,117,0.2)","var(--pink)"]];
+  if(verb.imperfect)tenseRows.push(["🕰️ Imperfecto","imperfect","rgba(167,139,250,0.2)","var(--purple)"]);
+  tenseRows.push(["⏭️ Futuro","future","rgba(96,165,250,0.2)","var(--blue)"]);
+  tenseRows.forEach(([title,tense,bg,color])=>{
     const wrap=document.createElement("div");wrap.className="vd-tense-wrap";
     const th=document.createElement("div");th.className="vd-tense-title";th.style.background=bg;
     th.innerHTML=`<span class="vd-tense-name" style="color:${color}">${title}</span>`;
@@ -773,6 +784,7 @@ function showVerbDetail(key,verb){
       r.innerHTML=`<span class="vd-pro">${row.p}</span><span class="vd-verb">${row.v}</span><span class="vd-en-small">${row.e}</span><span class="vd-spk">🔊</span>`;
       r.onclick=()=>speak(row.v,0.75);rows.appendChild(r);});
     wrap.appendChild(th);wrap.appendChild(rows);vd.appendChild(wrap);});
+  if(verb.imperfect){const note=document.createElement("div");note.className="vd-imperfect-note";note.innerHTML="<strong>🧠 When do I use the imperfect?</strong><span>Use it for background, repeated habits, or an action in progress. Use the simple past above for a completed event.</span><div><b>Tenía tiempo</b> = I had time / used to have time · <b>Tuve tiempo ayer</b> = I had time yesterday (completed situation).</div>";vd.appendChild(note);}
   // Imperative
   const imp=document.createElement("div");imp.className="imperative-box";
   imp.innerHTML=`<div class="imp-title">🫵 Imperativo (Commands)</div>
@@ -1069,6 +1081,11 @@ function renderFraseDialogue(dialogue,tense){
     hdr.appendChild(trow);
   }
   fl.appendChild(hdr);
+  if(routineToday().step===3){
+    const guide=document.createElement("section");guide.className="routine-phrase-guide";
+    guide.innerHTML="<div class='routine-guide-kicker'>🎯 STEP 4 · SPEAKING</div><strong>Practice both sides of the conversation</strong><span>Tap each line to listen. Then cover one side with your hand, say it from memory, and compare. Try the Ahora version first.</span><button type='button' class='routine-next-large' onclick='routineFinishPhrases()'>I practiced both sides — continue →</button><button type='button' class='routine-back-link' onclick='routineBack()'>‹ Back to daily path</button>";
+    fl.appendChild(guide);
+  }
   /* Speaking practice: hide one side, say the line out loud, tap to reveal */
   const bubbles=[];
   const pbar=document.createElement("div");pbar.className="practice-bar";
@@ -1636,7 +1653,8 @@ function renderMission(mission){
   reveal.onclick=()=>{say.textContent="Compare your idea with these natural Colombian answers:";reveal.remove();models.hidden=false;};card.appendChild(reveal);
   (mission.models||[]).forEach((m,i)=>{const row=document.createElement("div");row.className="mission-model";row.innerHTML=`<div class="mission-model-label">Natural option ${i+1}</div><div class="mission-model-es">${escapeVocabHtml(m.es)}</div><div class="mission-model-en">${escapeVocabHtml(m.en)}</div>`;row.onclick=()=>{markPractice("phrases",m.es);speak(m.tts||m.es,0.75);};attachMic(row,m.es);models.appendChild(row);});
   card.appendChild(models);
-  const done=document.createElement("button");done.type="button";done.className="lesson-start";done.textContent=missionProgress[mission.id]?"✅ Mission completed — practice again":"✅ I answered out loud";done.onclick=()=>{missionProgress[mission.id]=true;saveMissions();renderMission(mission);};card.appendChild(done);root.appendChild(card);
+  const inRoutine=routineToday().step===4;
+  const done=document.createElement("button");done.type="button";done.className="lesson-start";done.textContent=inRoutine?"✅ Finish today’s speaking path":(missionProgress[mission.id]?"✅ Mission completed — practice again":"✅ I answered out loud");done.onclick=()=>{missionProgress[mission.id]=true;saveMissions();if(inRoutine)routineAdvance(4);else renderMission(mission);};card.appendChild(done);root.appendChild(card);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1680,9 +1698,10 @@ function renderReading(reading){
    Guided daily speaking routine (v35) — one small sequence using existing
    features. The day and current step persist, but content remains replayable.
    ═══════════════════════════════════════════════════════════════════════════ */
-const ROUTINE_KEY="esco-routine-v2";
+const ROUTINE_KEY="esco-routine-v3";
 const ROUTINE_STEPS=[
   {id:"warmup",icon:"🎙️",title:"Warm up your mouth",sub:"Pure vowels, RR, and Ñ · about 2 minutes."},
+  {id:"twisters",icon:"🗣️",title:"Train difficult sounds",sub:"Tongue twisters for RR and Ñ · about 3 minutes."},
   {id:"review",icon:"🔁",title:"Recall useful Spanish",sub:"Review due cards and answer before looking."},
   {id:"phrases",icon:"💬",title:"Speak useful phrases",sub:"Practice a real conversation and both sides."},
   {id:"mission",icon:"🗣️",title:"Conversation mission",sub:"Answer in your own words out loud."}
@@ -1692,19 +1711,61 @@ try{routineState=Object.assign(routineState,JSON.parse(localStorage.getItem(ROUT
 function routineToday(){const today=new Date().toISOString().slice(0,10);if(routineState.date!==today){routineState={date:today,step:0};saveRoutine();}return routineState;}
 function saveRoutine(){try{localStorage.setItem(ROUTINE_KEY,JSON.stringify(routineState));}catch(e){}}
 function routineOpen(id){
+  removeRoutineQuizGuide();
   if(id==="warmup"){
-    showPage("fonetica");showPhonetic("syllables");
-    setTimeout(()=>{const start=document.getElementById("phonetic-start");if(start)start.scrollIntoView({behavior:"smooth",block:"start"});},60);
+    clearRoutineFocus();showPage("fonetica");showPhonetic("syllables");setRoutineFocus("warmup");
+    setTimeout(()=>{const reminders=document.getElementById("phonetic-english-reminders");if(reminders)reminders.open=true;const start=document.getElementById("phonetic-start");if(start)start.scrollIntoView({behavior:"smooth",block:"start"});},60);
   }
-  else if(id==="review"){showPage("quiz");qMode="mixed";qCat="all";qFocus="all";repasoLeft=10;resetQuizRound();syncQuizControls();nQ();}
+  else if(id==="twisters"){
+    clearRoutineFocus();showPage("fonetica");showPhonetic("syllables");setRoutineFocus("twisters");
+    setTimeout(()=>{
+      const fold=document.getElementById("phonetic-twisters");if(fold)fold.open=true;
+      const root=document.getElementById("tongue-twister-lab");
+      routineTwisterSelection=getDailyTwisterSelection();
+      const labels=routineTwisterSelection.map(x=>escapeVocabHtml(x.title)).join(" + ");
+      const list=root&&root.querySelector(".twister-list");
+      if(list){routineTwisterSelection.slice().reverse().forEach(item=>{const card=list.querySelector(`[data-twister-id="${item.id}"]`);if(card){card.classList.add("routine-daily-pick");list.prepend(card);}});}
+      if(root&&!root.querySelector(".routine-twister-guide")){
+        root.insertAdjacentHTML("afterbegin",`<div class="routine-twister-guide"><div class="routine-guide-kicker">🎯 STEP 2 · TODAY'S FOCUS</div><strong>Train RR and Ñ before speed</strong><span>Today's picks: <b>${labels}</b>. They rotate automatically each day. Practice each one 2–3 times: listen slowly, repeat, say it naturally, then record yourself.</span><div class="routine-twister-sequence"><b>1</b> Listen slowly · <b>2</b> Repeat twice · <b>3</b> Natural speed · <b>4</b> Record and compare</div><div class="routine-guide-actions"><button type="button" class="warmup-back" onclick="routineBack()">‹ Back to daily path</button><button type="button" class="warmup-continue" onclick="routineFinishTwisters()">Done — continue →</button></div></div>`);
+      }
+      const start=document.getElementById("phonetic-twisters");if(start)start.scrollIntoView({behavior:"smooth",block:"start"});
+    },60);
+  }
+  else if(id==="review"){
+    showPage("quiz");qMode="mixed";qCat="all";qFocus="all";repasoLeft=10;resetQuizRound();syncQuizControls();nQ();renderRoutineQuizGuide();
+  }
   else if(id==="phrases"){
     showPage("frases");
     const d=PHRASE_DIALOGUES.find(x=>/Uber: hablo poquito español/i.test(x.title))||PHRASE_DIALOGUES.find(x=>/Carro y taxi/i.test(x.title))||PHRASE_DIALOGUES[0];
     if(d)renderFraseDialogue(d,"Ahora");
   }
-  else if(id==="mission"){const m=CONVERSATION_MISSIONS.find(x=>!missionProgress[x.id])||CONVERSATION_MISSIONS[0];if(m)renderMission(m);}
+  else if(id==="mission"){const m=CONVERSATION_MISSIONS.find(x=>!missionProgress[x.id])||CONVERSATION_MISSIONS[0];if(m){showPage("lecciones");renderMission(m);}}
 }
-function routineComplete(){routineToday();routineState.step=Math.min(ROUTINE_STEPS.length,routineState.step+1);saveRoutine();renderLessons();}
+function clearRoutineGuide(){routineTwisterSelection=null;renderTongueTwisters();removeRoutineQuizGuide();}
+function setRoutineFocus(kind){const page=document.getElementById("page-fonetica");if(page){page.classList.add("routine-focus");page.classList.toggle("routine-focus-warmup",kind==="warmup");page.classList.toggle("routine-focus-twisters",kind==="twisters");}}
+function clearRoutineFocus(){const page=document.getElementById("page-fonetica");if(page)page.classList.remove("routine-focus","routine-focus-warmup","routine-focus-twisters");}
+function routineBack(){clearRoutineGuide();clearRoutineFocus();showPage("lecciones");renderLessons();}
+function routineAdvance(expected){
+  routineToday();
+  if(routineState.step!==expected){routineBack();return;}
+  routineState.step=Math.min(ROUTINE_STEPS.length,routineState.step+1);saveRoutine();
+  const next=ROUTINE_STEPS[routineState.step];
+  if(next)routineOpen(next.id);else{clearRoutineGuide();showPage("lecciones");renderLessons();}
+}
+function routineFinishWarmup(){routineAdvance(0);}
+function routineFinishTwisters(){routineAdvance(1);}
+function routineFinishReview(){routineAdvance(2);}
+function routineFinishPhrases(){routineAdvance(3);}
+function routineComplete(){routineToday();routineState.step=Math.min(ROUTINE_STEPS.length,routineState.step+1);saveRoutine();showPage("lecciones");renderLessons();}
+function removeRoutineQuizGuide(){const guide=document.querySelector(".routine-quiz-guide");if(guide)guide.remove();}
+function renderRoutineQuizGuide(){
+  removeRoutineQuizGuide();
+  if(routineToday().step!==2)return;
+  const page=document.getElementById("page-quiz"),anchor=page&&page.querySelector(".quiz-score-bar");if(!page||!anchor)return;
+  const guide=document.createElement("section");guide.className="routine-quiz-guide";
+  guide.innerHTML="<div class='routine-guide-kicker'>🎯 STEP 3 · RECALL</div><strong>Practice a few useful answers</strong><span>Answer out loud before tapping. Use the Spanish reveal to repeat the complete sentence.</span><button type='button' class='routine-next-large' onclick='routineFinishReview()'>I practiced — continue to phrases →</button><button type='button' class='routine-back-link' onclick='routineBack()'>‹ Back to daily path</button>";
+  page.insertBefore(guide,anchor);
+}
 function renderRoutineCard(root){
   routineToday();
   const wrap=document.createElement("section");wrap.className="daily-routine-card";
@@ -1838,7 +1899,7 @@ function renderLessons(){
   root.appendChild(bkLabel);
   /* Backup / restore progress (v17) */
   const bk=document.createElement("div");bk.className="backup-row";
-  const BK_KEYS=["esco-quiz-v1","esco-srs-v1","esco-lesson-progress-v1","esco-mission-progress-v1","esco-reading-progress-v1","esco-routine-v1","esco-routine-v2","esco-practice-v1","esco-days-v1"];
+  const BK_KEYS=["esco-quiz-v1","esco-srs-v1","esco-lesson-progress-v1","esco-mission-progress-v1","esco-reading-progress-v1","esco-routine-v1","esco-routine-v2","esco-routine-v3","esco-practice-v1","esco-days-v1"];
   const b1=document.createElement("button");b1.type="button";b1.className="backup-btn";b1.textContent="💾 Copy backup";
   b1.onclick=()=>{
     const data={};BK_KEYS.forEach(k=>{const v=localStorage.getItem(k);if(v)data[k]=v;});
