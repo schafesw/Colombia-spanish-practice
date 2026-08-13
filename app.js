@@ -1654,7 +1654,7 @@ function renderMission(mission){
   (mission.models||[]).forEach((m,i)=>{const row=document.createElement("div");row.className="mission-model";row.innerHTML=`<div class="mission-model-label">Natural option ${i+1}</div><div class="mission-model-es">${escapeVocabHtml(m.es)}</div><div class="mission-model-en">${escapeVocabHtml(m.en)}</div>`;row.onclick=()=>{markPractice("phrases",m.es);speak(m.tts||m.es,0.75);};attachMic(row,m.es);models.appendChild(row);});
   card.appendChild(models);
   const inRoutine=routineToday().step===4;
-  const done=document.createElement("button");done.type="button";done.className="lesson-start";done.textContent=inRoutine?"✅ Finish today’s speaking path":(missionProgress[mission.id]?"✅ Mission completed — practice again":"✅ I answered out loud");done.onclick=()=>{missionProgress[mission.id]=true;saveMissions();if(inRoutine)routineAdvance(4);else renderMission(mission);};card.appendChild(done);root.appendChild(card);
+  const done=document.createElement("button");done.type="button";done.className="lesson-start";done.textContent=inRoutine?"✅ Finish today’s speaking path":(missionProgress[mission.id]?"✅ Mission completed — practice again":"✅ I answered out loud");done.onclick=()=>{missionProgress[mission.id]=true;saveMissions();if(inRoutine)routineFinishMission();else renderMission(mission);};card.appendChild(done);root.appendChild(card);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1712,6 +1712,7 @@ function routineToday(){const today=new Date().toISOString().slice(0,10);if(rout
 function saveRoutine(){try{localStorage.setItem(ROUTINE_KEY,JSON.stringify(routineState));}catch(e){}}
 function routineOpen(id){
   removeRoutineQuizGuide();
+  routineDockShow();
   if(id==="warmup"){
     clearRoutineFocus();showPage("fonetica");showPhonetic("syllables");setRoutineFocus("warmup");
     setTimeout(()=>{const reminders=document.getElementById("phonetic-english-reminders");if(reminders)reminders.open=true;const start=document.getElementById("phonetic-start");if(start)start.scrollIntoView({behavior:"smooth",block:"start"});},60);
@@ -1744,20 +1745,51 @@ function routineOpen(id){
 function clearRoutineGuide(){routineTwisterSelection=null;renderTongueTwisters();removeRoutineQuizGuide();}
 function setRoutineFocus(kind){const page=document.getElementById("page-fonetica");if(page){page.classList.add("routine-focus");page.classList.toggle("routine-focus-warmup",kind==="warmup");page.classList.toggle("routine-focus-twisters",kind==="twisters");}}
 function clearRoutineFocus(){const page=document.getElementById("page-fonetica");if(page)page.classList.remove("routine-focus","routine-focus-warmup","routine-focus-twisters");}
-function routineBack(){clearRoutineGuide();clearRoutineFocus();showPage("lecciones");renderLessons();}
+function routineBack(){routineDockHide();clearRoutineGuide();clearRoutineFocus();showPage("lecciones");renderLessons();}
 function routineAdvance(expected){
   routineToday();
   if(routineState.step!==expected){routineBack();return;}
   routineState.step=Math.min(ROUTINE_STEPS.length,routineState.step+1);saveRoutine();
   const next=ROUTINE_STEPS[routineState.step];
-  if(next)routineOpen(next.id);else{clearRoutineGuide();showPage("lecciones");renderLessons();}
+  if(next)routineOpen(next.id);else{routineDockHide();clearRoutineGuide();clearRoutineFocus();showPage("lecciones");renderLessons();}
 }
 function routineFinishWarmup(){routineAdvance(0);}
 function routineFinishTwisters(){routineAdvance(1);}
 function routineFinishReview(){routineAdvance(2);}
 function routineFinishPhrases(){routineAdvance(3);}
+function routineFinishMission(){
+  const mission=CONVERSATION_MISSIONS.find(x=>!missionProgress[x.id])||CONVERSATION_MISSIONS[0];
+  if(mission){missionProgress[mission.id]=true;saveMissions();}
+  routineAdvance(4);
+}
 function routineComplete(){routineToday();routineState.step=Math.min(ROUTINE_STEPS.length,routineState.step+1);saveRoutine();showPage("lecciones");renderLessons();}
 function removeRoutineQuizGuide(){const guide=document.querySelector(".routine-quiz-guide");if(guide)guide.remove();}
+function routineDockEnsure(){
+  let dock=document.getElementById("routine-dock");
+  if(dock)return dock;
+  dock=document.createElement("section");dock.id="routine-dock";dock.className="routine-dock";dock.setAttribute("aria-label","Daily speaking path controls");
+  dock.innerHTML="<div class='routine-dock-meta'><span>🎓 DAILY SPEAKING PATH</span><span class='routine-dock-count'></span></div><button type='button' class='routine-dock-btn'></button><button type='button' class='routine-dock-back'>‹ Back to daily path</button>";
+  dock.querySelector(".routine-dock-back").onclick=routineBack;
+  dock.querySelector(".routine-dock-btn").onclick=routineDockAdvance;
+  document.body.appendChild(dock);return dock;
+}
+function routineDockShow(){
+  const dock=routineDockEnsure();routineToday();
+  if(routineState.step>=ROUTINE_STEPS.length){routineDockHide();return;}
+  const step=routineState.step,next=ROUTINE_STEPS[step+1];
+  dock.querySelector(".routine-dock-count").textContent=`Step ${step+1} of ${ROUTINE_STEPS.length}`;
+  dock.querySelector(".routine-dock-btn").textContent=next?`Continue to ${next.title} →`:"Finish today’s speaking path ✓";
+  document.body.classList.add("routine-session-active");dock.classList.add("active");
+}
+function routineDockHide(){const dock=document.getElementById("routine-dock");if(dock)dock.classList.remove("active");document.body.classList.remove("routine-session-active");}
+function routineDockAdvance(){
+  routineToday();
+  if(routineState.step===0)return routineFinishWarmup();
+  if(routineState.step===1)return routineFinishTwisters();
+  if(routineState.step===2)return routineFinishReview();
+  if(routineState.step===3)return routineFinishPhrases();
+  if(routineState.step===4)return routineFinishMission();
+}
 function renderRoutineQuizGuide(){
   removeRoutineQuizGuide();
   if(routineToday().step!==2)return;
@@ -2553,6 +2585,7 @@ function showPage(id){
   document.querySelector(".scroll").scrollTop=0;
   if(id!=="vocab")hideVerbDetail();
   if(id==="vocab")showVocabHome();
+  if(id==="vocab"||id==="gram")routineDockHide();
 }
  
 
