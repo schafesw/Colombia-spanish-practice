@@ -1232,3 +1232,48 @@ const LESSON_META={
   "gram-pronombres":{stage:"Build Sentences",difficulty:"Challenge",prereq:"Sentence structure",guideIds:["pronombres"]},
   "gram-groserias":{stage:"Speak More Naturally",difficulty:"Challenge",prereq:"Everyday expressions",guideIds:["conectores"]}
 };
+
+/* v56: speaking frames keep high-frequency sentence patterns separate from
+   app logic. The trainer uses these as short, repeatable production drills. */
+const SPEAKING_FRAMES=[
+  {id:"quiero",title:"Say what you want",formula:"Quiero + infinitive",en:"I want to…",guide:"presente",prompts:[
+    {en:"I want to go home.",es:"Quiero ir para la casa."},
+    {en:"I want to practice Spanish.",es:"Quiero practicar español."},
+    {en:"I want to order a coffee.",es:"Quiero pedir un café."}
+  ]},
+  {id:"tengo-que",title:"Say what you need to do",formula:"Tengo que + infinitive",en:"I have to…",guide:"presente",prompts:[
+    {en:"I have to work today.",es:"Tengo que trabajar hoy."},
+    {en:"I have to find the address.",es:"Tengo que encontrar la dirección."},
+    {en:"I have to call my friend.",es:"Tengo que llamar a mi amigo."}
+  ]},
+  {id:"voy-a",title:"Talk about your next plan",formula:"Voy a + infinitive",en:"I am going to…",guide:"futuro",prompts:[
+    {en:"I am going to call you later.",es:"Voy a llamarte más tarde."},
+    {en:"I am going to take a taxi.",es:"Voy a tomar un taxi."},
+    {en:"I am going to practice tonight.",es:"Voy a practicar esta noche."}
+  ]},
+  {id:"acabo-de",title:"Say what just happened",formula:"Acabo de + infinitive",en:"I just…",guide:"presente",prompts:[
+    {en:"I just arrived.",es:"Acabo de llegar."},
+    {en:"I just ate.",es:"Acabo de comer."},
+    {en:"I just sent the location.",es:"Acabo de mandar la ubicación."}
+  ]},
+  {id:"se-me",title:"Explain an accidental problem",formula:"Se me + verb + thing",en:"Something happened to me…",guide:"se-me",prompts:[
+    {en:"I forgot the address.",es:"Se me olvidó la dirección."},
+    {en:"My phone broke on me.",es:"Se me dañó el celular."},
+    {en:"I left my wallet in the car.",es:"Se me quedó la billetera en el carro."}
+  ]},
+  {id:"me-gustaria",title:"Make a polite request",formula:"Me gustaría + infinitive",en:"I would like to…",guide:"estructura",prompts:[
+    {en:"I would like to ask a question.",es:"Me gustaría hacer una pregunta."},
+    {en:"I would like to change the order.",es:"Me gustaría cambiar el pedido."},
+    {en:"I would like to practice with you.",es:"Me gustaría practicar contigo."}
+  ]},
+  {id:"pronombres",title:"Use object pronouns naturally",formula:"lo / la / le → se lo / se la",en:"it / to him or her",guide:"pronombres",prompts:[
+    {en:"I have it here.",es:"Lo tengo aquí."},
+    {en:"I sent her the location.",es:"Se la mandé por mensaje."},
+    {en:"I am going to send it to him.",es:"Se lo voy a mandar."}
+  ]},
+  {id:"connectors",title:"Connect two ideas",formula:"idea + pero / porque / entonces",en:"but / because / so",guide:"conectores",prompts:[
+    {en:"I want to go, but I have to work.",es:"Quiero ir, pero tengo que trabajar."},
+    {en:"I practice because I want to speak.",es:"Practico porque quiero hablar."},
+    {en:"There is traffic, so I will arrive late.",es:"Hay trancón, entonces voy a llegar tarde."}
+  ]}
+];

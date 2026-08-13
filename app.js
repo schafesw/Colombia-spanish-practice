@@ -1117,6 +1117,9 @@ function renderFraseDialogue(dialogue,tense){
       row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${line.who}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
       const bub=row.querySelector(".dlg-bubble");
       bubbles.push({who:line.who,el:bub});
+      const shadow=document.createElement("button");shadow.type="button";shadow.className="dlg-shadow";shadow.textContent="🗣️ Shadow";shadow.title="Listen, then record yourself";
+      shadow.onclick=e=>{e.stopPropagation();speak(line.tts,0.72,()=>setTimeout(()=>openMicPanel(line.tts),180));};
+      bub.appendChild(shadow);
        bub.onclick=()=>{
          if(bub.classList.contains("dlg-hidden"))bub.classList.remove("dlg-hidden");
          markPractice("phrases",line.es);
@@ -1657,6 +1660,45 @@ function renderMission(mission){
   const done=document.createElement("button");done.type="button";done.className="lesson-start";done.textContent=inRoutine?"✅ Finish today’s speaking path":(missionProgress[mission.id]?"✅ Mission completed — practice again":"✅ I answered out loud");done.onclick=()=>{missionProgress[mission.id]=true;saveMissions();if(inRoutine)routineFinishMission();else renderMission(mission);};card.appendChild(done);root.appendChild(card);
 }
 
+/* v56: Sentence-frame trainer — turns familiar grammar into spoken output. */
+let frameSessionIndex=0;
+function frameDayNumber(){return Math.floor(Date.now()/86400000);}
+function renderFramePractice(advance){
+  if(typeof rrStop==="function")rrStop();
+  const root=document.getElementById("lesson-list");
+  if(!root||typeof SPEAKING_FRAMES==="undefined"||!SPEAKING_FRAMES.length){renderLessons();return;}
+  if(advance)frameSessionIndex=(frameSessionIndex+1)%SPEAKING_FRAMES.length;
+  const day=frameDayNumber();
+  const frame=SPEAKING_FRAMES[frameSessionIndex];
+  const prompt=frame.prompts[(day+frameSessionIndex)%frame.prompts.length];
+  const guide=typeof SPEAKING_GUIDE!=="undefined"?SPEAKING_GUIDE.find(g=>g.id===frame.guide):null;
+  root.innerHTML="";
+  const back=document.createElement("button");back.type="button";back.className="phrase-back";back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=renderLessons;root.appendChild(back);
+  const card=lpEl("lp-card frame-practice-card");
+  card.appendChild(lpEl("frame-kicker",`🧱 BUILD A SENTENCE · FRAME ${frameSessionIndex+1} OF ${SPEAKING_FRAMES.length}`));
+  card.appendChild(lpEl("frame-title",frame.title));
+  const formula=lpEl("frame-formula");formula.innerHTML=`<strong>${escapeVocabHtml(frame.formula)}</strong><span>${escapeVocabHtml(frame.en)}</span>`;card.appendChild(formula);
+  if(guide)card.appendChild(lpEl("frame-explain",guide.explain));
+  card.appendChild(lpEl("frame-prompt-label","Say this in Spanish before revealing the model:"));
+  card.appendChild(lpEl("frame-prompt-en",prompt.en));
+  const listen=lpSpeakBtn(prompt.es,"🔊 Hear the model");listen.classList.add("frame-listen");card.appendChild(listen);
+  const reveal=document.createElement("button");reveal.type="button";reveal.className="lp-nav-btn primary frame-reveal";reveal.textContent="👀 Reveal model sentence";
+  const model=lpEl("frame-model");model.hidden=true;
+  model.innerHTML=`<div class="frame-model-label">Natural answer</div><div class="frame-model-es">${escapeVocabHtml(prompt.es)}</div><div class="frame-model-en">${escapeVocabHtml(prompt.en)}</div>`;
+  const modelSpeak=lpSpeakBtn(prompt.es,"🔊 Repeat the sentence");model.appendChild(modelSpeak);
+  reveal.onclick=()=>{model.hidden=false;reveal.remove();markPractice("frames",frame.id);};
+  card.appendChild(reveal);card.appendChild(model);attachMic(card,prompt.es);
+  const more=document.createElement("details");more.className="frame-more";more.innerHTML="<summary>More ways to use this frame</summary><div class='frame-more-list'></div>";
+  const moreList=more.querySelector(".frame-more-list");
+  frame.prompts.filter(x=>x!==prompt).forEach(x=>{const row=document.createElement("button");row.type="button";row.className="frame-example-row";row.innerHTML=`<span><strong>${escapeVocabHtml(x.es)}</strong><small>${escapeVocabHtml(x.en)}</small></span><span>🔊</span>`;row.onclick=()=>{markPractice("frames",frame.id);speak(x.es,0.75);};moreList.appendChild(row);});
+  card.appendChild(more);
+  const rating=lpEl("frame-rating");rating.innerHTML="<span>After saying it:</span>";
+  [["got","✅ I said it"],["practice","🔁 Need more practice"]].forEach(([kind,label])=>{const b=document.createElement("button");b.type="button";b.textContent=label;b.onclick=()=>{recordSrs("frame:"+frame.id,kind==="got");markPractice("frames",frame.id);rating.querySelectorAll("button").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");};rating.appendChild(b);});
+  card.appendChild(rating);
+  const next=document.createElement("button");next.type="button";next.className="lp-nav-btn primary frame-next";next.textContent="Next sentence frame →";next.onclick=()=>renderFramePractice(true);card.appendChild(next);
+  root.appendChild(card);
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    Lecturas (v35) — short Colombian paragraphs with listen, read-aloud, and
    comprehension practice. Kept inside Lecciones so the six-tab layout stays.
@@ -1828,6 +1870,8 @@ function renderProgressDashboard(root,done){
   root.appendChild(card);
 }
 
+function openReviewSession(){showPage("quiz");qMode="mixed";qCat="all";syncQuizControls();repasoLeft=10;nQ();}
+
 function renderLessons(){
   const root=document.getElementById("lesson-list");if(!root)return;
   if(lpLesson){renderLessonStep();return;}
@@ -1841,6 +1885,17 @@ function renderLessons(){
   const resume=loadResume();
   const resLesson=resume&&LESSONS.find(l=>l.id===resume.id);
   const nextLesson=LESSONS.find(l=>!lessonProgress[l.id]);
+  const homeHub=document.createElement("section");homeHub.className="today-hub";
+  homeHub.innerHTML="<div class='today-hub-kicker'>🧭 START HERE · YOUR NEXT FEW MINUTES</div><div class='today-hub-title'>Choose one clear action</div><div class='today-hub-sub'>The app is most useful when you say something every session—not when you open every section.</div>";
+  const homeActions=document.createElement("div");homeActions.className="today-hub-actions";
+  const addHomeAction=(icon,title,sub,fn,primary)=>{const b=document.createElement("button");b.type="button";b.className="today-action"+(primary?" primary":"");b.innerHTML=`<span class='today-action-icon'>${icon}</span><span><strong>${title}</strong><small>${sub}</small></span><span class='today-action-arrow'>›</span>`;b.onclick=fn;homeActions.appendChild(b);};
+  if(resLesson&&!lessonProgress[resLesson.id])addHomeAction("▶️","Continue / Continuar",`${resLesson.title} · step ${(resume.step|0)+1}`,()=>openLessonAt(resLesson,resume.step,resume.qi,resume.score),true);
+  else if(nextLesson)addHomeAction("🎓","Start next lesson / Empezar",nextLesson.title,()=>openLesson(nextLesson),true);
+  else addHomeAction("🎓","Review your path / Repasar","Replay a completed lesson",()=>{const first=LESSONS[0];if(first)openLesson(first);},true);
+  const dueHome=srsDueCount();
+  addHomeAction("🔁","Review / Repasar",dueHome?`${dueHome} card${dueHome===1?"":"s"} due today`:"Keep your memory active",openReviewSession,false);
+  addHomeAction("🧱","Speak with frames / Construir", "Turn patterns into sentences",()=>renderFramePractice(false),false);
+  homeHub.appendChild(homeActions);root.appendChild(homeHub);
   const cont=document.createElement("div");cont.className="continue-card";
   let cTitle,cSub,cAction;
   if(resLesson&&!lessonProgress[resLesson.id]){
@@ -1858,18 +1913,18 @@ function renderLessons(){
   }
   cont.innerHTML=`<div class="continue-title">${cTitle}</div><div class="continue-sub">${cSub}</div>`;
   if(cAction){cont.onclick=cAction;cont.classList.add("tappable");}
-  root.appendChild(cont);
+  /* The primary resume action now lives in today-hub above; keep one clear CTA. */
   renderProgressDashboard(root,done);
   let missedCount=srsDueCount();
   if(!missedCount){try{const s=JSON.parse(localStorage.getItem("esco-quiz-v1")||"{}");missedCount=s.missed?Object.keys(s.missed).length:0;}catch(e){}}
   /* Daily practice — one compact row (v22) */
   const daily=document.createElement("div");daily.className="daily-row";
   const dr1=document.createElement("button");dr1.type="button";dr1.className="daily-card";
-  dr1.innerHTML=`<div class="daily-icon">🔁</div><div class="daily-title">Review</div><div class="daily-sub">${missedCount?missedCount+" item"+(missedCount===1?"":"s")+" due":"nothing due"}</div>`;
-  dr1.onclick=()=>{showPage("quiz");qMode="mixed";qCat="all";syncQuizControls();repasoLeft=10;nQ();};
+  dr1.innerHTML=`<div class="daily-icon">⚡</div><div class="daily-title">Rápida</div><div class="daily-sub">${RR_BANK.length} questions · answer under pressure</div>`;
+  dr1.onclick=()=>{rrSession=0;renderRapida(false);};
   const dr2=document.createElement("button");dr2.type="button";dr2.className="daily-card";
-  dr2.innerHTML=`<div class="daily-icon">⚡</div><div class="daily-title">Rápida</div><div class="daily-sub">${RR_BANK.length} questions</div>`;
-  dr2.onclick=()=>{rrSession=0;renderRapida(false);};
+  dr2.innerHTML="<div class='daily-icon'>💬</div><div class='daily-title'>Shadow a dialogue</div><div class='daily-sub'>Listen · hide a side · speak</div>";
+  dr2.onclick=()=>{showPage("frases");renderFraseMenu();};
   daily.appendChild(dr1);daily.appendChild(dr2);
   root.appendChild(daily);
 
