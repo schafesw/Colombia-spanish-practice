@@ -1680,21 +1680,28 @@ function renderReading(reading){
    Guided daily speaking routine (v35) — one small sequence using existing
    features. The day and current step persist, but content remains replayable.
    ═══════════════════════════════════════════════════════════════════════════ */
-const ROUTINE_KEY="esco-routine-v1";
+const ROUTINE_KEY="esco-routine-v2";
 const ROUTINE_STEPS=[
-  {id:"review",icon:"🔁",title:"Review",sub:"Practice anything due today."},
-  {id:"reading",icon:"📖",title:"Read aloud",sub:"Read one short Colombian paragraph."},
-  {id:"rapid",icon:"⚡",title:"React quickly",sub:"Answer one question under pressure."},
-  {id:"mission",icon:"🗣️",title:"Conversation mission",sub:"Say a complete response out loud."}
+  {id:"warmup",icon:"🎙️",title:"Warm up your mouth",sub:"Pure vowels, RR, and Ñ · about 2 minutes."},
+  {id:"review",icon:"🔁",title:"Recall useful Spanish",sub:"Review due cards and answer before looking."},
+  {id:"phrases",icon:"💬",title:"Speak useful phrases",sub:"Practice a real conversation and both sides."},
+  {id:"mission",icon:"🗣️",title:"Conversation mission",sub:"Answer in your own words out loud."}
 ];
 let routineState={date:"",step:0};
 try{routineState=Object.assign(routineState,JSON.parse(localStorage.getItem(ROUTINE_KEY)||"{}"));}catch(e){}
 function routineToday(){const today=new Date().toISOString().slice(0,10);if(routineState.date!==today){routineState={date:today,step:0};saveRoutine();}return routineState;}
 function saveRoutine(){try{localStorage.setItem(ROUTINE_KEY,JSON.stringify(routineState));}catch(e){}}
 function routineOpen(id){
-  if(id==="review"){showPage("quiz");qMode="mixed";qCat="all";qFocus="all";repasoLeft=10;resetQuizRound();syncQuizControls();nQ();}
-  else if(id==="reading"){renderReading(READINGS[routineState.step%READINGS.length]);}
-  else if(id==="rapid"){rrSession=0;renderRapida(false);}
+  if(id==="warmup"){
+    showPage("fonetica");showPhonetic("syllables");
+    setTimeout(()=>{const start=document.getElementById("phonetic-start");if(start)start.scrollIntoView({behavior:"smooth",block:"start"});},60);
+  }
+  else if(id==="review"){showPage("quiz");qMode="mixed";qCat="all";qFocus="all";repasoLeft=10;resetQuizRound();syncQuizControls();nQ();}
+  else if(id==="phrases"){
+    showPage("frases");
+    const d=PHRASE_DIALOGUES.find(x=>/Uber: hablo poquito español/i.test(x.title))||PHRASE_DIALOGUES.find(x=>/Carro y taxi/i.test(x.title))||PHRASE_DIALOGUES[0];
+    if(d)renderFraseDialogue(d,"Ahora");
+  }
   else if(id==="mission"){const m=CONVERSATION_MISSIONS.find(x=>!missionProgress[x.id])||CONVERSATION_MISSIONS[0];if(m)renderMission(m);}
 }
 function routineComplete(){routineToday();routineState.step=Math.min(ROUTINE_STEPS.length,routineState.step+1);saveRoutine();renderLessons();}
@@ -1703,12 +1710,12 @@ function renderRoutineCard(root){
   const wrap=document.createElement("section");wrap.className="daily-routine-card";
   const complete=routineState.step>=ROUTINE_STEPS.length;
   const current=ROUTINE_STEPS[Math.min(routineState.step,ROUTINE_STEPS.length-1)];
-  wrap.innerHTML=`<div class='routine-top'><div><div class='routine-kicker'>🎓 DAILY SPEAKING PATH</div><div class='routine-title'>${complete?"Routine complete for today":"Your next 10-minute practice"}</div></div><div class='routine-count'>${complete?"4/4":`${routineState.step}/4`}</div></div><div class='routine-track'><span style='width:${Math.round(routineState.step/ROUTINE_STEPS.length*100)}%'></span></div>`;
+  wrap.innerHTML=`<div class='routine-top'><div><div class='routine-kicker'>🎓 DAILY SPEAKING PATH</div><div class='routine-title'>${complete?"Routine complete for today":"Your next 10-minute speaking practice"}</div></div><div class='routine-count'>${complete?`${ROUTINE_STEPS.length}/${ROUTINE_STEPS.length}`:`${routineState.step}/${ROUTINE_STEPS.length}`}</div></div><div class='routine-track'><span style='width:${Math.round(routineState.step/ROUTINE_STEPS.length*100)}%'></span></div><div class='routine-note'>Listen → say it → compare → continue</div>`;
   if(!complete){
     const step=lpEl("routine-current");step.innerHTML=`<span class='routine-current-icon'>${current.icon}</span><span><strong>${current.title}</strong><small>${current.sub}</small></span>`;
     const actions=lpEl("routine-actions");
-    const open=document.createElement("button");open.type="button";open.className="lp-nav-btn primary";open.textContent="Open";open.onclick=()=>routineOpen(current.id);
-    const done=document.createElement("button");done.type="button";done.className="lp-nav-btn";done.textContent="Mark done";done.onclick=routineComplete;
+    const open=document.createElement("button");open.type="button";open.className="lp-nav-btn primary";open.textContent="Start step";open.onclick=()=>routineOpen(current.id);
+    const done=document.createElement("button");done.type="button";done.className="lp-nav-btn";done.textContent="I practiced";done.onclick=routineComplete;
     actions.append(open,done);wrap.append(step,actions);
   }else{
     const replay=document.createElement("button");replay.type="button";replay.className="lp-nav-btn";replay.textContent="↻ Start again tomorrow";replay.disabled=true;wrap.appendChild(replay);
@@ -1736,7 +1743,7 @@ function renderLessons(){
   const intro=document.createElement("div");intro.className="lesson-intro";
   intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-flow">Recommended path: Start Here → Travel → Daily Life → Build Sentences → Speak Naturally<br>Each lesson: 🎯 Goal → 🔑 Words → 👂 Listen → 🗣️ Say it → 🎭 Role-play → 🧱 Understand → 📖 Read → 🧪 Quiz → 🎯 Mission</div>`;
   root.appendChild(intro);
-  renderProgressDashboard(root,done);
+  renderRoutineCard(root);
   /* Continue / Start here (v21) */
   const resume=loadResume();
   const resLesson=resume&&LESSONS.find(l=>l.id===resume.id);
@@ -1759,7 +1766,7 @@ function renderLessons(){
   cont.innerHTML=`<div class="continue-title">${cTitle}</div><div class="continue-sub">${cSub}</div>`;
   if(cAction){cont.onclick=cAction;cont.classList.add("tappable");}
   root.appendChild(cont);
-  renderRoutineCard(root);
+  renderProgressDashboard(root,done);
   let missedCount=srsDueCount();
   if(!missedCount){try{const s=JSON.parse(localStorage.getItem("esco-quiz-v1")||"{}");missedCount=s.missed?Object.keys(s.missed).length:0;}catch(e){}}
   /* Daily practice — one compact row (v22) */
@@ -1831,7 +1838,7 @@ function renderLessons(){
   root.appendChild(bkLabel);
   /* Backup / restore progress (v17) */
   const bk=document.createElement("div");bk.className="backup-row";
-  const BK_KEYS=["esco-quiz-v1","esco-srs-v1","esco-lesson-progress-v1","esco-mission-progress-v1","esco-reading-progress-v1","esco-routine-v1","esco-practice-v1","esco-days-v1"];
+  const BK_KEYS=["esco-quiz-v1","esco-srs-v1","esco-lesson-progress-v1","esco-mission-progress-v1","esco-reading-progress-v1","esco-routine-v1","esco-routine-v2","esco-practice-v1","esco-days-v1"];
   const b1=document.createElement("button");b1.type="button";b1.className="backup-btn";b1.textContent="💾 Copy backup";
   b1.onclick=()=>{
     const data={};BK_KEYS.forEach(k=>{const v=localStorage.getItem(k);if(v)data[k]=v;});
