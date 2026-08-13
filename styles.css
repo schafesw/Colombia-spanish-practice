@@ -102,12 +102,12 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 .phonetic-reminder-list span{color:rgba(255,255,255,.76);}
 .phonetic-reminder-list b{color:#fff;}
 .phonetic-guide-label{margin:12px 0 1px;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);font-weight:900;}
-.warmup-finish{display:flex;align-items:center;gap:10px;margin-top:12px;padding-top:11px;border-top:1px solid rgba(255,255,255,.1);}
+.warmup-finish{display:block;margin-top:12px;padding-top:11px;border-top:1px solid rgba(255,255,255,.1);}
 .warmup-finish>div{min-width:0;flex:1;}
 .warmup-finish strong,.warmup-finish span{display:block;}
 .warmup-finish strong{font-size:.72rem;color:#fff;}
 .warmup-finish span{font-size:.62rem;line-height:1.35;color:var(--muted);margin-top:2px;}
-.warmup-continue{border:1px solid rgba(232,180,74,.45);border-radius:10px;background:rgba(232,180,74,.16);color:#fff;padding:9px 10px;font:inherit;font-size:.65rem;font-weight:900;white-space:nowrap;cursor:pointer;}
+.warmup-continue,.routine-next-large{display:block;width:100%;min-height:56px;margin-top:10px;border:1px solid rgba(232,180,74,.65);border-radius:13px;background:linear-gradient(135deg,rgba(232,180,74,.95),rgba(232,151,55,.92));color:#1a1408;padding:12px 14px;font:inherit;font-size:.86rem;font-weight:900;white-space:normal;cursor:pointer;box-shadow:0 5px 16px rgba(232,180,74,.15);}
 .warmup-continue:active{transform:translateY(1px);}
 .routine-twister-guide{margin-bottom:12px;padding:12px;border:1px solid rgba(232,180,74,.35);border-radius:13px;background:linear-gradient(135deg,rgba(232,180,74,.12),rgba(74,168,160,.08));}
 .routine-guide-kicker{font-size:.56rem;letter-spacing:.12em;color:var(--gold);font-weight:900;}
@@ -116,8 +116,19 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 .routine-twister-guide>span{font-size:.66rem;line-height:1.42;color:var(--muted);margin-top:4px;}
 .routine-twister-sequence{margin-top:9px;padding:8px;border-radius:9px;background:rgba(0,0,0,.15);font-size:.64rem;line-height:1.45;color:rgba(255,255,255,.78);}
 .routine-twister-sequence b{color:var(--teal);}
-.routine-guide-actions{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;}
-.routine-guide-actions .warmup-continue{padding:8px 10px;}
+.routine-guide-actions{display:block;margin-top:10px;}
+.routine-guide-actions .warmup-back{display:block;}
+.routine-guide-actions .warmup-continue{margin-top:9px;}
+.routine-quiz-guide,.routine-phrase-guide{margin:0 0 13px;padding:13px;border:1px solid rgba(232,180,74,.35);border-radius:14px;background:linear-gradient(135deg,rgba(232,180,74,.12),rgba(74,168,160,.08));}
+.routine-quiz-guide strong,.routine-quiz-guide span,.routine-phrase-guide strong,.routine-phrase-guide span{display:block;}
+.routine-quiz-guide strong,.routine-phrase-guide strong{font-size:.9rem;color:#fff;margin-top:4px;}
+.routine-quiz-guide>span,.routine-phrase-guide>span{font-size:.67rem;line-height:1.45;color:var(--muted);margin-top:4px;}
+.routine-quiz-guide .routine-next-large,.routine-phrase-guide .routine-next-large{margin-top:12px;}
+.routine-back-link{display:block;margin:9px 0 0;padding:2px 0;border:0;background:transparent;color:var(--teal);font:inherit;font-size:.65rem;font-weight:900;cursor:pointer;}
+#page-fonetica.routine-focus .phonetic-panel.active>.sl,#page-fonetica.routine-focus .phonetic-panel.active>.fw,#page-fonetica.routine-focus .phonetic-panel.active>#combo-groups,#page-fonetica.routine-focus .phonetic-panel.active>.phonetic-practice-map{display:none;}
+#page-fonetica.routine-focus-warmup .phonetic-panel.active>.phonetic-fold{display:none;}
+#page-fonetica.routine-focus-twisters .phonetic-panel.active>#phonetic-start{display:none;}
+#page-fonetica.routine-focus-twisters .phonetic-panel.active>.phonetic-fold:not(#phonetic-twisters){display:none;}
 .warmup-row{display:flex;align-items:center;gap:9px;padding:10px 0;border-top:1px solid rgba(255,255,255,.1);}
 .warmup-row:first-child{margin-top:11px;}
 .warmup-copy{flex:1;min-width:0;}

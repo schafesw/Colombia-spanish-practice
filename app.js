@@ -1081,6 +1081,11 @@ function renderFraseDialogue(dialogue,tense){
     hdr.appendChild(trow);
   }
   fl.appendChild(hdr);
+  if(routineToday().step===3){
+    const guide=document.createElement("section");guide.className="routine-phrase-guide";
+    guide.innerHTML="<div class='routine-guide-kicker'>🎯 STEP 4 · SPEAKING</div><strong>Practice both sides of the conversation</strong><span>Tap each line to listen. Then cover one side with your hand, say it from memory, and compare. Try the Ahora version first.</span><button type='button' class='routine-next-large' onclick='routineFinishPhrases()'>I practiced both sides — continue →</button><button type='button' class='routine-back-link' onclick='routineBack()'>‹ Back to daily path</button>";
+    fl.appendChild(guide);
+  }
   /* Speaking practice: hide one side, say the line out loud, tap to reveal */
   const bubbles=[];
   const pbar=document.createElement("div");pbar.className="practice-bar";
@@ -1648,7 +1653,8 @@ function renderMission(mission){
   reveal.onclick=()=>{say.textContent="Compare your idea with these natural Colombian answers:";reveal.remove();models.hidden=false;};card.appendChild(reveal);
   (mission.models||[]).forEach((m,i)=>{const row=document.createElement("div");row.className="mission-model";row.innerHTML=`<div class="mission-model-label">Natural option ${i+1}</div><div class="mission-model-es">${escapeVocabHtml(m.es)}</div><div class="mission-model-en">${escapeVocabHtml(m.en)}</div>`;row.onclick=()=>{markPractice("phrases",m.es);speak(m.tts||m.es,0.75);};attachMic(row,m.es);models.appendChild(row);});
   card.appendChild(models);
-  const done=document.createElement("button");done.type="button";done.className="lesson-start";done.textContent=missionProgress[mission.id]?"✅ Mission completed — practice again":"✅ I answered out loud";done.onclick=()=>{missionProgress[mission.id]=true;saveMissions();renderMission(mission);};card.appendChild(done);root.appendChild(card);
+  const inRoutine=routineToday().step===4;
+  const done=document.createElement("button");done.type="button";done.className="lesson-start";done.textContent=inRoutine?"✅ Finish today’s speaking path":(missionProgress[mission.id]?"✅ Mission completed — practice again":"✅ I answered out loud");done.onclick=()=>{missionProgress[mission.id]=true;saveMissions();if(inRoutine)routineAdvance(4);else renderMission(mission);};card.appendChild(done);root.appendChild(card);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1705,12 +1711,13 @@ try{routineState=Object.assign(routineState,JSON.parse(localStorage.getItem(ROUT
 function routineToday(){const today=new Date().toISOString().slice(0,10);if(routineState.date!==today){routineState={date:today,step:0};saveRoutine();}return routineState;}
 function saveRoutine(){try{localStorage.setItem(ROUTINE_KEY,JSON.stringify(routineState));}catch(e){}}
 function routineOpen(id){
+  removeRoutineQuizGuide();
   if(id==="warmup"){
-    showPage("fonetica");showPhonetic("syllables");
+    clearRoutineFocus();showPage("fonetica");showPhonetic("syllables");setRoutineFocus("warmup");
     setTimeout(()=>{const reminders=document.getElementById("phonetic-english-reminders");if(reminders)reminders.open=true;const start=document.getElementById("phonetic-start");if(start)start.scrollIntoView({behavior:"smooth",block:"start"});},60);
   }
   else if(id==="twisters"){
-    showPage("fonetica");showPhonetic("syllables");
+    clearRoutineFocus();showPage("fonetica");showPhonetic("syllables");setRoutineFocus("twisters");
     setTimeout(()=>{
       const fold=document.getElementById("phonetic-twisters");if(fold)fold.open=true;
       const root=document.getElementById("tongue-twister-lab");
@@ -1724,19 +1731,41 @@ function routineOpen(id){
       const start=document.getElementById("phonetic-twisters");if(start)start.scrollIntoView({behavior:"smooth",block:"start"});
     },60);
   }
-  else if(id==="review"){showPage("quiz");qMode="mixed";qCat="all";qFocus="all";repasoLeft=10;resetQuizRound();syncQuizControls();nQ();}
+  else if(id==="review"){
+    showPage("quiz");qMode="mixed";qCat="all";qFocus="all";repasoLeft=10;resetQuizRound();syncQuizControls();nQ();renderRoutineQuizGuide();
+  }
   else if(id==="phrases"){
     showPage("frases");
     const d=PHRASE_DIALOGUES.find(x=>/Uber: hablo poquito español/i.test(x.title))||PHRASE_DIALOGUES.find(x=>/Carro y taxi/i.test(x.title))||PHRASE_DIALOGUES[0];
     if(d)renderFraseDialogue(d,"Ahora");
   }
-  else if(id==="mission"){const m=CONVERSATION_MISSIONS.find(x=>!missionProgress[x.id])||CONVERSATION_MISSIONS[0];if(m)renderMission(m);}
+  else if(id==="mission"){const m=CONVERSATION_MISSIONS.find(x=>!missionProgress[x.id])||CONVERSATION_MISSIONS[0];if(m){showPage("lecciones");renderMission(m);}}
 }
-function clearRoutineGuide(){routineTwisterSelection=null;renderTongueTwisters();}
-function routineBack(){clearRoutineGuide();showPage("lecciones");renderLessons();}
-function routineFinishWarmup(){routineToday();if(routineState.step===0)routineComplete();else routineBack();}
-function routineFinishTwisters(){routineToday();if(routineState.step===1)routineComplete();else routineBack();}
+function clearRoutineGuide(){routineTwisterSelection=null;renderTongueTwisters();removeRoutineQuizGuide();}
+function setRoutineFocus(kind){const page=document.getElementById("page-fonetica");if(page){page.classList.add("routine-focus");page.classList.toggle("routine-focus-warmup",kind==="warmup");page.classList.toggle("routine-focus-twisters",kind==="twisters");}}
+function clearRoutineFocus(){const page=document.getElementById("page-fonetica");if(page)page.classList.remove("routine-focus","routine-focus-warmup","routine-focus-twisters");}
+function routineBack(){clearRoutineGuide();clearRoutineFocus();showPage("lecciones");renderLessons();}
+function routineAdvance(expected){
+  routineToday();
+  if(routineState.step!==expected){routineBack();return;}
+  routineState.step=Math.min(ROUTINE_STEPS.length,routineState.step+1);saveRoutine();
+  const next=ROUTINE_STEPS[routineState.step];
+  if(next)routineOpen(next.id);else{clearRoutineGuide();showPage("lecciones");renderLessons();}
+}
+function routineFinishWarmup(){routineAdvance(0);}
+function routineFinishTwisters(){routineAdvance(1);}
+function routineFinishReview(){routineAdvance(2);}
+function routineFinishPhrases(){routineAdvance(3);}
 function routineComplete(){routineToday();routineState.step=Math.min(ROUTINE_STEPS.length,routineState.step+1);saveRoutine();showPage("lecciones");renderLessons();}
+function removeRoutineQuizGuide(){const guide=document.querySelector(".routine-quiz-guide");if(guide)guide.remove();}
+function renderRoutineQuizGuide(){
+  removeRoutineQuizGuide();
+  if(routineToday().step!==2)return;
+  const page=document.getElementById("page-quiz"),anchor=page&&page.querySelector(".quiz-score-bar");if(!page||!anchor)return;
+  const guide=document.createElement("section");guide.className="routine-quiz-guide";
+  guide.innerHTML="<div class='routine-guide-kicker'>🎯 STEP 3 · RECALL</div><strong>Practice a few useful answers</strong><span>Answer out loud before tapping. Use the Spanish reveal to repeat the complete sentence.</span><button type='button' class='routine-next-large' onclick='routineFinishReview()'>I practiced — continue to phrases →</button><button type='button' class='routine-back-link' onclick='routineBack()'>‹ Back to daily path</button>";
+  page.insertBefore(guide,anchor);
+}
 function renderRoutineCard(root){
   routineToday();
   const wrap=document.createElement("section");wrap.className="daily-routine-card";
