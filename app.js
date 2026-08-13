@@ -1694,7 +1694,7 @@ function saveRoutine(){try{localStorage.setItem(ROUTINE_KEY,JSON.stringify(routi
 function routineOpen(id){
   if(id==="warmup"){
     showPage("fonetica");showPhonetic("syllables");
-    setTimeout(()=>{const start=document.getElementById("phonetic-start");if(start)start.scrollIntoView({behavior:"smooth",block:"start"});},60);
+    setTimeout(()=>{const reminders=document.getElementById("phonetic-english-reminders");if(reminders)reminders.open=true;const start=document.getElementById("phonetic-start");if(start)start.scrollIntoView({behavior:"smooth",block:"start"});},60);
   }
   else if(id==="review"){showPage("quiz");qMode="mixed";qCat="all";qFocus="all";repasoLeft=10;resetQuizRound();syncQuizControls();nQ();}
   else if(id==="phrases"){

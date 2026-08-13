@@ -87,6 +87,18 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 .phonetic-start-kicker{font-size:.56rem;letter-spacing:.13em;color:var(--gold);font-weight:900;}
 .phonetic-start-title{font-size:1.05rem;font-weight:900;color:#fff;margin-top:4px;}
 .phonetic-start-sub{font-size:.7rem;line-height:1.48;color:var(--muted);margin-top:4px;}
+.phonetic-reminder-fold{margin-top:12px;border-top:1px solid rgba(255,255,255,.1);padding-top:10px;}
+.phonetic-reminder-fold>summary{display:flex;justify-content:space-between;gap:8px;cursor:pointer;list-style:none;font-size:.72rem;font-weight:900;color:#fff;}
+.phonetic-reminder-fold>summary::-webkit-details-marker{display:none;}
+.phonetic-reminder-fold>summary:after{content:"+";color:var(--gold);}
+.phonetic-reminder-fold[open]>summary:after{content:"−";}
+.phonetic-reminder-fold>summary small{color:var(--muted);font-size:.6rem;margin-left:auto;font-weight:700;}
+.phonetic-reminder-list{display:grid;gap:6px;margin-top:9px;}
+.phonetic-reminder-list>div{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:start;padding:8px;border-radius:9px;background:rgba(0,0,0,.15);font-size:.64rem;line-height:1.4;}
+.phonetic-reminder-list strong{color:var(--teal);font-size:.68rem;}
+.phonetic-reminder-list span{color:rgba(255,255,255,.76);}
+.phonetic-reminder-list b{color:#fff;}
+.phonetic-guide-label{margin:12px 0 1px;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);font-weight:900;}
 .warmup-row{display:flex;align-items:center;gap:9px;padding:10px 0;border-top:1px solid rgba(255,255,255,.1);}
 .warmup-row:first-child{margin-top:11px;}
 .warmup-copy{flex:1;min-width:0;}
@@ -168,7 +180,7 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 .twister-btn{flex:1;min-height:38px;border:1px solid var(--border);border-radius:9px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.78);font-size:.68rem;font-weight:800;padding:7px 4px;}
 .twister-btn.gold{border-color:rgba(232,180,74,.4);background:rgba(232,180,74,.12);color:var(--gold);}
 @media(max-width:620px){.sound-tips{grid-template-columns:1fr;}}
-@media(max-width:430px){.interference-grid{grid-template-columns:1fr;}.warmup-actions{flex-direction:column;}.warmup-btn{min-height:32px;padding:5px 6px;font-size:.58rem;}.phonetic-map-links{grid-template-columns:repeat(2,minmax(0,1fr));}.phonetic-fold>summary small{font-size:.56rem;}.minimal-pair-words{gap:4px;}}
+@media(max-width:430px){.interference-grid{grid-template-columns:1fr;}.warmup-actions{flex-direction:column;}.warmup-btn{min-height:32px;padding:5px 6px;font-size:.58rem;}.phonetic-map-links{grid-template-columns:repeat(2,minmax(0,1fr));}.phonetic-fold>summary small{font-size:.56rem;}.phonetic-reminder-list>div{grid-template-columns:1fr;gap:2px;}.phonetic-reminder-fold>summary small{font-size:.56rem;}.minimal-pair-words{gap:4px;}}
 
 /* Vocab */
 .cat-wrap{display:flex;gap:7px;overflow-x:auto;margin-bottom:18px;padding-bottom:4px;scrollbar-width:none;}
