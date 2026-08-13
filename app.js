@@ -827,6 +827,7 @@ const PHRASE_DIALOGUES=[
 ];
 let fraseSearchTerm="";
 let fraseView="all";
+let fraseReturnToLessons=false;
 const TENSE_BADGE={
   "Ahora":{txt:"⚡ Ahora · presente",css:"color:var(--teal);background:rgba(74,168,160,0.12);border:1px solid rgba(74,168,160,0.25)"},
   "Planes":{txt:"⏭️ Planes · voy a...",css:"color:var(--blue);background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.25)"},
@@ -914,6 +915,7 @@ function phraseCollectionGroup(sec){
 }
 function resetFraseScroll(){const sc=document.querySelector(".scroll");if(sc)sc.scrollTop=0;}
 function renderFraseMenu(){
+  fraseReturnToLessons=false;
   resetFraseScroll();
   fl.dataset.view="menu";
   fl.innerHTML="";
@@ -1060,8 +1062,9 @@ function renderFraseDialogue(dialogue,tense){
   fl.innerHTML="";
   const back=document.createElement("button");
   back.type="button";back.className="phrase-back";
-  back.innerHTML="<span>‹</span><span>Back to phrases · Volver a frases</span>";
-  back.onclick=renderFraseMenu;
+  const returnToLessons=fraseReturnToLessons;
+  back.innerHTML=returnToLessons?"<span>‹</span><span>Back to lessons · Volver a lecciones</span>":"<span>‹</span><span>Back to phrases · Volver a frases</span>";
+  back.onclick=()=>{fraseReturnToLessons=false;if(returnToLessons){showPage("lecciones");renderLessons();}else renderFraseMenu();};
   fl.appendChild(back);
   /* Header: title + English + tense selector — one version at a time (v23) */
   const versions=dialogue.versions||[];
@@ -1924,7 +1927,12 @@ function renderLessons(){
   dr1.onclick=()=>{rrSession=0;renderRapida(false);};
   const dr2=document.createElement("button");dr2.type="button";dr2.className="daily-card";
   dr2.innerHTML="<div class='daily-icon'>💬</div><div class='daily-title'>Shadow a dialogue</div><div class='daily-sub'>Listen · hide a side · speak</div>";
-  dr2.onclick=()=>{showPage("frases");renderFraseMenu();};
+  dr2.onclick=()=>{
+    showPage("frases");
+    const candidates=PHRASE_DIALOGUES.filter(d=>/Uber|direcciones|taxi|transporte|farmacia|restaurante/i.test(d.title));
+    const d=(candidates.length?candidates:PHRASE_DIALOGUES)[frameDayNumber()%(candidates.length||PHRASE_DIALOGUES.length)];
+    fraseReturnToLessons=true;renderFraseDialogue(d);
+  };
   daily.appendChild(dr1);daily.appendChild(dr2);
   root.appendChild(daily);
 
