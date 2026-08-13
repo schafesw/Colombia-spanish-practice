@@ -125,6 +125,17 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 .routine-quiz-guide>span,.routine-phrase-guide>span{font-size:.67rem;line-height:1.45;color:var(--muted);margin-top:4px;}
 .routine-quiz-guide .routine-next-large,.routine-phrase-guide .routine-next-large{margin-top:12px;}
 .routine-back-link{display:block;margin:9px 0 0;padding:2px 0;border:0;background:transparent;color:var(--teal);font:inherit;font-size:.65rem;font-weight:900;cursor:pointer;}
+.routine-dock{display:none;position:fixed;left:54px;right:10px;bottom:calc(var(--tab-h) + var(--safe-bottom) + 8px);z-index:998;padding:9px 10px 8px;border:1px solid rgba(232,180,74,.42);border-radius:15px;background:rgba(15,22,29,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 -5px 22px rgba(0,0,0,.42);}
+.routine-dock.active{display:block;}
+.routine-dock-meta{display:flex;justify-content:space-between;gap:8px;margin:0 2px 6px;color:var(--gold);font-size:.55rem;font-weight:900;letter-spacing:.1em;}
+.routine-dock-count{color:var(--muted);letter-spacing:.04em;white-space:nowrap;}
+.routine-dock-btn{display:block;width:100%;min-height:46px;padding:10px 12px;border:1px solid rgba(232,180,74,.65);border-radius:11px;background:linear-gradient(135deg,rgba(232,180,74,.95),rgba(232,151,55,.92));color:#1a1408;font:inherit;font-size:.8rem;font-weight:900;}
+.routine-dock-btn:active{transform:translateY(1px);}
+.routine-dock-back{display:block;margin:5px auto 0;border:0;background:transparent;color:var(--teal);font:inherit;font-size:.6rem;font-weight:900;padding:2px 5px;}
+body.routine-session-active .scroll{padding-bottom:calc(var(--tab-h) + var(--safe-bottom) + 126px);}
+body.routine-session-active .warmup-finish,body.routine-session-active .routine-guide-actions,body.routine-session-active .routine-quiz-guide .routine-next-large,body.routine-session-active .routine-quiz-guide .routine-back-link,body.routine-session-active .routine-phrase-guide .routine-next-large,body.routine-session-active .routine-phrase-guide .routine-back-link,body.routine-session-active .mission-card>.lesson-start{display:none;}
+body.routine-session-active #page-quiz .quiz-next{bottom:calc(var(--tab-h) + var(--safe-bottom) + 116px);}
+body.routine-session-active .mic-panel{bottom:calc(var(--tab-h) + var(--safe-bottom) + 116px);}
 #page-fonetica.routine-focus .phonetic-panel.active>.sl,#page-fonetica.routine-focus .phonetic-panel.active>.fw,#page-fonetica.routine-focus .phonetic-panel.active>#combo-groups,#page-fonetica.routine-focus .phonetic-panel.active>.phonetic-practice-map{display:none;}
 #page-fonetica.routine-focus-warmup .phonetic-panel.active>.phonetic-fold{display:none;}
 #page-fonetica.routine-focus-twisters .phonetic-panel.active>#phonetic-start{display:none;}
