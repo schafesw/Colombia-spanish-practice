@@ -281,12 +281,15 @@ function renderSpanishThinking(){
   };
   draw();
 }
+function openPhoneticSection(id){
+  const target=document.getElementById(id);if(!target)return;
+  if(target.tagName.toLowerCase()==="details")target.open=true;
+  setTimeout(()=>target.scrollIntoView({behavior:"smooth",block:"start"}),20);
+}
 function setupPhoneticLinks(){
-  document.querySelectorAll(".phonetic-map-links a").forEach(link=>link.onclick=event=>{
-    const target=document.getElementById(link.getAttribute("href").slice(1));
-    if(target&&target.tagName.toLowerCase()==="details")target.open=true;
-    if(target){event.preventDefault();setTimeout(()=>target.scrollIntoView({behavior:"smooth",block:"start"}),20);}
-  });
+  document.querySelectorAll(".phonetic-map-links a").forEach(link=>link.onclick=event=>{event.preventDefault();openPhoneticSection(link.getAttribute("href").slice(1));});
+  const jump=document.getElementById("phonetic-jump");
+  if(jump)jump.onchange=()=>{if(jump.value){openPhoneticSection(jump.value);jump.value="";}};
 }
 renderPhoneticWarmup();renderEnglishInterference();renderMinimalPairs();renderSpanishThinking();setupPhoneticLinks();
 

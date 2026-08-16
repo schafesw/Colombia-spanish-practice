@@ -988,10 +988,15 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .practice-info small{color:var(--muted);font-size:.6rem;line-height:1.3;}
 .language-toggle{white-space:nowrap;}
 .dlg-no-english .dlg-en{display:none;}
+.phonetic-jump-row{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;margin:0 0 13px;padding:9px 10px;border:1px solid rgba(74,168,160,.28);border-radius:12px;background:rgba(74,168,160,.07);}
+.phonetic-jump-row label{color:var(--teal);font-size:.64rem;font-weight:900;white-space:nowrap;}
+.phonetic-jump-row select{width:100%;min-height:38px;padding:7px 9px;border:1px solid rgba(255,255,255,.16);border-radius:9px;background:#172027;color:#fff;font:inherit;font-size:.68rem;font-weight:800;}
 @media(max-width:430px){
   .lesson-view-tabs{top:4px;}
   .lesson-view-tab{min-height:47px;}
   .lesson-view-tab strong{font-size:.6rem;}
   .lesson-view-tab small{font-size:.5rem;}
   .tense-roadmap-grid{grid-template-columns:1fr;}
+  .phonetic-jump-row{grid-template-columns:1fr;gap:6px;}
+  .phonetic-jump-row label{font-size:.58rem;}
 }
