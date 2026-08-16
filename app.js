@@ -1093,7 +1093,7 @@ function renderFraseDialogue(dialogue,tense){
   const bubbles=[];
   const pbar=document.createElement("div");pbar.className="practice-bar";
   const pInfo=document.createElement("div");pInfo.className="practice-info";
-  pInfo.textContent="🗣️ Speaking practice: hide one side, say the line out loud, then tap to reveal.";
+  pInfo.innerHTML="<strong>🗣️ Speaking ladder</strong><small>Listen → hide one side → say it → shadow the model</small>";
   const pBtns=document.createElement("div");pBtns.className="practice-btns";
   const mkPB=(label,who)=>{
     const b=document.createElement("button");b.type="button";b.className="practice-btn"+(who===null?" active":"");b.textContent=label;
@@ -1112,6 +1112,7 @@ function renderFraseDialogue(dialogue,tense){
   const box=document.createElement("div");
   box.className="dialogue phrase-dialogue";
   box.innerHTML=`<div class="dlg-title">Tap any line to hear it</div>`;
+  const langBtn=document.createElement("button");langBtn.type="button";langBtn.className="practice-btn language-toggle";langBtn.textContent="🇺🇸 Hide English";langBtn.onclick=()=>{const hidden=box.classList.toggle("dlg-no-english");langBtn.textContent=hidden?"🇺🇸 Show English":"🇺🇸 Hide English";};pBtns.appendChild(langBtn);
   const version=versions.find(v=>v.tense===active)||versions[0];
   if(version){
     version.lines.forEach(line=>{
@@ -1171,6 +1172,10 @@ const LESSONS=[
   {id:"function-words",icon:"🗣️",title:"Palabras para conversar",sub:"Usa frases pequeñas para conectar ideas y mantener la charla",vocab:"gustos",dialogue:"Palabras para conversar",quizCat:"conectores",quizMode:"mixed"},
   {id:"action-chunks",icon:"⚡",title:"Acciones de todos los días",sub:"Quiero, necesito, tengo que y voy a… para decir lo que haces",vocab:"acciones",dialogue:"Acciones de todos los días",quizCat:"acciones",quizMode:"conversation"},
   {id:"social-colombia-v36",icon:"🇨🇴",title:"Habla más colombiano",sub:"Expresiones sociales con registro y contexto",vocab:"colombianismos",dialogue:"Compañeros de trabajo",quizCat:"expresiones",quizMode:"conversation"},
+  {id:"gram-perfecto",icon:"✅",title:"Lo que has hecho",sub:"He visto, has probado, hemos llegado",vocab:"acciones",dialogue:"Contar lo que pasó",quizCat:"frases",quizMode:"blank",quizFocus:"perfecto"},
+  {id:"gram-condicional",icon:"🙏",title:"Pedir con cortesía",sub:"Me gustaría, podría y debería",vocab:"acciones",dialogue:"Restaurante: pedir y cambiar",quizCat:"frases",quizMode:"blank",quizFocus:"condicional"},
+  {id:"gram-pasado-perfecto",icon:"⏪",title:"Lo que ya había pasado",sub:"Había llegado, había visto, ya había terminado",vocab:"acciones",dialogue:"Contar lo que pasó",quizCat:"frases",quizMode:"blank",quizFocus:"pasado-perfecto"},
+  {id:"gram-futuro-perfecto",icon:"⏩",title:"Lo que habrá pasado",sub:"Reconoce habré llegado y habremos terminado",vocab:"acciones",dialogue:"Planes de fin de semana",quizCat:"frases",quizMode:"blank",quizFocus:"futuro-perfecto"},
   {id:"conversation-challenge",icon:"🎯",title:"Reto de conversación",sub:"Combina lectura, reacción rápida y una misión",vocab:"gustos",dialogue:"Uber: confirmar la recogida",quizCat:"all",quizMode:"conversation"}
 ];
 LESSONS.forEach(lesson=>{
@@ -1790,7 +1795,7 @@ function routineOpen(id){
 function clearRoutineGuide(){routineTwisterSelection=null;renderTongueTwisters();removeRoutineQuizGuide();}
 function setRoutineFocus(kind){const page=document.getElementById("page-fonetica");if(page){page.classList.add("routine-focus");page.classList.toggle("routine-focus-warmup",kind==="warmup");page.classList.toggle("routine-focus-twisters",kind==="twisters");}}
 function clearRoutineFocus(){const page=document.getElementById("page-fonetica");if(page)page.classList.remove("routine-focus","routine-focus-warmup","routine-focus-twisters");}
-function routineBack(){routineDockHide();clearRoutineGuide();clearRoutineFocus();showPage("lecciones");renderLessons();}
+function routineBack(){routineDockHide();clearRoutineGuide();clearRoutineFocus();lessonView="today";showPage("lecciones");renderLessons();}
 function routineAdvance(expected){
   routineToday();
   if(routineState.step!==expected){routineBack();return;}
@@ -1843,9 +1848,45 @@ function renderRoutineQuizGuide(){
   guide.innerHTML="<div class='routine-guide-kicker'>🎯 STEP 3 · RECALL</div><strong>Practice a few useful answers</strong><span>Answer out loud before tapping. Use the Spanish reveal to repeat the complete sentence.</span><button type='button' class='routine-next-large' onclick='routineFinishReview()'>I practiced — continue to phrases →</button><button type='button' class='routine-back-link' onclick='routineBack()'>‹ Back to daily path</button>";
   page.insertBefore(guide,anchor);
 }
+
+/* v58: keep Lecciones from becoming one long mixed-purpose page. The three
+   views preserve all existing material while making the next action obvious. */
+const LESSON_VIEW_KEY="esco-lesson-view-v1";
+const SESSION_LENGTH_KEY="esco-session-length-v1";
+let lessonView="today",sessionLength="10";
+try{lessonView=localStorage.getItem(LESSON_VIEW_KEY)||"today";sessionLength=localStorage.getItem(SESSION_LENGTH_KEY)||"10";}catch(e){}
+function setLessonView(view){
+  lessonView=view||"today";
+  try{localStorage.setItem(LESSON_VIEW_KEY,lessonView);}catch(e){}
+  const root=document.getElementById("lesson-list");if(!root)return;
+  root.querySelectorAll(".lesson-view-tab").forEach(b=>b.classList.toggle("active",b.dataset.view===lessonView));
+  root.querySelectorAll("[data-lesson-view]").forEach(el=>el.classList.toggle("lesson-view-hidden",el.dataset.lessonView!==lessonView));
+}
+function buildLessonViewTabs(root){
+  const nav=document.createElement("nav");nav.className="lesson-view-tabs";nav.setAttribute("aria-label","Lesson views");
+  [["today","Today / Hoy","Your next practice"],["path","Learning path / Ruta","Tenses and lessons"],["practice","Practice library / Biblioteca","Missions, readings, backup"]].forEach(([id,title,sub])=>{
+    const b=document.createElement("button");b.type="button";b.className="lesson-view-tab";b.dataset.view=id;b.innerHTML=`<strong>${title}</strong><small>${sub}</small>`;b.onclick=()=>setLessonView(id);nav.appendChild(b);
+  });
+  root.appendChild(nav);
+}
+function setSessionLength(value){
+  sessionLength=String(value);try{localStorage.setItem(SESSION_LENGTH_KEY,sessionLength);}catch(e){}
+  const root=document.getElementById("lesson-list");if(!root)return;
+  root.querySelectorAll(".session-length-btn").forEach(b=>b.classList.toggle("selected",b.dataset.minutes===sessionLength));
+}
+function startSelectedSession(){
+  if(sessionLength==="5"){renderFramePractice(false);return;}
+  if(sessionLength==="20"){
+    const target=LESSONS.find(l=>!lessonProgress[l.id])||LESSONS[0];
+    if(target)openLesson(target);return;
+  }
+  routineToday();
+  if(routineState.step>=ROUTINE_STEPS.length){routineState.step=0;saveRoutine();}
+  routineOpen(ROUTINE_STEPS[routineState.step].id);
+}
 function renderRoutineCard(root){
   routineToday();
-  const wrap=document.createElement("section");wrap.className="daily-routine-card";
+  const wrap=document.createElement("section");wrap.className="daily-routine-card";wrap.dataset.lessonView="today";
   const complete=routineState.step>=ROUTINE_STEPS.length;
   const current=ROUTINE_STEPS[Math.min(routineState.step,ROUTINE_STEPS.length-1)];
   wrap.innerHTML=`<div class='routine-top'><div><div class='routine-kicker'>🎓 DAILY SPEAKING PATH</div><div class='routine-title'>${complete?"Routine complete for today":"Your next 10-minute speaking practice"}</div></div><div class='routine-count'>${complete?`${ROUTINE_STEPS.length}/${ROUTINE_STEPS.length}`:`${routineState.step}/${ROUTINE_STEPS.length}`}</div></div><div class='routine-track'><span style='width:${Math.round(routineState.step/ROUTINE_STEPS.length*100)}%'></span></div><div class='routine-note'>Listen → say it → compare → continue</div>`;
@@ -1868,8 +1909,28 @@ function renderProgressDashboard(root,done){
   const mastered=Object.values(srsStore||{}).filter(c=>(c.interval||0)>=SRS_INTERVALS.length).length;
   const due=srsDueCount();
   const rapid=rrStats.attempts||0;
-  const card=document.createElement("section");card.className="progress-dashboard";
+  const card=document.createElement("section");card.className="progress-dashboard";card.dataset.lessonView="today";
   card.innerHTML=`<div class="progress-dashboard-head"><div><div class="progress-kicker">📈 YOUR SPEAKING PROGRESS</div><div class="progress-title">Small steps become conversation</div></div><div class="progress-streak">🔥 ${dayInfo.streak}</div></div><div class="progress-metrics"><div><strong>${done}/${LESSONS.length}</strong><small>lessons</small></div><div><strong>${vocabCount}</strong><small>words practiced</small></div><div><strong>${phraseCount}</strong><small>phrases practiced</small></div><div><strong>${mastered}</strong><small>cards mastered</small></div></div><div class="progress-dashboard-note">${due?`🔁 ${due} review card${due===1?"":"s"} due today`:`✅ No review cards due today`} · ⚡ ${rapid} rapid response${rapid===1?"":"s"}</div>`;
+  root.appendChild(card);
+}
+
+function renderQuizAuditCard(root){
+  const card=document.createElement("section");card.className="quiz-audit-card";card.dataset.lessonView="practice";
+  card.innerHTML="<div class='quiz-audit-kicker'>🧪 QUIZ QUALITY CHECK</div><div class='quiz-audit-title'>Keep questions fair and unambiguous</div><p>Run a quick structural audit after adding new lessons or quiz content. It checks duplicate prompts, answer choices, and missing blanks.</p><button type='button' class='quiz-audit-btn'>Run quiz audit</button><div class='quiz-audit-result' aria-live='polite'></div>";
+  card.querySelector(".quiz-audit-btn").onclick=()=>{
+    const result=card.querySelector(".quiz-audit-result");
+    const pool=typeof aQ!=="undefined"?aQ:[];const seen=new Map(),duplicates=[],choiceIssues=[];
+    pool.forEach((q,i)=>{
+      const prompt=normalizeQuizText(q.es||q.prompt||"");
+      const signature=normalizeQuizText(q.en||q.answer||"")+"|"+(Array.isArray(q.choices)?q.choices.map(normalizeQuizText).sort().join("/"):"");
+      if(prompt){if(seen.has(prompt)){const prior=seen.get(prompt);if(prior.signature!==signature)duplicates.push(`Questions ${prior.index} and ${i+1} share a prompt but differ in answer choices.`);}else seen.set(prompt,{index:i+1,signature});}
+      if(Array.isArray(q.choices)){
+        const c=q.choices.map(normalizeQuizText);if(c.length!==4||new Set(c).size!==c.length||!c.includes(normalizeQuizText(q.en||q.answer||"")))choiceIssues.push(i+1);
+      }
+    });
+    const total=duplicates.length+choiceIssues.length;
+    result.innerHTML=total?`<strong>⚠️ ${total} candidate issue${total===1?"":"s"}</strong><small>${duplicates.slice(0,3).join(" ")}${choiceIssues.length?` ${choiceIssues.length} question${choiceIssues.length===1?"":"s"} need choice review.`:""}</small><em>These are candidates for review, not automatic errors. Meaning and alternate valid answers still need a human check.</em>`:`<strong>✅ No structural candidates found in ${pool.length} questions.</strong><small>Choices and blanks look consistent. This does not replace a meaning audit for alternate valid answers.</small>`;
+  };
   root.appendChild(card);
 }
 
@@ -1879,8 +1940,9 @@ function renderLessons(){
   const root=document.getElementById("lesson-list");if(!root)return;
   if(lpLesson){renderLessonStep();return;}
   root.innerHTML="";
+  buildLessonViewTabs(root);
   const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
-  const intro=document.createElement("div");intro.className="lesson-intro";
+  const intro=document.createElement("div");intro.className="lesson-intro";intro.dataset.lessonView="today";
   intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-flow">Recommended path: Start Here → Travel → Daily Life → Build Sentences → Speak Naturally<br>Each lesson: 🎯 Goal → 🔑 Words → 👂 Listen → 🗣️ Say it → 🎭 Role-play → 🧱 Understand → 📖 Read → 🧪 Quiz → 🎯 Mission</div>`;
   root.appendChild(intro);
   renderRoutineCard(root);
@@ -1888,7 +1950,7 @@ function renderLessons(){
   const resume=loadResume();
   const resLesson=resume&&LESSONS.find(l=>l.id===resume.id);
   const nextLesson=LESSONS.find(l=>!lessonProgress[l.id]);
-  const homeHub=document.createElement("section");homeHub.className="today-hub";
+  const homeHub=document.createElement("section");homeHub.className="today-hub";homeHub.dataset.lessonView="today";
   homeHub.innerHTML="<div class='today-hub-kicker'>🧭 START HERE · YOUR NEXT FEW MINUTES</div><div class='today-hub-title'>Choose one clear action</div><div class='today-hub-sub'>The app is most useful when you say something every session—not when you open every section.</div>";
   const homeActions=document.createElement("div");homeActions.className="today-hub-actions";
   const addHomeAction=(icon,title,sub,fn,primary)=>{const b=document.createElement("button");b.type="button";b.className="today-action"+(primary?" primary":"");b.innerHTML=`<span class='today-action-icon'>${icon}</span><span><strong>${title}</strong><small>${sub}</small></span><span class='today-action-arrow'>›</span>`;b.onclick=fn;homeActions.appendChild(b);};
@@ -1899,6 +1961,13 @@ function renderLessons(){
   addHomeAction("🔁","Review / Repasar",dueHome?`${dueHome} card${dueHome===1?"":"s"} due today`:"Keep your memory active",openReviewSession,false);
   addHomeAction("🧱","Speak with frames / Construir", "Turn patterns into sentences",()=>renderFramePractice(false),false);
   homeHub.appendChild(homeActions);root.appendChild(homeHub);
+  const sessionBox=document.createElement("div");sessionBox.className="session-picker";
+  sessionBox.innerHTML="<div class='session-picker-copy'><strong>Choose your session</strong><small>Pick a realistic amount of speaking for today.</small></div><div class='session-lengths'></div><button type='button' class='session-start'>▶ Start session</button>";
+  const sessionLengths=sessionBox.querySelector(".session-lengths");
+  [["5","5 min","Quick sentence frames"],["10","10 min","Daily speaking path"],["20","20 min","Full lesson + practice"]].forEach(([minutes,label,sub])=>{const b=document.createElement("button");b.type="button";b.className="session-length-btn";b.dataset.minutes=minutes;b.innerHTML=`<strong>${label}</strong><small>${sub}</small>`;b.onclick=()=>setSessionLength(minutes);sessionLengths.appendChild(b);});
+  sessionBox.querySelector(".session-start").onclick=startSelectedSession;
+  homeHub.appendChild(sessionBox);
+  setSessionLength(sessionLength);
   const cont=document.createElement("div");cont.className="continue-card";
   let cTitle,cSub,cAction;
   if(resLesson&&!lessonProgress[resLesson.id]){
@@ -1921,7 +1990,7 @@ function renderLessons(){
   let missedCount=srsDueCount();
   if(!missedCount){try{const s=JSON.parse(localStorage.getItem("esco-quiz-v1")||"{}");missedCount=s.missed?Object.keys(s.missed).length:0;}catch(e){}}
   /* Daily practice — one compact row (v22) */
-  const daily=document.createElement("div");daily.className="daily-row";
+  const daily=document.createElement("div");daily.className="daily-row";daily.dataset.lessonView="practice";
   const dr1=document.createElement("button");dr1.type="button";dr1.className="daily-card";
   dr1.innerHTML=`<div class="daily-icon">⚡</div><div class="daily-title">Rápida</div><div class="daily-sub">${RR_BANK.length} questions · answer under pressure</div>`;
   dr1.onclick=()=>{rrSession=0;renderRapida(false);};
@@ -1936,13 +2005,13 @@ function renderLessons(){
   daily.appendChild(dr1);daily.appendChild(dr2);
   root.appendChild(daily);
 
-  const missionLabel=document.createElement("div");missionLabel.className="fr-home-label";missionLabel.textContent=`🗣️ Conversation missions · ${Object.keys(missionProgress).length}/${CONVERSATION_MISSIONS.length} completed`;root.appendChild(missionLabel);
-  const missionGrid=document.createElement("div");missionGrid.className="mission-grid";
+  const missionLabel=document.createElement("div");missionLabel.className="fr-home-label";missionLabel.dataset.lessonView="practice";missionLabel.textContent=`🗣️ Conversation missions · ${Object.keys(missionProgress).length}/${CONVERSATION_MISSIONS.length} completed`;root.appendChild(missionLabel);
+  const missionGrid=document.createElement("div");missionGrid.className="mission-grid";missionGrid.dataset.lessonView="practice";
   CONVERSATION_MISSIONS.forEach(m=>{const b=document.createElement("button");b.type="button";b.className="mission-home-card";b.innerHTML=`<span class="mission-home-icon">${missionProgress[m.id]?"✅":"🗣️"}</span><span class="mission-home-copy"><strong>${m.title}</strong><small>${m.scenario}</small></span>`;b.onclick=()=>renderMission(m);missionGrid.appendChild(b);});
   root.appendChild(missionGrid);
 
-  const readingLabel=document.createElement("div");readingLabel.className="fr-home-label";readingLabel.textContent=`📖 Lecturas · ${Object.keys(readingProgress).length}/${READINGS.length} completed`;root.appendChild(readingLabel);
-  const readingGrid=document.createElement("div");readingGrid.className="reading-home-grid";
+  const readingLabel=document.createElement("div");readingLabel.className="fr-home-label";readingLabel.dataset.lessonView="practice";readingLabel.textContent=`📖 Lecturas · ${Object.keys(readingProgress).length}/${READINGS.length} completed`;root.appendChild(readingLabel);
+  const readingGrid=document.createElement("div");readingGrid.className="reading-home-grid";readingGrid.dataset.lessonView="practice";
   READINGS.forEach(reading=>{const b=document.createElement("button");b.type="button";b.className="reading-home-card";b.innerHTML=`<span class='reading-home-icon'>${readingProgress[reading.id]?"✅":"📖"}</span><span><strong>${reading.title}</strong><small>${reading.level} · ${reading.intro}</small></span><span>›</span>`;b.onclick=()=>renderReading(reading);readingGrid.appendChild(b);});
   root.appendChild(readingGrid);
 
@@ -1951,11 +2020,19 @@ function renderLessons(){
     {name:"🌱 Stage 1 · Start Here",sub:"Greetings, basic needs, numbers, and repairing misunderstandings.",ids:["presentate","plata","survival-communication","casa","gustos"]},
     {name:"🧭 Stage 2 · Travel and Survival",sub:"Uber, directions, hotels, food, shopping, and the pharmacy.",ids:["uber-ride","hotel-checkin","calle","cocina","farmacia"]},
     {name:"🏠 Stage 3 · Daily Life",sub:"Work, home, phone calls, feelings, and everyday routines.",ids:["trabajo","daily-repair","planes","sentirse"]},
-    {name:"🧱 Stage 4 · Build Sentences",sub:"Present, future, past, contrast, subjunctive, action chunks, connectors, sentence structure, and pronouns.",ids:["sentence-structure","action-chunks","connectors-v36","function-words","gram-presente","gram-futuro","gram-pasado","gram-pasado-historia","gram-pasado-contraste","gram-subjuntivo","gram-necesidades","gram-conectores","gram-pronombres"]},
+    {name:"🧱 Stage 4 · Build Sentences",sub:"Present, future, past, contrast, perfect tenses, conditional, action chunks, connectors, and pronouns.",ids:["sentence-structure","action-chunks","connectors-v36","function-words","gram-presente","gram-futuro","gram-pasado","gram-pasado-historia","gram-pasado-contraste","gram-perfecto","gram-condicional","gram-pasado-perfecto","gram-futuro-perfecto","gram-subjuntivo","gram-necesidades","gram-conectores","gram-pronombres"]},
     {name:"🇨🇴 Stage 5 · Speak More Naturally",sub:"Colombian everyday expressions, slang, register, and follow-up questions.",ids:["colombia","social-colombia-v36","gram-groserias"]},
     {name:"🎯 Stage 6 · Conversation Challenge",sub:"Read aloud, react quickly, and complete real speaking missions.",ids:["conversation-challenge"]}
   ];
+  const tenseRoadmap=document.createElement("section");tenseRoadmap.className="tense-roadmap";tenseRoadmap.dataset.lessonView="path";
+  tenseRoadmap.innerHTML="<div class='tense-roadmap-kicker'>🧭 SPEAKING TENSE ROADMAP</div><div class='tense-roadmap-title'>Build time in layers</div><p>Learn the high-frequency patterns first, then add detail to your stories. The advanced forms are for recognition before production.</p><div class='tense-roadmap-grid'></div>";
+  const tenseTargets=[
+    ["Presente","Hablo / tengo","gram-presente","Core now"],["Near future","Voy a hacer","gram-futuro","Easy next step"],["Completed past","Fui / hice","gram-pasado","Tell what happened"],["Past contrast","Fui vs. iba","gram-pasado-contraste","Story detail"],["Present perfect","He hecho","gram-perfecto","Connected to now"],["Conditional","Me gustaría","gram-condicional","Polite and possible"],["Past perfect","Había hecho","gram-pasado-perfecto","Earlier past"],["Future perfect","Habré hecho","gram-futuro-perfecto","Advanced recognition"]
+  ];
+  const tenseGrid=tenseRoadmap.querySelector(".tense-roadmap-grid");tenseTargets.forEach(([label,pattern,id,sub],i)=>{const b=document.createElement("button");b.type="button";b.className="tense-roadmap-item";b.innerHTML=`<span class='tense-roadmap-number'>${i+1}</span><span><strong>${label}</strong><small>${pattern} · ${sub}</small></span><span>›</span>`;b.onclick=()=>{const lesson=LESSONS.find(l=>l.id===id);if(lesson)openLesson(lesson);else{showPage("gram");showGram(id);}};tenseGrid.appendChild(b);});
+  root.appendChild(tenseRoadmap);
   const roadmap=lpEl("lesson-roadmap");
+  roadmap.dataset.lessonView="path";
   roadmap.appendChild(lpEl("lesson-roadmap-title","🧭 Recommended path · browse any stage anytime"));
   const roadmapRow=lpEl("lesson-roadmap-row");
   LESSON_STAGES.forEach((stage,i)=>{const b=document.createElement("button");b.type="button";b.className="lesson-roadmap-btn";b.textContent=stage.name.replace(/^.*?Stage /,"Stage ");b.onclick=()=>{const target=document.getElementById("lesson-stage-"+i);if(target)target.scrollIntoView({behavior:"smooth",block:"start"});};roadmapRow.appendChild(b);});
@@ -1965,13 +2042,13 @@ function renderLessons(){
     const stageLessons=stage.ids.map(id=>LESSONS.find(l=>l.id===id)).filter(Boolean);
     if(!stageLessons.length)return;
     const sDone=stageLessons.filter(l=>lessonProgress[l.id]).length;
-    const sh=document.createElement("div");sh.className="stage-label";sh.id="lesson-stage-"+LESSON_STAGES.indexOf(stage);
+    const sh=document.createElement("div");sh.className="stage-label";sh.dataset.lessonView="path";sh.id="lesson-stage-"+LESSON_STAGES.indexOf(stage);
     sh.innerHTML=`<div class="stage-label-main"><span>${stage.name}</span><span class="stage-count">${sDone}/${stageLessons.length}</span></div><div class="stage-sub">${stage.sub}</div>`;
     root.appendChild(sh);
     stageLessons.forEach(lesson=>{
       lessonNum++;
       const recommended=nextLesson&&nextLesson.id===lesson.id;
-      const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"")+(recommended?" recommended":"");
+      const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"")+(recommended?" recommended":"");card.dataset.lessonView="path";
       card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div><div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
       card.onclick=()=>openLesson(lesson);
       card.querySelector(".lesson-check").onclick=(e)=>{e.stopPropagation();if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();renderLessons();};
@@ -1983,17 +2060,18 @@ function renderLessons(){
   LESSONS.filter(l=>!staged.has(l.id)).forEach(lesson=>{
     lessonNum++;
     const recommended=nextLesson&&nextLesson.id===lesson.id;
-    const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"")+(recommended?" recommended":"");
+    const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"")+(recommended?" recommended":"");card.dataset.lessonView="path";
     card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div><div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
     card.onclick=()=>openLesson(lesson);
     card.querySelector(".lesson-check").onclick=(e)=>{e.stopPropagation();if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();renderLessons();};
     root.appendChild(card);
   });
   /* Progress backup lives at the bottom — rare-use utility (v22) */
-  const bkLabel=document.createElement("div");bkLabel.className="fr-home-label";bkLabel.textContent="💾 Progress backup";
+  renderQuizAuditCard(root);
+  const bkLabel=document.createElement("div");bkLabel.className="fr-home-label";bkLabel.dataset.lessonView="practice";bkLabel.textContent="💾 Progress backup";
   root.appendChild(bkLabel);
   /* Backup / restore progress (v17) */
-  const bk=document.createElement("div");bk.className="backup-row";
+  const bk=document.createElement("div");bk.className="backup-row";bk.dataset.lessonView="practice";
   const BK_KEYS=["esco-quiz-v1","esco-srs-v1","esco-lesson-progress-v1","esco-mission-progress-v1","esco-reading-progress-v1","esco-routine-v1","esco-routine-v2","esco-routine-v3","esco-practice-v1","esco-days-v1"];
   const b1=document.createElement("button");b1.type="button";b1.className="backup-btn";b1.textContent="💾 Copy backup";
   b1.onclick=()=>{
@@ -2015,6 +2093,7 @@ function renderLessons(){
     }catch(e){alert("⚠️ That does not look like a valid backup.");}
   };
   bk.appendChild(b1);bk.appendChild(b2);root.appendChild(bk);
+  setLessonView(lessonView);
 }
 renderLessons();
 
@@ -2035,7 +2114,10 @@ function buildGram(id,data){
   if(id==="pronombres"){buildPronombres(sec);return;}
   if(id==="reflexivos"){buildReflexivos(sec);return;}
   const intro=document.createElement("div");intro.className="gram-intro";
-  intro.innerHTML=`<div class="gram-intro-title">${id==="presente"?"⚡":id==="pasado"?"⏮️":"⏭️"} ${id.charAt(0).toUpperCase()+id.slice(1)}</div>
+  const grammarMeta={perfecto:["✅","Present perfect"],condicional:["🙏","Conditional"],"pasado-perfecto":["⏪","Past perfect"],"futuro-perfecto":["⏩","Future perfect"]}[id];
+  const grammarIcon=grammarMeta?grammarMeta[0]:(id==="presente"?"⚡":id==="pasado"?"⏮️":"⏭️");
+  const grammarTitle=grammarMeta?grammarMeta[1]:id.charAt(0).toUpperCase()+id.slice(1);
+  intro.innerHTML=`<div class="gram-intro-title">${grammarIcon} ${grammarTitle}</div>
     <div class="gram-intro-text">${data.intro}</div>`;
   sec.appendChild(intro);
   const trick=document.createElement("div");trick.className="trick-box";
@@ -2112,13 +2194,13 @@ function buildSpeakingGuide(){
     const drill=document.createElement("div");drill.className="speaking-guide-drill";drill.textContent="🗣️ Try it: "+g.exercise;card.appendChild(drill);sec.appendChild(card);
   });
 }
-["presente","pasado","futuro","pasado-contraste","subjuntivo","trucos"].forEach(id=>buildGram(id,GRAMMAR[id]));
+["presente","pasado","pasado-contraste","futuro","perfecto","condicional","pasado-perfecto","futuro-perfecto","subjuntivo","trucos"].forEach(id=>buildGram(id,GRAMMAR[id]));
 buildGram("pronombres");buildGram("reflexivos");
 buildSpeakingGuide();
 
 /* Grouped grammar navigation (v23): Tiempos / Pronombres / Patrones */
 const GRAM_GROUPS={
-  tiempos:{label:"⏱️ Tiempos",items:[["presente","⚡ Presente"],["pasado","⏮️ Pasado"],["pasado-contraste","🎞️ Evento vs. contexto"],["futuro","⏭️ Futuro"]]},
+  tiempos:{label:"⏱️ Tiempos",items:[["presente","⚡ Presente"],["pasado","⏮️ Pasado"],["pasado-contraste","🎞️ Evento vs. contexto"],["futuro","⏭️ Futuro"],["perfecto","✅ He hecho"],["condicional","🙏 Haría / podría"],["pasado-perfecto","⏪ Había hecho"],["futuro-perfecto","⏩ Habré hecho"]]},
   pronombres:{label:"👤 Pronombres",items:[["pronombres","Lo / La / Le"]]},
   patrones:{label:"🧩 Patrones",items:[["reflexivos","🔄 Reflexivos"],["subjuntivo","🌱 Subjuntivo"],["trucos","🧠 Trucos"]]},
   estructura:{label:"🧱 Hablar",items:[["estructura","🧱 Estructura"]]}
@@ -2140,7 +2222,7 @@ function showGramGroup(g){
 }
 function showGram(id){
   gramSection=id;
-  ["presente","pasado","pasado-contraste","futuro","pronombres","reflexivos","subjuntivo","trucos","estructura"].forEach(g=>{
+  ["presente","pasado","pasado-contraste","futuro","perfecto","condicional","pasado-perfecto","futuro-perfecto","pronombres","reflexivos","subjuntivo","trucos","estructura"].forEach(g=>{
     document.getElementById("gs-"+g).classList.toggle("active",g===id);
   });
   const sub=document.getElementById("gram-sub");
@@ -2398,6 +2480,16 @@ const PRONOUN_FRAME_BLANKS=[
 ];
 FILL_BLANK_QUIZ.push(...CONVERSATION_FRAME_BLANKS);
 FILL_BLANK_QUIZ.push(...PRONOUN_FRAME_BLANKS);
+FILL_BLANK_QUIZ.push(
+  {kind:"blank",focus:"perfecto",cat:"frases",es:"Esta semana ___ tres veces.",en:"he practicado",tts:"Esta semana he practicado tres veces.",trans:"This week I have practiced three times.",choices:["he practicado","practiqué","practicaba","practicaré"]},
+  {kind:"blank",focus:"perfecto",cat:"frases",es:"¿___ la arepa?",en:"Has probado",tts:"¿Has probado la arepa?",trans:"Have you tried arepa?",choices:["Has probado","Probaste","Habías probado","Probarás"]},
+  {kind:"blank",focus:"condicional",cat:"frases",es:"Me ___ pedir una mesa.",en:"gustaría",tts:"Me gustaría pedir una mesa.",trans:"I would like to order a table.",choices:["gustaría","gusta","gustó","gustará"]},
+  {kind:"blank",focus:"condicional",cat:"frases",es:"¿___ repetir, por favor?",en:"Podría",tts:"¿Podría repetir, por favor?",trans:"Could you repeat, please?",choices:["Podría","Puedo","Pude","Podré"]},
+  {kind:"blank",focus:"pasado-perfecto",cat:"frases",es:"Cuando llegué, ya ___ la tienda.",en:"habían cerrado",tts:"Cuando llegué, ya habían cerrado la tienda.",trans:"When I arrived, they had already closed the store.",choices:["habían cerrado","cerraron","cerraban","han cerrado"]},
+  {kind:"blank",focus:"pasado-perfecto",cat:"frases",es:"Ya ___ cuando me llamaste.",en:"había comido",tts:"Ya había comido cuando me llamaste.",trans:"I had already eaten when you called me.",choices:["había comido","comí","comía","he comido"]},
+  {kind:"blank",focus:"futuro-perfecto",cat:"frases",es:"Para las ocho, ___ terminado.",en:"habré",tts:"Para las ocho, habré terminado.",trans:"By eight, I will have finished.",choices:["habré","había","he","habría"]},
+  {kind:"blank",focus:"futuro-perfecto",cat:"frases",es:"En un año, ___ mucho.",en:"habré aprendido",tts:"En un año, habré aprendido mucho.",trans:"In a year, I will have learned a lot.",choices:["habré aprendido","había aprendido","he aprendido","aprenderé"]}
+);
 FILL_BLANK_QUIZ.push(...APPROVED_VOCAB_BLANKS);
 FILL_BLANK_QUIZ.push(
   {kind:"blank",focus:"past",cat:"frases",es:"Cuando era niño, ___ en Cali.",en:"vivía",tts:"Cuando era niño, vivía en Cali.",trans:"When I was a child, I used to live in Cali.",choices:["vivía","viví","vivo","voy"]},
@@ -2432,7 +2524,9 @@ const QUIZ_MODES=[
 ];
 const QUIZ_FOCUS=[
   {id:"all",label:"All patterns"},{id:"present",label:"Presente"},{id:"past",label:"Pasado"},
-  {id:"future",label:"Futuro"},{id:"pronombres",label:"Pronombres"},{id:"subjuntivo",label:"Subjuntivo"}
+  {id:"future",label:"Futuro"},{id:"perfecto",label:"He hecho"},{id:"condicional",label:"Condicional"},
+  {id:"pasado-perfecto",label:"Había hecho"},{id:"futuro-perfecto",label:"Habré hecho"},
+  {id:"pronombres",label:"Pronombres"},{id:"subjuntivo",label:"Subjuntivo"}
 ];
 const FOCUS_MODES=new Set(["mixed","blank","conversation","dictation"]);
 
@@ -2648,6 +2742,7 @@ function showPage(id){
   document.querySelector(".scroll").scrollTop=0;
   if(id!=="vocab")hideVerbDetail();
   if(id==="vocab")showVocabHome();
+  if(id==="lecciones"&&typeof renderLessons==="function"){lpLesson=null;renderLessons();}
   if(id==="vocab"||id==="gram")routineDockHide();
 }
  
