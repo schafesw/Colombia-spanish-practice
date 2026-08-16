@@ -281,12 +281,15 @@ function renderSpanishThinking(){
   };
   draw();
 }
+function openPhoneticSection(id){
+  const target=document.getElementById(id);if(!target)return;
+  if(target.tagName.toLowerCase()==="details")target.open=true;
+  setTimeout(()=>target.scrollIntoView({behavior:"smooth",block:"start"}),20);
+}
 function setupPhoneticLinks(){
-  document.querySelectorAll(".phonetic-map-links a").forEach(link=>link.onclick=event=>{
-    const target=document.getElementById(link.getAttribute("href").slice(1));
-    if(target&&target.tagName.toLowerCase()==="details")target.open=true;
-    if(target){event.preventDefault();setTimeout(()=>target.scrollIntoView({behavior:"smooth",block:"start"}),20);}
-  });
+  document.querySelectorAll(".phonetic-map-links a").forEach(link=>link.onclick=event=>{event.preventDefault();openPhoneticSection(link.getAttribute("href").slice(1));});
+  const jump=document.getElementById("phonetic-jump");
+  if(jump)jump.onchange=()=>{if(jump.value){openPhoneticSection(jump.value);jump.value="";}};
 }
 renderPhoneticWarmup();renderEnglishInterference();renderMinimalPairs();renderSpanishThinking();setupPhoneticLinks();
 
@@ -1000,8 +1003,10 @@ function renderFraseMenu(){
   groupOrder.forEach(id=>{const block=groups.get(id);if(block){g2.appendChild(block);}});
   g2.appendChild(titleGroup);
   const phraseCollectionsGroup=document.createElement("section");phraseCollectionsGroup.className="fr-phrase-collections-group";phraseCollectionsGroup.append(h2,g2);
-  fl.appendChild(phraseCollectionsGroup);
+  /* Put the speaking-first material first; collections remain immediately
+     below it for lookup and targeted study. */
   fl.appendChild(conversationGroup);
+  fl.appendChild(phraseCollectionsGroup);
   const blocks=[phraseCollectionsGroup,conversationGroup];
   function applyFraseView(){
     const q=fraseSearchTerm.trim();
@@ -1923,13 +1928,21 @@ function renderQuizAuditCard(root){
     pool.forEach((q,i)=>{
       const prompt=normalizeQuizText(q.es||q.prompt||"");
       const signature=normalizeQuizText(q.en||q.answer||"")+"|"+(Array.isArray(q.choices)?q.choices.map(normalizeQuizText).sort().join("/"):"");
-      if(prompt){if(seen.has(prompt)){const prior=seen.get(prompt);if(prior.signature!==signature)duplicates.push(`Questions ${prior.index} and ${i+1} share a prompt but differ in answer choices.`);}else seen.set(prompt,{index:i+1,signature});}
+      if(prompt){if(seen.has(prompt)){const prior=seen.get(prompt);if(prior.signature!==signature)duplicates.push({first:prior.index,second:i+1,prompt:q.es||q.prompt||"",firstAnswer:prior.answer||"",secondAnswer:q.en||q.answer||""});}else seen.set(prompt,{index:i+1,signature,answer:q.en||q.answer||""});}
       if(Array.isArray(q.choices)){
         const c=q.choices.map(normalizeQuizText);if(c.length!==4||new Set(c).size!==c.length||!c.includes(normalizeQuizText(q.en||q.answer||"")))choiceIssues.push(i+1);
       }
     });
     const total=duplicates.length+choiceIssues.length;
-    result.innerHTML=total?`<strong>⚠️ ${total} candidate issue${total===1?"":"s"}</strong><small>${duplicates.slice(0,3).join(" ")}${choiceIssues.length?` ${choiceIssues.length} question${choiceIssues.length===1?"":"s"} need choice review.`:""}</small><em>These are candidates for review, not automatic errors. Meaning and alternate valid answers still need a human check.</em>`:`<strong>✅ No structural candidates found in ${pool.length} questions.</strong><small>Choices and blanks look consistent. This does not replace a meaning audit for alternate valid answers.</small>`;
+    result.innerHTML=total?`<strong>⚠️ ${total} candidate issue${total===1?"":"s"}</strong><small>${duplicates.slice(0,3).map(x=>`Questions ${x.first} and ${x.second} share a prompt but differ in answer choices.`).join(" ")}${choiceIssues.length?` ${choiceIssues.length} question${choiceIssues.length===1?"":"s"} need choice review.`:""}</small><em>These are candidates for review, not automatic errors. Meaning and alternate valid answers still need a human check.</em>`:`<strong>✅ No structural candidates found in ${pool.length} questions.</strong><small>Choices and blanks look consistent. This does not replace a meaning audit for alternate valid answers.</small>`;
+    if(total){
+      const detail=document.createElement("details");detail.className="quiz-audit-details";
+      const summary=document.createElement("summary");summary.textContent="Show candidate list";detail.appendChild(summary);
+      const list=document.createElement("div");list.className="quiz-audit-list";
+      duplicates.slice(0,60).forEach(x=>{const row=document.createElement("div");row.innerHTML=`<strong>#${x.first} / #${x.second}</strong><span>${escapeVocabHtml(x.prompt)}</span><small>Answers: ${escapeVocabHtml(x.firstAnswer)} · ${escapeVocabHtml(x.secondAnswer)}</small>`;list.appendChild(row);});
+      if(choiceIssues.length){const row=document.createElement("div");row.innerHTML=`<strong>Choice structure</strong><span>Question numbers: ${choiceIssues.join(", ")}</span><small>Check that each has four unique choices and exactly one intended answer.</small>`;list.appendChild(row);}
+      detail.appendChild(list);result.appendChild(detail);
+    }
   };
   root.appendChild(card);
 }
