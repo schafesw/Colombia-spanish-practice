@@ -1470,14 +1470,32 @@ const RR_BANK=[];
       const q=v.lines[i],ans=v.lines[i+1];
       if(/\?\s*$/.test(q.es)&&ans&&ans.es&&!seen.has(q.es)){
         seen.add(q.es);
-        RR_BANK.push({q:q.tts||q.es,qEs:q.es,qEn:q.en,aEs:ans.es,aTts:ans.tts||ans.es,aEn:ans.en});
+        const combined=`${q.es} ${ans.es}`;
+        const words=combined.trim().split(/\s+/).length;
+        const clauses=(combined.match(/[,;:]/g)||[]).length;
+        const level=words<=14&&clauses===0?"easy":(words<=24&&clauses<=1?"moderate":"challenge");
+        RR_BANK.push({q:q.tts||q.es,qEs:q.es,qEn:q.en,aEs:ans.es,aTts:ans.tts||ans.es,aEn:ans.en,level});
       }
     }
   });});
 })();
 let rrTimer=null,rrCurrent=null,rrSession=0,rrPromptToken=0;
 let rrRecorder=null,rrStream=null,rrChunks=[],rrUrl=null,rrSilenceTimer=null,rrMaxTimer=null,rrAudioContext=null,rrAnalyser=null,rrRated=false;
-const RR_THINK_SECONDS=8;
+const RR_DIFFICULTY_KEY="esco-rapid-difficulty-v1";
+const RR_DIFFICULTIES={
+  easy:{label:"Easy",seconds:8,description:"More time · shorter prompts"},
+  moderate:{label:"Moderate",seconds:5,description:"Balanced speaking pace"},
+  challenge:{label:"Challenge",seconds:3,description:"Quick conversation pressure"}
+};
+let rrDifficulty="moderate";
+try{const saved=localStorage.getItem(RR_DIFFICULTY_KEY);if(RR_DIFFICULTIES[saved])rrDifficulty=saved;}catch(e){}
+function rrSaveDifficulty(){try{localStorage.setItem(RR_DIFFICULTY_KEY,rrDifficulty);}catch(e){}}
+function rrDifficultyConfig(){return RR_DIFFICULTIES[rrDifficulty]||RR_DIFFICULTIES.moderate;}
+function rrQuestionPool(){
+  const level=rrDifficulty;
+  const matching=RR_BANK.filter(item=>item.level===level);
+  return matching.length>=3?matching:RR_BANK;
+}
 const RR_STATS_KEY="esco-rapid-stats-v1";
 let rrStats={attempts:0,got:0,practice:0,skipped:0};
 try{rrStats=Object.assign(rrStats,JSON.parse(localStorage.getItem(RR_STATS_KEY)||"{}"));}catch(e){}
@@ -1557,20 +1575,32 @@ function renderRapida(keepSame){
   const promptToken=rrPromptToken;
   const root=document.getElementById("lesson-list");if(!root)return;
   if(!RR_BANK.length){renderLessons();return;}
-  if(!keepSame||!rrCurrent){rrCurrent=RR_BANK[Math.floor(Math.random()*RR_BANK.length)];rrSession++;}
+  const pace=rrDifficultyConfig();
+  const pool=rrQuestionPool();
+  if(!keepSame||!rrCurrent||!pool.includes(rrCurrent)){rrCurrent=pool[Math.floor(Math.random()*pool.length)];rrSession++;}
   root.innerHTML="";
   const back=document.createElement("button");back.type="button";back.className="phrase-back";
   back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=rrExit;
   root.appendChild(back);
   const card=lpEl("lp-card rr-card");
-  card.appendChild(lpEl("lp-step-title","⚡ Reacción Rápida — question "+rrSession+" this session"));
+  card.appendChild(lpEl("lp-step-title",`⚡ Reacción Rápida · ${pace.label} — question ${rrSession} this session`));
+  const difficultyRow=lpEl("rr-difficulty-row");
+  const difficultyLabel=lpEl("rr-difficulty-label","Choose your speaking pace");difficultyRow.appendChild(difficultyLabel);
+  const difficultyButtons=lpEl("rr-difficulty-buttons");
+  Object.entries(RR_DIFFICULTIES).forEach(([key,config])=>{
+    const b=document.createElement("button");b.type="button";b.className="rr-difficulty-btn";b.classList.toggle("selected",key===rrDifficulty);b.dataset.difficulty=key;
+    b.innerHTML=`<strong>${config.label}</strong><small>${config.seconds}s · ${config.description.split(" · ")[0]}</small>`;
+    b.onclick=()=>{if(key===rrDifficulty)return;rrDifficulty=key;rrSaveDifficulty();renderRapida(false);};
+    difficultyButtons.appendChild(b);
+  });
+  difficultyRow.appendChild(difficultyButtons);card.appendChild(difficultyRow);
   const qBox=lpEl("rr-question",rrCurrent.qEs);
   qBox.onclick=()=>speak(rrCurrent.q,0.75);
   card.appendChild(qBox);
   card.appendChild(lpEl("rr-qen",rrCurrent.qEn||""));
   const cd=lpEl("rr-countdown","🎧");
   card.appendChild(cd);
-  card.appendChild(lpEl("lp-hint",`🗣️ Answer OUT LOUD — any answer that fits. You get ${RR_THINK_SECONDS} seconds to think, then your microphone starts automatically.`));
+  card.appendChild(lpEl("lp-hint",`🗣️ Answer OUT LOUD — any answer that fits. You get ${pace.seconds} seconds to think, then your microphone starts automatically.`));
   const controls=lpEl("lp-nav");
   const repeatBtn=document.createElement("button");repeatBtn.type="button";repeatBtn.className="lp-nav-btn";repeatBtn.textContent="🔁 Repeat question";
   repeatBtn.onclick=()=>renderRapida(true);
@@ -1581,11 +1611,11 @@ function renderRapida(keepSame){
   card.appendChild(controls);
   const recNote=lpEl("rr-recording-note","After the countdown, recording starts automatically.");recNote.className="rr-recording-note";card.appendChild(recNote);
   root.appendChild(card);
-  let n=RR_THINK_SECONDS;
+  let n=pace.seconds;
   cd.textContent=String(n);
   const startCountdown=()=>{
     if(promptToken!==rrPromptToken)return;
-    n=RR_THINK_SECONDS;
+    n=pace.seconds;
     cd.textContent=String(n);
     rrTimer=setInterval(()=>{
       n--;

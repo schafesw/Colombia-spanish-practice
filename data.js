@@ -982,6 +982,12 @@ CONVERSATION_MISSIONS.push(
 CONVERSATION_MISSIONS.push(
   {id:"acciones-diarias",title:"Habla de tus acciones",scenario:"A friend asks what you are doing and where you are going. Use two or three action chunks to answer naturally.",prompt:"Responde sin traducir palabra por palabra:",lesson:"action-chunks",models:[{es:"Estoy buscando la dirección y voy para el hotel. Te aviso cuando llegue.",en:"I am looking for the address and I am headed to the hotel. I will let you know when I arrive.",tts:"Estoy buscando la dirección y voy para el hotel. Te aviso cuando llegue."},{es:"Quiero pasar por el mercado, pero tengo que llegar a casa temprano.",en:"I want to stop by the market, but I have to get home early.",tts:"Quiero pasar por el mercado, pero tengo que llegar a casa temprano."}]}
 );
+CONVERSATION_MISSIONS.push(
+  {id:"uber-ruta",title:"Corrige la ruta del Uber",scenario:"Your Uber driver seems to be going the wrong way. Explain the problem politely and confirm the destination.",prompt:"Responde con una frase para reparar la situación:",lesson:"uber-ride",models:[{es:"Disculpe, creo que vamos por otro lado. El destino es este hotel.",en:"Excuse me, I think we are going another way. The destination is this hotel.",tts:"Disculpe, creo que vamos por otro lado. El destino es este hotel."},{es:"Perdón, ¿puede revisar la dirección? Creo que esta no es la ruta.",en:"Sorry, can you check the address? I think this is not the route.",tts:"Perdón, ¿puede revisar la dirección? Creo que esta no es la ruta."}]},
+  {id:"edificio-entrada",title:"Explica dónde está el edificio",scenario:"Someone asks for directions. Tell them to go straight, identify the building over there, and explain where the entrance is.",prompt:"Da las indicaciones:",lesson:"direcciones",models:[{es:"Siga derecho hasta el fondo. Es el edificio de allá y la entrada queda detrás.",en:"Go straight to the back. It is that building over there, and the entrance is behind it.",tts:"Siga derecho hasta el fondo. Es el edificio de allá y la entrada queda detrás."},{es:"Vaya derecho hasta la esquina; el edificio está al frente y la entrada queda por atrás.",en:"Go straight to the corner; the building is in front, and the entrance is in the back.",tts:"Vaya derecho hasta la esquina; el edificio está al frente y la entrada queda por atrás."}]},
+  {id:"cita-cambio",title:"Cambia una cita",scenario:"You cannot attend an appointment tomorrow. Explain why and suggest another time.",prompt:"Llama y cambia la cita:",lesson:"planes",models:[{es:"Mañana no puedo ir porque tengo una reunión. ¿Podemos vernos el viernes?",en:"I cannot go tomorrow because I have a meeting. Can we meet Friday?",tts:"Mañana no puedo ir porque tengo una reunión. ¿Podemos vernos el viernes?"},{es:"Se me cruzó algo mañana. ¿Le parece si cambiamos la cita para la próxima semana?",en:"Something came up tomorrow. Would it be okay if we move the appointment to next week?",tts:"Se me cruzó algo mañana. ¿Le parece si cambiamos la cita para la próxima semana?"}]},
+  {id:"si-entonces-plan",title:"Propón un plan con una condición",scenario:"Make a weekend plan with a friend. Say what you will do if the weather is good, and offer a backup plan.",prompt:"Habla de las dos posibilidades:",lesson:"planes",models:[{es:"Si hace buen tiempo, vamos al parque; si no, nos vemos para un tinto.",en:"If the weather is good, we will go to the park; if not, we will meet for a coffee.",tts:"Si hace buen tiempo, vamos al parque; si no, nos vemos para un tinto."},{es:"Si no llueve, podemos caminar. Si llueve, hacemos algo en casa.",en:"If it does not rain, we can walk. If it rains, we will do something at home.",tts:"Si no llueve, podemos caminar. Si llueve, hacemos algo en casa."}]}
+);
 
  /* Short readings: read for meaning first, then shadow each sentence aloud. */
  const READINGS=[
@@ -1304,3 +1310,22 @@ const SPEAKING_FRAMES=[
     {en:"There is traffic, so I will arrive late.",es:"Hay trancón, entonces voy a llegar tarde."}
   ]}
 ];
+
+/* v59: high-frequency chunks for real conversation, not isolated vocabulary. */
+SPEAKING_FRAMES.push(
+  {id:"ya-todavia",title:"Say what is already done",formula:"ya + verb / todavía no",en:"already / not yet",guide:"presente",prompts:[
+    {en:"I already ate.",es:"Ya comí."},{en:"I have not arrived yet.",es:"Todavía no he llegado."},{en:"I already sent the location.",es:"Ya mandé la ubicación."}
+  ]},
+  {id:"lo-que-pasa",title:"Explain the real situation",formula:"Lo que pasa es que…",en:"The thing is…",guide:"conectores",prompts:[
+    {en:"The thing is, I am still learning.",es:"Lo que pasa es que todavía estoy aprendiendo."},{en:"The thing is, I do not have the address.",es:"Lo que pasa es que no tengo la dirección."},{en:"The thing is, I have to work tomorrow.",es:"Lo que pasa es que tengo que trabajar mañana."}
+  ]},
+  {id:"no-se-si",title:"Sound natural when you are unsure",formula:"No sé si + sentence",en:"I do not know if…",guide:"conectores",prompts:[
+    {en:"I do not know if the office is open.",es:"No sé si la oficina está abierta."},{en:"I do not know if he received the message.",es:"No sé si recibió el mensaje."},{en:"I do not know if I can go tomorrow.",es:"No sé si puedo ir mañana."}
+  ]},
+  {id:"si-entonces",title:"Talk about two possibilities",formula:"Si + present, …",en:"If…, then…",guide:"conectores",prompts:[
+    {en:"If it rains, I will stay home.",es:"Si llueve, me quedo en casa."},{en:"If you want, we can practice later.",es:"Si quieres, podemos practicar más tarde."},{en:"If the driver arrives, I will call you.",es:"Si llega el conductor, te llamo."}
+  ]},
+  {id:"me-toca",title:"Say what you have to handle",formula:"Me toca + infinitive",en:"I have to / it is my turn to…",guide:"presente",prompts:[
+    {en:"I have to work tomorrow.",es:"Me toca trabajar mañana."},{en:"I have to call the office.",es:"Me toca llamar a la oficina."},{en:"It is my turn to pay.",es:"Me toca pagar."}
+  ]}
+);
