@@ -1043,6 +1043,20 @@ READINGS.push(
     {es:"Disculpe, ¿dónde está la entrada?",en:"Excuse me, where is the entrance?",tts:"Disculpe, ¿dónde está la entrada?"},{es:"Es el edificio de allá, al frente.",en:"It is that building over there, across the way.",tts:"Es el edificio de allá, al frente."},{es:"Siga derecho hasta la esquina y gire a la derecha.",en:"Go straight to the corner and turn right.",tts:"Siga derecho hasta la esquina y gire a la derecha."},{es:"Después suba al segundo piso.",en:"Then go up to the second floor.",tts:"Después suba al segundo piso."}
   ],questions:[{q:"¿A qué piso debe subir?",choices:["Al segundo piso","Al primer piso","Al sótano"],answer:"Al segundo piso"}]}
 );
+READINGS.push(
+  {id:"lectura-historia-contraste",level:"A2",title:"Una tarde con lluvia",lesson:"gram-pasado-contraste",intro:"Notice the difference between the background and the completed events. Read once for meaning, then shadow each line.",lines:[
+    {es:"Cuando era niño, vivía cerca de un parque.",en:"When I was a child, I lived near a park.",tts:"Cuando era niño, vivía cerca de un parque."},
+    {es:"Ayer fui al mismo parque porque quería caminar.",en:"Yesterday I went to the same park because I wanted to walk.",tts:"Ayer fui al mismo parque porque quería caminar."},
+    {es:"Estaba lloviendo cuando llegué, pero no me devolví.",en:"It was raining when I arrived, but I did not turn back.",tts:"Estaba lloviendo cuando llegué, pero no me devolví."},
+    {es:"Esperé diez minutos y después regresé a casa.",en:"I waited ten minutes and then returned home.",tts:"Esperé diez minutos y después regresé a casa."}
+  ],questions:[{q:"¿Qué estaba pasando cuando llegó?",choices:["Estaba lloviendo","Estaba trabajando","Estaba cocinando"],answer:"Estaba lloviendo"},{q:"¿Qué hizo después?",choices:["Regresó a casa","Compró un carro","Llamó al médico"],answer:"Regresó a casa"}]},
+  {id:"lectura-pronombres-ubicacion",level:"A2",title:"La dirección y el mensaje",lesson:"gram-pronombres",intro:"Listen for lo, la, le, and se lo. Try to say each line before hearing it.",lines:[
+    {es:"¿Tienes la dirección del edificio?",en:"Do you have the building's address?",tts:"¿Tienes la dirección del edificio?"},
+    {es:"Sí, la tengo aquí, pero no sé cómo llegar.",en:"Yes, I have it here, but I do not know how to get there.",tts:"Sí, la tengo aquí, pero no sé cómo llegar."},
+    {es:"Mándamela por mensaje y se la muestro al conductor.",en:"Send it to me by message and I will show it to the driver.",tts:"Mándamela por mensaje y se la muestro al conductor."},
+    {es:"Listo, ya te la mandé.",en:"Okay, I already sent it to you.",tts:"Listo, ya te la mandé."}
+  ],questions:[{q:"¿Qué va a mostrarle al conductor?",choices:["La dirección","La habitación","La comida"],answer:"La dirección"}]}
+);
 
 // ── Grammar data ──────────────────────────────────────────────────────────────
 const GRAMMAR={

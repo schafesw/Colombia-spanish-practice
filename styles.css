@@ -1023,3 +1023,14 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
   .rr-difficulty-row{margin-left:-2px;margin-right:-2px;}
   .rr-difficulty-btn{min-height:50px;}
 }
+
+/* v59: readings support comprehension first, then slower shadowing. */
+.reading-speed{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 8px;}
+.reading-speed>span{width:100%;color:var(--muted);font-size:.59rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;}
+.reading-speed-btn{min-height:35px;padding:7px 10px;border:1px solid var(--border);border-radius:9px;background:rgba(255,255,255,.045);color:var(--muted);font:inherit;font-size:.63rem;font-weight:900;}
+.reading-speed-btn.selected{border-color:rgba(74,168,160,.65);background:rgba(74,168,160,.14);color:var(--teal);}
+.reading-speed-btn:active{transform:scale(.98);}
+.reading-translation{margin:0 0 11px;border:1px solid rgba(167,139,250,.22);border-radius:11px;background:rgba(167,139,250,.06);}
+.reading-translation summary{padding:10px 11px;color:var(--purple);font-size:.68rem;font-weight:900;cursor:pointer;}
+.reading-translation-copy{padding:0 11px 9px;}
+.reading-translation-copy p{margin:6px 0;color:var(--muted);font-size:.7rem;line-height:1.4;font-style:italic;}

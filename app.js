@@ -1759,13 +1759,24 @@ function renderReading(reading){
   card.appendChild(lpEl("lp-step-title",reading.title));
   card.appendChild(lpEl("reading-intro",reading.intro));
   const guide=lpEl("reading-guide","Read the Spanish aloud before revealing the English. Then listen and compare.");card.appendChild(guide);
-  const play=lpSpeakBtn(reading.lines.map(line=>line.tts||line.es).join(". "),"▶️ Listen to the whole reading");play.classList.add("reading-play");card.appendChild(play);
+  const readingText=reading.lines.map(line=>line.tts||line.es).join(". ");
+  let readingRate=1;
+  const speed=lpEl("reading-speed");speed.innerHTML="<span>Playback speed</span>";
+  [[1,"Full speed"],[0.78,"Slower"],[0.6,"Very slow"]].forEach(([rate,label],i)=>{
+    const b=document.createElement("button");b.type="button";b.className="reading-speed-btn";b.textContent=label;b.classList.toggle("selected",i===0);b.onclick=()=>{readingRate=rate;speed.querySelectorAll("button").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");speak(readingText,readingRate);};speed.appendChild(b);
+  });
+  card.appendChild(speed);
+  const play=document.createElement("button");play.type="button";play.className="lp-speak reading-play";play.textContent="▶️ Listen to the whole reading";play.onclick=()=>speak(readingText,readingRate);card.appendChild(play);
+  const translation=document.createElement("details");translation.className="reading-translation";translation.innerHTML="<summary>📖 Show full English translation</summary><div class='reading-translation-copy'></div>";
+  const translationCopy=translation.querySelector(".reading-translation-copy");
+  reading.lines.forEach(line=>{const p=document.createElement("p");p.textContent=line.en||"";translationCopy.appendChild(p);});
+  card.appendChild(translation);
   const lines=lpEl("reading-lines");
   reading.lines.forEach((line,i)=>{
     const row=document.createElement("article");row.className="reading-line";
     row.innerHTML=`<div class='reading-line-num'>${i+1}</div><div class='reading-line-copy'><button type='button' class='reading-es'>${escapeVocabHtml(line.es)}</button><button type='button' class='reading-en' hidden>${escapeVocabHtml(line.en)}</button></div><div class='reading-actions'></div>`;
     const es=row.querySelector(".reading-es"),en=row.querySelector(".reading-en");
-    es.onclick=()=>speak(line.tts||line.es,0.72);en.onclick=()=>{en.hidden=!en.hidden;};
+    es.onclick=()=>speak(line.tts||line.es,readingRate);en.onclick=()=>{en.hidden=!en.hidden;};
     const rec=document.createElement("button");rec.type="button";rec.className="reading-record";rec.textContent="🎙️";rec.title="Record yourself";rec.setAttribute("aria-label","Record yourself");rec.onclick=()=>openMicPanel(line.tts||line.es);
     row.querySelector(".reading-actions").appendChild(rec);lines.appendChild(row);
   });
@@ -1956,15 +1967,17 @@ function renderQuizAuditCard(root){
     const result=card.querySelector(".quiz-audit-result");
     const pool=typeof aQ!=="undefined"?aQ:[];const seen=new Map(),duplicates=[],choiceIssues=[];
     pool.forEach((q,i)=>{
-      const prompt=normalizeQuizText(q.es||q.prompt||"");
-      const signature=normalizeQuizText(q.en||q.answer||"")+"|"+(Array.isArray(q.choices)?q.choices.map(normalizeQuizText).sort().join("/"):"");
-      if(prompt){if(seen.has(prompt)){const prior=seen.get(prompt);if(prior.signature!==signature)duplicates.push({first:prior.index,second:i+1,prompt:q.es||q.prompt||"",firstAnswer:prior.answer||"",secondAnswer:q.en||q.answer||""});}else seen.set(prompt,{index:i+1,signature,answer:q.en||q.answer||""});}
+      const prompt=normalizeQuizPrompt(q.quizPrompt||q.es||q.prompt||"");
+      const signature=normalizeQuizAnswer(q.en||q.answer||"")+"|"+(Array.isArray(q.choices)?q.choices.map(normalizeQuizAnswer).sort().join("/"):"");
+      if(prompt){if(seen.has(prompt)){const prior=seen.get(prompt);if(prior.signature!==signature)duplicates.push({first:prior.index,second:i+1,prompt:q.quizPrompt||q.es||q.prompt||"",firstAnswer:prior.answer||"",secondAnswer:q.en||q.answer||""});}else seen.set(prompt,{index:i+1,signature,answer:q.en||q.answer||""});}
       if(Array.isArray(q.choices)){
         const c=q.choices.map(normalizeQuizText);if(c.length!==4||new Set(c).size!==c.length||!c.includes(normalizeQuizText(q.en||q.answer||"")))choiceIssues.push(i+1);
       }
     });
     const total=duplicates.length+choiceIssues.length;
-    result.innerHTML=total?`<strong>⚠️ ${total} candidate issue${total===1?"":"s"}</strong><small>${duplicates.slice(0,3).map(x=>`Questions ${x.first} and ${x.second} share a prompt but differ in answer choices.`).join(" ")}${choiceIssues.length?` ${choiceIssues.length} question${choiceIssues.length===1?"":"s"} need choice review.`:""}</small><em>These are candidates for review, not automatic errors. Meaning and alternate valid answers still need a human check.</em>`:`<strong>✅ No structural candidates found in ${pool.length} questions.</strong><small>Choices and blanks look consistent. This does not replace a meaning audit for alternate valid answers.</small>`;
+    const structure=choiceIssues.length?`⚠️ ${choiceIssues.length} choice-structure issue${choiceIssues.length===1?"":"s"}`:`✅ No malformed choice sets in ${pool.length} questions`;
+    const repeatNote=duplicates.length?`${duplicates.length} repeated or translation-variant prompts are listed below for human review.`:"No repeated prompt variants found.";
+    result.innerHTML=`<strong>${structure}</strong><small>${repeatNote}</small><em>Repeated translations are not automatically wrong; the quiz now prevents the same prompt from appearing twice in one round. Review the list when you want to refine wording or add context.</em>`;
     if(total){
       const detail=document.createElement("details");detail.className="quiz-audit-details";
       const summary=document.createElement("summary");summary.textContent="Show candidate list";detail.appendChild(summary);
@@ -2542,10 +2555,19 @@ FILL_BLANK_QUIZ.push(
   {kind:"blank",focus:"subjuntivo",cat:"subjuntivo",es:"Espero que ___ bien.",en:"estés",tts:"Espero que estés bien.",trans:"I hope you are well.",choices:["estés","estás","estar","estuviste"]},
   {kind:"blank",focus:"subjuntivo",cat:"subjuntivo",es:"Es importante que ___ despacio.",en:"hables",tts:"Es importante que hables despacio.",trans:"It is important that you speak slowly.",choices:["hables","hablas","hablar","hablaste"]}
 );
+FILL_BLANK_QUIZ.push(
+  {kind:"blank",focus:"pronombres",cat:"pronombres",es:"¿Tienes la dirección? Sí, ___ tengo aquí.",en:"la",tts:"¿Tienes la dirección? Sí, la tengo aquí.",trans:"Do you have the address? Yes, I have it here.",choices:["la","lo","le","las"]},
+  {kind:"blank",focus:"pronombres",cat:"pronombres",es:"¿Le mandaste la ubicación? Sí, ___ mandé ayer.",en:"se la",tts:"¿Le mandaste la ubicación? Sí, se la mandé ayer.",trans:"Did you send him/her the location? Yes, I sent it to him/her yesterday.",choices:["se la","se lo","la le","lo se"]},
+  {kind:"blank",focus:"pronombres",cat:"pronombres",es:"¿Qué haces con el documento? ___ voy a enviar ahora.",en:"Se lo",tts:"¿Qué haces con el documento? Se lo voy a enviar ahora.",trans:"What are you doing with the document? I am going to send it to him/her now.",choices:["Se lo","Se la","Lo le","La se"]},
+  {kind:"blank",focus:"pronombres",cat:"pronombres",es:"¿Le explicaste la ruta? Sí, ___ expliqué despacio.",en:"se la",tts:"¿Le explicaste la ruta? Sí, se la expliqué despacio.",trans:"Did you explain the route to him/her? Yes, I explained it to him/her slowly.",choices:["se la","se lo","la le","lo se"]}
+);
 
 let aQ=[];
 VC.forEach(cat=>{
-  if(cat.type==="basic")cat.items.forEach(i=>aQ.push({es:i.word,en:i.en,tts:i.tts,cat:cat.id}));
+  if(cat.type==="basic")cat.items.forEach(i=>{
+    const quizPrompt=cat.id==="colores"&&i.word==="Café"?"El color café":cat.id==="comida"&&i.word==="Café"?"Una bebida: café":undefined;
+    aQ.push({es:i.word,en:i.en,tts:i.tts,cat:cat.id,quizPrompt});
+  });
   if(cat.type==="vocales")VOCALES_DATA.forEach(v=>v.examples.forEach(ex=>aQ.push({es:ex.word,en:ex.en,tts:ex.tts,cat:"vocales"})));
   if(cat.type==="numeros"){[...N130,...NT].forEach(n=>aQ.push({es:n.w,en:String(n.n),tts:n.w,cat:"numeros"}));}
   if(cat.type==="preguntas")PQ.forEach(p=>aQ.push({es:p.word,en:p.en,tts:p.tts,cat:"preguntas"}));
@@ -2636,8 +2658,8 @@ function quizPool(){
   else if(qMode==="dictation")pool=aQ.filter(q=>!q.kind&&q.es&&q.tts).map(q=>({...q,answer:q.es,prompt:"🎧",dictation:true}));
   else if(qMode==="en-es")pool=aQ.filter(q=>!q.kind).map(q=>({...q,answer:q.es,prompt:q.en}));
   else if(qMode==="listening")pool=aQ.filter(q=>!q.kind).map(q=>({...q,answer:q.es,prompt:"🎧"}));
-  else if(qMode==="es-en")pool=aQ.filter(q=>!q.kind||q.kind==="meaning").map(q=>({...q,answer:q.en,prompt:q.es}));
-  else pool=aQ.map(q=>({...q,answer:q.en,prompt:q.kind==="listening"?"🎧":q.es}));
+  else if(qMode==="es-en")pool=aQ.filter(q=>!q.kind||q.kind==="meaning").map(q=>({...q,answer:q.en,prompt:q.quizPrompt||q.es}));
+  else pool=aQ.map(q=>({...q,answer:q.en,prompt:q.kind==="listening"?"🎧":(q.quizPrompt||q.es)}));
   if(qMode==="blank"){
     if(qCat==="pronombres")pool=pool.filter(q=>q.cat==="pronombres");
     else if(qCat!=="all")pool=pool.filter(q=>q.cat===qCat);
@@ -2666,7 +2688,16 @@ function normalizeDictation(text,stripAccents){
   return stripAccents?s.normalize("NFD").replace(/[\u0300-\u036f]/g,""):s;
 }
 function normalizeQuizText(text){return String(text||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[¿?¡!.,;:…]+/g,"").replace(/\s+/g," ").trim();}
+/* Audit prompts keep accents so "si" and "sí" are not treated as the same
+   Spanish word. Answer cleanup ignores parenthetical teaching notes when it
+   compares duplicate records. */
+function normalizeQuizPrompt(text){return String(text||"").toLowerCase().replace(/[¿?¡!.,;:…]+/g,"").replace(/\s+/g," ").trim();}
+function normalizeQuizAnswer(text){return String(text||"").toLowerCase().replace(/\([^)]*\)/g,"").replace(/[¿?¡!.,;:…]+/g,"").replace(/\s+/g," ").trim();}
 function quizItemKey(q){return normalizeQuizText(`${q.kind||""}|${q.es}|${q.answer}`);}
+function quizRoundPromptKey(q){
+  const text=(qMode==="listening"||q.prompt==="🎧")?(q.tts||q.es):(q.prompt||q.es);
+  return normalizeQuizPrompt(text);
+}
 function cleanQuizPool(pool){
   const seen=new Set();
   return pool.filter(q=>{
@@ -2690,7 +2721,7 @@ function nQ(){
   }
   const roundKey=qMode+"|"+qCat+"|"+qFocus;
   if(roundKey!==qRoundKey){qRoundKey=roundKey;qRoundSeen.clear();}
-  let unseen=base.filter(q=>!qRoundSeen.has(quizItemKey(q)));
+   let unseen=base.filter(q=>!qRoundSeen.has(quizRoundPromptKey(q)));
   if(!unseen.length){qRoundSeen.clear();unseen=base;}
   /* Missed questions can repeat during an explicit Repaso session. In a
      normal round, only unseen missed questions receive extra weighting. */
@@ -2700,7 +2731,7 @@ function nQ(){
    if(repasoLeft>0&&dueAll.length){pickFrom=dueAll;repasoLeft--;}
    else{if(repasoLeft>0)repasoLeft=0;pickFrom=(duePool.length&&Math.random()<0.7)?duePool:unseen;}
   cQ=pickFrom[Math.floor(Math.random()*pickFrom.length)];
-  qRoundSeen.add(quizItemKey(cQ));
+   qRoundSeen.add(quizRoundPromptKey(cQ));
   if(qMode==="dictation"){
     document.getElementById("qc-word").textContent="🎧";
     document.querySelector(".qc-label").textContent="Listen, then type the Spanish";
