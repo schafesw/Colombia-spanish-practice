@@ -1160,13 +1160,13 @@ const LESSONS=[
   {id:"gram-presente",icon:"⚡",title:"Presente para hablar",sub:"Di quién eres, qué haces y cómo estás",vocab:"verbos",dialogue:"Presentación personal",quizCat:"all",quizMode:"conversation",quizFocus:"present"},
   {id:"gram-futuro",icon:"⏭️",title:"Planes futuros",sub:"Usa voy a… para hablar de tus planes",vocab:"acciones",dialogue:"Trabajo y oficina",quizCat:"all",quizMode:"conversation",quizFocus:"future"},
   {id:"gram-pasado",icon:"⏮️",title:"Hablar del pasado",sub:"Cuenta qué hiciste ayer y qué pasó",vocab:"acciones",dialogue:"Preparar la cocina",quizCat:"all",quizMode:"conversation",quizFocus:"past"},
-  {id:"gram-pasado-historia",icon:"🗣️",title:"Pasado para conversar",sub:"Cuenta qué hiciste y qué estaba pasando",vocab:"verbos",dialogue:"Contar lo que pasó",quizCat:"all",quizMode:"conversation",quizFocus:"past"},
-  {id:"gram-pasado-contraste",icon:"🎞️",title:"Pasado: evento vs. contexto",sub:"Fui, iba, estaba y era para contar historias",vocab:"acciones",dialogue:"Contar lo que pasó",quizCat:"frases",quizMode:"blank",quizFocus:"past"},
+  {id:"gram-pasado-historia",icon:"🗣️",title:"Pasado para conversar",sub:"Cuenta qué hiciste y qué estaba pasando",vocab:"verbos",dialogue:"Contar lo que pasó",quizCat:"all",quizMode:"conversation",quizFocus:"past",readingId:"lectura-historia-contraste"},
+  {id:"gram-pasado-contraste",icon:"🎞️",title:"Pasado: evento vs. contexto",sub:"Fui, iba, estaba y era para contar historias",vocab:"acciones",dialogue:"Contar lo que pasó",quizCat:"frases",quizMode:"blank",quizFocus:"past",readingId:"lectura-historia-contraste"},
   {id:"gram-subjuntivo",icon:"🌱",title:"Deseos y recomendaciones",sub:"Quiero que…, espero que…, es importante que…",vocab:"acciones",dialogue:"Planes de fin de semana",quizCat:"subjuntivo",quizMode:"blank",quizFocus:"subjuntivo"},
   {id:"gram-necesidades",icon:"🧱",title:"Necesidades y obligaciones",sub:"Di lo que querías, necesitabas y tenías que hacer",vocab:"acciones",dialogue:"Contar lo que pasó",quizCat:"all",quizMode:"conversation",quizFocus:"past"},
   {id:"gram-conectores",icon:"🔗",title:"Conecta tus ideas",sub:"Usa pero, porque y entonces para sonar natural",vocab:"gustos",dialogue:"Contar lo que pasó",quizCat:"all",quizMode:"conversation"},
   {id:"gram-groserias",icon:"⚠️",title:"Groserías colombianas",sub:"Reconócelas y aprende el contexto antes de usarlas",vocab:"colombianismos",dialogue:"Groserías colombianas",quizCat:"groserias",quizMode:"conversation"},
-  {id:"gram-pronombres",icon:"👤",title:"Pronombres en conversación",sub:"Practica lo, la, le y las combinaciones comunes",vocab:"gustos",dialogue:"Pronombres en acción",quizCat:"pronombres",quizMode:"conversation",quizFocus:"pronombres"},
+  {id:"gram-pronombres",icon:"👤",title:"Pronombres en conversación",sub:"Practica lo, la, le y las combinaciones comunes",vocab:"gustos",dialogue:"Pronombres en acción",quizCat:"pronombres",quizMode:"conversation",quizFocus:"pronombres",readingId:"lectura-pronombres-ubicacion"},
   {id:"survival-communication",icon:"🧰",title:"Hazte entender",sub:"Pide repetición, tiempo y ayuda cuando no entiendes",vocab:"gustos",dialogue:"Uber: español limitado",quizCat:"reparar"},
   {id:"uber-ride",icon:"🚕",title:"Uber en español",sub:"Confirma la recogida, la dirección y el destino",vocab:"direcciones",dialogue:"Uber: confirmar la recogida",quizCat:"uber",quizMode:"conversation"},
   {id:"hotel-checkin",icon:"🏨",title:"Llegada al hotel",sub:"Regístrate, pregunta por el desayuno y ubícate",vocab:"lugares",dialogue:"Hotel: registrarse",quizCat:"hotel",quizMode:"conversation"},
@@ -1380,9 +1380,9 @@ function renderLessonStep(){
   else if(step==="lectura"){
     const reading=READINGS.find(r=>r.id===lpLesson.readingId)||READINGS.find(r=>r.lesson===lpLesson.id)||READINGS[0];
     title.textContent="📖 Read aloud for meaning";
-    body.appendChild(lpEl("lp-hint",`${reading.title} · Read the Spanish first, then open the English and listen.`));
+    body.appendChild(lpEl("lp-hint",`${reading.title} · Read it aloud once, then listen and shadow it at your own pace.`));
     (reading.lines||[]).forEach(line=>{const row=lpEl("lp-line",`<span>${escapeVocabHtml(line.es)}</span><div class='lp-line-en'>${escapeVocabHtml(line.en)}</div>`);row.onclick=()=>speak(line.tts||line.es,0.75);attachMic(row,line.tts||line.es);body.appendChild(row);});
-    const open=document.createElement("button");open.type="button";open.className="lp-nav-btn";open.textContent="📖 Open full reading";open.onclick=()=>renderReading(reading);body.appendChild(open);
+    const open=document.createElement("button");open.type="button";open.className="lp-nav-btn primary";open.textContent="📖 Read & shadow full passage";open.onclick=()=>renderReading(reading);body.appendChild(open);
     navBtn("‹ Back",prev);navBtn("Next →",next,true);
   }
   else if(step==="mision"){
@@ -1429,6 +1429,7 @@ function renderLessonStep(){
     const explore=lpEl("lp-explore","<div class='lp-hint'>Explore more:</div>");
     const mk=(label,fn)=>{const b=document.createElement("button");b.type="button";b.className="lp-nav-btn";b.textContent=label;b.onclick=fn;explore.appendChild(b);};
     mk("📚 Vocabulary",()=>{showPage("vocab");sCat(lpLesson.vocab);});
+    mk("📖 Read & shadow",()=>{const reading=READINGS.find(r=>r.id===lpLesson.readingId)||READINGS.find(r=>r.lesson===lpLesson.id)||READINGS[0];renderReading(reading);});
     mk("💬 Full conversation",()=>{showPage("frases");const d=lessonDialogue(lpLesson);if(d)renderFraseDialogue(d);});
     mk("🧪 Full quiz",()=>{showPage("quiz");qCat=lpLesson.quizCat;qMode=lpLesson.quizMode||"mixed";qFocus=lpLesson.quizFocus||"all";repasoLeft=0;resetQuizRound();syncQuizControls();nQ();});
     body.appendChild(explore);
