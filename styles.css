@@ -1034,3 +1034,43 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .reading-translation summary{padding:10px 11px;color:var(--purple);font-size:.68rem;font-weight:900;cursor:pointer;}
 .reading-translation-copy{padding:0 11px 9px;}
 .reading-translation-copy p{margin:6px 0;color:var(--muted);font-size:.7rem;line-height:1.4;font-style:italic;}
+
+/* v60: lesson production activities. Keep each exercise compact so the learner
+   can see the task and its controls together on a phone. */
+.lp-activity-note{margin:0 0 13px;padding:10px 12px;border:1px solid rgba(74,168,160,.2);border-radius:12px;background:rgba(74,168,160,.06);color:var(--muted);font-size:.74rem;line-height:1.4;}
+.lp-match{display:grid;gap:10px;}
+.lp-match-status{color:var(--teal);font-size:.7rem;font-weight:900;text-align:center;}
+.lp-match-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.lp-match-col{display:grid;gap:7px;align-content:start;min-width:0;}
+.lp-match-col-title{padding:0 2px;color:var(--muted);font-size:.6rem;font-weight:950;letter-spacing:.1em;text-transform:uppercase;}
+.lp-match-btn{min-width:0;min-height:50px;padding:9px 7px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,.045);color:var(--text);font:inherit;font-size:.75rem;font-weight:800;line-height:1.25;overflow-wrap:anywhere;}
+.lp-match-btn.match-selected{border-color:var(--gold);background:rgba(232,180,74,.15);color:var(--gold);}
+.lp-match-btn.matched{border-color:rgba(52,211,153,.6);background:rgba(52,211,153,.12);color:var(--green);}
+.lp-match-btn:disabled{opacity:1;cursor:default;}
+.lp-match-feedback{min-height:20px;color:var(--muted);font-size:.7rem;text-align:center;}
+.lp-builder,.lp-typing{display:grid;gap:10px;}
+.lp-builder-target,.lp-typing-prompt{padding:13px;border:1px solid rgba(232,180,74,.25);border-radius:12px;background:rgba(232,180,74,.07);color:var(--gold);font-size:1rem;font-weight:850;line-height:1.35;}
+.lp-builder-output{min-height:54px;padding:12px;border:1px dashed rgba(255,255,255,.25);border-radius:11px;color:var(--text);font-size:.9rem;line-height:1.35;overflow-wrap:anywhere;}
+.lp-builder-chips{display:flex;flex-wrap:wrap;gap:7px;}
+.lp-builder-chip{min-height:38px;padding:7px 10px;border:1px solid rgba(74,168,160,.4);border-radius:9px;background:rgba(74,168,160,.1);color:var(--teal);font:inherit;font-size:.7rem;font-weight:850;}
+.lp-builder-chip:disabled{border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.08);color:var(--green);opacity:.7;}
+.lp-builder-actions,.lp-typing-actions{display:flex;flex-wrap:wrap;gap:7px;}
+.lp-builder-actions .lp-nav-btn,.lp-typing-actions .lp-nav-btn{flex:1 1 30%;min-width:100px;}
+.lp-builder-feedback,.lp-typing-feedback{min-height:21px;color:var(--muted);font-size:.75rem;line-height:1.35;}
+.lp-builder-feedback strong,.lp-typing-feedback strong{color:var(--gold);}
+.lp-typing-input{width:100%;min-height:50px;padding:11px 12px;border:1px solid rgba(74,168,160,.4);border-radius:11px;background:rgba(255,255,255,.06);color:var(--text);font:inherit;font-size:.9rem;outline:none;}
+.lp-typing-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(74,168,160,.12);}
+.english-hint{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px;}
+.english-hint-btn{min-height:32px;padding:6px 9px;border:1px solid rgba(167,139,250,.35);border-radius:9px;background:rgba(167,139,250,.08);color:var(--purple);font:inherit;font-size:.65rem;font-weight:850;}
+.english-hint-text{flex:1 1 100%;padding:8px 10px;border-left:2px solid var(--purple);color:var(--muted);font-size:.74rem;line-height:1.35;}
+.dlg-alternates{margin:12px 0;border:1px solid rgba(167,139,250,.25);border-radius:12px;background:rgba(167,139,250,.06);}
+.dlg-alternates summary{padding:11px 12px;color:var(--purple);font-size:.72rem;font-weight:900;cursor:pointer;}
+.dlg-alternate-list{display:grid;gap:7px;padding:0 9px 9px;}
+.dlg-alternate{display:grid;grid-template-columns:1fr auto;gap:3px 8px;padding:9px 10px;border:1px solid var(--border);border-radius:9px;background:rgba(255,255,255,.04);color:var(--text);font:inherit;text-align:left;}
+.dlg-alternate strong{font-size:.76rem;line-height:1.3;overflow-wrap:anywhere;}
+.dlg-alternate small{grid-column:1;color:var(--muted);font-size:.68rem;line-height:1.3;overflow-wrap:anywhere;}
+.dlg-alternate span{grid-column:2;grid-row:1 / span 2;align-self:center;}
+@media(max-width:430px){
+  .lp-match-btn{font-size:.68rem;}
+  .lp-builder-actions .lp-nav-btn,.lp-typing-actions .lp-nav-btn{min-width:0;padding-left:8px;padding-right:8px;font-size:.68rem;}
+}

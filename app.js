@@ -7,12 +7,15 @@ const nativeStorage=window.localStorage;
 const PROFILE_LIST_KEY="esco-profiles-v1";
 const ACTIVE_PROFILE_KEY="esco-active-profile-v1";
 const PROFILE_MIGRATION_KEY="esco-profile-migrated-v1";
-const DEFAULT_PROFILES=[{id:"seth",label:"Seth",emoji:"🧑‍🎓"},{id:"guest",label:"Guest",emoji:"👤"}];
+const DEFAULT_PROFILES=[{id:"seth",label:"Seth",emoji:"🧑‍🎓"},{id:"brad",label:"Brad",emoji:"🧑‍💼"},{id:"guest",label:"Guest",emoji:"👤"}];
 let profileList=DEFAULT_PROFILES.slice();
 let activeProfileId="seth";
 try{
   const savedProfiles=JSON.parse(nativeStorage.getItem(PROFILE_LIST_KEY)||"null");
-  if(Array.isArray(savedProfiles)&&savedProfiles.length)profileList=savedProfiles;
+  if(Array.isArray(savedProfiles)&&savedProfiles.length){
+    const savedById=new Map(savedProfiles.filter(p=>p&&p.id).map(p=>[p.id,p]));
+    profileList=DEFAULT_PROFILES.map(p=>savedById.get(p.id)||p).concat(savedProfiles.filter(p=>p&&p.id&&!DEFAULT_PROFILES.some(d=>d.id===p.id)));
+  }
   const savedActive=nativeStorage.getItem(ACTIVE_PROFILE_KEY);
   if(profileList.some(p=>p.id===savedActive))activeProfileId=savedActive;
 }catch(e){}
@@ -472,6 +475,14 @@ function renderVocabSearch(term){
 }
 if(vocabSearch)vocabSearch.oninput=()=>renderVocabSearch(vocabSearch.value);
 function escapeVocabHtml(value){return String(value||"").replace(/[&<>\"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;"}[ch]));}
+function addEnglishHint(parent,text,label="💡 English help"){
+  if(!parent||!text)return;
+  const wrap=document.createElement("div");wrap.className="english-hint";
+  const button=document.createElement("button");button.type="button";button.className="english-hint-btn";button.textContent=label;button.setAttribute("aria-expanded","false");
+  const copy=document.createElement("span");copy.className="english-hint-text";copy.hidden=true;copy.textContent=text;
+  button.onclick=e=>{e.stopPropagation();const open=copy.hidden;copy.hidden=!open;button.setAttribute("aria-expanded",String(open));button.textContent=open?"✅ English shown":label;};
+  wrap.append(button,copy);parent.appendChild(wrap);
+}
 function getVocabExample(item,catId,index){
   const raw=item.example||(VOCAB_EXAMPLES[catId]||[])[index];
   if(Array.isArray(raw))return {es:raw[0],en:raw[1],tts:raw[0]};
@@ -824,8 +835,9 @@ const fl=document.getElementById("frases-list");
 const PHRASE_DIALOGUES=[
   {title:"Saludos formales",preview:DIALOGUE[0].es,en:"Formal greetings and introductions",versions:[{tense:null,lines:DIALOGUE}]},
   ...Array.from(new Set(CONVERSATIONS.map(c=>c.title))).map(title=>{
-    const versions=CONVERSATIONS.filter(c=>c.title===title).map(c=>({tense:c.tense,lines:c.lines}));
-    return {title,preview:versions[0].lines[0].es,en:"Ahora · Planes · Ayer",versions};
+    const versions=CONVERSATIONS.filter(c=>c.title===title).map(c=>({tense:c.tense,lines:c.lines,alternates:c.alternates||[]}));
+    const source=CONVERSATIONS.find(c=>c.title===title);
+    return {title,preview:versions[0].lines[0].es,en:source&&source.en?source.en:"Ahora · Planes · Ayer",versions};
   })
 ];
 let fraseSearchTerm="";
@@ -1138,7 +1150,20 @@ function renderFraseDialogue(dialogue,tense){
       box.appendChild(row);
     });
   }
+  let alt=null;
+  if(version&&Array.isArray(version.alternates)&&version.alternates.length){
+    alt=document.createElement("details");alt.className="dlg-alternates";
+    alt.innerHTML="<summary>🧩 More natural ways to say it</summary>";
+    const list=document.createElement("div");list.className="dlg-alternate-list";
+    version.alternates.forEach(item=>{
+      const row=document.createElement("button");row.type="button";row.className="dlg-alternate";
+      row.innerHTML=`<strong>${escapeVocabHtml(item.es)}</strong><small>${escapeVocabHtml(item.en)}</small><span>🔊</span>`;
+      row.onclick=()=>{markPractice("phrases",item.es);speak(item.tts||item.es,0.75);};list.appendChild(row);
+    });
+    alt.appendChild(list);
+  }
   fl.appendChild(box);
+  if(alt)fl.appendChild(alt);
   const tip=document.createElement("div");
   tip.className="phrase-practice-note";
   tip.textContent="Practice both sides: read Persona A, then Persona B. Switch tenses above to level up.";
@@ -1181,7 +1206,16 @@ const LESSONS=[
   {id:"gram-condicional",icon:"🙏",title:"Pedir con cortesía",sub:"Me gustaría, podría y debería",vocab:"acciones",dialogue:"Restaurante: pedir y cambiar",quizCat:"frases",quizMode:"blank",quizFocus:"condicional"},
   {id:"gram-pasado-perfecto",icon:"⏪",title:"Lo que ya había pasado",sub:"Había llegado, había visto, ya había terminado",vocab:"acciones",dialogue:"Contar lo que pasó",quizCat:"frases",quizMode:"blank",quizFocus:"pasado-perfecto"},
   {id:"gram-futuro-perfecto",icon:"⏩",title:"Lo que habrá pasado",sub:"Reconoce habré llegado y habremos terminado",vocab:"acciones",dialogue:"Planes de fin de semana",quizCat:"frases",quizMode:"blank",quizFocus:"futuro-perfecto"},
-  {id:"conversation-challenge",icon:"🎯",title:"Reto de conversación",sub:"Combina lectura, reacción rápida y una misión",vocab:"gustos",dialogue:"Uber: confirmar la recogida",quizCat:"all",quizMode:"conversation"}
+  {id:"conversation-challenge",icon:"🎯",title:"Reto de conversación",sub:"Combina lectura, reacción rápida y una misión",vocab:"gustos",dialogue:"Uber: confirmar la recogida",quizCat:"all",quizMode:"conversation"},
+  {id:"commands-repair",icon:"🗣️",title:"Pide, repite y aclara",sub:"Usa mandatos útiles sin sonar brusco",vocab:"direcciones",dialogue:"Comunicación: pedir y aclarar",quizCat:"mandatos",quizMode:"conversation"},
+  {id:"uber-completo",icon:"🚗",title:"Un viaje completo en Uber",sub:"Recogida, dirección, tráfico y llegada",vocab:"direcciones",dialogue:"Uber: viaje completo",quizCat:"uber-real",quizMode:"conversation"},
+  {id:"restaurante-real",icon:"🍽️",title:"Comer fuera",sub:"Pide, cambia algo, pregunta y paga",vocab:"comida",dialogue:"Restaurante: una comida completa",quizCat:"restaurante-real",quizMode:"conversation"},
+  {id:"mercado-negociar",icon:"🛍️",title:"Mercado y precios",sub:"Compra comida, pregunta el precio y negocia",vocab:"comida",dialogue:"Mercado: comprar y negociar",quizCat:"mercado",quizMode:"conversation"},
+  {id:"gerundios-actividades",icon:"🔄",title:"Lo que estás haciendo",sub:"Estoy cocinando, buscando y aprendiendo",vocab:"acciones",dialogue:"Cocinar y hablar de lo que haces",quizCat:"gerundios",quizMode:"blank",quizFocus:"gerundios"},
+  {id:"social-salida",icon:"🤝",title:"Salir con amigos",sub:"Propón planes, acepta y cambia la hora",vocab:"gustos",dialogue:"Salir con amigos",quizCat:"social",quizMode:"conversation"},
+  {id:"fiesta-gathering",icon:"🎉",title:"En una fiesta",sub:"Saluda, conversa y despídete con naturalidad",vocab:"colombianismos",dialogue:"En una fiesta",quizCat:"fiesta",quizMode:"conversation"},
+  {id:"deportes-partido",icon:"⚽",title:"Ver el partido",sub:"Habla del marcador, el equipo y la emoción",vocab:"tv",dialogue:"Ver el partido",quizCat:"deportes",quizMode:"conversation"},
+  {id:"oficina-real",icon:"🧑‍💼",title:"Una conversación en la oficina",sub:"Explica avances, retrasos y próximos pasos",vocab:"oficina",dialogue:"Oficina: proyecto y retraso",quizCat:"oficina-real",quizMode:"conversation"}
 ];
 LESSONS.forEach(lesson=>{
   if(typeof LESSON_META!=="undefined"&&LESSON_META[lesson.id])Object.assign(lesson,LESSON_META[lesson.id]);
@@ -1217,7 +1251,7 @@ function openLesson(lesson){
   const c=LESSON_CONTENT[lesson.id];
   /* Speaking-first order: hear a useful chunk, produce it, role-play it,
      then study the grammar that explains what you just said. */
-  lpSteps=c?["objetivo","palabras","escucha","frases","hablaA","hablaB","estructura","pronun","lectura","quiz","mision","fin"]:["fin"];
+  lpSteps=c?["objetivo","palabras","escucha","frases","matching","building","typing","hablaA","hablaB","estructura","pronun","lectura","quiz","mision","fin"]:["fin"];
   if(c)buildLessonQuiz(lesson,c);
   renderLessonStep();
 }
@@ -1247,6 +1281,7 @@ function lpEl(cls,html){const d=document.createElement("div");d.className=cls;if
 function lpSpeakBtn(text,label){const b=document.createElement("button");b.type="button";b.className="lp-speak";b.textContent=label||"🔊 Escuchar";b.onclick=()=>speak(text,0.75);return b;}
 function renderLessonStep(){
   const root=document.getElementById("lesson-list");if(!root||!lpLesson)return;root.innerHTML="";
+  const scroll=document.querySelector(".scroll");if(scroll)scroll.scrollTop=0;
   const c=LESSON_CONTENT[lpLesson.id];
   const step=lpSteps[lpStep];
   saveResume();
@@ -1306,6 +1341,55 @@ function renderLessonStep(){
       body.appendChild(pc);
     });
     body.appendChild(lpEl("lp-hint","Say it YOURSELF out loud first. Then tap to hear and compare."));
+    navBtn("‹ Back",prev);navBtn("Next →",next,true);
+  }
+  else if(step==="matching"){
+    title.textContent="🧩 Match the meaning — build quick recognition";
+    body.appendChild(lpEl("lp-activity-note","Tap an English meaning, then tap the matching Spanish chunk. Say each pair out loud."));
+    const pairs=(c.words||[]).slice(0,4).map((w,i)=>({id:String(i),es:w.es,en:w.en}));
+    const match=lpEl("lp-match");
+    const status=lpEl("lp-match-status",`0 of ${pairs.length} matched`);match.appendChild(status);
+    const board=lpEl("lp-match-grid");
+    const enCol=lpEl("lp-match-col");enCol.appendChild(lpEl("lp-match-col-title","English"));
+    const esCol=lpEl("lp-match-col");esCol.appendChild(lpEl("lp-match-col-title","Español"));
+    const enButtons=[],esButtons=[];let selected=null;const matched=new Set();
+    const redraw=()=>{
+      enButtons.forEach(x=>{x.button.classList.toggle("matched",matched.has(x.id));x.button.classList.toggle("match-selected",selected===x.id);x.button.disabled=matched.has(x.id);});
+      esButtons.forEach(x=>{x.button.classList.toggle("matched",matched.has(x.id));x.button.classList.toggle("match-selected",selected===x.id);x.button.disabled=matched.has(x.id);});
+      status.textContent=`${matched.size} of ${pairs.length} matched`;
+    };
+    const message=lpEl("lp-match-feedback","Choose an English meaning first.");
+    pairs.slice().sort(()=>Math.random()-0.5).forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp-match-btn";b.textContent=p.en;b.onclick=()=>{selected=p.id;message.textContent="Now tap the matching Spanish.";redraw();};enButtons.push({id:p.id,button:b});enCol.appendChild(b);});
+    pairs.slice().sort(()=>Math.random()-0.5).forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp-match-btn";b.textContent=p.es;b.onclick=()=>{if(!selected){message.textContent="Choose an English meaning first.";return;}if(selected===p.id){matched.add(p.id);selected=null;message.textContent=matched.size===pairs.length?"✅ Great — say the pairs once more.":"✅ Correct. Keep going.";}else{message.textContent="Not that one — try again.";}redraw();};esButtons.push({id:p.id,button:b});esCol.appendChild(b);});
+    board.append(enCol,esCol);match.append(board,message);body.appendChild(match);
+    navBtn("‹ Back",prev);navBtn("Next →",next,true);
+  }
+  else if(step==="building"){
+    title.textContent="🧱 Build a sentence — then say it";
+    const target=(c.phrases||[])[0];
+    if(target){
+      body.appendChild(lpEl("lp-activity-note","Read the English idea, tap the Spanish pieces in order, then check yourself. This is a bridge to speaking — not a typing test."));
+      const builder=lpEl("lp-builder");builder.appendChild(lpEl("lp-builder-target",target.en));
+      const output=lpEl("lp-builder-output","Your sentence will appear here…");const chips=lpEl("lp-builder-chips");const feedback=lpEl("lp-builder-feedback","");
+      const pieces=target.es.trim().split(/\s+/).map((word,i)=>({word,i})).sort(()=>Math.random()-0.5);const chosen=[];
+      const redraw=()=>{output.textContent=chosen.length?chosen.map(x=>x.word).join(" "):"Your sentence will appear here…";chips.querySelectorAll("button").forEach(b=>b.disabled=chosen.some(x=>String(x.i)===b.dataset.i));};
+      pieces.forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp-builder-chip";b.textContent=p.word;b.dataset.i=String(p.i);b.onclick=()=>{chosen.push(p);redraw();};chips.appendChild(b);});
+      const actions=lpEl("lp-builder-actions");const clear=document.createElement("button");clear.type="button";clear.className="lp-nav-btn";clear.textContent="↩ Clear";clear.onclick=()=>{chosen.length=0;feedback.textContent="";redraw();};
+      const check=document.createElement("button");check.type="button";check.className="lp-nav-btn primary";check.textContent="Check sentence";check.onclick=()=>{const answer=chosen.map(x=>x.word).join(" ");const ok=normalizeQuizText(answer)===normalizeQuizText(target.es);feedback.textContent=ok?"✅ Correct — now say it out loud.":"Keep adjusting the order, then try again.";if(ok)speak(target.es,0.75);};
+      const hear=document.createElement("button");hear.type="button";hear.className="lp-nav-btn";hear.textContent="🔊 Hear model";hear.onclick=()=>speak(target.es,0.75);actions.append(clear,check,hear);builder.append(output,chips,feedback,actions);body.appendChild(builder);attachMic(body,target.es);
+    }else body.appendChild(lpEl("lp-hint","No sentence is available for this lesson yet."));
+    navBtn("‹ Back",prev);navBtn("Next →",next,true);
+  }
+  else if(step==="typing"){
+    title.textContent="⌨️ Produce the Spanish — type it, then say it";
+    const target=(c.phrases||[])[1]||(c.phrases||[])[0];
+    if(target){
+      body.appendChild(lpEl("lp-activity-note","Start from the English meaning. Type the Spanish sentence you would say, then compare and speak it."));
+      const box=lpEl("lp-typing");box.appendChild(lpEl("lp-typing-prompt",target.en));
+      const input=document.createElement("input");input.type="text";input.className="lp-typing-input";input.placeholder="Escribe en español…";input.autocomplete="off";input.autocapitalize="sentences";
+      const actions=lpEl("lp-typing-actions");const check=document.createElement("button");check.type="button";check.className="lp-nav-btn primary";check.textContent="Check answer";const hear=document.createElement("button");hear.type="button";hear.className="lp-nav-btn";hear.textContent="🔊 Hear model";hear.onclick=()=>speak(target.es,0.75);
+      const feedback=lpEl("lp-typing-feedback","");check.onclick=()=>{const ok=normalizeQuizText(input.value)===normalizeQuizText(target.es);feedback.innerHTML=ok?"✅ Correct — say it again without reading.":`Keep practicing. Model: <strong>${escapeVocabHtml(target.es)}</strong>`;if(ok)speak(target.es,0.75);attachMic(feedback,target.es);};actions.append(check,hear);box.append(input,actions,feedback);body.appendChild(box);addEnglishHint(body,target.en,"💡 Show English meaning");
+    }else body.appendChild(lpEl("lp-hint","No typing prompt is available for this lesson yet."));
     navBtn("‹ Back",prev);navBtn("Next →",next,true);
   }
   else if(step==="estructura"){
@@ -2075,10 +2159,10 @@ function renderLessons(){
   /* Lessons grouped into a speaking-first progression */
   const LESSON_STAGES=[
     {name:"🌱 Stage 1 · Start Here",sub:"Greetings, basic needs, numbers, and repairing misunderstandings.",ids:["presentate","plata","survival-communication","casa","gustos"]},
-    {name:"🧭 Stage 2 · Travel and Survival",sub:"Uber, directions, hotels, food, shopping, and the pharmacy.",ids:["uber-ride","hotel-checkin","calle","cocina","farmacia"]},
-    {name:"🏠 Stage 3 · Daily Life",sub:"Work, home, phone calls, feelings, and everyday routines.",ids:["trabajo","daily-repair","planes","sentirse"]},
+    {name:"🧭 Stage 2 · Travel and Survival",sub:"Uber, directions, hotels, food, shopping, repair, and the pharmacy.",ids:["uber-ride","uber-completo","hotel-checkin","calle","cocina","restaurante-real","mercado-negociar","commands-repair","farmacia"]},
+    {name:"🏠 Stage 3 · Daily Life",sub:"Work, office, phone calls, feelings, activities, and everyday routines.",ids:["trabajo","oficina-real","daily-repair","planes","gerundios-actividades","sentirse"]},
     {name:"🧱 Stage 4 · Build Sentences",sub:"Present, future, past, contrast, perfect tenses, conditional, action chunks, connectors, and pronouns.",ids:["sentence-structure","action-chunks","connectors-v36","function-words","gram-presente","gram-futuro","gram-pasado","gram-pasado-historia","gram-pasado-contraste","gram-perfecto","gram-condicional","gram-pasado-perfecto","gram-futuro-perfecto","gram-subjuntivo","gram-necesidades","gram-conectores","gram-pronombres"]},
-    {name:"🇨🇴 Stage 5 · Speak More Naturally",sub:"Colombian everyday expressions, slang, register, and follow-up questions.",ids:["colombia","social-colombia-v36","gram-groserias"]},
+    {name:"🇨🇴 Stage 5 · Speak More Naturally",sub:"Colombian everyday expressions, social plans, parties, sports, and register.",ids:["colombia","social-colombia-v36","social-salida","fiesta-gathering","deportes-partido","gram-groserias"]},
     {name:"🎯 Stage 6 · Conversation Challenge",sub:"Read aloud, react quickly, and complete real speaking missions.",ids:["conversation-challenge"]}
   ];
   const tenseRoadmap=document.createElement("section");tenseRoadmap.className="tense-roadmap";tenseRoadmap.dataset.lessonView="path";
@@ -2563,6 +2647,11 @@ FILL_BLANK_QUIZ.push(
   {kind:"blank",focus:"pronombres",cat:"pronombres",es:"¿Le explicaste la ruta? Sí, ___ expliqué despacio.",en:"se la",tts:"¿Le explicaste la ruta? Sí, se la expliqué despacio.",trans:"Did you explain the route to him/her? Yes, I explained it to him/her slowly.",choices:["se la","se lo","la le","lo se"]}
 );
 
+/* v60 content is kept in data.js so the quiz remains data-driven and easy to
+   extend without changing the quiz engine. */
+if(typeof V60_CONVERSATION_QUIZ!=="undefined")CONVERSATION_QUIZ.push(...V60_CONVERSATION_QUIZ);
+if(typeof V60_FILL_BLANK_QUIZ!=="undefined")FILL_BLANK_QUIZ.push(...V60_FILL_BLANK_QUIZ);
+
 let aQ=[];
 VC.forEach(cat=>{
   if(cat.type==="basic")cat.items.forEach(i=>{
@@ -2583,7 +2672,7 @@ FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
 /* Vocabulary examples remain in Vocab as full context. Only the authored
    prompts above enter Fill blank; generic example sentences stay out. */
 
-const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"reparar",label:"🧰 Repair"},{id:"conectores",label:"🔗 Connectors"},{id:"direcciones",label:"🧭 Directions"},{id:"uber",label:"🚕 Uber"},{id:"hotel",label:"🏨 Hotel"},{id:"restaurante",label:"🍽️ Restaurant"},{id:"compras",label:"🛒 Shopping"},{id:"farmacia",label:"💊 Pharmacy"},{id:"expresiones",label:"🇨🇴 Expressions"},{id:"estructura",label:"🧱 Structure"},{id:"subjuntivo",label:"🌱 Subjuntivo"},{id:"pronunciacion",label:"🔊 Sounds"},{id:"groserias",label:"⚠️ Groserías"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
+const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"reparar",label:"🧰 Repair"},{id:"conectores",label:"🔗 Connectors"},{id:"direcciones",label:"🧭 Directions"},{id:"uber",label:"🚕 Uber"},{id:"uber-real",label:"🚕 Uber · full trip"},{id:"hotel",label:"🏨 Hotel"},{id:"restaurante",label:"🍽️ Restaurant"},{id:"restaurante-real",label:"🍽️ Restaurant · real"},{id:"compras",label:"🛒 Shopping"},{id:"mercado",label:"🛍️ Market"},{id:"farmacia",label:"💊 Pharmacy"},{id:"expresiones",label:"🇨🇴 Expressions"},{id:"social",label:"🤝 Social"},{id:"fiesta",label:"🎉 Party"},{id:"deportes",label:"⚽ Sports"},{id:"oficina-real",label:"🧑‍💼 Office"},{id:"gerundios",label:"🔄 Actions in progress"},{id:"mandatos",label:"🗣️ Commands"},{id:"estructura",label:"🧱 Structure"},{id:"subjuntivo",label:"🌱 Subjuntivo"},{id:"pronunciacion",label:"🔊 Sounds"},{id:"groserias",label:"⚠️ Groserías"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
 const QUIZ_MODES=[
   {id:"mixed",label:"Mixed"},{id:"es-en",label:"ES → EN"},{id:"en-es",label:"EN → ES"},
   {id:"listening",label:"🎧 Listening"},{id:"dictation",label:"⌨️ Dictation"},{id:"blank",label:"✏️ Fill blank"},{id:"conversation",label:"💬 Conversation"}
@@ -2845,7 +2934,7 @@ function runDataValidator(){
     CONVERSATION_MISSIONS.forEach(m=>{if(!m.id||!m.scenario||!m.prompt||!Array.isArray(m.models)||m.models.length<2)issues.push('Mission "'+(m.id||"?")+'": missing scenario, prompt, or model answers');});
     SPECIAL_SOUNDS.forEach(s=>{if(!s.id||!s.label||!s.tip||!Array.isArray(s.examples)||!s.examples.length)issues.push('Special sound "'+(s.id||"?")+ '": incomplete examples');});
     READINGS.forEach(r=>{if(!r.id||!r.title||!Array.isArray(r.lines)||r.lines.length<3)issues.push('Reading "'+(r.id||"?")+ '": needs at least three lines');r.lines&&r.lines.forEach((line,i)=>{if(!line.es||!line.en||!line.tts)issues.push('Reading "'+r.id+'" line '+(i+1)+' missing Spanish, English, or tts');});});
-    CONVERSATIONS.forEach(c=>c.lines.forEach(L=>{if(!L.tts)issues.push('Conversation "'+c.title+'" ('+c.tense+'): line missing tts');}));
+    CONVERSATIONS.forEach(c=>{c.lines.forEach(L=>{if(!L.tts)issues.push('Conversation "'+c.title+'" ('+c.tense+'): line missing tts');});(c.alternates||[]).forEach((L,i)=>{if(!L.es||!L.en||!L.tts)issues.push('Conversation "'+c.title+'" alternate '+(i+1)+' missing Spanish, English, or tts');});});
     if(typeof TONGUE_TWISTERS!=="undefined")TONGUE_TWISTERS.forEach(t=>{if(!t.id||!t.target||!t.text||!t.en||!t.tts)issues.push('Tongue twister "'+(t.id||"?")+'": incomplete Spanish, English, or audio text');});
     if(typeof PRONUNCIATION_TIPS!=="undefined")PRONUNCIATION_TIPS.forEach(t=>{if(!t.target||!t.title||!t.sound||!Array.isArray(t.steps)||!t.steps.length||!t.avoid)issues.push('Pronunciation tip "'+(t.target||"?")+'": incomplete coaching content');});
     if(typeof PHONETIC_WARMUP!=="undefined")PHONETIC_WARMUP.forEach(s=>{if(!s.id||!s.label||!s.detail||!s.tts||!s.target||!s.note)issues.push('Warm-up step "'+(s.id||"?")+'": incomplete practice content');});
@@ -2854,6 +2943,7 @@ function runDataValidator(){
     if(typeof SPANISH_THINKING_PROMPTS!=="undefined")SPANISH_THINKING_PROMPTS.forEach(s=>{if(!s.intent||!s.model||!s.tts)issues.push('Spanish-thinking prompt missing intent, model, or tts');});
     if(typeof SPEAKING_GUIDE!=="undefined")SPEAKING_GUIDE.forEach(g=>{if(!g.id||!g.title||!g.formula||!g.explain||!g.mistake||!g.exercise)issues.push('Speaking guide "'+(g.id||"?")+ '": incomplete explanation');(g.examples||[]).forEach((ex,i)=>{if(!ex.es||!ex.en||!ex.tts)issues.push('Speaking guide "'+g.id+'" example '+(i+1)+' missing Spanish, English, or tts');});});
     if(typeof LESSON_META!=="undefined")LESSONS.forEach(l=>{const m=LESSON_META[l.id];if(!m)return;(m.guideIds||[]).forEach(id=>{if(typeof SPEAKING_GUIDE!=="undefined"&&!SPEAKING_GUIDE.some(g=>g.id===id))issues.push('Lesson "'+l.id+'": guide "'+id+'" does not exist');});});
+    [...CONVERSATION_QUIZ,...FILL_BLANK_QUIZ].forEach((q,i)=>{if(!Array.isArray(q.choices))return;const choices=q.choices.map(String);const normalized=choices.map(normalizeQuizText);if(choices.length!==4)issues.push('Data quiz question '+(i+1)+' needs exactly four answer choices');if(new Set(normalized).size!==normalized.length)issues.push('Data quiz question '+(i+1)+' has duplicate answer choices');if(q.en&&!normalized.includes(normalizeQuizText(q.en)))issues.push('Data quiz question '+(i+1)+' correct answer is not in its choices');if(q.kind==="blank"&&!String(q.es).includes("___"))issues.push('Data quiz question '+(i+1)+' is marked blank but has no blank in its Spanish prompt');});
     aQ.forEach((q,i)=>{if(!Array.isArray(q.choices))return;const choices=q.choices.map(String);const normalized=choices.map(normalizeQuizText);if(choices.length!==4)issues.push('Quiz question '+(i+1)+' needs exactly four answer choices');if(new Set(normalized).size!==normalized.length)issues.push('Quiz question '+(i+1)+' has duplicate answer choices');if(q.en&&!normalized.includes(normalizeQuizText(q.en)))issues.push('Quiz question '+(i+1)+' correct answer is not in its choices');if(q.kind==="blank"&&!String(q.es).includes("___"))issues.push('Quiz question '+(i+1)+' is marked blank but has no blank in its Spanish prompt');});
     FRASES.forEach(s=>{if(s.id&&s.section)issues.push('FRASES "'+s.id+'": has BOTH id and section (breaks hybrid filters)');});
   }catch(e){issues.push("Validator crashed: "+e.message);}
