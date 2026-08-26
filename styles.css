@@ -1074,3 +1074,37 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
   .lp-match-btn{font-size:.68rem;}
   .lp-builder-actions .lp-nav-btn,.lp-typing-actions .lp-nav-btn{min-width:0;padding-left:8px;padding-right:8px;font-size:.68rem;}
 }
+
+/* v61: the practice list keeps difficult speaking targets visible without
+   turning the home screen into a dashboard. */
+.progress-ladder{margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.1);}
+.progress-ladder-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;color:#fff;font-size:.68rem;}
+.progress-ladder-head span{color:var(--gold);font-size:.6rem;font-weight:900;text-align:right;}
+.progress-ladder-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;}
+.progress-ladder-steps span{position:relative;padding-top:9px;color:rgba(255,255,255,.35);font-size:.52rem;line-height:1.15;text-align:center;}
+.progress-ladder-steps span::before{content:"";position:absolute;top:0;left:15%;right:15%;height:3px;border-radius:4px;background:rgba(255,255,255,.12);}
+.progress-ladder-steps span.on{color:var(--teal);font-weight:900;}
+.progress-ladder-steps span.on::before{background:var(--teal);}
+.error-journal{margin:14px 0;padding:13px;border:1px solid rgba(232,93,117,.28);border-radius:15px;background:linear-gradient(135deg,rgba(232,93,117,.08),rgba(167,139,250,.05));}
+.error-journal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.error-journal-kicker{color:var(--pink);font-size:.56rem;letter-spacing:.13em;text-transform:uppercase;font-weight:950;}
+.error-journal-title{margin-top:4px;color:#fff;font-size:.86rem;font-weight:950;}
+.error-journal-count{display:grid;place-items:center;min-width:27px;height:27px;border-radius:50%;background:rgba(232,93,117,.16);color:var(--pink);font-size:.72rem;font-weight:950;}
+.error-journal-sub{margin:6px 0 10px;color:var(--muted);font-size:.65rem;line-height:1.4;}
+.error-journal-list{display:grid;gap:6px;}
+.error-journal-empty{padding:9px 10px;border-radius:9px;background:rgba(0,0,0,.14);color:var(--muted);font-size:.62rem;line-height:1.35;}
+.error-journal-row{display:flex;align-items:center;gap:8px;padding:8px 9px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:rgba(0,0,0,.16);}
+.error-journal-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px;}
+.error-journal-copy strong{color:#fff;font-size:.7rem;line-height:1.3;overflow-wrap:anywhere;}
+.error-journal-copy small{color:var(--muted);font-size:.56rem;}
+.error-journal-actions{display:flex;gap:4px;flex:0 0 auto;}
+.error-journal-btn{display:grid;place-items:center;width:31px;height:31px;padding:0;border:1px solid rgba(255,255,255,.16);border-radius:8px;background:rgba(255,255,255,.06);color:var(--text);font:inherit;font-size:.78rem;}
+.error-journal-btn.done{border-color:rgba(52,211,153,.35);color:var(--green);}
+.error-journal-btn:active{transform:scale(.95);}
+.lp-english-help{align-self:flex-start;margin:0 0 10px;padding:7px 10px;border:1px solid rgba(167,139,250,.35);border-radius:9px;background:rgba(167,139,250,.08);color:var(--purple);font:inherit;font-size:.64rem;font-weight:850;}
+.lp-typing-feedback small{display:block;margin-top:3px;color:var(--muted);font-size:.63rem;}
+@media(max-width:430px){
+  .progress-ladder-steps span{font-size:.48rem;}
+  .error-journal-row{align-items:flex-start;}
+  .error-journal-btn{width:29px;height:29px;}
+}
