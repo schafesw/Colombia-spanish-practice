@@ -1361,14 +1361,15 @@ function renderLessonStep(){
     const esCol=lpEl("lp-match-col");esCol.appendChild(lpEl("lp-match-col-title","Español"));
     const enButtons=[],esButtons=[];let selected=null;const matched=new Set();
     const redraw=()=>{
-      enButtons.forEach(x=>{x.button.classList.toggle("matched",matched.has(x.id));x.button.classList.toggle("match-selected",selected===x.id);x.button.disabled=matched.has(x.id);});
-      esButtons.forEach(x=>{x.button.classList.toggle("matched",matched.has(x.id));x.button.classList.toggle("match-selected",selected===x.id);x.button.disabled=matched.has(x.id);});
+      const selectedId=selected&&selected.id,selectedSide=selected&&selected.side;
+      enButtons.forEach(x=>{x.button.classList.toggle("matched",matched.has(x.id));x.button.classList.toggle("match-selected",selectedSide==="en"&&selectedId===x.id);x.button.disabled=matched.has(x.id);});
+      esButtons.forEach(x=>{x.button.classList.toggle("matched",matched.has(x.id));x.button.classList.toggle("match-selected",selectedSide==="es"&&selectedId===x.id);x.button.disabled=matched.has(x.id);});
       status.textContent=`${matched.size} of ${pairs.length} matched`;
     };
     const message=lpEl("lp-match-feedback","Choose an English meaning first.");message.setAttribute("aria-live","polite");
     const setMatchMessage=(text,state)=>{message.textContent=text;message.dataset.state=state||"";};
-    pairs.slice().sort(()=>Math.random()-0.5).forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp-match-btn";b.textContent=p.en;b.onclick=()=>{selected=p.id;setMatchMessage("Now tap the matching Spanish answer.","selected");redraw();};enButtons.push({id:p.id,button:b});enCol.appendChild(b);});
-    pairs.slice().sort(()=>Math.random()-0.5).forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp-match-btn";b.textContent=p.es;b.onclick=()=>{if(!selected){setMatchMessage("Choose an English meaning first.","error");return;}const picked=selected;const enPair=pairs.find(x=>x.id===picked);if(selected===p.id){matched.add(p.id);clearSpeakingError(p.es);markPractice("phrases",p.es);selected=null;setMatchMessage(matched.size===pairs.length?"✅ Correct — all matched. Say each pair once more.":"✅ Correct match. Choose the next English meaning.","correct");}else{recordSpeakingError(p.es,"matching");selected=null;setMatchMessage("❌ Not a match. “"+(enPair?enPair.en:"That meaning")+"” goes with “"+(enPair?enPair.es:"the other Spanish phrase")+"”. Try again.","wrong");}redraw();};esButtons.push({id:p.id,button:b});esCol.appendChild(b);});
+    pairs.slice().sort(()=>Math.random()-0.5).forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp-match-btn";b.textContent=p.en;b.onclick=()=>{selected={id:p.id,side:"en"};setMatchMessage("Now tap the matching Spanish answer.","selected");redraw();};enButtons.push({id:p.id,button:b});enCol.appendChild(b);});
+    pairs.slice().sort(()=>Math.random()-0.5).forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp-match-btn";b.textContent=p.es;b.onclick=()=>{if(!selected){setMatchMessage("Choose an English meaning first.","error");return;}const picked=selected.id;const enPair=pairs.find(x=>x.id===picked);if(selected.id===p.id){matched.add(p.id);clearSpeakingError(p.es);markPractice("phrases",p.es);selected=null;setMatchMessage(matched.size===pairs.length?"✅ Correct — all matched. Say each pair once more.":"✅ Correct match. Choose the next English meaning.","correct");}else{recordSpeakingError(p.es,"matching");selected=null;setMatchMessage("❌ Not a match. “"+(enPair?enPair.en:"That meaning")+"” goes with “"+(enPair?enPair.es:"the other Spanish phrase")+"”. Try again.","wrong");}redraw();};esButtons.push({id:p.id,button:b});esCol.appendChild(b);});
     board.append(enCol,esCol);match.append(message,board);body.appendChild(match);
     navBtn("‹ Back",prev);navBtn("Next →",next,true);
   }
