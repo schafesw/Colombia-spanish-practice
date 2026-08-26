@@ -1423,6 +1423,30 @@ SPEAKING_FRAMES.push(
   ]}
 );
 
+/* v61: essential production frames for a true beginner. These are deliberately
+   short, reusable chunks; the learner swaps the final idea instead of
+   memorizing isolated vocabulary. */
+SPEAKING_FRAMES.push(
+  {id:"necesito",title:"Say what you need",formula:"Necesito + noun / infinitive",en:"I need…",guide:"presente",prompts:[
+    {en:"I need help.",es:"Necesito ayuda."},{en:"I need to find the bathroom.",es:"Necesito encontrar el baño."},{en:"I need a little more time.",es:"Necesito un poco más de tiempo."}
+  ]},
+  {id:"puedo",title:"Ask what you can do",formula:"¿Puedo + infinitive?",en:"Can I…?",guide:"presente",prompts:[
+    {en:"Can I pay by card?",es:"¿Puedo pagar con tarjeta?"},{en:"Can I sit here?",es:"¿Puedo sentarme aquí?"},{en:"Can I ask a question?",es:"¿Puedo hacer una pregunta?"}
+  ]},
+  {id:"estoy",title:"Say where you are and how you feel",formula:"Estoy + state / location",en:"I am…",guide:"ser-estar",prompts:[
+    {en:"I am at the hotel.",es:"Estoy en el hotel."},{en:"I am tired, but I am okay.",es:"Estoy cansado, pero estoy bien."},{en:"I am ready.",es:"Estoy listo."}
+  ]},
+  {id:"fui",title:"Tell what you did",formula:"Ayer fui / hice / tuve…",en:"Yesterday I…",guide:"pasado",prompts:[
+    {en:"Yesterday I went to the market.",es:"Ayer fui al mercado."},{en:"Yesterday I worked all day.",es:"Ayer trabajé todo el día."},{en:"Yesterday I had a meeting.",es:"Ayer tuve una reunión."}
+  ]},
+  {id:"quiero-que",title:"Express a wish about another person",formula:"Quiero que + subjunctive",en:"I want you to…",guide:"subjuntivo",prompts:[
+    {en:"I want you to speak slowly.",es:"Quiero que hables despacio."},{en:"I want you to come tomorrow.",es:"Quiero que vengas mañana."},{en:"I want you to tell me the truth.",es:"Quiero que me digas la verdad."}
+  ]},
+  {id:"me-pasa",title:"Explain what is happening",formula:"Me pasa que… / El problema es que…",en:"What is happening is…",guide:"conectores",prompts:[
+    {en:"The problem is that I do not understand.",es:"El problema es que no entiendo."},{en:"What is happening is that the app is not working.",es:"Me pasa que la aplicación no funciona."},{en:"The problem is that I am running late.",es:"El problema es que voy tarde."}
+  ]}
+);
+
 /* v60 quiz additions. Conversation questions test the response a learner
    would actually choose; fill blanks use a single, context-locked answer. */
 const V60_CONVERSATION_QUIZ=[

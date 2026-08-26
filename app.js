@@ -608,8 +608,8 @@ function micListen(){
       done=true;
       const alts=[];for(let i=0;i<e.results[0].length;i++)alts.push(e.results[0][i].transcript);
       const heard=alts[0]||"";
-      if(micMatch(alts,micTarget)){markPracticed(micTarget);renderMicPanel("idle","✅ Understood! I heard: “"+heard+"”");}
-      else renderMicPanel("idle","❌ I heard: “"+(heard||"…nothing")+"” — try again, slower and louder.");
+      if(micMatch(alts,micTarget)){clearSpeakingError(micTarget);markPracticed(micTarget);renderMicPanel("idle","✅ Understood! I heard: “"+heard+"”");}
+      else{recordSpeakingError(micTarget,"speech check");renderMicPanel("idle","❌ I heard: “"+(heard||"…nothing")+"” — try again, slower and louder. It is saved in your practice list.");}
     };
     rec.onerror=e=>{
       if(rec!==current||done)return;
@@ -1360,7 +1360,7 @@ function renderLessonStep(){
     };
     const message=lpEl("lp-match-feedback","Choose an English meaning first.");
     pairs.slice().sort(()=>Math.random()-0.5).forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp-match-btn";b.textContent=p.en;b.onclick=()=>{selected=p.id;message.textContent="Now tap the matching Spanish.";redraw();};enButtons.push({id:p.id,button:b});enCol.appendChild(b);});
-    pairs.slice().sort(()=>Math.random()-0.5).forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp-match-btn";b.textContent=p.es;b.onclick=()=>{if(!selected){message.textContent="Choose an English meaning first.";return;}if(selected===p.id){matched.add(p.id);selected=null;message.textContent=matched.size===pairs.length?"✅ Great — say the pairs once more.":"✅ Correct. Keep going.";}else{message.textContent="Not that one — try again.";}redraw();};esButtons.push({id:p.id,button:b});esCol.appendChild(b);});
+    pairs.slice().sort(()=>Math.random()-0.5).forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp-match-btn";b.textContent=p.es;b.onclick=()=>{if(!selected){message.textContent="Choose an English meaning first.";return;}if(selected===p.id){matched.add(p.id);clearSpeakingError(p.es);selected=null;message.textContent=matched.size===pairs.length?"✅ Great — say the pairs once more.":"✅ Correct. Keep going.";}else{recordSpeakingError(p.es,"matching");message.textContent="Not that one — try again. It is saved in your practice list.";}redraw();};esButtons.push({id:p.id,button:b});esCol.appendChild(b);});
     board.append(enCol,esCol);match.append(board,message);body.appendChild(match);
     navBtn("‹ Back",prev);navBtn("Next →",next,true);
   }
@@ -1375,7 +1375,7 @@ function renderLessonStep(){
       const redraw=()=>{output.textContent=chosen.length?chosen.map(x=>x.word).join(" "):"Your sentence will appear here…";chips.querySelectorAll("button").forEach(b=>b.disabled=chosen.some(x=>String(x.i)===b.dataset.i));};
       pieces.forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp-builder-chip";b.textContent=p.word;b.dataset.i=String(p.i);b.onclick=()=>{chosen.push(p);redraw();};chips.appendChild(b);});
       const actions=lpEl("lp-builder-actions");const clear=document.createElement("button");clear.type="button";clear.className="lp-nav-btn";clear.textContent="↩ Clear";clear.onclick=()=>{chosen.length=0;feedback.textContent="";redraw();};
-      const check=document.createElement("button");check.type="button";check.className="lp-nav-btn primary";check.textContent="Check sentence";check.onclick=()=>{const answer=chosen.map(x=>x.word).join(" ");const ok=normalizeQuizText(answer)===normalizeQuizText(target.es);feedback.textContent=ok?"✅ Correct — now say it out loud.":"Keep adjusting the order, then try again.";if(ok)speak(target.es,0.75);};
+      const check=document.createElement("button");check.type="button";check.className="lp-nav-btn primary";check.textContent="Check sentence";check.onclick=()=>{const answer=chosen.map(x=>x.word).join(" ");const ok=normalizeQuizText(answer)===normalizeQuizText(target.es);if(ok){clearSpeakingError(target.es);feedback.textContent="✅ Correct — now say it out loud.";speak(target.es,0.75);}else{recordSpeakingError(target.es,"sentence builder");feedback.textContent="Keep adjusting the order, then try again. It is saved in your practice list.";}};
       const hear=document.createElement("button");hear.type="button";hear.className="lp-nav-btn";hear.textContent="🔊 Hear model";hear.onclick=()=>speak(target.es,0.75);actions.append(clear,check,hear);builder.append(output,chips,feedback,actions);body.appendChild(builder);attachMic(body,target.es);
     }else body.appendChild(lpEl("lp-hint","No sentence is available for this lesson yet."));
     navBtn("‹ Back",prev);navBtn("Next →",next,true);
@@ -1388,7 +1388,7 @@ function renderLessonStep(){
       const box=lpEl("lp-typing");box.appendChild(lpEl("lp-typing-prompt",target.en));
       const input=document.createElement("input");input.type="text";input.className="lp-typing-input";input.placeholder="Escribe en español…";input.autocomplete="off";input.autocapitalize="sentences";
       const actions=lpEl("lp-typing-actions");const check=document.createElement("button");check.type="button";check.className="lp-nav-btn primary";check.textContent="Check answer";const hear=document.createElement("button");hear.type="button";hear.className="lp-nav-btn";hear.textContent="🔊 Hear model";hear.onclick=()=>speak(target.es,0.75);
-      const feedback=lpEl("lp-typing-feedback","");check.onclick=()=>{const ok=normalizeQuizText(input.value)===normalizeQuizText(target.es);feedback.innerHTML=ok?"✅ Correct — say it again without reading.":`Keep practicing. Model: <strong>${escapeVocabHtml(target.es)}</strong>`;if(ok)speak(target.es,0.75);attachMic(feedback,target.es);};actions.append(check,hear);box.append(input,actions,feedback);body.appendChild(box);addEnglishHint(body,target.en,"💡 Show English meaning");
+      const feedback=lpEl("lp-typing-feedback","");check.onclick=()=>{const ok=normalizeQuizText(input.value)===normalizeQuizText(target.es);if(ok){clearSpeakingError(target.es);feedback.innerHTML="✅ Correct — say it again without reading.";speak(target.es,0.75);}else{recordSpeakingError(target.es,"typed production");feedback.innerHTML=`Keep practicing. Model: <strong>${escapeVocabHtml(target.es)}</strong><small>Saved in your practice list.</small>`;}attachMic(feedback,target.es);};actions.append(check,hear);box.append(input,actions,feedback);body.appendChild(box);
     }else body.appendChild(lpEl("lp-hint","No typing prompt is available for this lesson yet."));
     navBtn("‹ Back",prev);navBtn("Next →",next,true);
   }
@@ -1406,11 +1406,13 @@ function renderLessonStep(){
   else if(step==="hablaA"||step==="hablaB"){
     const who=step==="hablaA"?"A":"B";
     title.textContent="🎭 Your turn — you are Person "+who+". Say your lines out loud, tap to check";
+    const help=document.createElement("button");help.type="button";help.className="lp-english-help";help.textContent="💡 Show English help";let englishShown=false;
+    help.onclick=()=>{englishShown=!englishShown;body.querySelectorAll(".lp-line-en").forEach(x=>x.hidden=!englishShown);help.textContent=englishShown?"🙈 Hide English help":"💡 Show English help";};body.appendChild(help);
     const d=lessonDialogue(lpLesson);
     const lines=d?d.versions[0].lines:[];
     lines.forEach(L=>{
       const hidden=L.who===who;
-      const row=lpEl("lp-line"+(hidden?" lp-me":""),"<strong>"+L.who+":</strong> <span class='lp-line-es"+(hidden?" lp-blur":"")+"'>"+L.es+"</span><div class='lp-line-en'>"+L.en+"</div>");
+      const row=lpEl("lp-line"+(hidden?" lp-me":""),"<strong>"+L.who+":</strong> <span class='lp-line-es"+(hidden?" lp-blur":"")+"'>"+L.es+"</span><div class='lp-line-en' hidden>"+L.en+"</div>");
       row.onclick=()=>{
         const esEl=row.querySelector(".lp-line-es");
         if(esEl.classList.contains("lp-blur"))esEl.classList.remove("lp-blur");
@@ -1449,8 +1451,8 @@ function renderLessonStep(){
       const b=document.createElement("button");b.type="button";b.className="lp-opt";b.textContent=opt;
       b.onclick=()=>{
         if(lpAnswered)return;lpAnswered=true;
-        if(opt===q.answer){b.classList.add("correct");lpScore++;fb.innerHTML="✅ ¡Correcto! <div class='lp-reveal'>📖 "+q.revEs+" — "+q.revEn+"</div>";speak(q.afterTts,0.75);}
-        else{b.classList.add("wrong");grid.querySelectorAll(".lp-opt").forEach(x=>{if(x.textContent===q.answer)x.classList.add("reveal");});fb.innerHTML="❌ Not quite. <div class='lp-reveal'>📖 "+q.revEs+" — "+q.revEn+"</div>";}
+        if(opt===q.answer){b.classList.add("correct");clearSpeakingError(q.revEs);lpScore++;fb.innerHTML="✅ ¡Correcto! <div class='lp-reveal'>📖 "+q.revEs+" — "+q.revEn+"</div>";speak(q.afterTts,0.75);}
+        else{b.classList.add("wrong");recordSpeakingError(q.revEs,"lesson quiz");grid.querySelectorAll(".lp-opt").forEach(x=>{if(x.textContent===q.answer)x.classList.add("reveal");});fb.innerHTML="❌ Not quite. <div class='lp-reveal'>📖 "+q.revEs+" — "+q.revEn+"</div><small>Saved in your practice list.</small>";}
         attachMic(fb,q.revEs);
         navBtn(lpQi<lpQs.length-1?"Next question →":"Finish →",()=>{
           if(lpQi<lpQs.length-1){lpQi++;lpAnswered=false;renderLessonStep();}
@@ -1769,6 +1771,39 @@ function srsDue(key){const card=srsStore[key];return !!card&&(!card.due||card.du
 function srsDueCount(){return Object.keys(srsStore).filter(srsDue).length;}
 function recordSrs(key,correct){const card=srsStore[key]||{reps:0,interval:0,lapses:0,due:0};if(correct){card.reps=(card.reps||0)+1;card.interval=Math.min((card.interval||0)+1,SRS_INTERVALS.length);card.due=Date.now()+SRS_INTERVALS[card.interval-1]*86400000;}else{card.lapses=(card.lapses||0)+1;card.reps=0;card.interval=0;card.due=Date.now()+86400000;}srsStore[key]=card;saveSrs();}
 function srsNextLabel(card){if(!card||!card.interval)return "tomorrow";const days=SRS_INTERVALS[Math.max(0,Math.min(SRS_INTERVALS.length-1,card.interval-1))];return days===1?"tomorrow":`in ${days} days`;}
+
+/* v61: a small, profile-scoped error journal. Quiz misses and speaking
+   hesitations become useful practice targets instead of disappearing into a
+   score counter. It stores the Spanish target, not private recordings. */
+const SPEAKING_ERROR_KEY="esco-speaking-errors-v1";
+let speakingErrors={};
+try{speakingErrors=JSON.parse(localStorage.getItem(SPEAKING_ERROR_KEY)||"{}");if(!speakingErrors||typeof speakingErrors!=="object")speakingErrors={};}catch(e){speakingErrors={};}
+function saveSpeakingErrors(){try{localStorage.setItem(SPEAKING_ERROR_KEY,JSON.stringify(speakingErrors));}catch(e){}}
+function speakingErrorId(target){return normalizeQuizText(target||"");}
+function recordSpeakingError(target,source){
+  const text=String(target||"").trim(),id=speakingErrorId(text);if(!id)return;
+  const old=speakingErrors[id]||{};
+  speakingErrors[id]={text:old.text||text,source:source||old.source||"practice",count:(old.count||0)+1,last:Date.now()};
+  saveSpeakingErrors();
+}
+function clearSpeakingError(target){const id=speakingErrorId(target);if(!id)return;delete speakingErrors[id];saveSpeakingErrors();}
+function renderSpeakingErrorJournal(root){
+  const entries=Object.values(speakingErrors||{}).sort((a,b)=>(b.last||0)-(a.last||0));
+  const card=document.createElement("section");card.className="error-journal";card.dataset.lessonView="today";
+  card.innerHTML=`<div class="error-journal-head"><div><div class="error-journal-kicker">🧠 YOUR PRACTICE LIST</div><div class="error-journal-title">Turn hesitation into progress</div></div><span class="error-journal-count">${entries.length}</span></div><p class="error-journal-sub">When a sentence feels difficult, it stays here until you can say it comfortably.</p>`;
+  const list=document.createElement("div");list.className="error-journal-list";
+  if(!entries.length){const empty=document.createElement("div");empty.className="error-journal-empty";empty.textContent="Your list is empty. Use “Need more practice” after a quiz or speaking frame.";list.appendChild(empty);}
+  entries.slice(0,8).forEach(item=>{
+    const row=document.createElement("div");row.className="error-journal-row";
+    const copy=document.createElement("div");copy.className="error-journal-copy";copy.innerHTML=`<strong>${escapeVocabHtml(item.text)}</strong><small>${escapeVocabHtml(item.source||"practice")} · ${item.count||1} attempt${(item.count||1)===1?"":"s"}</small>`;
+    const actions=document.createElement("div");actions.className="error-journal-actions";
+    const hear=document.createElement("button");hear.type="button";hear.className="error-journal-btn";hear.textContent="🔊";hear.title="Hear sentence";hear.setAttribute("aria-label","Hear sentence");hear.onclick=()=>speak(item.text,0.75);
+    const record=document.createElement("button");record.type="button";record.className="error-journal-btn";record.textContent="🎙️";record.title="Record yourself";record.setAttribute("aria-label","Record yourself");record.onclick=()=>openMicPanel(item.text);
+    const done=document.createElement("button");done.type="button";done.className="error-journal-btn done";done.textContent="✓";done.title="Remove from practice list";done.setAttribute("aria-label","Remove from practice list");done.onclick=()=>{clearSpeakingError(item.text);renderLessons();};
+    actions.append(hear,record,done);row.append(copy,actions);list.appendChild(row);
+  });
+  card.appendChild(list);root.appendChild(card);
+}
 const MISSION_KEY="esco-mission-progress-v1";
 let missionProgress={};
 try{missionProgress=JSON.parse(localStorage.getItem(MISSION_KEY)||"{}");if(!missionProgress||typeof missionProgress!=="object")missionProgress={};}catch(e){missionProgress={};}
@@ -1821,7 +1856,7 @@ function renderFramePractice(advance){
   frame.prompts.filter(x=>x!==prompt).forEach(x=>{const row=document.createElement("button");row.type="button";row.className="frame-example-row";row.innerHTML=`<span><strong>${escapeVocabHtml(x.es)}</strong><small>${escapeVocabHtml(x.en)}</small></span><span>🔊</span>`;row.onclick=()=>{markPractice("frames",frame.id);speak(x.es,0.75);};moreList.appendChild(row);});
   card.appendChild(more);
   const rating=lpEl("frame-rating");rating.innerHTML="<span>After saying it:</span>";
-  [["got","✅ I said it"],["practice","🔁 Need more practice"]].forEach(([kind,label])=>{const b=document.createElement("button");b.type="button";b.textContent=label;b.onclick=()=>{recordSrs("frame:"+frame.id,kind==="got");markPractice("frames",frame.id);rating.querySelectorAll("button").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");};rating.appendChild(b);});
+  [["got","✅ I said it"],["practice","🔁 Need more practice"]].forEach(([kind,label])=>{const b=document.createElement("button");b.type="button";b.textContent=label;b.onclick=()=>{recordSrs("frame:"+frame.id,kind==="got");if(kind==="got")clearSpeakingError(prompt.es);else recordSpeakingError(prompt.es,"sentence frame");markPractice("frames",frame.id);rating.querySelectorAll("button").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");};rating.appendChild(b);});
   card.appendChild(rating);
   const next=document.createElement("button");next.type="button";next.className="lp-nav-btn primary frame-next";next.textContent="Next sentence frame →";next.onclick=()=>renderFramePractice(true);card.appendChild(next);
   root.appendChild(card);
@@ -2042,6 +2077,10 @@ function renderProgressDashboard(root,done){
   const rapid=rrStats.attempts||0;
   const card=document.createElement("section");card.className="progress-dashboard";card.dataset.lessonView="today";
   card.innerHTML=`<div class="progress-dashboard-head"><div><div class="progress-kicker">📈 YOUR SPEAKING PROGRESS</div><div class="progress-title">Small steps become conversation</div></div><div class="progress-streak">🔥 ${dayInfo.streak}</div></div><div class="progress-metrics"><div><strong>${done}/${LESSONS.length}</strong><small>lessons</small></div><div><strong>${vocabCount}</strong><small>words practiced</small></div><div><strong>${phraseCount}</strong><small>phrases practiced</small></div><div><strong>${mastered}</strong><small>cards mastered</small></div></div><div class="progress-dashboard-note">${due?`🔁 ${due} review card${due===1?"":"s"} due today`:`✅ No review cards due today`} · ⚡ ${rapid} rapid response${rapid===1?"":"s"}</div>`;
+  const percent=LESSONS.length?done/LESSONS.length:0;
+  const pathLevel=percent<0.16?"A0 · Getting started":percent<0.38?"A1 · Everyday basics":percent<0.68?"A2 · Connected speech":"B1 · More natural conversation";
+  const ladder=document.createElement("div");ladder.className="progress-ladder";ladder.innerHTML=`<div class="progress-ladder-head"><strong>🧭 Your speaking path</strong><span>${pathLevel}</span></div><div class="progress-ladder-steps"><span class="on">Foundations</span><span class="${percent>=0.16?"on":""}">Daily life</span><span class="${percent>=0.38?"on":""}">Stories</span><span class="${percent>=0.68?"on":""}">Natural speech</span></div>`;
+  card.appendChild(ladder);
   root.appendChild(card);
 }
 
@@ -2084,7 +2123,7 @@ function renderLessons(){
   buildLessonViewTabs(root);
   const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
   const intro=document.createElement("div");intro.className="lesson-intro";intro.dataset.lessonView="today";
-  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-flow">Recommended path: Start Here → Travel → Daily Life → Build Sentences → Speak Naturally<br>Each lesson: 🎯 Goal → 🔑 Words → 👂 Listen → 🗣️ Say it → 🎭 Role-play → 🧱 Understand → 📖 Read → 🧪 Quiz → 🎯 Mission</div>`;
+  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-flow">Recommended path: Start Here → Travel → Daily Life → Build Sentences → Speak Naturally<br>Each lesson moves from recognition to production: 🎯 Goal → 🔑 Words → 👂 Listen → 🧩 Match → 🧱 Build → ⌨️ Type → 🎭 Role-play → 📖 Read → 🧪 Quiz → 🎯 Mission</div>`;
   root.appendChild(intro);
   renderRoutineCard(root);
   /* Continue / Start here (v21) */
@@ -2113,7 +2152,7 @@ function renderLessons(){
   let cTitle,cSub,cAction;
   if(resLesson&&!lessonProgress[resLesson.id]){
     cTitle="▶️ Continue: "+resLesson.title;
-    cSub="Step "+((resume.step|0)+1)+" of 12 — pick up where you left off";
+    cSub="Step "+((resume.step|0)+1)+" of "+lpSteps.length+" — pick up where you left off";
     cAction=()=>openLessonAt(resLesson,resume.step,resume.qi,resume.score);
   }else if(nextLesson){
     cTitle=(done===0?"▶️ Start here: ":"▶️ Next lesson: ")+nextLesson.title;
@@ -2128,6 +2167,7 @@ function renderLessons(){
   if(cAction){cont.onclick=cAction;cont.classList.add("tappable");}
   /* The primary resume action now lives in today-hub above; keep one clear CTA. */
   renderProgressDashboard(root,done);
+  renderSpeakingErrorJournal(root);
   let missedCount=srsDueCount();
   if(!missedCount){try{const s=JSON.parse(localStorage.getItem("esco-quiz-v1")||"{}");missedCount=s.missed?Object.keys(s.missed).length:0;}catch(e){}}
   /* Daily practice — one compact row (v22) */
@@ -2213,7 +2253,7 @@ function renderLessons(){
   root.appendChild(bkLabel);
   /* Backup / restore progress (v17) */
   const bk=document.createElement("div");bk.className="backup-row";bk.dataset.lessonView="practice";
-  const BK_KEYS=["esco-quiz-v1","esco-srs-v1","esco-lesson-progress-v1","esco-mission-progress-v1","esco-reading-progress-v1","esco-routine-v1","esco-routine-v2","esco-routine-v3","esco-practice-v1","esco-days-v1"];
+  const BK_KEYS=["esco-quiz-v1","esco-srs-v1","esco-speaking-errors-v1","esco-lesson-progress-v1","esco-mission-progress-v1","esco-reading-progress-v1","esco-routine-v1","esco-routine-v2","esco-routine-v3","esco-practice-v1","esco-days-v1"];
   const b1=document.createElement("button");b1.type="button";b1.className="backup-btn";b1.textContent="💾 Copy backup";
   b1.onclick=()=>{
     const data={};BK_KEYS.forEach(k=>{const v=localStorage.getItem(k);if(v)data[k]=v;});
@@ -2377,17 +2417,17 @@ showGramGroup("tiempos");
 // ── Quiz ──────────────────────────────────────────────────────────────────────
 const CONVERSATION_QUIZ=[
   {kind:"meaning",es:"¿Cómo te llamas?",en:"What's your name?",tts:"¿Cómo te llamas?",cat:"conversaciones",choices:["What's your name?","Where do you live?","What do you do for work?","Do you have siblings?"]},
-  {kind:"reply",es:"¿Cómo te llamas?",en:"Me llamo Laura.",tts:"¿Cómo te llamas?",cat:"conversaciones",choices:["Me llamo Laura.","Vivo en Medellín.","Trabajo como chef.","Siga derecho."]},
+  {kind:"reply",es:"¿Cómo te llamas?",quizPrompt:"Reply naturally: ¿Cómo te llamas?",en:"Me llamo Laura.",tts:"¿Cómo te llamas?",cat:"conversaciones",choices:["Me llamo Laura.","Vivo en Medellín.","Trabajo como chef.","Siga derecho."]},
   {kind:"listening",es:"Me llamo Laura. Mucho gusto.",en:"My name is Laura. Nice to meet you.",tts:"Me llamo Laura. Mucho gusto.",cat:"conversaciones",choices:["My name is Laura. Nice to meet you.","Yesterday I met a new person.","I work as an engineer.","I live near the park."]},
   {kind:"tense",es:"¿Cuál frase habla de un plan futuro?",en:"Mañana voy a presentarme a mis nuevos vecinos.",tts:"Mañana voy a presentarme a mis nuevos vecinos.",cat:"conversaciones",choices:["Mañana voy a presentarme a mis nuevos vecinos.","Me llamo Laura.","Ayer conocí a una persona nueva.","Le dije mi nombre."]},
   {kind:"meaning",es:"Trabajo como ingeniero.",en:"I work as an engineer.",tts:"Trabajo como ingeniero.",cat:"conversaciones",choices:["I work as an engineer.","I'm going to study medicine.","I worked at the office yesterday.","I'm a passenger."]},
   {kind:"reply",es:"¿En qué trabajas?",en:"Trabajo como ingeniero.",tts:"¿En qué trabajas?",cat:"conversaciones",choices:["Trabajo como ingeniero.","Voy a vivir en Bogotá.","Tengo una hermana.","Me gusta leer."]},
   {kind:"listening",es:"Voy a estudiar para ser médico.",en:"I'm going to study to become a doctor.",tts:"Voy a estudiar para ser médico.",cat:"conversaciones",choices:["I'm going to study to become a doctor.","Yesterday I worked at the office.","Go straight and turn left.","I like my job."]},
-  {kind:"tense",es:"¿Cuál frase está en pasado?",en:"Ayer trabajé en la oficina.",tts:"Ayer trabajé en la oficina.",cat:"conversaciones",choices:["Ayer trabajé en la oficina.","Trabajo como ingeniero.","Voy a estudiar para ser médico.","¿Qué vas a estudiar?"]},
+  {kind:"tense",es:"¿Cuál frase está en pasado?",quizPrompt:"Past tense: which sentence describes the work day?",en:"Ayer trabajé en la oficina.",tts:"Ayer trabajé en la oficina.",cat:"conversaciones",choices:["Ayer trabajé en la oficina.","Trabajo como ingeniero.","Voy a estudiar para ser médico.","¿Qué vas a estudiar?"]},
   {kind:"meaning",es:"¿Dónde vives?",en:"Where do you live?",tts:"¿Dónde vives?",cat:"conversaciones",choices:["Where do you live?","Where are you going to live?","Where did you live before?","Where is the bathroom?"]},
-  {kind:"reply",es:"¿Dónde vives?",en:"Vivo en Medellín, cerca del parque.",tts:"¿Dónde vives?",cat:"conversaciones",choices:["Vivo en Medellín, cerca del parque.","Voy a pasar tiempo con ellos.","Viví en Cali con mi familia.","Claro, con mucho gusto."]},
+  {kind:"reply",es:"¿Dónde vives?",quizPrompt:"Reply with where you live: ¿Dónde vives?",en:"Vivo en Medellín, cerca del parque.",tts:"¿Dónde vives?",cat:"conversaciones",choices:["Vivo en Medellín, cerca del parque.","Voy a pasar tiempo con ellos.","Viví en Cali con mi familia.","Claro, con mucho gusto."]},
   {kind:"listening",es:"Voy a vivir en Bogotá el próximo año.",en:"I'm going to live in Bogotá next year.",tts:"Voy a vivir en Bogotá el próximo año.",cat:"conversaciones",choices:["I'm going to live in Bogotá next year.","I live in Medellín.","I lived in Cali with my family.","I'm going to request a taxi."]},
-  {kind:"tense",es:"¿Cuál frase está en pasado?",en:"Viví en Cali con mi familia.",tts:"Viví en Cali con mi familia.",cat:"conversaciones",choices:["Viví en Cali con mi familia.","Vivo en Medellín.","Voy a vivir en Bogotá.","¿Dónde vives?"]},
+  {kind:"tense",es:"¿Cuál frase está en pasado?",quizPrompt:"Past tense: which sentence describes where someone lived?",en:"Viví en Cali con mi familia.",tts:"Viví en Cali con mi familia.",cat:"conversaciones",choices:["Viví en Cali con mi familia.","Vivo en Medellín.","Voy a vivir en Bogotá.","¿Dónde vives?"]},
   {kind:"meaning",es:"¿Tienes hermanos?",en:"Do you have siblings?",tts:"¿Tienes hermanos?",cat:"conversaciones",choices:["Do you have siblings?","Do you have pets?","What are you going to do?","Do you like sports?"]},
   {kind:"reply",es:"¿Qué vas a hacer con tu familia?",en:"Voy a pasar tiempo con ellos.",tts:"¿Qué vas a hacer con tu familia?",cat:"conversaciones",choices:["Voy a pasar tiempo con ellos.","Sí, tengo una hermana.","Ayer cené con mis padres.","No me gusta mi trabajo."]},
   {kind:"listening",es:"Ayer cené con mis padres.",en:"Yesterday I had dinner with my parents.",tts:"Ayer cené con mis padres.",cat:"conversaciones",choices:["Yesterday I had dinner with my parents.","I have a sister and a brother.","I'm going to spend time with them.","It is delicious."]},
@@ -2395,19 +2435,19 @@ const CONVERSATION_QUIZ=[
   {kind:"meaning",es:"Siga derecho y gire a la izquierda.",en:"Go straight and turn left.",tts:"Siga derecho y gire a la izquierda.",cat:"conversaciones",choices:["Go straight and turn left.","Turn right at the traffic light.","The address is nearby.","Take me to this address."]},
   {kind:"reply",es:"Disculpe, ¿me regala la dirección?",en:"Siga derecho y gire a la izquierda.",tts:"Disculpe, ¿me regala la dirección?",cat:"conversaciones",choices:["Siga derecho y gire a la izquierda.","Me llamo Laura.","Voy a preparar una sopa.","Está al lado de la habitación."]},
   {kind:"listening",es:"Va a girar en la próxima esquina.",en:"You are going to turn at the next corner.",tts:"Va a girar en la próxima esquina.",cat:"conversaciones",choices:["You are going to turn at the next corner.","I went straight and asked at the corner.","Go straight and turn left.","The driver was very kind."]},
-  {kind:"tense",es:"¿Cuál frase está en pasado?",en:"Seguí derecho y pregunté en la esquina.",tts:"Seguí derecho y pregunté en la esquina.",cat:"conversaciones",choices:["Seguí derecho y pregunté en la esquina.","Siga derecho y gire a la izquierda.","Va a girar en la próxima esquina.","¿Cómo voy a llegar al parqueadero?"]},
+  {kind:"tense",es:"¿Cuál frase está en pasado?",quizPrompt:"Past tense: which sentence tells what happened while finding the address?",en:"Seguí derecho y pregunté en la esquina.",tts:"Seguí derecho y pregunté en la esquina.",cat:"conversaciones",choices:["Seguí derecho y pregunté en la esquina.","Siga derecho y gire a la izquierda.","Va a girar en la próxima esquina.","¿Cómo voy a llegar al parqueadero?"]},
   {kind:"meaning",es:"¿Me lleva a esta dirección, por favor?",en:"Can you take me to this address, please?",tts:"¿Me lleva a esta dirección, por favor?",cat:"conversaciones",choices:["Can you take me to this address, please?","Are we going to request a car?","Did you take a taxi yesterday?","Where is the parking lot?"]},
   {kind:"reply",es:"¿Qué vas a pedir para llegar a la dirección?",en:"Voy a pedir un taxi.",tts:"¿Qué vas a pedir para llegar a la dirección?",cat:"conversaciones",choices:["Voy a pedir un taxi.","Claro, con mucho gusto.","Trabajo como conductor.","Ayer trabajé en la oficina."]},
   {kind:"listening",es:"Claro, con mucho gusto.",en:"Of course, with pleasure.",tts:"Claro, con mucho gusto.",cat:"conversaciones",choices:["Of course, with pleasure.","Yes, I'm going to request a taxi.","The driver was very kind.","I live near the park."]},
-  {kind:"tense",es:"¿Cuál frase está en pasado?",en:"Sí, el conductor fue muy amable.",tts:"Sí, el conductor fue muy amable.",cat:"conversaciones",choices:["Sí, el conductor fue muy amable.","¿Me lleva a esta dirección?","Voy a pedir un taxi.","Vamos a pedir un carro."]},
+  {kind:"tense",es:"¿Cuál frase está en pasado?",quizPrompt:"Past tense: which sentence describes the driver?",en:"Sí, el conductor fue muy amable.",tts:"Sí, el conductor fue muy amable.",cat:"conversaciones",choices:["Sí, el conductor fue muy amable.","¿Me lleva a esta dirección?","Voy a pedir un taxi.","Vamos a pedir un carro."]},
   {kind:"meaning",es:"¿Cocinamos juntos?",en:"Shall we cook together?",tts:"¿Cocinamos juntos?",cat:"conversaciones",choices:["Shall we cook together?","What are we going to cook?","What did you cook yesterday?","I cut the vegetables."]},
   {kind:"reply",es:"¿Qué vamos a cocinar?",en:"Vamos a preparar una sopa.",tts:"¿Qué vamos a cocinar?",cat:"conversaciones",choices:["Vamos a preparar una sopa.","Dale, yo corto las verduras.","Ayer hervimos la comida.","Me gusta la música."]},
   {kind:"listening",es:"Dale, yo corto las verduras.",en:"Sure, I'll cut the vegetables.",tts:"Dale, yo corto las verduras.",cat:"conversaciones",choices:["Sure, I'll cut the vegetables.","We are going to make a soup.","Yesterday we tasted the sauce.","Can you give me the address?"]},
-  {kind:"tense",es:"¿Cuál frase está en pasado?",en:"Ayer hervimos la comida y probamos la salsa.",tts:"Ayer hervimos la comida y probamos la salsa.",cat:"conversaciones",choices:["Ayer hervimos la comida y probamos la salsa.","¿Cocinamos juntos?","Vamos a preparar una sopa.","Yo corto las verduras."]},
+  {kind:"tense",es:"¿Cuál frase está en pasado?",quizPrompt:"Past tense: which sentence describes cooking yesterday?",en:"Ayer hervimos la comida y probamos la salsa.",tts:"Ayer hervimos la comida y probamos la salsa.",cat:"conversaciones",choices:["Ayer hervimos la comida y probamos la salsa.","¿Cocinamos juntos?","Vamos a preparar una sopa.","Yo corto las verduras."]},
   {kind:"meaning",es:"¿Dónde está el baño?",en:"Where is the bathroom?",tts:"¿Dónde está el baño?",cat:"conversaciones",choices:["Where is the bathroom?","Where is the bedroom?","Where was the towel?","Are you going to tidy the bedroom?"]},
   {kind:"reply",es:"¿Vas a arreglar la habitación?",en:"Sí, voy a cambiar la sábana y la cobija.",tts:"¿Vas a arreglar la habitación?",cat:"conversaciones",choices:["Sí, voy a cambiar la sábana y la cobija.","Está al lado de la habitación.","Ayer la dejé junto al lavamanos.","Siga derecho."]},
   {kind:"listening",es:"Ayer la dejé junto al lavamanos.",en:"Yesterday I left it next to the sink.",tts:"Ayer la dejé junto al lavamanos.",cat:"conversaciones",choices:["Yesterday I left it next to the sink.","It is next to the bedroom.","I'm going to change the sheet.","Where is the bathroom?"]},
-  {kind:"tense",es:"¿Cuál frase describe el presente?",en:"Está al lado de la habitación.",tts:"Está al lado de la habitación.",cat:"conversaciones",choices:["Está al lado de la habitación.","Voy a cambiar la sábana.","Ayer la dejé junto al lavamanos.","¿Dónde estaba la toalla?"]},
+  {kind:"tense",es:"¿Cuál frase describe el presente?",quizPrompt:"Present tense: which sentence describes the current location?",en:"Está al lado de la habitación.",tts:"Está al lado de la habitación.",cat:"conversaciones",choices:["Está al lado de la habitación.","Voy a cambiar la sábana.","Ayer la dejé junto al lavamanos.","¿Dónde estaba la toalla?"]},
   {kind:"pronoun",es:"¿Me lo puede repetir, por favor?",en:"Sí, se lo repito despacio.",tts:"¿Me lo puede repetir, por favor?",cat:"pronombres",choices:["Sí, se lo repito despacio.","Sí, la tengo aquí.","No, pero me la puede enviar.","Sí, necesito ayuda."]},
   {kind:"pronoun",es:"¿La dirección la tiene?",en:"Sí, la tengo aquí.",tts:"¿La dirección la tiene?",cat:"pronombres",choices:["Sí, la tengo aquí.","Sí, se lo repito despacio.","Sí, necesito ayuda.","La voy a buscar mañana."]},
   {kind:"pronoun",es:"¿Le explicaste el problema?",en:"Sí, se lo expliqué al técnico.",tts:"¿Le explicaste el problema?",cat:"pronombres",choices:["Sí, se lo expliqué al técnico.","Sí, la tengo aquí.","No, pero me la puede enviar.","Sí, se lo repito despacio."]},
@@ -2839,11 +2879,11 @@ function nQ(){
       const correct=strict||loose,fb=document.getElementById("quiz-fb"),mk=cQ.es+"|"+cQ.answer;
       submit.disabled=true;input.classList.add(correct?"correct":"wrong");
       if(correct){
-        qC++;qS++;recordSrs(mk,true);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;
+        qC++;qS++;recordSrs(mk,true);clearSpeakingError(cQ.tts||cQ.es);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;
         fb.innerHTML=(strict?"✅ ¡Correcto!":"✅ Correcto — check the accent marks.")+" <small class='srs-next'>Next review: "+srsNextLabel(srsStore[mk])+"</small>";fb.style.color="var(--teal)";speak(cQ.tts,0.75);
         if(qStore.missed[mk]){qStore.missed[mk]--;if(qStore.missed[mk]<=0)delete qStore.missed[mk];}
       }else{
-        qS=0;recordSrs(mk,false);document.getElementById("q-streak").textContent="🔥 0";
+        qS=0;recordSrs(mk,false);recordSpeakingError(cQ.tts||cQ.es,"dictation");document.getElementById("q-streak").textContent="🔥 0";
         fb.innerHTML="❌ Not quite <small class='srs-next'>Review again tomorrow.</small>";fb.style.color="var(--pink)";
         input.value=expected;
         qStore.missed[mk]=(qStore.missed[mk]||0)+2;
@@ -2876,9 +2916,9 @@ function nQ(){
     b.onclick=()=>{if(an)return;an=true;qT++;document.getElementById("q-total").textContent=qT;
       const fb=document.getElementById("quiz-fb");
       const mk=cQ.es+"|"+cQ.answer;
-       if(normalizeQuizText(opt.answer)===normalizeQuizText(cQ.answer)){b.classList.add("correct");qC++;qS++;recordSrs(mk,true);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.innerHTML=`✅ ¡Correcto! <small class="srs-next">Next review: ${srsNextLabel(srsStore[mk])}</small>`;fb.style.color="var(--teal)";speak(cQ.tts,0.75);
+       if(normalizeQuizText(opt.answer)===normalizeQuizText(cQ.answer)){b.classList.add("correct");qC++;qS++;recordSrs(mk,true);clearSpeakingError(cQ.tts||cQ.es);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.innerHTML=`✅ ¡Correcto! <small class="srs-next">Next review: ${srsNextLabel(srsStore[mk])}</small>`;fb.style.color="var(--teal)";speak(cQ.tts,0.75);
         if(qStore.missed[mk]){qStore.missed[mk]--;if(qStore.missed[mk]<=0)delete qStore.missed[mk];}}
-       else{b.classList.add("wrong");qS=0;recordSrs(mk,false);document.getElementById("q-streak").textContent="🔥 0";fb.innerHTML="❌ Incorrecto <small class='srs-next'>Review again tomorrow.</small>";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(normalizeQuizText(x.textContent)===normalizeQuizText(cQ.answer))x.classList.add("reveal");});
+       else{b.classList.add("wrong");qS=0;recordSrs(mk,false);recordSpeakingError(cQ.tts||cQ.es,"quiz");document.getElementById("q-streak").textContent="🔥 0";fb.innerHTML="❌ Incorrecto <small class='srs-next'>Review again tomorrow.</small>";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(normalizeQuizText(x.textContent)===normalizeQuizText(cQ.answer))x.classList.add("reveal");});
         qStore.missed[mk]=(qStore.missed[mk]||0)+2;}
       document.getElementById("quiz-reveal").innerHTML=`<div>🇨🇴 <strong>${spanishAnswer(cQ)}</strong></div><div>🇺🇸 ${englishAnswer(cQ)}</div>`;
       attachMic(document.getElementById("quiz-reveal"),spanishAnswer(cQ));
