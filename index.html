@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Español CO"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="styles.css?v=61.0"/>
+<link rel="stylesheet" href="styles.css?v=62.0"/>
 </head>
 <body>
 <div id="app">
@@ -237,7 +237,12 @@
     <div class="qc-label">Translate to English</div>
     <div class="qc-word" id="qc-word">—</div>
     <button class="qc-hear" onclick="quizHear()">🔊 Listen</button>
+    <div class="quiz-help-row" id="quiz-help-row" hidden>
+      <button type="button" class="quiz-help-btn" id="quiz-help">💡 Show English help</button>
+      <div class="quiz-help-text" id="quiz-help-text" hidden></div>
+    </div>
   </div>
+  <div class="quiz-review-banner" id="quiz-review-banner" hidden></div>
   <div class="quiz-feedback" id="quiz-fb"></div>
   <div class="quiz-reveal" id="quiz-reveal"></div>
   <div class="quiz-opts" id="quiz-opts"></div>
@@ -257,6 +262,6 @@
 </div>
 </div>
 
-<script src="data.js?v=61.0"></script><script src="app.js?v=61.0"></script>
+<script src="data.js?v=62.0"></script><script src="app.js?v=62.0"></script>
 </body>
 </html>

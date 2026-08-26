@@ -1108,3 +1108,19 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
   .error-journal-row{align-items:flex-start;}
   .error-journal-btn{width:29px;height:29px;}
 }
+
+/* v62: make every practice result explicit and keep review controls close to
+   the activity that produced them. */
+.lp-match-feedback{min-height:34px;padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:rgba(255,255,255,.035);line-height:1.35;}
+.lp-match-feedback[data-state="selected"]{border-color:rgba(232,180,74,.35);color:var(--gold);background:rgba(232,180,74,.08);}
+.lp-match-feedback[data-state="correct"]{border-color:rgba(52,211,153,.38);color:var(--green);background:rgba(52,211,153,.08);}
+.lp-match-feedback[data-state="wrong"],.lp-match-feedback[data-state="error"]{border-color:rgba(232,93,117,.38);color:var(--pink);background:rgba(232,93,117,.08);}
+.reading-question-feedback{min-height:0;margin-top:8px;font-size:.7rem;font-weight:850;line-height:1.35;}
+.reading-question-feedback.correct{color:var(--green);}
+.reading-question-feedback.wrong{color:var(--pink);}
+.quiz-help-row{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:10px;}
+.quiz-help-btn{padding:7px 10px;border:1px solid rgba(167,139,250,.36);border-radius:9px;background:rgba(167,139,250,.08);color:var(--purple);font:inherit;font-size:.64rem;font-weight:850;}
+.quiz-help-text{flex:1 1 100%;padding:8px 10px;border-left:2px solid var(--purple);color:var(--muted);font-size:.72rem;font-style:italic;line-height:1.4;text-align:left;}
+.quiz-review-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;padding:10px 11px;border:1px solid rgba(232,93,117,.34);border-radius:12px;background:rgba(232,93,117,.08);color:var(--text);font-size:.7rem;line-height:1.35;}
+.quiz-review-banner strong{color:var(--pink);}
+.quiz-review-exit{flex:0 0 auto;padding:6px 8px;border:1px solid rgba(255,255,255,.18);border-radius:8px;background:rgba(255,255,255,.06);color:var(--text);font:inherit;font-size:.62rem;font-weight:850;}
