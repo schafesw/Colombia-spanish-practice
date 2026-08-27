@@ -1665,7 +1665,7 @@ async function rrBeginRecording(token){
     rrMaxTimer=setTimeout(()=>rrStopRecording(),8000);
   }catch(e){rrStopStream();rrCloseAudio();rrReveal("mic-error");}
 }
-function renderRapida(keepSame){
+function renderRapida(keepSame,questionRate){
   rrStop();
   rrClearRecording();rrRated=false;
   const promptToken=rrPromptToken;
@@ -1693,16 +1693,22 @@ function renderRapida(keepSame){
   const qBox=lpEl("rr-question",rrCurrent.qEs);
   qBox.onclick=()=>speak(rrCurrent.q,0.75);
   card.appendChild(qBox);
-  card.appendChild(lpEl("rr-qen",rrCurrent.qEn||""));
+  if(rrCurrent.qEn){
+    const qHelp=lpEl("rr-qen rr-qen-help",rrCurrent.qEn);qHelp.hidden=true;qHelp.id="rr-question-help";card.appendChild(qHelp);
+    const helpBtn=document.createElement("button");helpBtn.type="button";helpBtn.className="rr-help-toggle";helpBtn.textContent="💡 Show English help";
+    helpBtn.onclick=()=>{qHelp.hidden=!qHelp.hidden;helpBtn.textContent=qHelp.hidden?"💡 Show English help":"🙈 Hide English help";};card.appendChild(helpBtn);
+  }
   const cd=lpEl("rr-countdown","🎧");
   card.appendChild(cd);
   card.appendChild(lpEl("lp-hint",`🗣️ Answer OUT LOUD — any answer that fits. You get ${pace.seconds} seconds to think, then your microphone starts automatically.`));
   const controls=lpEl("lp-nav");
   const repeatBtn=document.createElement("button");repeatBtn.type="button";repeatBtn.className="lp-nav-btn";repeatBtn.textContent="🔁 Repeat question";
   repeatBtn.onclick=()=>renderRapida(true);
+  const slowBtn=document.createElement("button");slowBtn.type="button";slowBtn.className="lp-nav-btn";slowBtn.textContent="🐢 Hear slower";
+  slowBtn.onclick=()=>renderRapida(true,0.5);
   const revealBtn=document.createElement("button");revealBtn.type="button";revealBtn.className="lp-nav-btn";revealBtn.textContent="Reveal without recording";
   revealBtn.onclick=()=>rrReveal("skipped");
-  controls.appendChild(repeatBtn);
+  controls.append(repeatBtn,slowBtn);
   controls.appendChild(revealBtn);
   card.appendChild(controls);
   const recNote=lpEl("rr-recording-note","After the countdown, recording starts automatically.");recNote.className="rr-recording-note";card.appendChild(recNote);
@@ -1719,7 +1725,7 @@ function renderRapida(keepSame){
       cd.textContent=String(n);
     },1000);
   };
-  speak(rrCurrent.q,0.75,startCountdown);
+  speak(rrCurrent.q,typeof questionRate==="number"?questionRate:0.75,startCountdown);
 }
 function rrReveal(reason){
   rrStop();
@@ -1765,6 +1771,8 @@ function rrReveal(reason){
 }
 function rrRate(kind){
   if(!rrRated){rrRated=true;rrStats.attempts++;if(kind==="got")rrStats.got++;if(kind==="practice")rrStats.practice++;if(kind==="skipped")rrStats.skipped++;saveRRStats();}
+  if(kind==="got")clearSpeakingError(rrCurrent&&rrCurrent.qEs);
+  else if(kind==="practice"||kind==="skipped")recordSpeakingError(rrCurrent&&rrCurrent.qEs,"rapid response");
   document.querySelectorAll(".rr-rating button").forEach(b=>b.classList.toggle("selected",b.dataset.rate===kind));
   const status=document.querySelector(".rr-rate-status");
   if(status)status.textContent=kind==="got"?"Nice — keep that response available for real conversation.":kind==="practice"?"Good choice. Try the same question again and say it a little more smoothly.":"No problem. Listen to the model, then take the next question when ready.";
