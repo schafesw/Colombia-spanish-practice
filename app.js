@@ -2995,6 +2995,27 @@ function showPage(id){
   if(id==="lecciones"&&typeof renderLessons==="function"){lpLesson=null;renderLessons();}
   if(id==="vocab"||id==="gram")routineDockHide();
 }
+
+/* v64: iPhone-style horizontal tab swipes without hijacking vertical scroll. */
+function initTabSwipe(){
+  const scroller=document.querySelector(".scroll");if(!scroller)return;
+  let start=null;
+  const interactive="button,input,select,textarea,a,summary,[contenteditable='true'],.quiz-mode-row,.quiz-cat-row,.vocab-pills,.phrase-menu,.gram-tabs,.phonetic-tabs";
+  scroller.addEventListener("touchstart",e=>{
+    if(e.touches.length!==1||e.target.closest(interactive)){start=null;return;}
+    const t=e.touches[0];start={x:t.clientX,y:t.clientY,time:Date.now()};
+  },{passive:true});
+  scroller.addEventListener("touchend",e=>{
+    if(!start||e.changedTouches.length!==1){start=null;return;}
+    const t=e.changedTouches[0],dx=t.clientX-start.x,dy=t.clientY-start.y,duration=Date.now()-start.time;start=null;
+    if(duration>800||Math.abs(dx)<72||Math.abs(dx)<Math.abs(dy)*1.35)return;
+    const active=PG.findIndex(p=>document.getElementById("page-"+p)?.classList.contains("active"));
+    if(active<0)return;
+    const next=active+(dx<0?1:-1);
+    if(next>=0&&next<PG.length)showPage(PG[next]);
+  },{passive:true});
+}
+initTabSwipe();
  
 
 
