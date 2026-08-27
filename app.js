@@ -359,7 +359,12 @@ let practiceStore={vocab:{},phrases:{}};
 try{practiceStore=Object.assign(practiceStore,JSON.parse(localStorage.getItem(PRACTICE_KEY)||"{}"));practiceStore.vocab=practiceStore.vocab||{};practiceStore.phrases=practiceStore.phrases||{};}catch(e){practiceStore={vocab:{},phrases:{}};}
 function savePractice(){try{localStorage.setItem(PRACTICE_KEY,JSON.stringify(practiceStore));}catch(e){}}
 function practiceKey(value){return String(value||"").trim().toLowerCase();}
-function markPractice(type,value){const key=practiceKey(value);if(!key)return;const bucket=practiceStore[type]||(practiceStore[type]={});bucket[key]=(bucket[key]||0)+1;savePractice();}
+function refreshVocabProgress(){
+  const cat=typeof VOCAB_CATS!=="undefined"?VOCAB_CATS.find(c=>c.id===aC):null,keys=vocabKeys(cat),strong=document.querySelector("#vocab-list .vocab-progress strong"),fill=document.querySelector("#vocab-list .vocab-progress-fill");
+  if(!cat||!keys.length||!strong)return;
+  const done=practicedCount("vocab",keys);strong.textContent=`${done} of ${keys.length} practiced`;if(fill)fill.style.width=`${Math.round(done/keys.length*100)}%`;
+}
+function markPractice(type,value){const key=practiceKey(value);if(!key)return;const bucket=practiceStore[type]||(practiceStore[type]={});bucket[key]=(bucket[key]||0)+1;savePractice();refreshVocabProgress();}
 function practiced(type,value){return !!(practiceStore[type]&&practiceStore[type][practiceKey(value)]);}
 function practicedCount(type,values){return (values||[]).filter(v=>practiced(type,v)).length;}
 function vocabKeys(cat){
@@ -510,12 +515,13 @@ function addVocabExample(card,item,catId,index){
    ═══════════════════════════════════════════════════════════════════════════ */
 const SPEECH_CHECK_ENABLED=true;
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition||null;
-let micPanel=null,micRecorder=null,micChunks=[],micUrl=null,micTarget="",micStream=null;
+let micPanel=null,micRecorder=null,micChunks=[],micUrl=null,micTarget="",micStream=null,micPracticeType="";
 function micSupported(){return !!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder);}
 function micStopStream(){if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null;}}
 function closeMicPanel(){if(micPanel)micPanel.style.display="none";micStopStream();try{if(micRecorder&&micRecorder.state==="recording")micRecorder.stop();}catch(e){}}
-function openMicPanel(target){
+function openMicPanel(target,practiceType){
   micTarget=target;
+  micPracticeType=practiceType||"";
   if(micUrl){URL.revokeObjectURL(micUrl);micUrl=null;}
   if(!micPanel){micPanel=document.createElement("div");micPanel.className="mic-panel";document.body.appendChild(micPanel);}
   renderMicPanel("idle");
@@ -545,6 +551,7 @@ async function micStart(){
       if(micUrl)URL.revokeObjectURL(micUrl);
       micUrl=URL.createObjectURL(blob);
       micStopStream();
+      if(micPracticeType)markPractice(micPracticeType,micTarget);
       markPracticed(micTarget);renderMicPanel("idle","Done ✅ — tap Your voice, then Model. Do they match?");
     };
     micRecorder.start();
@@ -608,7 +615,7 @@ function micListen(){
       done=true;
       const alts=[];for(let i=0;i<e.results[0].length;i++)alts.push(e.results[0][i].transcript);
       const heard=alts[0]||"";
-      if(micMatch(alts,micTarget)){clearSpeakingError(micTarget);markPracticed(micTarget);renderMicPanel("idle","✅ Understood! I heard: “"+heard+"”");}
+      if(micMatch(alts,micTarget)){clearSpeakingError(micTarget);if(micPracticeType)markPractice(micPracticeType,micTarget);markPracticed(micTarget);renderMicPanel("idle","✅ Understood! I heard: “"+heard+"”");}
       else{recordSpeakingError(micTarget,"speech check");renderMicPanel("idle","❌ I heard: “"+(heard||"…nothing")+"” — try again, slower and louder. It is saved in your practice list.");}
     };
     rec.onerror=e=>{
@@ -634,18 +641,18 @@ function markPracticed(target){
     });
   }catch(e){}
 }
-function attachMic(container,target){
+function attachMic(container,target,practiceType){
   if(!target)return;
   if(!micSupported()&&!(SPEECH_CHECK_ENABLED&&SR))return;
   const b=document.createElement("button");
   b.type="button";b.className="mic-mini";b.textContent="🎙️";b.title="Practice pronunciation";
-  b.onclick=e=>{e.stopPropagation();openMicPanel(target);};
+  b.onclick=e=>{e.stopPropagation();openMicPanel(target,practiceType);};
   container.appendChild(b);
 }
 
 function rV(){
   const cat=VC.find(c=>c.id===aC);const list=document.getElementById("vocab-list");list.innerHTML="";
-  const keys=vocabKeys(cat);if(keys.length){const done=practicedCount("vocab",keys);const p=document.createElement("div");p.className="vocab-progress";p.innerHTML=`<strong>${done} of ${keys.length} practiced</strong> · Tap a word or record yourself to count it.<div class="vocab-progress-track"><div class="vocab-progress-fill" style="width:${Math.round(done/keys.length*100)}%"></div></div>`;list.appendChild(p);}
+  const keys=vocabKeys(cat);if(keys.length){const done=practicedCount("vocab",keys);const p=document.createElement("div");p.className="vocab-progress";p.innerHTML=`<strong>${done} of ${keys.length} practiced</strong> · Tap a word, hear its example, or record yourself to count it.<div class="vocab-progress-track"><div class="vocab-progress-fill" style="width:${Math.round(done/keys.length*100)}%"></div></div>`;list.appendChild(p);}
   if(cat.type==="vocales"){rVocales(list);return;}
   if(cat.type==="numeros"){rN(list);return;}
   if(cat.type==="preguntas"){rP(list);return;}
@@ -658,7 +665,7 @@ function rV(){
       <div class="vc-ph">${item.ph}</div><div class="vc-actions"></div>`;
     const play=()=>{markPractice("vocab",item.tts||item.word);speak(item.tts||item.word,0.75);};
     card.querySelector(".vc-top").onclick=play;card.querySelector(".vc-listen").onclick=e=>{e.stopPropagation();play();};
-    addVocabExample(card,item,cat.id,index);attachMic(card.querySelector(".vc-actions"),item.tts||item.word);list.appendChild(card);
+    addVocabExample(card,item,cat.id,index);attachMic(card.querySelector(".vc-actions"),item.tts||item.word,"vocab");list.appendChild(card);
   });
 }
 
@@ -1327,7 +1334,7 @@ function renderLessonStep(){
     const grid=lpEl("lp-grid");
     c.words.forEach(w=>{
       const wc=lpEl("lp-word","<div class='lp-word-es'>"+w.es+"</div><div class='lp-word-en'>"+w.en+"</div><span>🔊</span>");
-      wc.onclick=()=>speak(w.es.replace(/\.\.\./g,""),0.75);attachMic(wc,w.es.replace(/\.\.\./g,""));
+      wc.onclick=()=>{markPractice("phrases",w.es.replace(/\.\.\./g,""));speak(w.es.replace(/\.\.\./g,""),0.75);};attachMic(wc,w.es.replace(/\.\.\./g,""),"phrases");
       grid.appendChild(wc);
     });
     body.appendChild(grid);
@@ -1354,14 +1361,16 @@ function renderLessonStep(){
     const esCol=lpEl("lp-match-col");esCol.appendChild(lpEl("lp-match-col-title","Español"));
     const enButtons=[],esButtons=[];let selected=null;const matched=new Set();
     const redraw=()=>{
-      enButtons.forEach(x=>{x.button.classList.toggle("matched",matched.has(x.id));x.button.classList.toggle("match-selected",selected===x.id);x.button.disabled=matched.has(x.id);});
-      esButtons.forEach(x=>{x.button.classList.toggle("matched",matched.has(x.id));x.button.classList.toggle("match-selected",selected===x.id);x.button.disabled=matched.has(x.id);});
+      const selectedId=selected&&selected.id,selectedSide=selected&&selected.side;
+      enButtons.forEach(x=>{x.button.classList.toggle("matched",matched.has(x.id));x.button.classList.toggle("match-selected",selectedSide==="en"&&selectedId===x.id);x.button.disabled=matched.has(x.id);});
+      esButtons.forEach(x=>{x.button.classList.toggle("matched",matched.has(x.id));x.button.classList.toggle("match-selected",selectedSide==="es"&&selectedId===x.id);x.button.disabled=matched.has(x.id);});
       status.textContent=`${matched.size} of ${pairs.length} matched`;
     };
-    const message=lpEl("lp-match-feedback","Choose an English meaning first.");
-    pairs.slice().sort(()=>Math.random()-0.5).forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp-match-btn";b.textContent=p.en;b.onclick=()=>{selected=p.id;message.textContent="Now tap the matching Spanish.";redraw();};enButtons.push({id:p.id,button:b});enCol.appendChild(b);});
-    pairs.slice().sort(()=>Math.random()-0.5).forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp-match-btn";b.textContent=p.es;b.onclick=()=>{if(!selected){message.textContent="Choose an English meaning first.";return;}if(selected===p.id){matched.add(p.id);clearSpeakingError(p.es);selected=null;message.textContent=matched.size===pairs.length?"✅ Great — say the pairs once more.":"✅ Correct. Keep going.";}else{recordSpeakingError(p.es,"matching");message.textContent="Not that one — try again. It is saved in your practice list.";}redraw();};esButtons.push({id:p.id,button:b});esCol.appendChild(b);});
-    board.append(enCol,esCol);match.append(board,message);body.appendChild(match);
+    const message=lpEl("lp-match-feedback","Choose an English meaning first.");message.setAttribute("aria-live","polite");
+    const setMatchMessage=(text,state)=>{message.textContent=text;message.dataset.state=state||"";};
+    pairs.slice().sort(()=>Math.random()-0.5).forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp-match-btn";b.textContent=p.en;b.onclick=()=>{selected={id:p.id,side:"en"};setMatchMessage("Now tap the matching Spanish answer.","selected");redraw();};enButtons.push({id:p.id,button:b});enCol.appendChild(b);});
+    pairs.slice().sort(()=>Math.random()-0.5).forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp-match-btn";b.textContent=p.es;b.onclick=()=>{if(!selected){setMatchMessage("Choose an English meaning first.","error");return;}const picked=selected.id;const enPair=pairs.find(x=>x.id===picked);if(selected.id===p.id){matched.add(p.id);clearSpeakingError(p.es);markPractice("phrases",p.es);selected=null;setMatchMessage(matched.size===pairs.length?"✅ Correct — all matched. Say each pair once more.":"✅ Correct match. Choose the next English meaning.","correct");}else{recordSpeakingError(p.es,"matching");selected=null;setMatchMessage("❌ Not a match. “"+(enPair?enPair.en:"That meaning")+"” goes with “"+(enPair?enPair.es:"the other Spanish phrase")+"”. Try again.","wrong");}redraw();};esButtons.push({id:p.id,button:b});esCol.appendChild(b);});
+    board.append(enCol,esCol);match.append(message,board);body.appendChild(match);
     navBtn("‹ Back",prev);navBtn("Next →",next,true);
   }
   else if(step==="building"){
@@ -1517,7 +1526,7 @@ function renderLessonStep(){
     mk("📚 Vocabulary",()=>{showPage("vocab");sCat(lpLesson.vocab);});
     mk("📖 Read & shadow",()=>{const reading=READINGS.find(r=>r.id===lpLesson.readingId)||READINGS.find(r=>r.lesson===lpLesson.id)||READINGS[0];renderReading(reading);});
     mk("💬 Full conversation",()=>{showPage("frases");const d=lessonDialogue(lpLesson);if(d)renderFraseDialogue(d);});
-    mk("🧪 Full quiz",()=>{showPage("quiz");qCat=lpLesson.quizCat;qMode=lpLesson.quizMode||"mixed";qFocus=lpLesson.quizFocus||"all";repasoLeft=0;resetQuizRound();syncQuizControls();nQ();});
+    mk("🧪 Full quiz",()=>{showPage("quiz");qMissedOnly=false;qCat=lpLesson.quizCat;qMode=lpLesson.quizMode||"mixed";qFocus=lpLesson.quizFocus||"all";repasoLeft=0;resetQuizRound();syncQuizControls();nQ();});
     body.appendChild(explore);
     navBtn("Back to lessons",()=>{lpLesson=null;renderLessons();},true);
   }
@@ -1904,8 +1913,9 @@ function renderReading(reading){
   (reading.questions||[]).forEach(q=>{
     const box=lpEl("reading-question");box.appendChild(lpEl("reading-question-text",q.q));
     const opts=lpEl("reading-question-options");
-    q.choices.forEach(choice=>{const b=document.createElement("button");b.type="button";b.className="reading-choice";b.textContent=choice;b.onclick=()=>{opts.querySelectorAll("button").forEach(x=>x.disabled=true);b.classList.add(choice===q.answer?"correct":"wrong");if(choice!==q.answer)opts.querySelectorAll("button").forEach(x=>{if(x.textContent===q.answer)x.classList.add("reveal");});};opts.appendChild(b);});
-    box.appendChild(opts);card.appendChild(box);
+    const feedback=lpEl("reading-question-feedback","");feedback.setAttribute("aria-live","polite");
+    q.choices.forEach(choice=>{const b=document.createElement("button");b.type="button";b.className="reading-choice";b.textContent=choice;b.onclick=()=>{opts.querySelectorAll("button").forEach(x=>x.disabled=true);const ok=choice===q.answer;b.classList.add(ok?"correct":"wrong");if(!ok)opts.querySelectorAll("button").forEach(x=>{if(x.textContent===q.answer)x.classList.add("reveal");});feedback.className="reading-question-feedback "+(ok?"correct":"wrong");feedback.textContent=ok?"✅ Correct — you understood it.":"❌ Not quite. Correct answer: "+q.answer;};opts.appendChild(b);});
+    box.appendChild(opts);box.appendChild(feedback);card.appendChild(box);
   });
   const done=document.createElement("button");done.type="button";done.className="lesson-start";done.textContent=readingProgress[reading.id]?"✅ Reading complete — practice again":"✅ I read this aloud";done.onclick=()=>{readingProgress[reading.id]=true;saveReadings();renderReading(reading);};card.appendChild(done);root.appendChild(card);
 }
@@ -1949,7 +1959,7 @@ function routineOpen(id){
     },60);
   }
   else if(id==="review"){
-    showPage("quiz");qMode="mixed";qCat="all";qFocus="all";repasoLeft=10;resetQuizRound();syncQuizControls();nQ();renderRoutineQuizGuide();
+    showPage("quiz");qMissedOnly=false;qMode="mixed";qCat="all";qFocus="all";repasoLeft=10;resetQuizRound();syncQuizControls();nQ();renderRoutineQuizGuide();
   }
   else if(id==="phrases"){
     showPage("frases");
@@ -2114,7 +2124,14 @@ function renderQuizAuditCard(root){
   root.appendChild(card);
 }
 
-function openReviewSession(){showPage("quiz");qMode="mixed";qCat="all";syncQuizControls();repasoLeft=10;nQ();}
+function storedMissedQuestionCount(){
+  try{
+    const raw=JSON.parse(localStorage.getItem("esco-quiz-v1")||"{}");
+    const missed=raw&&raw.missed&&typeof raw.missed==="object"?raw.missed:{};
+    return Object.values(missed).filter(value=>Number(value)>0).length;
+  }catch(e){return 0;}
+}
+function openReviewSession(){qMissedOnly=false;showPage("quiz");qMode="mixed";qCat="all";qFocus="all";syncQuizControls();repasoLeft=10;resetQuizRound();nQ();}
 
 function renderLessons(){
   const root=document.getElementById("lesson-list");if(!root)return;
@@ -2138,7 +2155,9 @@ function renderLessons(){
   else if(nextLesson)addHomeAction("🎓","Start next lesson / Empezar",nextLesson.title,()=>openLesson(nextLesson),true);
   else addHomeAction("🎓","Review your path / Repasar","Replay a completed lesson",()=>{const first=LESSONS[0];if(first)openLesson(first);},true);
   const dueHome=srsDueCount();
-  addHomeAction("🔁","Review / Repasar",dueHome?`${dueHome} card${dueHome===1?"":"s"} due today`:"Keep your memory active",openReviewSession,false);
+  addHomeAction("🔁","Review due cards / Repasar",dueHome?`${dueHome} card${dueHome===1?"":"s"} due today`:"Keep your memory active",openReviewSession,false);
+  const missedHome=storedMissedQuestionCount();
+  addHomeAction("🧠","Missed questions / Falladas",missedHome?`${missedHome} waiting · correct answers remove them`:"Queue empty — keep practicing",()=>{if(missedHome)openMissedQueue();else alert("Your missed-question queue is empty.");},false);
   addHomeAction("🧱","Speak with frames / Construir", "Turn patterns into sentences",()=>renderFramePractice(false),false);
   homeHub.appendChild(homeActions);root.appendChild(homeHub);
   const sessionBox=document.createElement("div");sessionBox.className="session-picker";
@@ -2168,8 +2187,6 @@ function renderLessons(){
   /* The primary resume action now lives in today-hub above; keep one clear CTA. */
   renderProgressDashboard(root,done);
   renderSpeakingErrorJournal(root);
-  let missedCount=srsDueCount();
-  if(!missedCount){try{const s=JSON.parse(localStorage.getItem("esco-quiz-v1")||"{}");missedCount=s.missed?Object.keys(s.missed).length:0;}catch(e){}}
   /* Daily practice — one compact row (v22) */
   const daily=document.createElement("div");daily.className="daily-row";daily.dataset.lessonView="practice";
   const dr1=document.createElement("button");dr1.type="button";dr1.className="daily-card";
@@ -2733,7 +2750,7 @@ try{const raw=localStorage.getItem(QS_KEY);if(raw)qStore=Object.assign(qStore,JS
 if(!Object.keys(srsStore).length&&qStore.missed){Object.keys(qStore.missed).forEach(key=>{srsStore[key]={reps:0,interval:0,lapses:0,due:Date.now()};});saveSrs();}
 function saveQ(){try{localStorage.setItem(QS_KEY,JSON.stringify(qStore));}catch(e){}}
 let repasoLeft=0;
-let qCat="all",qMode="mixed",qFocus="all",qC=qStore.c||0,qT=qStore.t||0,qS=qStore.s||0,cQ=null,an=false;
+let qCat="all",qMode="mixed",qFocus="all",qC=qStore.c||0,qT=qStore.t||0,qS=qStore.s||0,cQ=null,an=false,qMissedOnly=false;
 /* Normal quiz rounds do not repeat until the available pool is used. Missed
    questions may still repeat intentionally through the explicit Repaso card. */
 let qRoundKey="",qRoundSeen=new Set();
@@ -2748,7 +2765,7 @@ document.getElementById("q-streak").textContent="🔥 "+qS;
   btn.type="button";btn.className="quiz-reset";
   btn.textContent="↺";btn.title="Reiniciar puntaje";btn.setAttribute("aria-label","Reiniciar puntaje");
   btn.onclick=()=>{
-    qC=0;qT=0;qS=0;repasoLeft=0;qStore={c:0,t:0,s:0,missed:{}};srsStore={};saveQ();saveSrs();
+    qC=0;qT=0;qS=0;repasoLeft=0;qMissedOnly=false;qStore={c:0,t:0,s:0,missed:{}};srsStore={};saveQ();saveSrs();
     resetQuizRound();
     document.getElementById("q-correct").textContent=0;
     document.getElementById("q-total").textContent=0;
@@ -2760,12 +2777,12 @@ document.getElementById("q-streak").textContent="🔥 "+qS;
 })();
 
 const qmw=document.getElementById("qmode-wrap");
-QUIZ_MODES.forEach(m=>{const b=document.createElement("button");b.type="button";b.className="qmode"+(m.id===qMode?" active":"");b.textContent=m.label;b.onclick=()=>{qMode=m.id;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};qmw.appendChild(b);});
+QUIZ_MODES.forEach(m=>{const b=document.createElement("button");b.type="button";b.className="qmode"+(m.id===qMode?" active":"");b.textContent=m.label;b.onclick=()=>{qMissedOnly=false;qMode=m.id;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};qmw.appendChild(b);});
 const qcw=document.getElementById("qcat-wrap");
 QC.forEach(c=>{const b=document.createElement("button");b.className="qcat"+(c.id==="all"?" active":"");b.textContent=c.label;
-  b.onclick=()=>{qCat=c.id;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};qcw.appendChild(b);});
+  b.onclick=()=>{qMissedOnly=false;qCat=c.id;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};qcw.appendChild(b);});
 const qfs=document.getElementById("qfocus-select");
-if(qfs)qfs.onchange=()=>{qFocus=qfs.value;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};
+if(qfs)qfs.onchange=()=>{qMissedOnly=false;qFocus=qfs.value;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};
 function syncQuizControls(){
   document.querySelectorAll(".qcat").forEach((x,i)=>x.classList.toggle("active",QC[i].id===qCat));
   document.querySelectorAll(".qmode").forEach((x,i)=>x.classList.toggle("active",QUIZ_MODES[i].id===qMode));
@@ -2840,8 +2857,20 @@ function cleanQuizPool(pool){
     return choices.some(choice=>normalizeQuizText(choice)===normalizeQuizText(q.answer));
   });
 }
+function missedQuizKey(q){return `${q.es}|${q.en||q.answer}`;}
+function clearMissedQuiz(q){
+  const canonical=missedQuizKey(q),legacy=`${q.es}|${q.answer}`;
+  if(qStore.missed[canonical])delete qStore.missed[canonical];
+  if(legacy!==canonical&&qStore.missed[legacy])delete qStore.missed[legacy];
+}
+function exitMissedQueue(){qMissedOnly=false;repasoLeft=0;resetQuizRound();nQ();}
+function openMissedQueue(){showPage("quiz");qMissedOnly=true;qMode="mixed";qCat="all";qFocus="all";repasoLeft=0;resetQuizRound();syncQuizControls();nQ();}
 function nQ(){
   an=false;document.getElementById("quiz-next").style.display="none";document.getElementById("quiz-fb").textContent="";document.getElementById("quiz-reveal").innerHTML="";
+  const helpRow=document.getElementById("quiz-help-row"),helpBtn=document.getElementById("quiz-help"),helpText=document.getElementById("quiz-help-text");
+  if(helpRow){helpRow.hidden=true;if(helpText){helpText.hidden=true;helpText.textContent="";}if(helpBtn){helpBtn.textContent="💡 Show English help";helpBtn.onclick=null;}}
+  const reviewBanner=document.getElementById("quiz-review-banner");
+  if(reviewBanner){reviewBanner.hidden=!qMissedOnly;reviewBanner.innerHTML="";}
   const base=quizPool();
   if(!base.length){
     document.querySelector(".qc-label").textContent="No matching questions";
@@ -2849,19 +2878,36 @@ function nQ(){
     document.getElementById("quiz-opts").innerHTML="";
     return;
   }
-  const roundKey=qMode+"|"+qCat+"|"+qFocus;
+  const reviewBase=qMissedOnly?base.filter(q=>Number(qStore.missed[missedQuizKey(q)])>0):base;
+  if(!reviewBase.length){
+    document.querySelector(".qc-label").textContent=qMissedOnly?"Missed queue complete":"No matching questions";
+    document.getElementById("qc-word").textContent=qMissedOnly?"✅":"Try All topics or All patterns";
+    document.getElementById("quiz-opts").innerHTML="";
+    if(reviewBanner){reviewBanner.hidden=false;reviewBanner.innerHTML="<span><strong>Missed questions</strong> — your retry queue is clear.</span><button type='button' class='quiz-review-exit'>Back to quiz</button>";reviewBanner.querySelector("button").onclick=exitMissedQueue;}
+    return;
+  }
+  if(reviewBanner){reviewBanner.hidden=false;reviewBanner.innerHTML="<span><strong>Missed questions</strong> · "+storedMissedQuestionCount()+" remaining. Correct answers leave the queue.</span><button type='button' class='quiz-review-exit'>Exit queue</button>";reviewBanner.querySelector("button").onclick=exitMissedQueue;}
+  const roundKey=(qMissedOnly?"missed|":"normal|")+qMode+"|"+qCat+"|"+qFocus;
   if(roundKey!==qRoundKey){qRoundKey=roundKey;qRoundSeen.clear();}
-   let unseen=base.filter(q=>!qRoundSeen.has(quizRoundPromptKey(q)));
-  if(!unseen.length){qRoundSeen.clear();unseen=base;}
+   let unseen=reviewBase.filter(q=>!qRoundSeen.has(quizRoundPromptKey(q)));
+  if(!unseen.length){qRoundSeen.clear();unseen=reviewBase;}
   /* Missed questions can repeat during an explicit Repaso session. In a
      normal round, only unseen missed questions receive extra weighting. */
-   const dueAll=base.filter(q=>srsDue(q.es+"|"+q.answer));
+   const dueAll=reviewBase.filter(q=>srsDue(q.es+"|"+q.answer));
    const duePool=unseen.filter(q=>srsDue(q.es+"|"+q.answer));
    let pickFrom;
    if(repasoLeft>0&&dueAll.length){pickFrom=dueAll;repasoLeft--;}
    else{if(repasoLeft>0)repasoLeft=0;pickFrom=(duePool.length&&Math.random()<0.7)?duePool:unseen;}
   cQ=pickFrom[Math.floor(Math.random()*pickFrom.length)];
    qRoundSeen.add(quizRoundPromptKey(cQ));
+  if(helpRow&&cQ.kind==="blank"){
+    const translation=englishAnswer(cQ);
+    if(translation){
+      helpRow.hidden=false;
+      helpText.textContent=translation;
+      helpBtn.onclick=()=>{const open=helpText.hidden;helpText.hidden=!open;helpBtn.textContent=open?"🙈 Hide English help":"💡 Show English help";};
+    }
+  }
   if(qMode==="dictation"){
     document.getElementById("qc-word").textContent="🎧";
     document.querySelector(".qc-label").textContent="Listen, then type the Spanish";
@@ -2876,17 +2922,17 @@ function nQ(){
       an=true;qT++;document.getElementById("q-total").textContent=qT;
       const expected=String(cQ.answer||cQ.es),strict=normalizeDictation(raw,false)===normalizeDictation(expected,false);
       const loose=normalizeDictation(raw,true)===normalizeDictation(expected,true);
-      const correct=strict||loose,fb=document.getElementById("quiz-fb"),mk=cQ.es+"|"+cQ.answer;
+      const correct=strict||loose,fb=document.getElementById("quiz-fb"),mk=cQ.es+"|"+cQ.answer,missKey=missedQuizKey(cQ);
       submit.disabled=true;input.classList.add(correct?"correct":"wrong");
       if(correct){
         qC++;qS++;recordSrs(mk,true);clearSpeakingError(cQ.tts||cQ.es);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;
         fb.innerHTML=(strict?"✅ ¡Correcto!":"✅ Correcto — check the accent marks.")+" <small class='srs-next'>Next review: "+srsNextLabel(srsStore[mk])+"</small>";fb.style.color="var(--teal)";speak(cQ.tts,0.75);
-        if(qStore.missed[mk]){qStore.missed[mk]--;if(qStore.missed[mk]<=0)delete qStore.missed[mk];}
+        clearMissedQuiz(cQ);
       }else{
         qS=0;recordSrs(mk,false);recordSpeakingError(cQ.tts||cQ.es,"dictation");document.getElementById("q-streak").textContent="🔥 0";
         fb.innerHTML="❌ Not quite <small class='srs-next'>Review again tomorrow.</small>";fb.style.color="var(--pink)";
         input.value=expected;
-        qStore.missed[mk]=(qStore.missed[mk]||0)+2;
+        qStore.missed[missKey]=(qStore.missed[missKey]||0)+2;
       }
       document.getElementById("quiz-reveal").innerHTML="<div>🇨🇴 <strong>"+spanishAnswer(cQ)+"</strong></div><div>🇺🇸 "+englishAnswer(cQ)+"</div>";
       attachMic(document.getElementById("quiz-reveal"),spanishAnswer(cQ));
@@ -2915,11 +2961,11 @@ function nQ(){
   opts.forEach(opt=>{const b=document.createElement("button");b.className="qopt";b.textContent=opt.answer;
     b.onclick=()=>{if(an)return;an=true;qT++;document.getElementById("q-total").textContent=qT;
       const fb=document.getElementById("quiz-fb");
-      const mk=cQ.es+"|"+cQ.answer;
+      const mk=cQ.es+"|"+cQ.answer,missKey=missedQuizKey(cQ);
        if(normalizeQuizText(opt.answer)===normalizeQuizText(cQ.answer)){b.classList.add("correct");qC++;qS++;recordSrs(mk,true);clearSpeakingError(cQ.tts||cQ.es);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.innerHTML=`✅ ¡Correcto! <small class="srs-next">Next review: ${srsNextLabel(srsStore[mk])}</small>`;fb.style.color="var(--teal)";speak(cQ.tts,0.75);
-        if(qStore.missed[mk]){qStore.missed[mk]--;if(qStore.missed[mk]<=0)delete qStore.missed[mk];}}
+        clearMissedQuiz(cQ);}
        else{b.classList.add("wrong");qS=0;recordSrs(mk,false);recordSpeakingError(cQ.tts||cQ.es,"quiz");document.getElementById("q-streak").textContent="🔥 0";fb.innerHTML="❌ Incorrecto <small class='srs-next'>Review again tomorrow.</small>";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(normalizeQuizText(x.textContent)===normalizeQuizText(cQ.answer))x.classList.add("reveal");});
-        qStore.missed[mk]=(qStore.missed[mk]||0)+2;}
+        qStore.missed[missKey]=(qStore.missed[missKey]||0)+2;}
       document.getElementById("quiz-reveal").innerHTML=`<div>🇨🇴 <strong>${spanishAnswer(cQ)}</strong></div><div>🇺🇸 ${englishAnswer(cQ)}</div>`;
       attachMic(document.getElementById("quiz-reveal"),spanishAnswer(cQ));
       qStore.c=qC;qStore.t=qT;qStore.s=qS;saveQ();
