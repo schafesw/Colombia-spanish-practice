@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Español CO"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="styles.css?v=66.0"/>
+  <link rel="stylesheet" href="styles.css?v=67.2"/>
 </head>
 <body>
 <div id="app">
@@ -216,23 +216,28 @@
     <div class="quiz-control-label">Practice mode</div>
     <div class="quiz-mode-row" id="qmode-wrap"></div>
   </div>
-  <div class="quiz-focus-wrap">
-    <label class="quiz-control-label" for="qfocus-select">Grammar focus</label>
-    <select id="qfocus-select" aria-label="Choose a grammar focus">
-      <option value="all">All patterns</option>
-      <option value="present">⚡ Presente</option>
-      <option value="past">⏮️ Pasado</option>
-      <option value="future">⏭️ Futuro · voy a...</option>
-      <option value="perfecto">✅ He hecho · Present perfect</option>
-      <option value="condicional">🙏 Condicional</option>
-      <option value="pasado-perfecto">⏪ Había hecho</option>
-      <option value="futuro-perfecto">⏩ Habré hecho</option>
-      <option value="pronombres">👤 Pronombres · lo/la/le</option>
-      <option value="subjuntivo">🌱 Subjuntivo</option>
-    </select>
-    <div class="quiz-focus-note" id="qfocus-note">Focus works with Mixed, Fill blank, and Conversation.</div>
-  </div>
-  <div class="quiz-cat-wrap" id="qcat-wrap"></div>
+  <details class="quiz-customize" id="quiz-customize">
+    <summary><span>⚙️ Customize quiz</span><small>Topic + grammar</small></summary>
+    <div class="quiz-customize-body">
+      <div class="quiz-focus-wrap">
+        <label class="quiz-control-label" for="qfocus-select">Grammar focus</label>
+        <select id="qfocus-select" aria-label="Choose a grammar focus">
+          <option value="all">All patterns</option>
+          <option value="present">⚡ Presente</option>
+          <option value="past">⏮️ Pasado</option>
+          <option value="future">⏭️ Futuro · voy a...</option>
+          <option value="perfecto">✅ He hecho · Present perfect</option>
+          <option value="condicional">🙏 Condicional</option>
+          <option value="pasado-perfecto">⏪ Había hecho</option>
+          <option value="futuro-perfecto">⏩ Habré hecho</option>
+          <option value="pronombres">👤 Pronombres · lo/la/le</option>
+          <option value="subjuntivo">🌱 Subjuntivo</option>
+        </select>
+        <div class="quiz-focus-note" id="qfocus-note">Focus works with Mixed, Fill blank, and Conversation.</div>
+      </div>
+      <div class="quiz-cat-wrap" id="qcat-wrap"></div>
+    </div>
+  </details>
   <div class="quiz-card">
     <div class="qc-label">Translate to English</div>
     <div class="qc-word" id="qc-word">—</div>
@@ -262,6 +267,6 @@
 </div>
 </div>
 
-<script src="data.js?v=66.0"></script><script src="app.js?v=66.0"></script>
+  <script src="data.js?v=67.2"></script><script src="app.js?v=67.2"></script>
 </body>
 </html>
