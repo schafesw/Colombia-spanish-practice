@@ -500,7 +500,7 @@ function addVocabExample(card,item,catId,index){
   toggle.type="button";toggle.className="vc-example-toggle";toggle.textContent="📝 Example";toggle.setAttribute("aria-expanded","false");
   const panel=document.createElement("div");panel.className="vc-example";panel.hidden=true;
   panel.innerHTML=`<div class="vc-example-label">In context</div><div class="vc-example-es">${escapeVocabHtml(ex.es)}</div><div class="vc-example-en">${escapeVocabHtml(ex.en)}</div><button type="button" class="vc-example-speak">🔊 Hear the sentence</button>`;
-  toggle.onclick=event=>{event.stopPropagation();const open=panel.hidden;panel.hidden=!open;toggle.classList.toggle("open",open);toggle.setAttribute("aria-expanded",String(open));};
+  toggle.onclick=event=>{event.stopPropagation();const open=panel.hidden;panel.hidden=!open;toggle.classList.toggle("open",open);toggle.setAttribute("aria-expanded",String(open));toggle.textContent=open?"✕ Close example":"📝 Example";};
   panel.onclick=event=>event.stopPropagation();
   panel.querySelector(".vc-example-speak").onclick=event=>{event.stopPropagation();markPractice("vocab",item.tts||item.word);speak(ex.tts||ex.es,0.75);};
   const actions=card.querySelector(".vc-actions")||card;
@@ -966,8 +966,8 @@ function renderFraseMenu(){
   };
   jump.appendChild(sel);
   fl.appendChild(jump);
-  const navNote=document.createElement("div");navNote.className="phrase-nav-note";
-  navNote.innerHTML="<strong>Start with a situation, then practice the phrases you need.</strong><span>Spanish stays first for speaking practice; English subtitles help you find the right section.</span>";
+  const navNote=document.createElement("details");navNote.className="phrase-help";
+  navNote.innerHTML="<summary><span>ⓘ How to use Frases</span><small>Start with a situation</small></summary><div class='phrase-help-body'><strong>Start with a situation, then practice the phrases you need.</strong><span>Spanish stays first for speaking practice; English subtitles help you find the right section.</span></div>";
   fl.appendChild(navNote);
   renderRecentPhrase(fl);
   const viewSwitch=document.createElement("div");viewSwitch.className="frase-view-switch";viewSwitch.setAttribute("aria-label","Filter phrase content");
@@ -2148,7 +2148,7 @@ function renderLessons(){
   buildLessonViewTabs(root);
   const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
   const intro=document.createElement("div");intro.className="lesson-intro";intro.dataset.lessonView="today";
-  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><div class="lesson-flow">Recommended path: Start Here → Travel → Daily Life → Build Sentences → Speak Naturally<br>Each lesson moves from recognition to production: 🎯 Goal → 🔑 Words → 👂 Listen → 🧩 Match → 🧱 Build → ⌨️ Type → 🎭 Role-play → 📖 Read → 🧪 Quiz → 🎯 Mission</div>`;
+  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><details class="lesson-overview"><summary><span>ⓘ How the learning path works</span><small>Recognition → speaking</small></summary><div class="lesson-flow">Recommended path: Start Here → Travel → Daily Life → Build Sentences → Speak Naturally<br>Each lesson moves from recognition to production: 🎯 Goal → 🔑 Words → 👂 Listen → 🧩 Match → 🧱 Build → ⌨️ Type → 🎭 Role-play → 📖 Read → 🧪 Quiz → 🎯 Mission</div></details>`;
   root.appendChild(intro);
   renderRoutineCard(root);
   /* Continue / Start here (v21) */

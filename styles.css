@@ -797,6 +797,130 @@ body.routine-session-active .mic-panel{bottom:calc(var(--tab-h) + var(--safe-bot
 .reading-home-grid{display:grid;gap:8px;margin-bottom:18px;}.reading-home-card{display:flex;align-items:center;gap:9px;width:100%;padding:11px;text-align:left;border:1px solid rgba(74,168,160,.22);border-radius:12px;background:rgba(74,168,160,.06);color:#fff;}.reading-home-card:active{transform:scale(.985);}.reading-home-card>span:nth-child(2){flex:1;min-width:0;}.reading-home-card strong,.reading-home-card small{display:block;}.reading-home-card strong{font-size:.8rem;}.reading-home-card small{font-size:.65rem;color:var(--muted);line-height:1.35;margin-top:3px;}.reading-home-icon{font-size:1.1rem;}.reading-card{border-color:rgba(74,168,160,.3);}.reading-kicker{font-size:.6rem;letter-spacing:.14em;color:var(--teal);font-weight:900;margin-bottom:5px;}.reading-intro{font-size:.75rem;color:var(--muted);line-height:1.45;margin-bottom:7px;}.reading-guide{padding:9px 10px;border-radius:10px;background:rgba(74,168,160,.08);color:var(--muted);font-size:.68rem;line-height:1.45;margin-bottom:10px;}.reading-play{margin-bottom:11px;}.reading-lines{display:grid;gap:7px;}.reading-line{display:flex;align-items:flex-start;gap:8px;padding:9px;border:1px solid rgba(255,255,255,.1);border-radius:11px;background:rgba(255,255,255,.035);}.reading-line-num{width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:rgba(74,168,160,.18);color:var(--teal);font-size:.65rem;font-weight:900;flex-shrink:0;}.reading-line-copy{flex:1;min-width:0;}.reading-es,.reading-en{display:block;width:100%;padding:0;border:0;background:transparent;text-align:left;color:#fff;font:inherit;font-size:.82rem;font-weight:800;line-height:1.4;}.reading-en{margin-top:4px;color:var(--muted);font-size:.7rem;font-style:italic;font-weight:600;}.reading-actions{flex-shrink:0;}.reading-record{width:31px;height:31px;border:1px solid rgba(232,180,74,.35);border-radius:50%;background:rgba(232,180,74,.08);font-size:.78rem;}.reading-question{margin-top:14px;padding:11px;border:1px solid rgba(167,139,250,.25);border-radius:12px;background:rgba(167,139,250,.06);}.reading-question-text{font-size:.78rem;font-weight:900;color:#fff;margin-bottom:8px;}.reading-question-options{display:grid;gap:6px;}.reading-choice{padding:8px;text-align:left;border:1px solid rgba(255,255,255,.12);border-radius:9px;background:rgba(255,255,255,.04);color:#fff;font:inherit;font-size:.72rem;}.reading-choice.correct{border-color:var(--teal);background:rgba(74,168,160,.18);}.reading-choice.wrong{border-color:var(--pink);background:rgba(232,93,117,.15);}.reading-choice.reveal{border-color:var(--teal);}
 @media(max-width:430px){.special-sound-grid{grid-template-columns:repeat(2,1fr);}.special-sound-group:first-of-type .special-sound-grid{grid-template-columns:repeat(2,1fr);}}
 
+/* v67: professional layout pass. Keep the full curriculum, but give each
+   screen one clear hierarchy: action first, secondary guidance on demand. */
+:root{--content-max:780px;}
+.scroll{padding-left:18px;padding-right:18px;scroll-behavior:smooth;}
+.page{width:100%;max-width:var(--content-max);margin-inline:auto;}
+.ph{margin-bottom:17px;}
+.ph-title{font-size:2.3rem;}
+.ph-sub{font-size:.76rem;}
+.voice-bar{margin-bottom:14px;padding:9px 11px;border-radius:13px;box-shadow:0 4px 18px rgba(0,0,0,.12);}
+.voice-label{font-size:.52rem;}
+.voice-test{min-height:38px;padding:8px 12px;font-size:.7rem;}
+.content-search{margin-bottom:11px;}
+.vocab-home-intro{padding:13px 14px;}
+.vocab-home-title{font-size:1.08rem;}
+.vocab-home-sub{font-size:.7rem;}
+.vocab-home-group{margin-bottom:15px;}
+.vocab-home-group-sub{font-size:.63rem;}
+.vocab-home-card{min-height:68px;padding:10px 11px;}
+.vocab-home-card-title{font-size:.74rem;}
+.vocab-home-card-meta{font-size:.58rem;}
+.lesson-intro{padding:12px 13px;margin-bottom:12px;}
+.lesson-intro-title{margin-bottom:8px;}
+.lesson-overview{margin-top:9px;border-top:1px solid rgba(255,255,255,.1);}
+.lesson-overview summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 1px 2px;list-style:none;cursor:pointer;color:var(--gold);font-size:.65rem;font-weight:900;}
+.lesson-overview summary::-webkit-details-marker{display:none;}
+.lesson-overview summary:after{content:"+";font-size:.9rem;color:var(--gold);}
+.lesson-overview[open] summary:after{content:"−";}
+.lesson-overview summary small{margin-left:auto;color:var(--muted);font-size:.57rem;font-weight:700;}
+.lesson-flow{padding:8px 0 1px;color:var(--muted);font-size:.64rem;line-height:1.45;}
+.today-hub{padding:13px;margin-bottom:12px;}
+.today-hub-title{font-size:1rem;}
+.today-hub-actions{grid-template-columns:1fr 1fr;gap:7px;}
+.today-action{min-height:60px;padding:9px 8px;gap:7px;}
+.today-action:first-child{grid-column:1/-1;}
+.today-action-icon{font-size:.98rem;flex-basis:24px;}
+.today-action strong{font-size:.7rem;}
+.today-action small{font-size:.58rem;}
+.today-action-arrow{font-size:1rem;}
+.progress-dashboard{padding:12px;margin-top:12px;}
+.progress-metrics{gap:5px;margin-top:10px;}
+.progress-metrics>div{padding:7px 3px;}
+.progress-metrics strong{font-size:.84rem;}
+.progress-metrics small{font-size:.52rem;}
+.error-journal{padding:12px;margin:12px 0 14px;}
+.daily-row{gap:7px;}
+.daily-card{padding:11px 9px;}
+.frase-help{display:block;margin:0 0 11px;border:1px solid rgba(232,93,117,.2);border-radius:12px;background:rgba(232,93,117,.06);overflow:hidden;}
+.frase-help>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;list-style:none;cursor:pointer;color:#fff;font-size:.7rem;font-weight:900;}
+.frase-help>summary::-webkit-details-marker{display:none;}
+.frase-help>summary:after{content:"+";color:var(--pink);font-size:1rem;}
+.frase-help[open]>summary:after{content:"−";}
+.frase-help>summary small{margin-left:auto;color:var(--muted);font-size:.59rem;font-weight:700;}
+.phrase-help-body{display:flex;flex-direction:column;gap:4px;padding:0 12px 10px;border-top:1px solid rgba(255,255,255,.08);}
+.phrase-help-body strong{padding-top:9px;color:#fff;font-size:.7rem;line-height:1.35;}
+.phrase-help-body span{color:var(--muted);font-size:.63rem;line-height:1.4;}
+.fr-home-label{margin-top:13px;margin-bottom:7px;}
+.fr-home-card{min-height:70px;padding:10px 11px;}
+.fr-card-title{font-size:.82rem;}
+.fr-card-sub{font-size:.62rem;}
+.fr-card-meta{font-size:.56rem;}
+.fr-group-label{padding:9px 10px;margin-top:9px;}
+.gram-groups{gap:6px;margin-bottom:10px;}
+.ggroup{min-height:39px;padding:8px 10px;font-size:.66rem;}
+.gram-tabs{margin-bottom:13px;}
+.gtab{min-height:37px;padding:8px 11px;font-size:.67rem;}
+.gram-intro,.trick-box{padding:12px;margin-bottom:11px;}
+.gram-intro-text,.trick-text{font-size:.75rem;line-height:1.55;}
+.conj-table,.pro-table{margin-bottom:11px;}
+.example-card{min-height:55px;padding:10px 12px;margin-bottom:7px;}
+.ex-es{font-size:.83rem;}
+.ex-en{font-size:.68rem;}
+.quiz-score-bar{margin-bottom:9px;}
+.quiz-mode-wrap{margin-bottom:7px;}
+.quiz-customize{margin:0 0 10px;border:1px solid rgba(167,139,250,.25);border-radius:13px;background:rgba(167,139,250,.055);overflow:hidden;}
+.quiz-customize>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;list-style:none;cursor:pointer;color:var(--purple);font-size:.7rem;font-weight:900;}
+.quiz-customize>summary::-webkit-details-marker{display:none;}
+.quiz-customize>summary:after{content:"+";font-size:1rem;color:var(--purple);}
+.quiz-customize[open]>summary:after{content:"−";}
+.quiz-customize>summary small{margin-left:auto;color:var(--muted);font-size:.59rem;font-weight:700;}
+.quiz-customize-body{padding:0 10px 9px;border-top:1px solid rgba(167,139,250,.16);}
+.quiz-customize-body .quiz-focus-wrap{margin:9px 0;}
+.quiz-customize-body .quiz-cat-wrap{margin-bottom:0;}
+.quiz-card{margin-bottom:9px;}
+.quiz-opts{gap:8px;}
+.qopt{min-height:60px;padding:13px 8px;font-size:.86rem;}
+.quiz-reveal{font-size:.72rem;}
+.lp-card{padding:16px 14px;}
+.lp-step-title{margin-bottom:11px;}
+#page-lecciones .lp-nav{gap:7px;margin-bottom:12px;}
+#page-lecciones .lp-nav .lp-nav-btn{min-height:46px;padding:11px 9px;font-size:.78rem;}
+.routine-dock{left:14px;right:14px;}
+.routine-dock-btn{min-height:44px;}
+.lesson-view-tabs{margin-bottom:11px;}
+
+@media(min-width:700px){
+  .scroll{padding-left:28px;padding-right:28px;}
+  .ph-title{font-size:2.5rem;}
+  .today-hub-actions{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .today-action:first-child{grid-column:1/-1;}
+  .fr-home-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:430px){
+  .scroll{padding-left:12px;padding-right:12px;}
+  .ph{margin-bottom:15px;}
+  .ph-title{font-size:2.15rem;}
+  .voice-bar{gap:7px;padding:8px 9px;}
+  .voice-select{padding:7px 8px;font-size:.67rem;}
+  .voice-test{padding:7px 10px;font-size:.66rem;}
+  .today-action{min-height:62px;}
+  .today-action strong{font-size:.66rem;}
+  .today-action small{font-size:.55rem;}
+  .quiz-customize>summary{padding:9px 10px;}
+}
+
+/* v67 fix: the Frases help control uses the English-facing class name
+   .phrase-help. Keep its title and optional hint separated on narrow screens. */
+.phrase-help{display:block;margin:0 0 11px;border:1px solid rgba(232,93,117,.2);border-radius:12px;background:rgba(232,93,117,.06);overflow:hidden;}
+.phrase-help>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;list-style:none;cursor:pointer;color:#fff;font-size:.7rem;font-weight:900;}
+.phrase-help>summary::-webkit-details-marker{display:none;}
+.phrase-help>summary>span{flex:1;min-width:0;}
+.phrase-help>summary:after{content:"+";color:var(--pink);font-size:1rem;}
+.phrase-help[open]>summary:after{content:"−";}
+.phrase-help>summary small{margin-left:auto;color:var(--muted);font-size:.59rem;font-weight:700;white-space:nowrap;}
+
 /* v36: mobile layout pass.  Basic vocabulary cards use three intentional
    rows so actions never compete with the word itself. */
 .scroll{padding-top:calc(var(--safe-top) + 22px);padding-bottom:calc(var(--tab-h) + var(--safe-bottom) + 28px);}
@@ -1126,3 +1250,57 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .quiz-review-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;padding:10px 11px;border:1px solid rgba(232,93,117,.34);border-radius:12px;background:rgba(232,93,117,.08);color:var(--text);font-size:.7rem;line-height:1.35;}
 .quiz-review-banner strong{color:var(--pink);}
 .quiz-review-exit{flex:0 0 auto;padding:6px 8px;border:1px solid rgba(255,255,255,.18);border-radius:8px;background:rgba(255,255,255,.06);color:var(--text);font:inherit;font-size:.62rem;font-weight:850;}
+
+/* v67: final cascade for the layout pass. This stays last so the new visual
+   hierarchy wins over earlier compatibility rules in this single-file CSS. */
+.page{width:100%;max-width:var(--content-max,780px);margin-inline:auto;}
+.ph{margin-bottom:17px;}
+.voice-bar{margin-bottom:14px;padding:9px 11px;border-radius:13px;box-shadow:0 4px 18px rgba(0,0,0,.12);}
+.lesson-overview{margin-top:9px;border-top:1px solid rgba(255,255,255,.1);}
+.lesson-overview summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 1px 2px;list-style:none;cursor:pointer;color:var(--gold);font-size:.65rem;font-weight:900;}
+.lesson-overview summary::-webkit-details-marker{display:none;}
+.lesson-overview summary:after{content:"+";font-size:.9rem;color:var(--gold);}
+.lesson-overview[open] summary:after{content:"−";}
+.lesson-overview summary small{margin-left:auto;color:var(--muted);font-size:.57rem;font-weight:700;}
+.lesson-flow{padding:8px 0 1px;color:var(--muted);font-size:.64rem;line-height:1.45;}
+.today-hub-actions{grid-template-columns:1fr 1fr;gap:7px;}
+.today-action{min-height:60px;padding:9px 8px;gap:7px;}
+.today-action:first-child{grid-column:1/-1;}
+.today-action strong{font-size:.7rem;}
+.today-action small{font-size:.58rem;}
+.frase-help{display:block;margin:0 0 11px;border:1px solid rgba(232,93,117,.2);border-radius:12px;background:rgba(232,93,117,.06);overflow:hidden;}
+.frase-help>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;list-style:none;cursor:pointer;color:#fff;font-size:.7rem;font-weight:900;}
+.frase-help>summary::-webkit-details-marker{display:none;}
+.frase-help>summary:after{content:"+";color:var(--pink);font-size:1rem;}
+.frase-help[open]>summary:after{content:"−";}
+.frase-help>summary small{margin-left:auto;color:var(--muted);font-size:.59rem;font-weight:700;}
+.phrase-help-body{display:flex;flex-direction:column;gap:4px;padding:0 12px 10px;border-top:1px solid rgba(255,255,255,.08);}
+.phrase-help-body strong{padding-top:9px;color:#fff;font-size:.7rem;line-height:1.35;}
+.phrase-help-body span{color:var(--muted);font-size:.63rem;line-height:1.4;}
+.quiz-customize{margin:0 0 10px;border:1px solid rgba(167,139,250,.25);border-radius:13px;background:rgba(167,139,250,.055);overflow:hidden;}
+.quiz-customize>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;list-style:none;cursor:pointer;color:var(--purple);font-size:.7rem;font-weight:900;}
+.quiz-customize>summary::-webkit-details-marker{display:none;}
+.quiz-customize>summary:after{content:"+";font-size:1rem;color:var(--purple);}
+.quiz-customize[open]>summary:after{content:"−";}
+.quiz-customize>summary small{margin-left:auto;color:var(--muted);font-size:.59rem;font-weight:700;}
+.quiz-customize-body{padding:0 10px 9px;border-top:1px solid rgba(167,139,250,.16);}
+.quiz-customize-body .quiz-focus-wrap{margin:9px 0;}
+.quiz-customize-body .quiz-cat-wrap{margin-bottom:0;}
+
+@media(min-width:700px){
+  .scroll{padding-left:28px;padding-right:28px;}
+  .ph-title{font-size:2.5rem;}
+  .fr-home-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:430px){
+  .scroll{padding-left:12px;padding-right:12px;}
+  .ph{margin-bottom:15px;}
+  .ph-title{font-size:2.15rem;}
+  .voice-bar{gap:7px;padding:8px 9px;}
+  .voice-select{padding:7px 8px;font-size:.67rem;}
+  .voice-test{padding:7px 10px;font-size:.66rem;}
+  .today-action{min-height:62px;}
+  .today-action strong{font-size:.66rem;}
+  .today-action small{font-size:.55rem;}
+  .quiz-customize>summary{padding:9px 10px;}
+}
