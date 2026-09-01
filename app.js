@@ -1080,6 +1080,12 @@ function renderFraseSection(idx){
   fl.appendChild(wrap);
   rememberFraseLocation({kind:"section",value:idx,title:sec.section,subtitle:phraseEnglishTitle(sec.section)});
 }
+function returnFromFraseDialogue(){
+  const returnToLessons=fraseReturnToLessons;
+  fraseReturnToLessons=false;
+  if(returnToLessons){showPage("lecciones");renderLessons();}
+  else renderFraseMenu();
+}
 function renderFraseDialogue(dialogue,tense){
   resetFraseScroll();
   fl.dataset.view="dialogue";
@@ -1088,7 +1094,7 @@ function renderFraseDialogue(dialogue,tense){
   back.type="button";back.className="phrase-back";
   const returnToLessons=fraseReturnToLessons;
   back.innerHTML=returnToLessons?"<span>‹</span><span>Back to lessons · Volver a lecciones</span>":"<span>‹</span><span>Back to phrases · Volver a frases</span>";
-  back.onclick=()=>{fraseReturnToLessons=false;if(returnToLessons){showPage("lecciones");renderLessons();}else renderFraseMenu();};
+  back.onclick=returnFromFraseDialogue;
   fl.appendChild(back);
   /* Header: title + English + tense selector — one version at a time (v23) */
   const versions=dialogue.versions||[];
@@ -3019,6 +3025,13 @@ function initTabSwipe(){
     if(duration>800||Math.abs(dx)<72||Math.abs(dx)<Math.abs(dy)*1.35)return;
     const active=PG.findIndex(p=>document.getElementById("page-"+p)?.classList.contains("active"));
     if(active<0)return;
+    /* A dialogue opened from the daily Shadow action has its own return
+       destination. Treat a right swipe like the visible Back button instead
+       of jumping to the previous top-level tab (usually Vocab). */
+    if(dx>0&&active===PG.indexOf("frases")&&document.getElementById("frases-list")?.dataset.view==="dialogue"){
+      returnFromFraseDialogue();
+      return;
+    }
     const next=active+(dx<0?1:-1);
     if(next>=0&&next<PG.length)showPage(PG[next]);
   },{passive:true});
