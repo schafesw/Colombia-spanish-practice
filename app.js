@@ -1259,12 +1259,25 @@ try{dayInfo=Object.assign(dayInfo,JSON.parse(localStorage.getItem(DAY_KEY)||"{}"
 /* Lesson player state */
 let lpLesson=null,lpSteps=[],lpStep=0,lpScore=0,lpQs=[],lpQi=0,lpAnswered=false,lpPracticed=new Set();
 function lessonDialogue(lesson){return PHRASE_DIALOGUES.find(x=>x.title===lesson.dialogue);}
+function lessonResponsePair(lesson,c){
+  const d=lessonDialogue(lesson);
+  const lines=d&&d.versions&&d.versions[0]&&d.versions[0].lines||[];
+  for(let i=0;i<lines.length-1;i++){
+    const q=lines[i],a=lines[i+1];
+    if(q&&a&&q.es&&a.es&&(/\?\s*$/.test(q.es)||/\?\s*$/.test(q.en||"")))
+      return {questionEs:q.es,questionEn:q.en||"Listen for the meaning, then respond.",questionTts:q.tts||q.es,answerEs:a.es,answerEn:a.en||"A natural response",answerTts:a.tts||a.es,alternate:null};
+  }
+  const mission=lesson&&lesson.missionId&&typeof CONVERSATION_MISSIONS!=="undefined"?CONVERSATION_MISSIONS.find(m=>m.id===lesson.missionId):null;
+  const model=mission&&mission.models&&mission.models[0];
+  if(model&&mission.prompt)return {questionEs:mission.prompt,questionEn:mission.scenario||"Answer the situation in your own words.",questionTts:mission.prompt,answerEs:model.es,answerEn:model.en||"A natural response",answerTts:model.tts||model.es,alternate:mission.models[1]||null};
+  return null;
+}
 function openLesson(lesson){
   lpLesson=lesson;lpStep=0;lpScore=0;lpQi=0;lpAnswered=false;lpPracticed=new Set();
   const c=LESSON_CONTENT[lesson.id];
   /* Speaking-first order: hear a useful chunk, produce it, role-play it,
      then study the grammar that explains what you just said. */
-  lpSteps=c?["objetivo","palabras","escucha","frases","matching","building","typing","hablaA","hablaB","estructura","pronun","lectura","quiz","mision","fin"]:["fin"];
+  lpSteps=c?["objetivo","palabras","escucha",...(lessonResponsePair(lesson,c)?["respuesta"]:[]),"frases","matching","building","typing","hablaA","hablaB","estructura","pronun","lectura","quiz","mision","fin"]:["fin"];
   if(c)buildLessonQuiz(lesson,c);
   renderLessonStep();
 }
@@ -1334,6 +1347,60 @@ function renderLessonStep(){
     });
     if(lines.length)body.appendChild(lpSpeakBtn(lines.map(l=>l.tts).join(". "),"▶️ Play all"));
     navBtn("‹ Back",prev);navBtn("Next →",next,true);
+  }
+  else if(step==="respuesta"){
+    const pair=lessonResponsePair(lpLesson,c);
+    title.textContent="🎧 Listen → respond — move from understanding to speaking";
+    if(!pair){body.appendChild(lpEl("lp-hint","No response prompt is available for this lesson yet."));navBtn("‹ Back",prev);navBtn("Next →",next,true);}
+    else{
+      body.appendChild(lpEl("lp-activity-note","Listen for the idea, not every word. First use help, then hide the text and answer out loud in your own words."));
+      const rail=lpEl("lp-response-rail");
+      const stages=[["1","Slow + help"],["2","Normal speed"],["3","Respond"],["4","Compare"]];
+      stages.forEach(([number,label])=>{const item=lpEl("lp-response-stage",`<span>${number}</span><small>${label}</small>`);rail.appendChild(item);});
+      body.appendChild(rail);
+      const promptBox=lpEl("lp-response-prompt");
+      const promptEs=lpEl("lp-response-es",escapeVocabHtml(pair.questionEs));
+      const promptEn=lpEl("lp-response-en",escapeVocabHtml(pair.questionEn));
+      promptBox.append(promptEs,promptEn);body.appendChild(promptBox);
+      const status=lpEl("lp-response-status","Step 1 · Listen slowly and notice the main idea.");status.setAttribute("aria-live","polite");body.appendChild(status);
+      const actions=lpEl("lp-response-actions");
+      const slow=document.createElement("button");slow.type="button";slow.className="lp-nav-btn";slow.textContent="🐢 Hear slowly";slow.onclick=()=>speak(pair.questionTts,0.55);
+      const normal=document.createElement("button");normal.type="button";normal.className="lp-nav-btn";normal.textContent="🔊 Hear normally";normal.onclick=()=>speak(pair.questionTts,0.75);
+      const hide=document.createElement("button");hide.type="button";hide.className="lp-nav-btn primary";hide.textContent="I understand the idea →";
+      const help=document.createElement("button");help.type="button";help.className="lp-english-help";help.textContent="💡 Hide English help";
+      let stage=1,english=true,modelShown=false;
+      const setStage=n=>{
+        stage=n;
+        rail.querySelectorAll(".lp-response-stage").forEach((item,i)=>item.classList.toggle("on",i<n));
+        promptEs.hidden=n>=3;
+        promptEn.hidden=!english||n>=3;
+        help.textContent=english?"🙈 Hide English help":"💡 Show English help";
+        if(n===2)status.textContent="Step 2 · Hear it at normal speed. Then hide the text.";
+        if(n===3)status.textContent="Step 3 · Answer out loud now. You can use any natural answer that fits.";
+        if(n>=4)status.textContent="Step 4 · Compare with a natural model answer. Your wording can be different.";
+      };
+      hide.onclick=()=>{setStage(2);speak(pair.questionTts,0.75);};
+      help.onclick=()=>{english=!english;promptEn.hidden=!english||stage>=3;help.textContent=english?"🙈 Hide English help":"💡 Show English help";};
+      actions.append(slow,normal,hide);body.appendChild(actions);body.appendChild(help);
+      const responseActions=lpEl("lp-response-actions");
+      const answerBtn=document.createElement("button");answerBtn.type="button";answerBtn.className="lp-nav-btn primary";answerBtn.textContent="🎙️ Record my response";answerBtn.disabled=true;
+      answerBtn.onclick=()=>{setStage(3);openMicPanel(pair.answerEs);};
+      const reveal=document.createElement("button");reveal.type="button";reveal.className="lp-nav-btn";reveal.textContent="Reveal model answer";reveal.disabled=true;
+      reveal.onclick=()=>{modelShown=true;setStage(4);models.hidden=false;reveal.hidden=true;};
+      responseActions.append(answerBtn,reveal);body.appendChild(responseActions);
+      const models=lpEl("lp-response-models");models.hidden=true;
+      const addModel=(model,label)=>{if(!model)return;const row=lpEl("lp-response-model",`<small>${label}</small><strong>${escapeVocabHtml(model.es)}</strong><em>${escapeVocabHtml(model.en||"")}</em>`);row.onclick=()=>speak(model.tts||model.es,0.75);attachMic(row,model.tts||model.es);models.appendChild(row);};
+      addModel({es:pair.answerEs,en:pair.answerEn,tts:pair.answerTts},"Natural option 1");
+      if(pair.alternate)addModel(pair.alternate,"Natural option 2");
+      body.appendChild(models);
+      const rating=lpEl("lp-response-rating");
+      [["understood","✅ I understood"],["replay","🔁 Need replay"],["practice","🗣️ Need more practice"]].forEach(([kind,label])=>{const b=document.createElement("button");b.type="button";b.textContent=label;b.onclick=()=>{rating.querySelectorAll("button").forEach(x=>x.classList.toggle("selected",x===b));status.textContent=kind==="understood"?"Nice — keep answering without translating word by word.":kind==="replay"?"Replay slowly, then normally, and try again.":"Good choice. Repeat the model once, then answer again in your own words.";};rating.appendChild(b);});
+      body.appendChild(rating);
+      const unlock=()=>{answerBtn.disabled=false;reveal.disabled=false;};
+      hide.addEventListener("click",unlock);normal.addEventListener("click",()=>{if(stage>=2)unlock();});
+      setStage(1);setTimeout(()=>speak(pair.questionTts,0.55),250);
+      navBtn("‹ Back",prev);navBtn("Next →",next,true);
+    }
   }
   else if(step==="palabras"){
     title.textContent="🔑 Key words — tap, listen, repeat out loud";
@@ -1466,7 +1533,7 @@ function renderLessonStep(){
       const b=document.createElement("button");b.type="button";b.className="lp-opt";b.textContent=opt;
       b.onclick=()=>{
         if(lpAnswered)return;lpAnswered=true;
-        if(opt===q.answer){b.classList.add("correct");clearSpeakingError(q.revEs);lpScore++;fb.innerHTML="✅ ¡Correcto! <div class='lp-reveal'>📖 "+q.revEs+" — "+q.revEn+"</div>";speak(q.afterTts,0.75);}
+        if(quizAnswerMatches(q,opt)){b.classList.add("correct");clearSpeakingError(q.revEs);lpScore++;fb.innerHTML="✅ ¡Correcto! <div class='lp-reveal'>📖 "+q.revEs+" — "+q.revEn+"</div>";speak(q.afterTts,0.75);}
         else{b.classList.add("wrong");recordSpeakingError(q.revEs,"lesson quiz");grid.querySelectorAll(".lp-opt").forEach(x=>{if(x.textContent===q.answer)x.classList.add("reveal");});fb.innerHTML="❌ Not quite. <div class='lp-reveal'>📖 "+q.revEs+" — "+q.revEn+"</div><small>Saved in your practice list.</small>";}
         attachMic(fb,q.revEs);
         navBtn(lpQi<lpQs.length-1?"Next question →":"Finish →",()=>{
@@ -2108,30 +2175,63 @@ function renderProgressDashboard(root,done){
   root.appendChild(card);
 }
 
+function quizAcceptedAnswers(q){
+  const values=[];const add=value=>{if(value!==undefined&&value!==null&&String(value).trim())values.push(String(value));};
+  if(q&&q.answer!==undefined)add(q.answer);else add(q&&q.en);
+  (q&&Array.isArray(q.acceptedAnswers)?q.acceptedAnswers:[]).forEach(add);
+  return [...new Map(values.map(value=>[normalizeQuizText(value),value])).values()];
+}
+function quizAnswerMatches(q,value){
+  const key=normalizeQuizText(value);return !!key&&quizAcceptedAnswers(q).some(answer=>normalizeQuizText(answer)===key);
+}
+function buildQuizAuditReport(pool){
+  const groups=new Map(),choiceIssues=[],missingFields=[],weakContext=[];
+  pool.forEach((q,i)=>{
+    const number=i+1,promptText=q.quizPrompt||q.prompt||q.es||"",promptKey=normalizeQuizPrompt(promptText),groupKey=promptKey+"|"+(q.kind||"vocab"),answers=quizAcceptedAnswers(q);
+    if(!q.es||!q.tts||!answers.length)missingFields.push({number,detail:"missing Spanish, audio text, or intended answer"});
+    if(promptKey){const group=groups.get(groupKey)||{prompt:promptText,items:[]};group.items.push({number,answers});groups.set(groupKey,group);}
+    if(Array.isArray(q.choices)){
+      const normalized=q.choices.map(normalizeQuizText),unique=new Set(normalized);
+      if(q.choices.length!==4)choiceIssues.push({number,detail:"needs exactly four choices"});
+      else if(unique.size!==normalized.length)choiceIssues.push({number,detail:"contains duplicate choices"});
+      else if(!q.choices.some(choice=>quizAnswerMatches(q,choice)))choiceIssues.push({number,detail:"intended answer is not among the choices"});
+    }
+    if((q.kind==="reply"||q.kind==="tense")&&!q.quizPrompt)weakContext.push({number,prompt:promptText,detail:"add a situation or response instruction"});
+    if(q.kind==="blank"&&!String(q.es||"").includes("___"))choiceIssues.push({number,detail:"blank question has no blank marker"});
+  });
+  const conflicting=[],duplicates=[];
+  groups.forEach(group=>{
+    if(group.items.length<2)return;
+    const distinct=[...new Set(group.items.flatMap(item=>item.answers).map(normalizeQuizAnswer).filter(Boolean))];
+    const itemSummary=group.items.map(item=>`#${item.number}: ${item.answers.join(" / ")}`).join(" · ");
+    (distinct.length>1?conflicting:duplicates).push({prompt:group.prompt,summary:itemSummary});
+  });
+  return {pool,choiceIssues,missingFields,weakContext,conflicting,duplicates};
+}
 function renderQuizAuditCard(root){
   const card=document.createElement("section");card.className="quiz-audit-card";card.dataset.lessonView="practice";
-  card.innerHTML="<div class='quiz-audit-kicker'>🧪 QUIZ QUALITY CHECK</div><div class='quiz-audit-title'>Keep questions fair and unambiguous</div><p>Run a quick structural audit after adding new lessons or quiz content. It checks duplicate prompts, answer choices, and missing blanks.</p><button type='button' class='quiz-audit-btn'>Run quiz audit</button><div class='quiz-audit-result' aria-live='polite'></div>";
+  card.innerHTML="<div class='quiz-audit-kicker'>🧪 QUIZ QUALITY CHECK</div><div class='quiz-audit-title'>Keep questions fair and unambiguous</div><p>Run this after adding quiz content. It checks structure and flags prompts that need a human meaning check. It never deletes questions.</p><button type='button' class='quiz-audit-btn'>Run quiz audit</button><div class='quiz-audit-result' aria-live='polite'></div>";
   card.querySelector(".quiz-audit-btn").onclick=()=>{
     const result=card.querySelector(".quiz-audit-result");
-    const pool=typeof aQ!=="undefined"?aQ:[];const seen=new Map(),duplicates=[],choiceIssues=[];
+    const pool=typeof aQ!=="undefined"?aQ:[];const report=buildQuizAuditReport(pool);const seen=new Map(),duplicates=[],choiceIssues=report.choiceIssues.map(x=>x.number);
     pool.forEach((q,i)=>{
       const prompt=normalizeQuizPrompt(q.quizPrompt||q.es||q.prompt||"");
       const signature=normalizeQuizAnswer(q.en||q.answer||"")+"|"+(Array.isArray(q.choices)?q.choices.map(normalizeQuizAnswer).sort().join("/"):"");
       if(prompt){if(seen.has(prompt)){const prior=seen.get(prompt);if(prior.signature!==signature)duplicates.push({first:prior.index,second:i+1,prompt:q.quizPrompt||q.es||q.prompt||"",firstAnswer:prior.answer||"",secondAnswer:q.en||q.answer||""});}else seen.set(prompt,{index:i+1,signature,answer:q.en||q.answer||""});}
-      if(Array.isArray(q.choices)){
-        const c=q.choices.map(normalizeQuizText);if(c.length!==4||new Set(c).size!==c.length||!c.includes(normalizeQuizText(q.en||q.answer||"")))choiceIssues.push(i+1);
-      }
     });
-    const total=duplicates.length+choiceIssues.length;
+    report.conflicting.forEach(x=>duplicates.push({first:"conflict",second:"",prompt:x.prompt,firstAnswer:x.summary,secondAnswer:"Possible multiple valid answers"}));
+    const total=duplicates.length+choiceIssues.length+report.missingFields.length+report.weakContext.length;
     const structure=choiceIssues.length?`⚠️ ${choiceIssues.length} choice-structure issue${choiceIssues.length===1?"":"s"}`:`✅ No malformed choice sets in ${pool.length} questions`;
-    const repeatNote=duplicates.length?`${duplicates.length} repeated or translation-variant prompts are listed below for human review.`:"No repeated prompt variants found.";
-    result.innerHTML=`<strong>${structure}</strong><small>${repeatNote}</small><em>Repeated translations are not automatically wrong; the quiz now prevents the same prompt from appearing twice in one round. Review the list when you want to refine wording or add context.</em>`;
+    const repeatNote=duplicates.length?`${duplicates.length} repeated or possible-conflict prompt${duplicates.length===1?"":"s"} listed for human review.`:"No repeated or conflicting prompts found.";
+    result.innerHTML=`<strong>${structure}</strong><small>${repeatNote}</small><small>${report.weakContext.length} weak-context candidate${report.weakContext.length===1?"":"s"} · ${report.missingFields.length} missing-data item${report.missingFields.length===1?"":"s"}</small><em>A computer can find duplicates and malformed choices, but only a person can decide whether two natural replies both fit. Review candidates before publishing.</em>`;
     if(total){
       const detail=document.createElement("details");detail.className="quiz-audit-details";
       const summary=document.createElement("summary");summary.textContent="Show candidate list";detail.appendChild(summary);
       const list=document.createElement("div");list.className="quiz-audit-list";
       duplicates.slice(0,60).forEach(x=>{const row=document.createElement("div");row.innerHTML=`<strong>#${x.first} / #${x.second}</strong><span>${escapeVocabHtml(x.prompt)}</span><small>Answers: ${escapeVocabHtml(x.firstAnswer)} · ${escapeVocabHtml(x.secondAnswer)}</small>`;list.appendChild(row);});
       if(choiceIssues.length){const row=document.createElement("div");row.innerHTML=`<strong>Choice structure</strong><span>Question numbers: ${choiceIssues.join(", ")}</span><small>Check that each has four unique choices and exactly one intended answer.</small>`;list.appendChild(row);}
+      report.weakContext.slice(0,60).forEach(x=>{const row=document.createElement("div");row.innerHTML=`<strong>#${x.number}</strong><span>${escapeVocabHtml(x.prompt)}</span><small>Needs clearer context: ${escapeVocabHtml(x.detail)}</small>`;list.appendChild(row);});
+      report.missingFields.slice(0,60).forEach(x=>{const row=document.createElement("div");row.innerHTML=`<strong>#${x.number}</strong><span>Missing required quiz data</span><small>${escapeVocabHtml(x.detail)}</small>`;list.appendChild(row);});
       detail.appendChild(list);result.appendChild(detail);
     }
   };
@@ -2154,7 +2254,7 @@ function renderLessons(){
   buildLessonViewTabs(root);
   const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
   const intro=document.createElement("div");intro.className="lesson-intro";intro.dataset.lessonView="today";
-  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><details class="lesson-overview"><summary><span>ⓘ How the learning path works</span><small>Recognition → speaking</small></summary><div class="lesson-flow">Recommended path: Start Here → Travel → Daily Life → Build Sentences → Speak Naturally<br>Each lesson moves from recognition to production: 🎯 Goal → 🔑 Words → 👂 Listen → 🧩 Match → 🧱 Build → ⌨️ Type → 🎭 Role-play → 📖 Read → 🧪 Quiz → 🎯 Mission</div></details>`;
+  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><details class="lesson-overview"><summary><span>ⓘ How the learning path works</span><small>Recognition → speaking</small></summary><div class="lesson-flow">Recommended path: Start Here → Travel → Daily Life → Build Sentences → Speak Naturally<br>Each lesson moves from recognition to production: 🎯 Goal → 🔑 Words → 👂 Listen → 🎧 Respond → 🧩 Match → 🧱 Build → ⌨️ Type → 🎭 Role-play → 📖 Read → 🧪 Quiz → 🎯 Mission</div></details>`;
   root.appendChild(intro);
   renderRoutineCard(root);
   /* Continue / Start here (v21) */
@@ -2868,7 +2968,7 @@ function cleanQuizPool(pool){
     const choices=[];const seenChoices=new Set();
     q.choices.forEach(choice=>{const text=String(choice||"").trim();const ck=normalizeQuizText(text);if(text&&ck&&!seenChoices.has(ck)){seenChoices.add(ck);choices.push(text);}});
     q.choices=choices;
-    return choices.some(choice=>normalizeQuizText(choice)===normalizeQuizText(q.answer));
+    return choices.some(choice=>quizAnswerMatches(q,choice));
   });
 }
 function missedQuizKey(q){return `${q.es}|${q.en||q.answer}`;}
@@ -2961,7 +3061,7 @@ function nQ(){
   document.getElementById("qc-word").textContent=qMode==="listening"||cQ.kind==="listening"?"🎧":cQ.prompt;
   document.querySelector(".qc-label").textContent=qMode==="en-es"?"Translate to Spanish":qMode==="listening"?"Listen and recognize":qMode==="blank"?"Complete the sentence":qMode==="conversation"?(cQ.kind==="reply"?"Choose the natural reply":cQ.kind==="meaning"?"Choose the English meaning":cQ.kind==="listening"?"Listen and recognize":cQ.kind==="tense"?"Choose the matching tense":"Choose the best answer"):qMode==="es-en"?"Translate to English":cQ.kind==="reply"?"Choose the correct reply":cQ.kind==="listening"?"Listen and recognize":cQ.kind==="tense"?"Which tense is it?":cQ.kind==="blank"?"Complete the sentence":"Choose the correct answer";
   if(qMode==="listening"||cQ.kind==="listening")setTimeout(()=>speak(cQ.tts,0.7),350);
-  const seen=new Set([normalizeQuizText(cQ.answer)]);const wrong=[];
+  const seen=new Set(quizAcceptedAnswers(cQ).map(normalizeQuizText));const wrong=[];
   /* Mixed mode contains several question families.  Do not use a Spanish
      blank answer as a distractor for an English meaning question (or vice
      versa); that makes some questions look like they have multiple answers. */
@@ -2976,7 +3076,7 @@ function nQ(){
     b.onclick=()=>{if(an)return;an=true;qT++;document.getElementById("q-total").textContent=qT;
       const fb=document.getElementById("quiz-fb");
       const mk=cQ.es+"|"+cQ.answer,missKey=missedQuizKey(cQ);
-       if(normalizeQuizText(opt.answer)===normalizeQuizText(cQ.answer)){b.classList.add("correct");qC++;qS++;recordSrs(mk,true);clearSpeakingError(cQ.tts||cQ.es);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.innerHTML=`✅ ¡Correcto! <small class="srs-next">Next review: ${srsNextLabel(srsStore[mk])}</small>`;fb.style.color="var(--teal)";speak(cQ.tts,0.75);
+       if(quizAnswerMatches(cQ,opt.answer)){b.classList.add("correct");qC++;qS++;recordSrs(mk,true);clearSpeakingError(cQ.tts||cQ.es);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.innerHTML=`✅ ¡Correcto! <small class="srs-next">Next review: ${srsNextLabel(srsStore[mk])}</small>`;fb.style.color="var(--teal)";speak(cQ.tts,0.75);
         clearMissedQuiz(cQ);}
        else{b.classList.add("wrong");qS=0;recordSrs(mk,false);recordSpeakingError(cQ.tts||cQ.es,"quiz");document.getElementById("q-streak").textContent="🔥 0";fb.innerHTML="❌ Incorrecto <small class='srs-next'>Review again tomorrow.</small>";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(normalizeQuizText(x.textContent)===normalizeQuizText(cQ.answer))x.classList.add("reveal");});
         qStore.missed[missKey]=(qStore.missed[missKey]||0)+2;}
@@ -3058,6 +3158,13 @@ function runDataValidator(){
       if(!PHRASE_DIALOGUES.some(d=>d.title===l.dialogue))issues.push('Lesson "'+l.id+'": dialogue "'+l.dialogue+'" does not exist');
       if(l.quizCat!=="all"&&!aQ.some(q=>q.cat===l.quizCat))issues.push('Lesson "'+l.id+'": quiz category "'+l.quizCat+'" is empty');
       if(typeof LESSON_CONTENT!=="undefined"&&!LESSON_CONTENT[l.id])issues.push('Lesson "'+l.id+'": no LESSON_CONTENT entry');
+    });
+    if(typeof LESSON_CONTENT!=="undefined")Object.entries(LESSON_CONTENT).forEach(([id,c])=>{
+      if(!c||!c.goal||!c.goal.es||!c.goal.en)issues.push('Lesson content "'+id+'": missing bilingual goal');
+      if(!Array.isArray(c&&c.words)||c.words.length<3)issues.push('Lesson content "'+id+'": needs at least three key words');
+      if(!Array.isArray(c&&c.phrases)||c.phrases.length<3)issues.push('Lesson content "'+id+'": needs at least three speaking phrases');
+      (c&&c.words||[]).forEach((w,i)=>{if(!w.es||!w.en)issues.push('Lesson content "'+id+'" word '+(i+1)+' missing Spanish or English');});
+      (c&&c.phrases||[]).forEach((p,i)=>{if(!p.es||!p.en)issues.push('Lesson content "'+id+'" phrase '+(i+1)+' missing Spanish or English');});
     });
     CONVERSATION_MISSIONS.forEach(m=>{if(!m.id||!m.scenario||!m.prompt||!Array.isArray(m.models)||m.models.length<2)issues.push('Mission "'+(m.id||"?")+'": missing scenario, prompt, or model answers');});
     SPECIAL_SOUNDS.forEach(s=>{if(!s.id||!s.label||!s.tip||!Array.isArray(s.examples)||!s.examples.length)issues.push('Special sound "'+(s.id||"?")+ '": incomplete examples');});
