@@ -1164,6 +1164,27 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 /* v60: lesson production activities. Keep each exercise compact so the learner
    can see the task and its controls together on a phone. */
 .lp-activity-note{margin:0 0 13px;padding:10px 12px;border:1px solid rgba(74,168,160,.2);border-radius:12px;background:rgba(74,168,160,.06);color:var(--muted);font-size:.74rem;line-height:1.4;}
+.lp-response-rail{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin:0 0 13px;}
+.lp-response-stage{display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 3px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:rgba(255,255,255,.035);color:rgba(255,255,255,.4);text-align:center;}
+.lp-response-stage span{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.08);font-size:.62rem;font-weight:950;}
+.lp-response-stage small{font-size:.54rem;line-height:1.15;font-weight:850;}
+.lp-response-stage.on{border-color:rgba(74,168,160,.55);background:rgba(74,168,160,.1);color:var(--teal);}
+.lp-response-stage.on span{background:var(--teal);color:#081313;}
+.lp-response-prompt{margin:0 0 10px;padding:14px;border:1px solid rgba(167,139,250,.3);border-radius:13px;background:linear-gradient(135deg,rgba(167,139,250,.1),rgba(74,168,160,.06));}
+.lp-response-es{display:block;color:#fff;font-size:1.02rem;font-weight:900;line-height:1.4;}
+.lp-response-en{display:block;margin-top:5px;color:var(--muted);font-size:.73rem;font-style:italic;line-height:1.4;}
+.lp-response-status{min-height:21px;margin:0 0 9px;color:var(--gold);font-size:.7rem;font-weight:850;line-height:1.35;text-align:center;}
+.lp-response-actions{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 9px;}
+.lp-response-actions .lp-nav-btn{flex:1 1 30%;min-width:100px;}
+.lp-response-actions .lp-nav-btn:disabled{opacity:.45;cursor:not-allowed;}
+.lp-response-models{display:grid;gap:8px;margin:9px 0 11px;}
+.lp-response-model{display:grid;grid-template-columns:1fr auto;gap:3px 8px;padding:10px 11px;border:1px solid rgba(74,168,160,.3);border-radius:11px;background:rgba(74,168,160,.08);text-align:left;cursor:pointer;}
+.lp-response-model small{grid-column:1/-1;color:var(--teal);font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;font-weight:950;}
+.lp-response-model strong{font-size:.82rem;line-height:1.35;color:#fff;}
+.lp-response-model em{grid-column:1/-1;color:var(--muted);font-size:.68rem;line-height:1.35;}
+.lp-response-rating{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 3px;}
+.lp-response-rating button{flex:1 1 30%;min-width:100px;min-height:36px;padding:7px 8px;border:1px solid var(--border);border-radius:9px;background:rgba(255,255,255,.045);color:var(--muted);font:inherit;font-size:.63rem;font-weight:850;}
+.lp-response-rating button.selected{border-color:rgba(232,180,74,.7);background:rgba(232,180,74,.14);color:var(--gold);}
 .lp-match{display:grid;gap:10px;}
 .lp-match-status{color:var(--teal);font-size:.7rem;font-weight:900;text-align:center;}
 .lp-match-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
@@ -1199,6 +1220,8 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 @media(max-width:430px){
   .lp-match-btn{font-size:.68rem;}
   .lp-builder-actions .lp-nav-btn,.lp-typing-actions .lp-nav-btn{min-width:0;padding-left:8px;padding-right:8px;font-size:.68rem;}
+  .lp-response-stage small{font-size:.49rem;}
+  .lp-response-actions .lp-nav-btn,.lp-response-rating button{min-width:0;font-size:.62rem;padding-left:6px;padding-right:6px;}
 }
 
 /* v61: the practice list keeps difficult speaking targets visible without
