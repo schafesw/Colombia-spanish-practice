@@ -1,4 +1,4 @@
-﻿// Spanish learning app data
+// Spanish learning app data
 // ── Alphabet ──────────────────────────────────────────────────────────────────
 const VW=["a","e","i","o","u"],VL=["A","E","I","O","U"];
 const AL=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","Ñ","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
@@ -116,136 +116,136 @@ const VERBS={
   hablar:{en:"to speak / talk",type:"AR — Regular",icon:"🗣️",color:"#4aa8a0",
     gerund:{f:"hablando",en:"speaking"},participle:{f:"hablado",en:"spoken"},
     imperative:{tu:{f:"¡Habla!",en:"Speak! (informal)"},usted:{f:"¡Hable!",en:"Speak! (formal)"}},
-    present:[{p:"yo",v:"hablo",e:"I speak"},{p:"tú",v:"hablas",e:"you speak"},{p:"él/ella",v:"habla",e:"he/she speaks"},{p:"nosotros",v:"hablamos",e:"we speak"},{p:"ellos",v:"hablan",e:"they speak"}],
-    past:[{p:"yo",v:"hablé",e:"I spoke"},{p:"tú",v:"hablaste",e:"you spoke"},{p:"él/ella",v:"habló",e:"he/she spoke"},{p:"nosotros",v:"hablamos",e:"we spoke"},{p:"ellos",v:"hablaron",e:"they spoke"}],
-    imperfect:[{p:"yo",v:"hablaba",e:"I was speaking / used to speak"},{p:"tú",v:"hablabas",e:"you were speaking / used to speak"},{p:"él/ella",v:"hablaba",e:"he/she was speaking / used to speak"},{p:"nosotros",v:"hablábamos",e:"we were speaking / used to speak"},{p:"ellos",v:"hablaban",e:"they were speaking / used to speak"}],
-    future:[{p:"yo",v:"hablaré",e:"I will speak"},{p:"tú",v:"hablarás",e:"you will speak"},{p:"él/ella",v:"hablará",e:"he/she will speak"},{p:"nosotros",v:"hablaremos",e:"we will speak"},{p:"ellos",v:"hablarán",e:"they will speak"}],
+    present:[{p:"yo",v:"hablo",e:"I speak"},{p:"tú",v:"hablas",e:"you speak"},{p:"él/ella/ud.",v:"habla",e:"he/she speaks"},{p:"nosotros",v:"hablamos",e:"we speak"},{p:"ellos/uds.",v:"hablan",e:"they speak"}],
+    past:[{p:"yo",v:"hablé",e:"I spoke"},{p:"tú",v:"hablaste",e:"you spoke"},{p:"él/ella/ud.",v:"habló",e:"he/she spoke"},{p:"nosotros",v:"hablamos",e:"we spoke"},{p:"ellos/uds.",v:"hablaron",e:"they spoke"}],
+    imperfect:[{p:"yo",v:"hablaba",e:"I was speaking / used to speak"},{p:"tú",v:"hablabas",e:"you were speaking / used to speak"},{p:"él/ella/ud.",v:"hablaba",e:"he/she was speaking / used to speak"},{p:"nosotros",v:"hablábamos",e:"we were speaking / used to speak"},{p:"ellos/uds.",v:"hablaban",e:"they were speaking / used to speak"}],
+    future:[{p:"yo",v:"hablaré",e:"I will speak"},{p:"tú",v:"hablarás",e:"you will speak"},{p:"él/ella/ud.",v:"hablará",e:"he/she will speak"},{p:"nosotros",v:"hablaremos",e:"we will speak"},{p:"ellos/uds.",v:"hablarán",e:"they will speak"}],
     family:[{f:"el habla",e:"speech / dialect",t:"sustantivo"},{f:"el/la hablante",e:"speaker",t:"sustantivo"},{f:"hablador/a",e:"talkative person",t:"adjetivo"},{f:"la hablada",e:"accent / way of talking",t:"sustantivo"}],
     example:{es:"Yo hablo un poco de español.",en:"I speak a little Spanish."}},
   comer:{en:"to eat",type:"ER — Regular",icon:"🍽️",color:"#f97316",
     gerund:{f:"comiendo",en:"eating"},participle:{f:"comido",en:"eaten"},
     imperative:{tu:{f:"¡Come!",en:"Eat! (informal)"},usted:{f:"¡Coma!",en:"Eat! (formal)"}},
-    present:[{p:"yo",v:"como",e:"I eat"},{p:"tú",v:"comes",e:"you eat"},{p:"él/ella",v:"come",e:"he/she eats"},{p:"nosotros",v:"comemos",e:"we eat"},{p:"ellos",v:"comen",e:"they eat"}],
-    past:[{p:"yo",v:"comí",e:"I ate"},{p:"tú",v:"comiste",e:"you ate"},{p:"él/ella",v:"comió",e:"he/she ate"},{p:"nosotros",v:"comimos",e:"we ate"},{p:"ellos",v:"comieron",e:"they ate"}],
-    imperfect:[{p:"yo",v:"comía",e:"I was eating / used to eat"},{p:"tú",v:"comías",e:"you were eating / used to eat"},{p:"él/ella",v:"comía",e:"he/she was eating / used to eat"},{p:"nosotros",v:"comíamos",e:"we were eating / used to eat"},{p:"ellos",v:"comían",e:"they were eating / used to eat"}],
-    future:[{p:"yo",v:"comeré",e:"I will eat"},{p:"tú",v:"comerás",e:"you will eat"},{p:"él/ella",v:"comerá",e:"he/she will eat"},{p:"nosotros",v:"comeremos",e:"we will eat"},{p:"ellos",v:"comerán",e:"they will eat"}],
+    present:[{p:"yo",v:"como",e:"I eat"},{p:"tú",v:"comes",e:"you eat"},{p:"él/ella/ud.",v:"come",e:"he/she eats"},{p:"nosotros",v:"comemos",e:"we eat"},{p:"ellos/uds.",v:"comen",e:"they eat"}],
+    past:[{p:"yo",v:"comí",e:"I ate"},{p:"tú",v:"comiste",e:"you ate"},{p:"él/ella/ud.",v:"comió",e:"he/she ate"},{p:"nosotros",v:"comimos",e:"we ate"},{p:"ellos/uds.",v:"comieron",e:"they ate"}],
+    imperfect:[{p:"yo",v:"comía",e:"I was eating / used to eat"},{p:"tú",v:"comías",e:"you were eating / used to eat"},{p:"él/ella/ud.",v:"comía",e:"he/she was eating / used to eat"},{p:"nosotros",v:"comíamos",e:"we were eating / used to eat"},{p:"ellos/uds.",v:"comían",e:"they were eating / used to eat"}],
+    future:[{p:"yo",v:"comeré",e:"I will eat"},{p:"tú",v:"comerás",e:"you will eat"},{p:"él/ella/ud.",v:"comerá",e:"he/she will eat"},{p:"nosotros",v:"comeremos",e:"we will eat"},{p:"ellos/uds.",v:"comerán",e:"they will eat"}],
     family:[{f:"la comida",e:"food / meal",t:"sustantivo"},{f:"el comedor",e:"dining room",t:"sustantivo"},{f:"el/la comensal",e:"diner / guest",t:"sustantivo"},{f:"comestible",e:"edible",t:"adjetivo"}],
     example:{es:"¿Qué vas a comer?",en:"What are you going to eat?"}},
   vivir:{en:"to live",type:"IR — Regular",icon:"🏠",color:"#34d399",
     gerund:{f:"viviendo",en:"living"},participle:{f:"vivido",en:"lived"},
     imperative:{tu:{f:"¡Vive!",en:"Live! (informal)"},usted:{f:"¡Viva!",en:"Live! (formal) / Cheers!"}},
-    present:[{p:"yo",v:"vivo",e:"I live"},{p:"tú",v:"vives",e:"you live"},{p:"él/ella",v:"vive",e:"he/she lives"},{p:"nosotros",v:"vivimos",e:"we live"},{p:"ellos",v:"viven",e:"they live"}],
-    past:[{p:"yo",v:"viví",e:"I lived"},{p:"tú",v:"viviste",e:"you lived"},{p:"él/ella",v:"vivió",e:"he/she lived"},{p:"nosotros",v:"vivimos",e:"we lived"},{p:"ellos",v:"vivieron",e:"they lived"}],
-    imperfect:[{p:"yo",v:"vivía",e:"I was living / used to live"},{p:"tú",v:"vivías",e:"you were living / used to live"},{p:"él/ella",v:"vivía",e:"he/she was living / used to live"},{p:"nosotros",v:"vivíamos",e:"we were living / used to live"},{p:"ellos",v:"vivían",e:"they were living / used to live"}],
-    future:[{p:"yo",v:"viviré",e:"I will live"},{p:"tú",v:"vivirás",e:"you will live"},{p:"él/ella",v:"vivirá",e:"he/she will live"},{p:"nosotros",v:"viviremos",e:"we will live"},{p:"ellos",v:"vivirán",e:"they will live"}],
+    present:[{p:"yo",v:"vivo",e:"I live"},{p:"tú",v:"vives",e:"you live"},{p:"él/ella/ud.",v:"vive",e:"he/she lives"},{p:"nosotros",v:"vivimos",e:"we live"},{p:"ellos/uds.",v:"viven",e:"they live"}],
+    past:[{p:"yo",v:"viví",e:"I lived"},{p:"tú",v:"viviste",e:"you lived"},{p:"él/ella/ud.",v:"vivió",e:"he/she lived"},{p:"nosotros",v:"vivimos",e:"we lived"},{p:"ellos/uds.",v:"vivieron",e:"they lived"}],
+    imperfect:[{p:"yo",v:"vivía",e:"I was living / used to live"},{p:"tú",v:"vivías",e:"you were living / used to live"},{p:"él/ella/ud.",v:"vivía",e:"he/she was living / used to live"},{p:"nosotros",v:"vivíamos",e:"we were living / used to live"},{p:"ellos/uds.",v:"vivían",e:"they were living / used to live"}],
+    future:[{p:"yo",v:"viviré",e:"I will live"},{p:"tú",v:"vivirás",e:"you will live"},{p:"él/ella/ud.",v:"vivirá",e:"he/she will live"},{p:"nosotros",v:"viviremos",e:"we will live"},{p:"ellos/uds.",v:"vivirán",e:"they will live"}],
     family:[{f:"la vida",e:"life",t:"sustantivo"},{f:"la vivienda",e:"housing / home",t:"sustantivo"},{f:"vivo/a",e:"alive / lively",t:"adjetivo"},{f:"el/la vecino/a",e:"neighbour",t:"sustantivo"}],
     example:{es:"Vivo en Colombia.",en:"I live in Colombia."}},
   beber:{en:"to drink",type:"ER — Regular",icon:"🥤",color:"#60a5fa",
     gerund:{f:"bebiendo",en:"drinking"},participle:{f:"bebido",en:"drunk (drunk something)"},
     imperative:{tu:{f:"¡Bebe!",en:"Drink! (informal)"},usted:{f:"¡Beba!",en:"Drink! (formal)"}},
-    present:[{p:"yo",v:"bebo",e:"I drink"},{p:"tú",v:"bebes",e:"you drink"},{p:"él/ella",v:"bebe",e:"he/she drinks"},{p:"nosotros",v:"bebemos",e:"we drink"},{p:"ellos",v:"beben",e:"they drink"}],
-    past:[{p:"yo",v:"bebí",e:"I drank"},{p:"tú",v:"bebiste",e:"you drank"},{p:"él/ella",v:"bebió",e:"he/she drank"},{p:"nosotros",v:"bebimos",e:"we drank"},{p:"ellos",v:"bebieron",e:"they drank"}],
-    imperfect:[{p:"yo",v:"bebía",e:"I was drinking / used to drink"},{p:"tú",v:"bebías",e:"you were drinking / used to drink"},{p:"él/ella",v:"bebía",e:"he/she was drinking / used to drink"},{p:"nosotros",v:"bebíamos",e:"we were drinking / used to drink"},{p:"ellos",v:"bebían",e:"they were drinking / used to drink"}],
-    future:[{p:"yo",v:"beberé",e:"I will drink"},{p:"tú",v:"beberás",e:"you will drink"},{p:"él/ella",v:"beberá",e:"he/she will drink"},{p:"nosotros",v:"beberemos",e:"we will drink"},{p:"ellos",v:"beberán",e:"they will drink"}],
+    present:[{p:"yo",v:"bebo",e:"I drink"},{p:"tú",v:"bebes",e:"you drink"},{p:"él/ella/ud.",v:"bebe",e:"he/she drinks"},{p:"nosotros",v:"bebemos",e:"we drink"},{p:"ellos/uds.",v:"beben",e:"they drink"}],
+    past:[{p:"yo",v:"bebí",e:"I drank"},{p:"tú",v:"bebiste",e:"you drank"},{p:"él/ella/ud.",v:"bebió",e:"he/she drank"},{p:"nosotros",v:"bebimos",e:"we drank"},{p:"ellos/uds.",v:"bebieron",e:"they drank"}],
+    imperfect:[{p:"yo",v:"bebía",e:"I was drinking / used to drink"},{p:"tú",v:"bebías",e:"you were drinking / used to drink"},{p:"él/ella/ud.",v:"bebía",e:"he/she was drinking / used to drink"},{p:"nosotros",v:"bebíamos",e:"we were drinking / used to drink"},{p:"ellos/uds.",v:"bebían",e:"they were drinking / used to drink"}],
+    future:[{p:"yo",v:"beberé",e:"I will drink"},{p:"tú",v:"beberás",e:"you will drink"},{p:"él/ella/ud.",v:"beberá",e:"he/she will drink"},{p:"nosotros",v:"beberemos",e:"we will drink"},{p:"ellos/uds.",v:"beberán",e:"they will drink"}],
     family:[{f:"la bebida",e:"drink / beverage",t:"sustantivo"},{f:"el bebedor",e:"drinker",t:"sustantivo"},{f:"bebible",e:"drinkable",t:"adjetivo"},{f:"la bebida alcohólica",e:"alcoholic drink",t:"sustantivo"}],
     example:{es:"¿Qué bebida quieres?",en:"What drink do you want?"}},
   trabajar:{en:"to work",type:"AR — Regular",icon:"💼",color:"#e8b44a",
     gerund:{f:"trabajando",en:"working"},participle:{f:"trabajado",en:"worked"},
     imperative:{tu:{f:"¡Trabaja!",en:"Work! (informal)"},usted:{f:"¡Trabaje!",en:"Work! (formal)"}},
-    present:[{p:"yo",v:"trabajo",e:"I work"},{p:"tú",v:"trabajas",e:"you work"},{p:"él/ella",v:"trabaja",e:"he/she works"},{p:"nosotros",v:"trabajamos",e:"we work"},{p:"ellos",v:"trabajan",e:"they work"}],
-    past:[{p:"yo",v:"trabajé",e:"I worked"},{p:"tú",v:"trabajaste",e:"you worked"},{p:"él/ella",v:"trabajó",e:"he/she worked"},{p:"nosotros",v:"trabajamos",e:"we worked"},{p:"ellos",v:"trabajaron",e:"they worked"}],
-    imperfect:[{p:"yo",v:"trabajaba",e:"I was working / used to work"},{p:"tú",v:"trabajabas",e:"you were working / used to work"},{p:"él/ella",v:"trabajaba",e:"he/she was working / used to work"},{p:"nosotros",v:"trabajábamos",e:"we were working / used to work"},{p:"ellos",v:"trabajaban",e:"they were working / used to work"}],
-    future:[{p:"yo",v:"trabajaré",e:"I will work"},{p:"tú",v:"trabajarás",e:"you will work"},{p:"él/ella",v:"trabajará",e:"he/she will work"},{p:"nosotros",v:"trabajaremos",e:"we will work"},{p:"ellos",v:"trabajarán",e:"they will work"}],
+    present:[{p:"yo",v:"trabajo",e:"I work"},{p:"tú",v:"trabajas",e:"you work"},{p:"él/ella/ud.",v:"trabaja",e:"he/she works"},{p:"nosotros",v:"trabajamos",e:"we work"},{p:"ellos/uds.",v:"trabajan",e:"they work"}],
+    past:[{p:"yo",v:"trabajé",e:"I worked"},{p:"tú",v:"trabajaste",e:"you worked"},{p:"él/ella/ud.",v:"trabajó",e:"he/she worked"},{p:"nosotros",v:"trabajamos",e:"we worked"},{p:"ellos/uds.",v:"trabajaron",e:"they worked"}],
+    imperfect:[{p:"yo",v:"trabajaba",e:"I was working / used to work"},{p:"tú",v:"trabajabas",e:"you were working / used to work"},{p:"él/ella/ud.",v:"trabajaba",e:"he/she was working / used to work"},{p:"nosotros",v:"trabajábamos",e:"we were working / used to work"},{p:"ellos/uds.",v:"trabajaban",e:"they were working / used to work"}],
+    future:[{p:"yo",v:"trabajaré",e:"I will work"},{p:"tú",v:"trabajarás",e:"you will work"},{p:"él/ella/ud.",v:"trabajará",e:"he/she will work"},{p:"nosotros",v:"trabajaremos",e:"we will work"},{p:"ellos/uds.",v:"trabajarán",e:"they will work"}],
     family:[{f:"el trabajo",e:"work / job",t:"sustantivo"},{f:"el/la trabajador/a",e:"worker",t:"sustantivo"},{f:"trabajador/a",e:"hardworking",t:"adjetivo"},{f:"el taller",e:"workshop",t:"sustantivo"}],
     example:{es:"Trabajo en una empresa colombiana.",en:"I work at a Colombian company."}},
   comprar:{en:"to buy",type:"AR — Regular",icon:"🛍️",color:"#ec4899",
     gerund:{f:"comprando",en:"buying"},participle:{f:"comprado",en:"bought"},
     imperative:{tu:{f:"¡Compra!",en:"Buy! (informal)"},usted:{f:"¡Compre!",en:"Buy! (formal)"}},
-    present:[{p:"yo",v:"compro",e:"I buy"},{p:"tú",v:"compras",e:"you buy"},{p:"él/ella",v:"compra",e:"he/she buys"},{p:"nosotros",v:"compramos",e:"we buy"},{p:"ellos",v:"compran",e:"they buy"}],
-    past:[{p:"yo",v:"compré",e:"I bought"},{p:"tú",v:"compraste",e:"you bought"},{p:"él/ella",v:"compró",e:"he/she bought"},{p:"nosotros",v:"compramos",e:"we bought"},{p:"ellos",v:"compraron",e:"they bought"}],
-    imperfect:[{p:"yo",v:"compraba",e:"I was buying / used to buy"},{p:"tú",v:"comprabas",e:"you were buying / used to buy"},{p:"él/ella",v:"compraba",e:"he/she was buying / used to buy"},{p:"nosotros",v:"comprábamos",e:"we were buying / used to buy"},{p:"ellos",v:"compraban",e:"they were buying / used to buy"}],
-    future:[{p:"yo",v:"compraré",e:"I will buy"},{p:"tú",v:"comprarás",e:"you will buy"},{p:"él/ella",v:"comprará",e:"he/she will buy"},{p:"nosotros",v:"compraremos",e:"we will buy"},{p:"ellos",v:"comprarán",e:"they will buy"}],
+    present:[{p:"yo",v:"compro",e:"I buy"},{p:"tú",v:"compras",e:"you buy"},{p:"él/ella/ud.",v:"compra",e:"he/she buys"},{p:"nosotros",v:"compramos",e:"we buy"},{p:"ellos/uds.",v:"compran",e:"they buy"}],
+    past:[{p:"yo",v:"compré",e:"I bought"},{p:"tú",v:"compraste",e:"you bought"},{p:"él/ella/ud.",v:"compró",e:"he/she bought"},{p:"nosotros",v:"compramos",e:"we bought"},{p:"ellos/uds.",v:"compraron",e:"they bought"}],
+    imperfect:[{p:"yo",v:"compraba",e:"I was buying / used to buy"},{p:"tú",v:"comprabas",e:"you were buying / used to buy"},{p:"él/ella/ud.",v:"compraba",e:"he/she was buying / used to buy"},{p:"nosotros",v:"comprábamos",e:"we were buying / used to buy"},{p:"ellos/uds.",v:"compraban",e:"they were buying / used to buy"}],
+    future:[{p:"yo",v:"compraré",e:"I will buy"},{p:"tú",v:"comprarás",e:"you will buy"},{p:"él/ella/ud.",v:"comprará",e:"he/she will buy"},{p:"nosotros",v:"compraremos",e:"we will buy"},{p:"ellos/uds.",v:"comprarán",e:"they will buy"}],
     family:[{f:"la compra",e:"purchase / shopping",t:"sustantivo"},{f:"el/la comprador/a",e:"buyer / shopper",t:"sustantivo"},{f:"las compras",e:"shopping (groceries)",t:"sustantivo"},{f:"el supermercado",e:"supermarket",t:"sustantivo"}],
     example:{es:"Fui a comprar en el mercado.",en:"I went to shop at the market."}},
   ir:{en:"to go",type:"Irregular",icon:"🚶",color:"#a78bfa",
     gerund:{f:"yendo",en:"going"},participle:{f:"ido",en:"gone"},
     imperative:{tu:{f:"¡Ve!",en:"Go! (informal)"},usted:{f:"¡Vaya!",en:"Go! (formal)"}},
-    present:[{p:"yo",v:"voy",e:"I go"},{p:"tú",v:"vas",e:"you go"},{p:"él/ella",v:"va",e:"he/she goes"},{p:"nosotros",v:"vamos",e:"we go"},{p:"ellos",v:"van",e:"they go"}],
-    past:[{p:"yo",v:"fui",e:"I went"},{p:"tú",v:"fuiste",e:"you went"},{p:"él/ella",v:"fue",e:"he/she went"},{p:"nosotros",v:"fuimos",e:"we went"},{p:"ellos",v:"fueron",e:"they went"}],
-    imperfect:[{p:"yo",v:"iba",e:"I was going / used to go"},{p:"tú",v:"ibas",e:"you were going / used to go"},{p:"él/ella",v:"iba",e:"he/she was going / used to go"},{p:"nosotros",v:"íbamos",e:"we were going / used to go"},{p:"ellos",v:"iban",e:"they were going / used to go"}],
-    future:[{p:"yo",v:"iré",e:"I will go"},{p:"tú",v:"irás",e:"you will go"},{p:"él/ella",v:"irá",e:"he/she will go"},{p:"nosotros",v:"iremos",e:"we will go"},{p:"ellos",v:"irán",e:"they will go"}],
+    present:[{p:"yo",v:"voy",e:"I go"},{p:"tú",v:"vas",e:"you go"},{p:"él/ella/ud.",v:"va",e:"he/she goes"},{p:"nosotros",v:"vamos",e:"we go"},{p:"ellos/uds.",v:"van",e:"they go"}],
+    past:[{p:"yo",v:"fui",e:"I went"},{p:"tú",v:"fuiste",e:"you went"},{p:"él/ella/ud.",v:"fue",e:"he/she went"},{p:"nosotros",v:"fuimos",e:"we went"},{p:"ellos/uds.",v:"fueron",e:"they went"}],
+    imperfect:[{p:"yo",v:"iba",e:"I was going / used to go"},{p:"tú",v:"ibas",e:"you were going / used to go"},{p:"él/ella/ud.",v:"iba",e:"he/she was going / used to go"},{p:"nosotros",v:"íbamos",e:"we were going / used to go"},{p:"ellos/uds.",v:"iban",e:"they were going / used to go"}],
+    future:[{p:"yo",v:"iré",e:"I will go"},{p:"tú",v:"irás",e:"you will go"},{p:"él/ella/ud.",v:"irá",e:"he/she will go"},{p:"nosotros",v:"iremos",e:"we will go"},{p:"ellos/uds.",v:"irán",e:"they will go"}],
     family:[{f:"la ida",e:"going / outward journey",t:"sustantivo"},{f:"la vuelta",e:"return / coming back",t:"sustantivo"},{f:"el viaje",e:"trip / journey",t:"sustantivo"},{f:"vamos a...",e:"let's go to... / going to...",t:"expresión"}],
     example:{es:"¿A dónde vas mañana?",en:"Where are you going tomorrow?"}},
   ser:{en:"to be (permanent)",type:"Irregular",icon:"⭐",color:"#a78bfa",
     gerund:{f:"siendo",en:"being"},participle:{f:"sido",en:"been"},
     imperative:{tu:{f:"¡Sé!",en:"Be! (informal)"},usted:{f:"¡Sea!",en:"Be! (formal)"}},
-    present:[{p:"yo",v:"soy",e:"I am"},{p:"tú",v:"eres",e:"you are"},{p:"él/ella",v:"es",e:"he/she is"},{p:"nosotros",v:"somos",e:"we are"},{p:"ellos",v:"son",e:"they are"}],
-    past:[{p:"yo",v:"fui",e:"I was"},{p:"tú",v:"fuiste",e:"you were"},{p:"él/ella",v:"fue",e:"he/she was"},{p:"nosotros",v:"fuimos",e:"we were"},{p:"ellos",v:"fueron",e:"they were"}],
-    imperfect:[{p:"yo",v:"era",e:"I was / used to be"},{p:"tú",v:"eras",e:"you were / used to be"},{p:"él/ella",v:"era",e:"he/she was / used to be"},{p:"nosotros",v:"éramos",e:"we were / used to be"},{p:"ellos",v:"eran",e:"they were / used to be"}],
-    future:[{p:"yo",v:"seré",e:"I will be"},{p:"tú",v:"serás",e:"you will be"},{p:"él/ella",v:"será",e:"he/she will be"},{p:"nosotros",v:"seremos",e:"we will be"},{p:"ellos",v:"serán",e:"they will be"}],
+    present:[{p:"yo",v:"soy",e:"I am"},{p:"tú",v:"eres",e:"you are"},{p:"él/ella/ud.",v:"es",e:"he/she is"},{p:"nosotros",v:"somos",e:"we are"},{p:"ellos/uds.",v:"son",e:"they are"}],
+    past:[{p:"yo",v:"fui",e:"I was"},{p:"tú",v:"fuiste",e:"you were"},{p:"él/ella/ud.",v:"fue",e:"he/she was"},{p:"nosotros",v:"fuimos",e:"we were"},{p:"ellos/uds.",v:"fueron",e:"they were"}],
+    imperfect:[{p:"yo",v:"era",e:"I was / used to be"},{p:"tú",v:"eras",e:"you were / used to be"},{p:"él/ella/ud.",v:"era",e:"he/she was / used to be"},{p:"nosotros",v:"éramos",e:"we were / used to be"},{p:"ellos/uds.",v:"eran",e:"they were / used to be"}],
+    future:[{p:"yo",v:"seré",e:"I will be"},{p:"tú",v:"serás",e:"you will be"},{p:"él/ella/ud.",v:"será",e:"he/she will be"},{p:"nosotros",v:"seremos",e:"we will be"},{p:"ellos/uds.",v:"serán",e:"they will be"}],
     family:[{f:"el ser",e:"being / creature",t:"sustantivo"},{f:"la persona",e:"person",t:"sustantivo"},{f:"la identidad",e:"identity",t:"sustantivo"},{f:"propio/a",e:"own / one's own",t:"adjetivo"}],
     example:{es:"Soy colombiano. ¿Y tú?",en:"I'm Colombian. And you?"}},
   estar:{en:"to be (temporary/location)",type:"Irregular",icon:"📍",color:"#60a5fa",
     gerund:{f:"estando",en:"being"},participle:{f:"estado",en:"been"},
     imperative:{tu:{f:"¡Estate!",en:"Stay! (informal)"},usted:{f:"¡Esté!",en:"Be! (formal)"}},
-    present:[{p:"yo",v:"estoy",e:"I am"},{p:"tú",v:"estás",e:"you are"},{p:"él/ella",v:"está",e:"he/she is"},{p:"nosotros",v:"estamos",e:"we are"},{p:"ellos",v:"están",e:"they are"}],
-    past:[{p:"yo",v:"estuve",e:"I was"},{p:"tú",v:"estuviste",e:"you were"},{p:"él/ella",v:"estuvo",e:"he/she was"},{p:"nosotros",v:"estuvimos",e:"we were"},{p:"ellos",v:"estuvieron",e:"they were"}],
-    imperfect:[{p:"yo",v:"estaba",e:"I was / used to be"},{p:"tú",v:"estabas",e:"you were / used to be"},{p:"él/ella",v:"estaba",e:"he/she was / used to be"},{p:"nosotros",v:"estábamos",e:"we were / used to be"},{p:"ellos",v:"estaban",e:"they were / used to be"}],
-    future:[{p:"yo",v:"estaré",e:"I will be"},{p:"tú",v:"estarás",e:"you will be"},{p:"él/ella",v:"estará",e:"he/she will be"},{p:"nosotros",v:"estaremos",e:"we will be"},{p:"ellos",v:"estarán",e:"they will be"}],
+    present:[{p:"yo",v:"estoy",e:"I am"},{p:"tú",v:"estás",e:"you are"},{p:"él/ella/ud.",v:"está",e:"he/she is"},{p:"nosotros",v:"estamos",e:"we are"},{p:"ellos/uds.",v:"están",e:"they are"}],
+    past:[{p:"yo",v:"estuve",e:"I was"},{p:"tú",v:"estuviste",e:"you were"},{p:"él/ella/ud.",v:"estuvo",e:"he/she was"},{p:"nosotros",v:"estuvimos",e:"we were"},{p:"ellos/uds.",v:"estuvieron",e:"they were"}],
+    imperfect:[{p:"yo",v:"estaba",e:"I was / used to be"},{p:"tú",v:"estabas",e:"you were / used to be"},{p:"él/ella/ud.",v:"estaba",e:"he/she was / used to be"},{p:"nosotros",v:"estábamos",e:"we were / used to be"},{p:"ellos/uds.",v:"estaban",e:"they were / used to be"}],
+    future:[{p:"yo",v:"estaré",e:"I will be"},{p:"tú",v:"estarás",e:"you will be"},{p:"él/ella/ud.",v:"estará",e:"he/she will be"},{p:"nosotros",v:"estaremos",e:"we will be"},{p:"ellos/uds.",v:"estarán",e:"they will be"}],
     family:[{f:"el estado",e:"state / condition",t:"sustantivo"},{f:"la estancia",e:"stay / ranch",t:"sustantivo"},{f:"estable",e:"stable",t:"adjetivo"},{f:"bien/mal",e:"well/bad (used with estar)",t:"adjetivo"}],
     example:{es:"¿Cómo estás? Estoy bien.",en:"How are you? I'm fine."}},
   tener:{en:"to have",type:"Irregular",icon:"✋",color:"#f59e0b",
     gerund:{f:"teniendo",en:"having"},participle:{f:"tenido",en:"had"},
     imperative:{tu:{f:"¡Ten!",en:"Have/Take! (informal)"},usted:{f:"¡Tenga!",en:"Have/Take! (formal)"}},
-    present:[{p:"yo",v:"tengo",e:"I have"},{p:"tú",v:"tienes",e:"you have"},{p:"él/ella",v:"tiene",e:"he/she has"},{p:"nosotros",v:"tenemos",e:"we have"},{p:"ellos",v:"tienen",e:"they have"}],
-    past:[{p:"yo",v:"tuve",e:"I had"},{p:"tú",v:"tuviste",e:"you had"},{p:"él/ella",v:"tuvo",e:"he/she had"},{p:"nosotros",v:"tuvimos",e:"we had"},{p:"ellos",v:"tuvieron",e:"they had"}],
-    imperfect:[{p:"yo",v:"tenía",e:"I had / used to have"},{p:"tú",v:"tenías",e:"you had / used to have"},{p:"él/ella",v:"tenía",e:"he/she had / used to have"},{p:"nosotros",v:"teníamos",e:"we had / used to have"},{p:"ellos",v:"tenían",e:"they had / used to have"}],
-    future:[{p:"yo",v:"tendré",e:"I will have"},{p:"tú",v:"tendrás",e:"you will have"},{p:"él/ella",v:"tendrá",e:"he/she will have"},{p:"nosotros",v:"tendremos",e:"we will have"},{p:"ellos",v:"tendrán",e:"they will have"}],
+    present:[{p:"yo",v:"tengo",e:"I have"},{p:"tú",v:"tienes",e:"you have"},{p:"él/ella/ud.",v:"tiene",e:"he/she has"},{p:"nosotros",v:"tenemos",e:"we have"},{p:"ellos/uds.",v:"tienen",e:"they have"}],
+    past:[{p:"yo",v:"tuve",e:"I had"},{p:"tú",v:"tuviste",e:"you had"},{p:"él/ella/ud.",v:"tuvo",e:"he/she had"},{p:"nosotros",v:"tuvimos",e:"we had"},{p:"ellos/uds.",v:"tuvieron",e:"they had"}],
+    imperfect:[{p:"yo",v:"tenía",e:"I had / used to have"},{p:"tú",v:"tenías",e:"you had / used to have"},{p:"él/ella/ud.",v:"tenía",e:"he/she had / used to have"},{p:"nosotros",v:"teníamos",e:"we had / used to have"},{p:"ellos/uds.",v:"tenían",e:"they had / used to have"}],
+    future:[{p:"yo",v:"tendré",e:"I will have"},{p:"tú",v:"tendrás",e:"you will have"},{p:"él/ella/ud.",v:"tendrá",e:"he/she will have"},{p:"nosotros",v:"tendremos",e:"we will have"},{p:"ellos/uds.",v:"tendrán",e:"they will have"}],
     family:[{f:"el tenedor",e:"fork",t:"sustantivo"},{f:"la tenencia",e:"possession / holding",t:"sustantivo"},{f:"el/la dueño/a",e:"owner",t:"sustantivo"},{f:"tener que",e:"to have to (must)",t:"expresión"}],
     example:{es:"Tengo treinta años. ¿Cuántos años tienes tú?",en:"I'm thirty years old. How old are you?"}},
   hacer:{en:"to do / to make",type:"Irregular",icon:"🛠️",color:"#34d399",
     gerund:{f:"haciendo",en:"doing/making"},participle:{f:"hecho",en:"done/made"},
     imperative:{tu:{f:"¡Haz!",en:"Do/Make! (informal)"},usted:{f:"¡Haga!",en:"Do/Make! (formal)"}},
-    present:[{p:"yo",v:"hago",e:"I do/make"},{p:"tú",v:"haces",e:"you do/make"},{p:"él/ella",v:"hace",e:"he/she does/makes"},{p:"nosotros",v:"hacemos",e:"we do/make"},{p:"ellos",v:"hacen",e:"they do/make"}],
-    past:[{p:"yo",v:"hice",e:"I did/made"},{p:"tú",v:"hiciste",e:"you did/made"},{p:"él/ella",v:"hizo",e:"he/she did/made"},{p:"nosotros",v:"hicimos",e:"we did/made"},{p:"ellos",v:"hicieron",e:"they did/made"}],
-    imperfect:[{p:"yo",v:"hacía",e:"I was doing / used to do"},{p:"tú",v:"hacías",e:"you were doing / used to do"},{p:"él/ella",v:"hacía",e:"he/she was doing / used to do"},{p:"nosotros",v:"hacíamos",e:"we were doing / used to do"},{p:"ellos",v:"hacían",e:"they were doing / used to do"}],
-    future:[{p:"yo",v:"haré",e:"I will do/make"},{p:"tú",v:"harás",e:"you will do/make"},{p:"él/ella",v:"hará",e:"he/she will do/make"},{p:"nosotros",v:"haremos",e:"we will do/make"},{p:"ellos",v:"harán",e:"they will do/make"}],
+    present:[{p:"yo",v:"hago",e:"I do/make"},{p:"tú",v:"haces",e:"you do/make"},{p:"él/ella/ud.",v:"hace",e:"he/she does/makes"},{p:"nosotros",v:"hacemos",e:"we do/make"},{p:"ellos/uds.",v:"hacen",e:"they do/make"}],
+    past:[{p:"yo",v:"hice",e:"I did/made"},{p:"tú",v:"hiciste",e:"you did/made"},{p:"él/ella/ud.",v:"hizo",e:"he/she did/made"},{p:"nosotros",v:"hicimos",e:"we did/made"},{p:"ellos/uds.",v:"hicieron",e:"they did/made"}],
+    imperfect:[{p:"yo",v:"hacía",e:"I was doing / used to do"},{p:"tú",v:"hacías",e:"you were doing / used to do"},{p:"él/ella/ud.",v:"hacía",e:"he/she was doing / used to do"},{p:"nosotros",v:"hacíamos",e:"we were doing / used to do"},{p:"ellos/uds.",v:"hacían",e:"they were doing / used to do"}],
+    future:[{p:"yo",v:"haré",e:"I will do/make"},{p:"tú",v:"harás",e:"you will do/make"},{p:"él/ella/ud.",v:"hará",e:"he/she will do/make"},{p:"nosotros",v:"haremos",e:"we will do/make"},{p:"ellos/uds.",v:"harán",e:"they will do/make"}],
     family:[{f:"el hecho",e:"fact / deed (done!)",t:"sustantivo"},{f:"la hazaña",e:"feat / achievement",t:"sustantivo"},{f:"hacedero/a",e:"doable / feasible",t:"adjetivo"},{f:"hacer una vuelta",e:"to run an errand (Colombian!)",t:"expresión"}],
     example:{es:"¿Qué haces hoy?",en:"What are you doing today?"}},
   poder:{en:"can / to be able to",type:"Irregular (stem-change)",icon:"💪",color:"#ef4444",
     gerund:{f:"pudiendo",en:"being able to"},participle:{f:"podido",en:"been able to"},
     imperative:{tu:{f:"¡Puede!",en:"You can! (rare as command)"},usted:{f:"—",en:"Rarely used as imperative"}},
-    present:[{p:"yo",v:"puedo",e:"I can"},{p:"tú",v:"puedes",e:"you can"},{p:"él/ella",v:"puede",e:"he/she can"},{p:"nosotros",v:"podemos",e:"we can"},{p:"ellos",v:"pueden",e:"they can"}],
-    past:[{p:"yo",v:"pude",e:"I could"},{p:"tú",v:"pudiste",e:"you could"},{p:"él/ella",v:"pudo",e:"he/she could"},{p:"nosotros",v:"pudimos",e:"we could"},{p:"ellos",v:"pudieron",e:"they could"}],
-    imperfect:[{p:"yo",v:"podía",e:"I could / was able to"},{p:"tú",v:"podías",e:"you could / were able to"},{p:"él/ella",v:"podía",e:"he/she could / was able to"},{p:"nosotros",v:"podíamos",e:"we could / were able to"},{p:"ellos",v:"podían",e:"they could / were able to"}],
-    future:[{p:"yo",v:"podré",e:"I will be able to"},{p:"tú",v:"podrás",e:"you will be able to"},{p:"él/ella",v:"podrá",e:"he/she will be able to"},{p:"nosotros",v:"podremos",e:"we will be able to"},{p:"ellos",v:"podrán",e:"they will be able to"}],
+    present:[{p:"yo",v:"puedo",e:"I can"},{p:"tú",v:"puedes",e:"you can"},{p:"él/ella/ud.",v:"puede",e:"he/she can"},{p:"nosotros",v:"podemos",e:"we can"},{p:"ellos/uds.",v:"pueden",e:"they can"}],
+    past:[{p:"yo",v:"pude",e:"I could"},{p:"tú",v:"pudiste",e:"you could"},{p:"él/ella/ud.",v:"pudo",e:"he/she could"},{p:"nosotros",v:"pudimos",e:"we could"},{p:"ellos/uds.",v:"pudieron",e:"they could"}],
+    imperfect:[{p:"yo",v:"podía",e:"I could / was able to"},{p:"tú",v:"podías",e:"you could / were able to"},{p:"él/ella/ud.",v:"podía",e:"he/she could / was able to"},{p:"nosotros",v:"podíamos",e:"we could / were able to"},{p:"ellos/uds.",v:"podían",e:"they could / were able to"}],
+    future:[{p:"yo",v:"podré",e:"I will be able to"},{p:"tú",v:"podrás",e:"you will be able to"},{p:"él/ella/ud.",v:"podrá",e:"he/she will be able to"},{p:"nosotros",v:"podremos",e:"we will be able to"},{p:"ellos/uds.",v:"podrán",e:"they will be able to"}],
     family:[{f:"el poder",e:"power",t:"sustantivo"},{f:"poderoso/a",e:"powerful",t:"adjetivo"},{f:"posible",e:"possible",t:"adjetivo"},{f:"¿Puede ayudarme?",e:"Can you help me?",t:"expresión"}],
     example:{es:"¿Puede repetir, por favor?",en:"Can you repeat, please?"}},
   querer:{en:"to want / to love",type:"Irregular (stem-change)",icon:"❤️",color:"#e85d75",
     gerund:{f:"queriendo",en:"wanting/loving"},participle:{f:"querido",en:"wanted/loved"},
     imperative:{tu:{f:"¡Quiere!",en:"Want/Love! (informal)"},usted:{f:"¡Quiera!",en:"Please want (formal, rare)"}},
-    present:[{p:"yo",v:"quiero",e:"I want/love"},{p:"tú",v:"quieres",e:"you want/love"},{p:"él/ella",v:"quiere",e:"he/she wants/loves"},{p:"nosotros",v:"queremos",e:"we want/love"},{p:"ellos",v:"quieren",e:"they want/love"}],
-    past:[{p:"yo",v:"quise",e:"I wanted/loved"},{p:"tú",v:"quisiste",e:"you wanted"},{p:"él/ella",v:"quiso",e:"he/she wanted"},{p:"nosotros",v:"quisimos",e:"we wanted"},{p:"ellos",v:"quisieron",e:"they wanted"}],
-    imperfect:[{p:"yo",v:"quería",e:"I wanted / used to want"},{p:"tú",v:"querías",e:"you wanted / used to want"},{p:"él/ella",v:"quería",e:"he/she wanted / used to want"},{p:"nosotros",v:"queríamos",e:"we wanted / used to want"},{p:"ellos",v:"querían",e:"they wanted / used to want"}],
-    future:[{p:"yo",v:"querré",e:"I will want"},{p:"tú",v:"querrás",e:"you will want"},{p:"él/ella",v:"querrá",e:"he/she will want"},{p:"nosotros",v:"querremos",e:"we will want"},{p:"ellos",v:"querrán",e:"they will want"}],
+    present:[{p:"yo",v:"quiero",e:"I want/love"},{p:"tú",v:"quieres",e:"you want/love"},{p:"él/ella/ud.",v:"quiere",e:"he/she wants/loves"},{p:"nosotros",v:"queremos",e:"we want/love"},{p:"ellos/uds.",v:"quieren",e:"they want/love"}],
+    past:[{p:"yo",v:"quise",e:"I wanted/loved"},{p:"tú",v:"quisiste",e:"you wanted"},{p:"él/ella/ud.",v:"quiso",e:"he/she wanted"},{p:"nosotros",v:"quisimos",e:"we wanted"},{p:"ellos/uds.",v:"quisieron",e:"they wanted"}],
+    imperfect:[{p:"yo",v:"quería",e:"I wanted / used to want"},{p:"tú",v:"querías",e:"you wanted / used to want"},{p:"él/ella/ud.",v:"quería",e:"he/she wanted / used to want"},{p:"nosotros",v:"queríamos",e:"we wanted / used to want"},{p:"ellos/uds.",v:"querían",e:"they wanted / used to want"}],
+    future:[{p:"yo",v:"querré",e:"I will want"},{p:"tú",v:"querrás",e:"you will want"},{p:"él/ella/ud.",v:"querrá",e:"he/she will want"},{p:"nosotros",v:"querremos",e:"we will want"},{p:"ellos/uds.",v:"querrán",e:"they will want"}],
     family:[{f:"el/la querido/a",e:"dear / darling",t:"sustantivo/adjetivo"},{f:"el querer",e:"love / affection",t:"sustantivo"},{f:"querido/a",e:"dear / beloved",t:"adjetivo"},{f:"querer decir",e:"to mean (to want to say)",t:"expresión"}],
     example:{es:"Te quiero mucho. ¿Qué quieres comer?",en:"I love you a lot. What do you want to eat?"}},
   dormir:{en:"to sleep",type:"IR — Irregular (stem-change)",icon:"😴",color:"#8b5cf6",
     gerund:{f:"durmiendo",en:"sleeping"},participle:{f:"dormido",en:"slept/asleep"},
     imperative:{tu:{f:"¡Duerme!",en:"Sleep! (informal)"},usted:{f:"¡Duerma!",en:"Sleep! (formal)"}},
-    present:[{p:"yo",v:"duermo",e:"I sleep"},{p:"tú",v:"duermes",e:"you sleep"},{p:"él/ella",v:"duerme",e:"he/she sleeps"},{p:"nosotros",v:"dormimos",e:"we sleep"},{p:"ellos",v:"duermen",e:"they sleep"}],
-    past:[{p:"yo",v:"dormí",e:"I slept"},{p:"tú",v:"dormiste",e:"you slept"},{p:"él/ella",v:"durmió",e:"he/she slept"},{p:"nosotros",v:"dormimos",e:"we slept"},{p:"ellos",v:"durmieron",e:"they slept"}],
-    imperfect:[{p:"yo",v:"dormía",e:"I was sleeping / used to sleep"},{p:"tú",v:"dormías",e:"you were sleeping / used to sleep"},{p:"él/ella",v:"dormía",e:"he/she was sleeping / used to sleep"},{p:"nosotros",v:"dormíamos",e:"we were sleeping / used to sleep"},{p:"ellos",v:"dormían",e:"they were sleeping / used to sleep"}],
-    future:[{p:"yo",v:"dormiré",e:"I will sleep"},{p:"tú",v:"dormirás",e:"you will sleep"},{p:"él/ella",v:"dormirá",e:"he/she will sleep"},{p:"nosotros",v:"dormiremos",e:"we will sleep"},{p:"ellos",v:"dormirán",e:"they will sleep"}],
+    present:[{p:"yo",v:"duermo",e:"I sleep"},{p:"tú",v:"duermes",e:"you sleep"},{p:"él/ella/ud.",v:"duerme",e:"he/she sleeps"},{p:"nosotros",v:"dormimos",e:"we sleep"},{p:"ellos/uds.",v:"duermen",e:"they sleep"}],
+    past:[{p:"yo",v:"dormí",e:"I slept"},{p:"tú",v:"dormiste",e:"you slept"},{p:"él/ella/ud.",v:"durmió",e:"he/she slept"},{p:"nosotros",v:"dormimos",e:"we slept"},{p:"ellos/uds.",v:"durmieron",e:"they slept"}],
+    imperfect:[{p:"yo",v:"dormía",e:"I was sleeping / used to sleep"},{p:"tú",v:"dormías",e:"you were sleeping / used to sleep"},{p:"él/ella/ud.",v:"dormía",e:"he/she was sleeping / used to sleep"},{p:"nosotros",v:"dormíamos",e:"we were sleeping / used to sleep"},{p:"ellos/uds.",v:"dormían",e:"they were sleeping / used to sleep"}],
+    future:[{p:"yo",v:"dormiré",e:"I will sleep"},{p:"tú",v:"dormirás",e:"you will sleep"},{p:"él/ella/ud.",v:"dormirá",e:"he/she will sleep"},{p:"nosotros",v:"dormiremos",e:"we will sleep"},{p:"ellos/uds.",v:"dormirán",e:"they will sleep"}],
     family:[{f:"el sueño",e:"sleep / dream",t:"sustantivo"},{f:"el dormitorio",e:"bedroom",t:"sustantivo"},{f:"dormido/a",e:"asleep",t:"adjetivo"},{f:"la siesta",e:"nap / siesta",t:"sustantivo"}],
     example:{es:"Dormí ocho horas anoche.",en:"I slept eight hours last night."}},
   escribir:{en:"to write",type:"IR — Regular",icon:"✍️",color:"#06b6d4",
     gerund:{f:"escribiendo",en:"writing"},participle:{f:"escrito",en:"written (irregular!)"},
     imperative:{tu:{f:"¡Escribe!",en:"Write! (informal)"},usted:{f:"¡Escriba!",en:"Write! (formal)"}},
-    present:[{p:"yo",v:"escribo",e:"I write"},{p:"tú",v:"escribes",e:"you write"},{p:"él/ella",v:"escribe",e:"he/she writes"},{p:"nosotros",v:"escribimos",e:"we write"},{p:"ellos",v:"escriben",e:"they write"}],
-    past:[{p:"yo",v:"escribí",e:"I wrote"},{p:"tú",v:"escribiste",e:"you wrote"},{p:"él/ella",v:"escribió",e:"he/she wrote"},{p:"nosotros",v:"escribimos",e:"we wrote"},{p:"ellos",v:"escribieron",e:"they wrote"}],
-    imperfect:[{p:"yo",v:"escribía",e:"I was writing / used to write"},{p:"tú",v:"escribías",e:"you were writing / used to write"},{p:"él/ella",v:"escribía",e:"he/she was writing / used to write"},{p:"nosotros",v:"escribíamos",e:"we were writing / used to write"},{p:"ellos",v:"escribían",e:"they were writing / used to write"}],
-    future:[{p:"yo",v:"escribiré",e:"I will write"},{p:"tú",v:"escribirás",e:"you will write"},{p:"él/ella",v:"escribirá",e:"he/she will write"},{p:"nosotros",v:"escribiremos",e:"we will write"},{p:"ellos",v:"escribirán",e:"they will write"}],
+    present:[{p:"yo",v:"escribo",e:"I write"},{p:"tú",v:"escribes",e:"you write"},{p:"él/ella/ud.",v:"escribe",e:"he/she writes"},{p:"nosotros",v:"escribimos",e:"we write"},{p:"ellos/uds.",v:"escriben",e:"they write"}],
+    past:[{p:"yo",v:"escribí",e:"I wrote"},{p:"tú",v:"escribiste",e:"you wrote"},{p:"él/ella/ud.",v:"escribió",e:"he/she wrote"},{p:"nosotros",v:"escribimos",e:"we wrote"},{p:"ellos/uds.",v:"escribieron",e:"they wrote"}],
+    imperfect:[{p:"yo",v:"escribía",e:"I was writing / used to write"},{p:"tú",v:"escribías",e:"you were writing / used to write"},{p:"él/ella/ud.",v:"escribía",e:"he/she was writing / used to write"},{p:"nosotros",v:"escribíamos",e:"we were writing / used to write"},{p:"ellos/uds.",v:"escribían",e:"they were writing / used to write"}],
+    future:[{p:"yo",v:"escribiré",e:"I will write"},{p:"tú",v:"escribirás",e:"you will write"},{p:"él/ella/ud.",v:"escribirá",e:"he/she will write"},{p:"nosotros",v:"escribiremos",e:"we will write"},{p:"ellos/uds.",v:"escribirán",e:"they will write"}],
     family:[{f:"la escritura",e:"writing / handwriting",t:"sustantivo"},{f:"escrito/a",e:"written",t:"adjetivo"},{f:"el/la escritor/a",e:"writer / author",t:"sustantivo"},{f:"la carta",e:"letter (written)",t:"sustantivo"}],
     example:{es:"Escríbalo, por favor.",en:"Write it down, please."}},
 };
@@ -473,6 +473,21 @@ const VC=[
     {word:"Seguir",en:"To continue / follow",ph:"seh-GEER",tts:"seguir",icon:"➡️",color:"#60a5fa"},
     {word:"Usar",en:"To use",ph:"oo-SAR",tts:"usar",icon:"🛠️",color:"#34d399"}
   ]},
+  {id:"habitacion",label:"🛏️ Habitación",type:"basic",items:[
+    {word:"cama",en:"bed",ph:"KAH-mah",tts:"cama",icon:"🛏️",color:"#a78bfa"},{word:"almohada",en:"pillow",ph:"al-moh-AH-dah",tts:"almohada",icon:"🛌",color:"#ec4899"},{word:"cobija",en:"blanket",ph:"koh-BEE-hah",tts:"cobija",icon:"🧣",color:"#e85d75"},{word:"sábana",en:"sheet",ph:"SAH-bah-nah",tts:"sábana",icon:"🛏️",color:"#60a5fa"},{word:"clóset",en:"closet",ph:"KLOH-set",tts:"clóset",icon:"🚪",color:"#a78bfa"},{word:"mesita de noche",en:"nightstand",ph:"meh-SEE-tah deh NOH-cheh",tts:"mesita de noche",icon:"🛋️",color:"#e8b44a"},{word:"lámpara",en:"lamp",ph:"LAM-pah-rah",tts:"lámpara",icon:"💡",color:"#f59e0b"},{word:"espejo",en:"mirror",ph:"ehs-PEH-hoh",tts:"espejo",icon:"🪞",color:"#60a5fa"},{word:"cortina",en:"curtain",ph:"kor-TEE-nah",tts:"cortina",icon:"🪟",color:"#4aa8a0"},{word:"armario",en:"wardrobe",ph:"ar-MAH-ryoh",tts:"armario",icon:"🗄️",color:"#92400e"}
+  ]},
+  {id:"bano",label:"🚿 Baño",type:"basic",items:[
+    {word:"baño",en:"bathroom",ph:"BAH-nyoh",tts:"baño",icon:"🚿",color:"#60a5fa"},{word:"ducha",en:"shower",ph:"DOO-chah",tts:"ducha",icon:"🚿",color:"#60a5fa"},{word:"inodoro",en:"toilet",ph:"ee-noh-DOH-roh",tts:"inodoro",icon:"🚽",color:"#94a3b8"},{word:"lavamanos",en:"sink",ph:"lah-vah-MAH-nohs",tts:"lavamanos",icon:"🧼",color:"#60a5fa"},{word:"jabón",en:"soap",ph:"hah-BON",tts:"jabón",icon:"🧴",color:"#34d399"},{word:"toalla",en:"towel",ph:"toh-AH-yah",tts:"toalla",icon:"🧖",color:"#a78bfa"},{word:"cepillo de dientes",en:"toothbrush",ph:"seh-PEE-yoh deh DYEN-tehs",tts:"cepillo de dientes",icon:"🪥",color:"#60a5fa"},{word:"pasta dental",en:"toothpaste",ph:"PAHS-tah den-TAHL",tts:"pasta dental",icon:"🦷",color:"#34d399"},{word:"papel higiénico",en:"toilet paper",ph:"pah-PEL ee-HYEH-nee-koh",tts:"papel higiénico",icon:"🧻",color:"#fff"},{word:"champú",en:"shampoo",ph:"cham-POO",tts:"champú",icon:"🧴",color:"#ec4899"}
+  ]},
+  {id:"trabajo",label:"💼 Trabajo",type:"basic",items:[
+    {word:"empresa",en:"company",ph:"em-PREH-sah",tts:"empresa",icon:"🏢",color:"#a78bfa"},{word:"jefe/a",en:"boss",ph:"HEH-feh / fah",tts:"jefe o jefa",icon:"👔",color:"#e8b44a"},{word:"cliente",en:"client / customer",ph:"klee-EN-teh",tts:"cliente",icon:"🤝",color:"#4aa8a0"},{word:"compañero/a",en:"coworker",ph:"kom-pah-NYEH-roh / rah",tts:"compañero o compañera",icon:"🧑‍💼",color:"#60a5fa"},{word:"reunión",en:"meeting",ph:"reh-oo-NYON",tts:"reunión",icon:"🗣️",color:"#ec4899"},{word:"proyecto",en:"project",ph:"proh-YEHK-toh",tts:"proyecto",icon:"📋",color:"#f59e0b"},{word:"horario",en:"schedule",ph:"oh-RAH-ryoh",tts:"horario",icon:"🕘",color:"#34d399"},{word:"sueldo",en:"salary",ph:"SWEHL-doh",tts:"sueldo",icon:"💰",color:"#e8b44a"},{word:"entrevista",en:"interview",ph:"en-treh-BEES-tah",tts:"entrevista",icon:"📝",color:"#a78bfa"},{word:"negocio",en:"business",ph:"neh-GOH-syoh",tts:"negocio",icon:"🏪",color:"#e85d75"}
+  ]},
+  {id:"oficina",label:"🖥️ Oficina",type:"basic",items:[
+    {word:"computador",en:"computer (Colombian)",ph:"kom-poo-tah-DOR",tts:"computador",icon:"💻",color:"#60a5fa"},{word:"escritorio",en:"desk",ph:"ehs-kree-TOH-ryoh",tts:"escritorio",icon:"🪑",color:"#92400e"},{word:"teclado",en:"keyboard",ph:"teh-KLAH-doh",tts:"teclado",icon:"⌨️",color:"#94a3b8"},{word:"pantalla",en:"screen",ph:"pan-TAH-yah",tts:"pantalla",icon:"🖥️",color:"#60a5fa"},{word:"impresora",en:"printer",ph:"eem-preh-SOH-rah",tts:"impresora",icon:"🖨️",color:"#a78bfa"},{word:"documento",en:"document",ph:"doh-koo-MEN-toh",tts:"documento",icon:"📄",color:"#fff"},{word:"correo electrónico",en:"email",ph:"koh-RREH-oh eh-lehk-TROH-nee-koh",tts:"correo electrónico",icon:"📧",color:"#4aa8a0"},{word:"archivo",en:"file",ph:"ar-CHEE-boh",tts:"archivo",icon:"🗂️",color:"#f59e0b"},{word:"silla",en:"chair",ph:"SEE-yah",tts:"silla",icon:"🪑",color:"#34d399"}
+  ]},
+  {id:"carropartes",label:"🚗 Partes del carro",type:"basic",items:[
+    {word:"motor",en:"engine",ph:"moh-TOR",tts:"motor",icon:"⚙️",color:"#94a3b8"},{word:"llanta",en:"tire (Colombian)",ph:"YAN-tah",tts:"llanta",icon:"🛞",color:"#e85d75"},{word:"volante",en:"steering wheel",ph:"boh-LAN-teh",tts:"volante",icon:"⭕",color:"#60a5fa"},{word:"freno",en:"brake",ph:"FREH-noh",tts:"freno",icon:"🛑",color:"#e85d75"},{word:"batería",en:"battery",ph:"bah-teh-REE-ah",tts:"batería",icon:"🔋",color:"#34d399"},{word:"parabrisas",en:"windshield",ph:"pah-rah-BREE-sahs",tts:"parabrisas",icon:"🚘",color:"#60a5fa"},{word:"espejo retrovisor",en:"rearview mirror",ph:"ehs-PEH-hoh rreh-troh-bee-SOR",tts:"espejo retrovisor",icon:"🪞",color:"#a78bfa"},{word:"placa",en:"license plate",ph:"PLAH-kah",tts:"placa",icon:"🔖",color:"#e8b44a"},{word:"baúl",en:"trunk",ph:"bah-OOL",tts:"baúl",icon:"🧳",color:"#92400e"},{word:"capó",en:"hood",ph:"kah-POH",tts:"capó",icon:"🚗",color:"#f59e0b"},{word:"puerta",en:"door",ph:"PWER-tah",tts:"puerta",icon:"🚪",color:"#4aa8a0"}
+  ]},
 ];
 
 /* ── Vocabulary examples ─────────────────────────────────────────────────────
@@ -640,21 +655,6 @@ const FRASES=[
   /* ── NEW v13: Plata y Pagos ── */
   {section:"💰 Plata y Pagos",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[{es:"¿Cuánto le debo?",en:"How much do I owe you?"},{es:"¿Tiene cambio de cincuenta mil?",en:"Do you have change for fifty thousand?"},{es:"¿Puedo pagar con tarjeta?",en:"Can I pay by card?"},{es:"Pago en efectivo.",en:"I'll pay in cash."},{es:"¿Me hace la transferencia?",en:"Can you send me the transfer? (Nequi-style)"},{es:"Quedamos a mano.",en:"We're even."},{es:"¿Me rebaja algo?",en:"Can you lower the price a bit?"},{es:"Necesito sacar plata.",en:"I need to withdraw money. (Colombian!)"},{es:"¿Dónde hay un cajero?",en:"Where is there an ATM?"},{es:"A la orden.",en:"At your service / You're welcome. (Colombian!)"}]},
   {section:"👤 Pronombres en acción",cls:"color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)",items:[{es:"¿Me lo puede repetir, por favor?",en:"Can you repeat it for me, please?"},{es:"Sí, se lo repito despacio.",en:"Yes, I'll repeat it slowly."},{es:"¿La dirección la tiene?",en:"Do you have the address?"},{es:"Sí, la tengo aquí.",en:"Yes, I have it here."},{es:"¿Le puedo ayudar?",en:"Can I help you?"},{es:"Sí, necesito ayuda.",en:"Yes, I need help."},{es:"¿Me la puede mandar?",en:"Can you send it to me?"},{es:"Se la mando en un momento.",en:"I'll send it to you in a moment."}]},
-  {id:"habitacion",label:"🛏️ Habitación",type:"basic",items:[
-    {word:"cama",en:"bed",ph:"KAH-mah",tts:"cama",icon:"🛏️",color:"#a78bfa"},{word:"almohada",en:"pillow",ph:"al-moh-AH-dah",tts:"almohada",icon:"🛌",color:"#ec4899"},{word:"cobija",en:"blanket",ph:"koh-BEE-hah",tts:"cobija",icon:"🧣",color:"#e85d75"},{word:"sábana",en:"sheet",ph:"SAH-bah-nah",tts:"sábana",icon:"🛏️",color:"#60a5fa"},{word:"clóset",en:"closet",ph:"KLOH-set",tts:"clóset",icon:"🚪",color:"#a78bfa"},{word:"mesita de noche",en:"nightstand",ph:"meh-SEE-tah deh NOH-cheh",tts:"mesita de noche",icon:"🛋️",color:"#e8b44a"},{word:"lámpara",en:"lamp",ph:"LAM-pah-rah",tts:"lámpara",icon:"💡",color:"#f59e0b"},{word:"espejo",en:"mirror",ph:"ehs-PEH-hoh",tts:"espejo",icon:"🪞",color:"#60a5fa"},{word:"cortina",en:"curtain",ph:"kor-TEE-nah",tts:"cortina",icon:"🪟",color:"#4aa8a0"},{word:"armario",en:"wardrobe",ph:"ar-MAH-ryoh",tts:"armario",icon:"🗄️",color:"#92400e"}
-  ]},
-  {id:"bano",label:"🚿 Baño",type:"basic",items:[
-    {word:"baño",en:"bathroom",ph:"BAH-nyoh",tts:"baño",icon:"🚿",color:"#60a5fa"},{word:"ducha",en:"shower",ph:"DOO-chah",tts:"ducha",icon:"🚿",color:"#60a5fa"},{word:"inodoro",en:"toilet",ph:"ee-noh-DOH-roh",tts:"inodoro",icon:"🚽",color:"#94a3b8"},{word:"lavamanos",en:"sink",ph:"lah-vah-MAH-nohs",tts:"lavamanos",icon:"🧼",color:"#60a5fa"},{word:"jabón",en:"soap",ph:"hah-BON",tts:"jabón",icon:"🧴",color:"#34d399"},{word:"toalla",en:"towel",ph:"toh-AH-yah",tts:"toalla",icon:"🧖",color:"#a78bfa"},{word:"cepillo de dientes",en:"toothbrush",ph:"seh-PEE-yoh deh DYEN-tehs",tts:"cepillo de dientes",icon:"🪥",color:"#60a5fa"},{word:"pasta dental",en:"toothpaste",ph:"PAHS-tah den-TAHL",tts:"pasta dental",icon:"🦷",color:"#34d399"},{word:"papel higiénico",en:"toilet paper",ph:"pah-PEL ee-HYEH-nee-koh",tts:"papel higiénico",icon:"🧻",color:"#fff"},{word:"champú",en:"shampoo",ph:"cham-POO",tts:"champú",icon:"🧴",color:"#ec4899"}
-  ]},
-  {id:"trabajo",label:"💼 Trabajo",type:"basic",items:[
-    {word:"empresa",en:"company",ph:"em-PREH-sah",tts:"empresa",icon:"🏢",color:"#a78bfa"},{word:"jefe/a",en:"boss",ph:"HEH-feh / fah",tts:"jefe o jefa",icon:"👔",color:"#e8b44a"},{word:"cliente",en:"client / customer",ph:"klee-EN-teh",tts:"cliente",icon:"🤝",color:"#4aa8a0"},{word:"compañero/a",en:"coworker",ph:"kom-pah-NYEH-roh / rah",tts:"compañero o compañera",icon:"🧑‍💼",color:"#60a5fa"},{word:"reunión",en:"meeting",ph:"reh-oo-NYON",tts:"reunión",icon:"🗣️",color:"#ec4899"},{word:"proyecto",en:"project",ph:"proh-YEHK-toh",tts:"proyecto",icon:"📋",color:"#f59e0b"},{word:"horario",en:"schedule",ph:"oh-RAH-ryoh",tts:"horario",icon:"🕘",color:"#34d399"},{word:"sueldo",en:"salary",ph:"SWEHL-doh",tts:"sueldo",icon:"💰",color:"#e8b44a"},{word:"entrevista",en:"interview",ph:"en-treh-BEES-tah",tts:"entrevista",icon:"📝",color:"#a78bfa"},{word:"negocio",en:"business",ph:"neh-GOH-syoh",tts:"negocio",icon:"🏪",color:"#e85d75"}
-  ]},
-  {id:"oficina",label:"🖥️ Oficina",type:"basic",items:[
-    {word:"computador",en:"computer (Colombian)",ph:"kom-poo-tah-DOR",tts:"computador",icon:"💻",color:"#60a5fa"},{word:"escritorio",en:"desk",ph:"ehs-kree-TOH-ryoh",tts:"escritorio",icon:"🪑",color:"#92400e"},{word:"teclado",en:"keyboard",ph:"teh-KLAH-doh",tts:"teclado",icon:"⌨️",color:"#94a3b8"},{word:"pantalla",en:"screen",ph:"pan-TAH-yah",tts:"pantalla",icon:"🖥️",color:"#60a5fa"},{word:"impresora",en:"printer",ph:"eem-preh-SOH-rah",tts:"impresora",icon:"🖨️",color:"#a78bfa"},{word:"documento",en:"document",ph:"doh-koo-MEN-toh",tts:"documento",icon:"📄",color:"#fff"},{word:"correo electrónico",en:"email",ph:"koh-RREH-oh eh-lehk-TROH-nee-koh",tts:"correo electrónico",icon:"📧",color:"#4aa8a0"},{word:"archivo",en:"file",ph:"ar-CHEE-boh",tts:"archivo",icon:"🗂️",color:"#f59e0b"},{word:"silla",en:"chair",ph:"SEE-yah",tts:"silla",icon:"🪑",color:"#34d399"}
-  ]},
-  {id:"carropartes",label:"🚗 Partes del carro",type:"basic",items:[
-    {word:"motor",en:"engine",ph:"moh-TOR",tts:"motor",icon:"⚙️",color:"#94a3b8"},{word:"llanta",en:"tire (Colombian)",ph:"YAN-tah",tts:"llanta",icon:"🛞",color:"#e85d75"},{word:"volante",en:"steering wheel",ph:"boh-LAN-teh",tts:"volante",icon:"⭕",color:"#60a5fa"},{word:"freno",en:"brake",ph:"FREH-noh",tts:"freno",icon:"🛑",color:"#e85d75"},{word:"batería",en:"battery",ph:"bah-teh-REE-ah",tts:"batería",icon:"🔋",color:"#34d399"},{word:"parabrisas",en:"windshield",ph:"pah-rah-BREE-sahs",tts:"parabrisas",icon:"🚘",color:"#60a5fa"},{word:"espejo retrovisor",en:"rearview mirror",ph:"ehs-PEH-hoh rreh-troh-bee-SOR",tts:"espejo retrovisor",icon:"🪞",color:"#a78bfa"},{word:"placa",en:"license plate",ph:"PLAH-kah",tts:"placa",icon:"🔖",color:"#e8b44a"},{word:"baúl",en:"trunk",ph:"bah-OOL",tts:"baúl",icon:"🧳",color:"#92400e"},{word:"capó",en:"hood",ph:"kah-POH",tts:"capó",icon:"🚗",color:"#f59e0b"},{word:"puerta",en:"door",ph:"PWER-tah",tts:"puerta",icon:"🚪",color:"#4aa8a0"}
-  ]},
 ];
 /* v36: high-value language for keeping a real conversation moving.  The
    quizCat field lets the quiz keep these practical topics separate while the
@@ -755,8 +755,6 @@ FRASES.push({section:"⚡ Acciones para hablar cada día",quizCat:"acciones",cls
   {es:"Resulta que...",en:"It turns out that...",register:"Everyday"},
   {es:"Depende de...",en:"It depends on...",register:"Everyday"}
 ]});
-/* New home, work, office, and car categories are also available in Vocab. */
-VC.push(...FRASES.filter(section=>section.id&&section.type==="basic"));
 const DIALOGUE=[{who:"A",es:"Hola, ¿cómo está?",en:"Hi, how are you? (formal)",tts:"Hola, ¿cómo está?"},{who:"B",es:"Hola, estoy bien, gracias.",en:"Hi, I'm fine, thank you.",tts:"Hola, estoy bien, gracias."},{who:"A",es:"Soy David. ¡Gusto en conocerle!",en:"I'm David. Nice to meet you!",tts:"Soy David. ¡Gusto en conocerle!"},{who:"B",es:"Soy Roberto. ¡El gusto es mío!",en:"I'm Roberto. The pleasure is mine!",tts:"Soy Roberto. ¡El gusto es mío!"},{who:"A",es:"Mucho gusto, señor Roberto.",en:"Nice to meet you, Mr. Roberto.",tts:"Mucho gusto, señor Roberto."},{who:"B",es:"Igualmente, señor David.",en:"Likewise, Mr. David.",tts:"Igualmente, señor David."}];
 const CONVERSATIONS=[
   {title:"Presentación personal",tense:"Ahora",lines:[{who:"A",es:"Hola, ¿cómo te llamas?",en:"Hi, what's your name?",tts:"Hola, ¿cómo te llamas?"},{who:"B",es:"Me llamo Laura. Mucho gusto.",en:"My name is Laura. Nice to meet you.",tts:"Me llamo Laura. Mucho gusto."}]},
@@ -1108,13 +1106,13 @@ READINGS.push(
 // ── Grammar data ──────────────────────────────────────────────────────────────
 const GRAMMAR={
   presente:{intro:"The present tense describes habits, facts, and current actions. 3 verb types: AR, ER, IR.",trick:"The -O ending always means 'I'. Yo habl-O = I speak. Yo com-O = I eat. Yo viv-O = I live. Learn -O and you can talk about yourself instantly!",
-    tables:[{title:"AR Verbs — Hablar",sub:"Drop -AR, add: -o, -as, -a, -amos, -an",rows:[{pro:"Yo",verb:"hablo",en:"I speak",tts:"yo hablo"},{pro:"Tú",verb:"hablas",en:"you speak",tts:"tú hablas"},{pro:"Él/Ella",verb:"habla",en:"he/she speaks",tts:"él habla"},{pro:"Nosotros",verb:"hablamos",en:"we speak",tts:"nosotros hablamos"},{pro:"Ellos",verb:"hablan",en:"they speak",tts:"ellos hablan"}]},{title:"ER Verbs — Comer",sub:"Drop -ER, add: -o, -es, -e, -emos, -en",rows:[{pro:"Yo",verb:"como",en:"I eat",tts:"yo como"},{pro:"Tú",verb:"comes",en:"you eat",tts:"tú comes"},{pro:"Él/Ella",verb:"come",en:"he/she eats",tts:"él come"},{pro:"Nosotros",verb:"comemos",en:"we eat",tts:"nosotros comemos"},{pro:"Ellos",verb:"comen",en:"they eat",tts:"ellos comen"}]},{title:"IR Verbs — Vivir",sub:"Drop -IR, add: -o, -es, -e, -imos, -en",rows:[{pro:"Yo",verb:"vivo",en:"I live",tts:"yo vivo"},{pro:"Tú",verb:"vives",en:"you live",tts:"tú vives"},{pro:"Él/Ella",verb:"vive",en:"he/she lives",tts:"él vive"},{pro:"Nosotros",verb:"vivimos",en:"we live",tts:"nosotros vivimos"},{pro:"Ellos",verb:"viven",en:"they live",tts:"ellos viven"}]}],
+    tables:[{title:"AR Verbs — Hablar",sub:"Drop -AR, add: -o, -as, -a, -amos, -an",rows:[{pro:"Yo",verb:"hablo",en:"I speak",tts:"yo hablo"},{pro:"Tú",verb:"hablas",en:"you speak",tts:"tú hablas"},{pro:"Él/Ella/Ud.",verb:"habla",en:"he/she speaks",tts:"él habla"},{pro:"Nosotros",verb:"hablamos",en:"we speak",tts:"nosotros hablamos"},{pro:"Ellos/Uds.",verb:"hablan",en:"they speak",tts:"ellos hablan"}]},{title:"ER Verbs — Comer",sub:"Drop -ER, add: -o, -es, -e, -emos, -en",rows:[{pro:"Yo",verb:"como",en:"I eat",tts:"yo como"},{pro:"Tú",verb:"comes",en:"you eat",tts:"tú comes"},{pro:"Él/Ella/Ud.",verb:"come",en:"he/she eats",tts:"él come"},{pro:"Nosotros",verb:"comemos",en:"we eat",tts:"nosotros comemos"},{pro:"Ellos/Uds.",verb:"comen",en:"they eat",tts:"ellos comen"}]},{title:"IR Verbs — Vivir",sub:"Drop -IR, add: -o, -es, -e, -imos, -en",rows:[{pro:"Yo",verb:"vivo",en:"I live",tts:"yo vivo"},{pro:"Tú",verb:"vives",en:"you live",tts:"tú vives"},{pro:"Él/Ella/Ud.",verb:"vive",en:"he/she lives",tts:"él vive"},{pro:"Nosotros",verb:"vivimos",en:"we live",tts:"nosotros vivimos"},{pro:"Ellos/Uds.",verb:"viven",en:"they live",tts:"ellos viven"}]}],
     examples:[{es:"Yo hablo un poco de español.",en:"I speak a little Spanish.",tts:"Yo hablo un poco de español."},{es:"¿Dónde vives tú?",en:"Where do you live?",tts:"¿Dónde vives tú?"},{es:"Ella come arepa todos los días.",en:"She eats arepa every day.",tts:"Ella come arepa todos los días."}]},
   pasado:{intro:"The simple past (Pretérito Indefinido) is used for completed actions. 'I spoke', 'I ate', 'I went'. Accents on the endings are the key signal.",trick:"Look for the accent at the END of a verb — it signals past tense! hablÉ = I spoke, comIÓ = he ate, fuÉ = I was/went. Spot the tilde = something HAPPENED!",
-    tables:[{title:"AR Verbs — Hablar",sub:"Past endings: -é, -aste, -ó, -amos, -aron",rows:[{pro:"Yo",verb:"hablé",en:"I spoke",tts:"yo hablé"},{pro:"Tú",verb:"hablaste",en:"you spoke",tts:"tú hablaste"},{pro:"Él/Ella",verb:"habló",en:"he/she spoke",tts:"él habló"},{pro:"Nosotros",verb:"hablamos",en:"we spoke",tts:"nosotros hablamos"},{pro:"Ellos",verb:"hablaron",en:"they spoke",tts:"ellos hablaron"}]},{title:"ER/IR Verbs — Comer",sub:"Past endings: -í, -iste, -ió, -imos, -ieron",rows:[{pro:"Yo",verb:"comí",en:"I ate",tts:"yo comí"},{pro:"Tú",verb:"comiste",en:"you ate",tts:"tú comiste"},{pro:"Él/Ella",verb:"comió",en:"he/she ate",tts:"él comió"},{pro:"Nosotros",verb:"comimos",en:"we ate",tts:"nosotros comimos"},{pro:"Ellos",verb:"comieron",en:"they ate",tts:"ellos comieron"}]},{title:"⚡ Ser & Ir — IDENTICAL past tense!",sub:"Both mean 'was' AND 'went' — context tells you which",rows:[{pro:"Yo",verb:"fui",en:"I was / I went",tts:"yo fui"},{pro:"Tú",verb:"fuiste",en:"you were / went",tts:"tú fuiste"},{pro:"Él/Ella",verb:"fue",en:"he was / he went",tts:"él fue"},{pro:"Nosotros",verb:"fuimos",en:"we were / went",tts:"nosotros fuimos"},{pro:"Ellos",verb:"fueron",en:"they were / went",tts:"ellos fueron"}]}],
+    tables:[{title:"AR Verbs — Hablar",sub:"Past endings: -é, -aste, -ó, -amos, -aron",rows:[{pro:"Yo",verb:"hablé",en:"I spoke",tts:"yo hablé"},{pro:"Tú",verb:"hablaste",en:"you spoke",tts:"tú hablaste"},{pro:"Él/Ella/Ud.",verb:"habló",en:"he/she spoke",tts:"él habló"},{pro:"Nosotros",verb:"hablamos",en:"we spoke",tts:"nosotros hablamos"},{pro:"Ellos/Uds.",verb:"hablaron",en:"they spoke",tts:"ellos hablaron"}]},{title:"ER/IR Verbs — Comer",sub:"Past endings: -í, -iste, -ió, -imos, -ieron",rows:[{pro:"Yo",verb:"comí",en:"I ate",tts:"yo comí"},{pro:"Tú",verb:"comiste",en:"you ate",tts:"tú comiste"},{pro:"Él/Ella/Ud.",verb:"comió",en:"he/she ate",tts:"él comió"},{pro:"Nosotros",verb:"comimos",en:"we ate",tts:"nosotros comimos"},{pro:"Ellos/Uds.",verb:"comieron",en:"they ate",tts:"ellos comieron"}]},{title:"⚡ Ser & Ir — IDENTICAL past tense!",sub:"Both mean 'was' AND 'went' — context tells you which",rows:[{pro:"Yo",verb:"fui",en:"I was / I went",tts:"yo fui"},{pro:"Tú",verb:"fuiste",en:"you were / went",tts:"tú fuiste"},{pro:"Él/Ella/Ud.",verb:"fue",en:"he was / he went",tts:"él fue"},{pro:"Nosotros",verb:"fuimos",en:"we were / went",tts:"nosotros fuimos"},{pro:"Ellos/Uds.",verb:"fueron",en:"they were / went",tts:"ellos fueron"}]}],
     examples:[{es:"Ayer hablé con mi amigo.",en:"Yesterday I spoke with my friend.",tts:"Ayer hablé con mi amigo."},{es:"¿Qué comiste anoche?",en:"What did you eat last night?",tts:"¿Qué comiste anoche?"},{es:"Fui al mercado esta mañana.",en:"I went to the market this morning.",tts:"Fui al mercado esta mañana."}]},
   futuro:{intro:"Great news — the future is the EASIEST tense! Keep the full infinitive and add endings. Or use the even simpler 'voy a' (going to) form.",trick:"Near future = VOY A + any verb. Exactly like English 'going to'. Voy a comer = I'm going to eat. Start with this — you can use it for months before needing the full future tense!",
-    tables:[{title:"Simple Future — Any Verb",sub:"Keep full infinitive + add: -é, -ás, -á, -emos, -án",rows:[{pro:"Yo",verb:"-é  (hablaré)",en:"I will speak",tts:"yo hablaré"},{pro:"Tú",verb:"-ás  (hablarás)",en:"you will speak",tts:"tú hablarás"},{pro:"Él/Ella",verb:"-á  (hablará)",en:"he/she will speak",tts:"él hablará"},{pro:"Nosotros",verb:"-emos  (hablaremos)",en:"we will speak",tts:"nosotros hablaremos"},{pro:"Ellos",verb:"-án  (hablarán)",en:"they will speak",tts:"ellos hablarán"}]},{title:"Ir a + Infinitive — Near Future",sub:"The easy way: voy/vas/va/vamos/van + a + verb",rows:[{pro:"Yo",verb:"voy a comer",en:"I'm going to eat",tts:"voy a comer"},{pro:"Tú",verb:"vas a comer",en:"you're going to eat",tts:"vas a comer"},{pro:"Él/Ella",verb:"va a comer",en:"he's going to eat",tts:"va a comer"},{pro:"Nosotros",verb:"vamos a comer",en:"we're going to eat",tts:"vamos a comer"},{pro:"Ellos",verb:"van a comer",en:"they're going to eat",tts:"van a comer"}]}],
+    tables:[{title:"Simple Future — Any Verb",sub:"Keep full infinitive + add: -é, -ás, -á, -emos, -án",rows:[{pro:"Yo",verb:"-é  (hablaré)",en:"I will speak",tts:"yo hablaré"},{pro:"Tú",verb:"-ás  (hablarás)",en:"you will speak",tts:"tú hablarás"},{pro:"Él/Ella/Ud.",verb:"-á  (hablará)",en:"he/she will speak",tts:"él hablará"},{pro:"Nosotros",verb:"-emos  (hablaremos)",en:"we will speak",tts:"nosotros hablaremos"},{pro:"Ellos/Uds.",verb:"-án  (hablarán)",en:"they will speak",tts:"ellos hablarán"}]},{title:"Ir a + Infinitive — Near Future",sub:"The easy way: voy/vas/va/vamos/van + a + verb",rows:[{pro:"Yo",verb:"voy a comer",en:"I'm going to eat",tts:"voy a comer"},{pro:"Tú",verb:"vas a comer",en:"you're going to eat",tts:"vas a comer"},{pro:"Él/Ella/Ud.",verb:"va a comer",en:"he's going to eat",tts:"va a comer"},{pro:"Nosotros",verb:"vamos a comer",en:"we're going to eat",tts:"vamos a comer"},{pro:"Ellos/Uds.",verb:"van a comer",en:"they're going to eat",tts:"van a comer"}]}],
     examples:[{es:"Mañana voy a ir al mercado.",en:"Tomorrow I'm going to go to the market.",tts:"Mañana voy a ir al mercado."},{es:"¿Vas a comer arepa?",en:"Are you going to eat arepa?",tts:"¿Vas a comer arepa?"},{es:"Va a llover esta tarde.",en:"It's going to rain this afternoon.",tts:"Va a llover esta tarde."}]},
   "pasado-contraste":{intro:"Spanish uses two past viewpoints: the preterite tells the completed event; the imperfect paints the background, habit, or action in progress.",trick:"Preterite moves the story forward: Ayer fui al mercado. Imperfect sets the scene: Cuando era niño, vivía en Cali.",tables:[{title:"The contrast",sub:"Completed event vs. background or repeated action",rows:[{pro:"Evento",verb:"Ayer fui al mercado.",en:"Yesterday I went to the market.",tts:"Ayer fui al mercado."},{pro:"Contexto",verb:"Cuando era niño, vivía en Cali.",en:"When I was a child, I used to live in Cali.",tts:"Cuando era niño, vivía en Cali."},{pro:"En progreso",verb:"Mientras cocinaba, me llamaste.",en:"While I was cooking, you called me.",tts:"Mientras cocinaba, me llamaste."}]}],examples:[{es:"Ayer fui al mercado, pero estaba cerrado.",en:"Yesterday I went to the market, but it was closed.",tts:"Ayer fui al mercado, pero estaba cerrado."},{es:"Cuando era niño, iba al parque todos los días.",en:"When I was a child, I used to go to the park every day.",tts:"Cuando era niño, iba al parque todos los días."},{es:"Mientras trabajaba, sonó el teléfono.",en:"While I was working, the phone rang.",tts:"Mientras trabajaba, sonó el teléfono."}]},
   subjuntivo:{intro:"The subjunctive is useful after a wish, hope, request, emotion, or recommendation when another person is doing the action.",trick:"Learn it as a speaking chunk: trigger + que + new subject + subjunctive. Quiero que vengas. Espero que estés bien.",tables:[{title:"Useful conversation triggers",sub:"Memorize the whole chunk",rows:[{pro:"Quiero que",verb:"vengas",en:"I want you to come",tts:"Quiero que vengas mañana."},{pro:"Espero que",verb:"estés",en:"I hope you are well",tts:"Espero que estés bien."},{pro:"Es importante que",verb:"hables",en:"It is important that you speak",tts:"Es importante que hables despacio."}]}],examples:[{es:"Quiero que vengas mañana.",en:"I want you to come tomorrow.",tts:"Quiero que vengas mañana."},{es:"Espero que estés bien.",en:"I hope you are well.",tts:"Espero que estés bien."},{es:"Es importante que practiques todos los días.",en:"It is important that you practice every day.",tts:"Es importante que practiques todos los días."}]},
@@ -1123,10 +1121,10 @@ const GRAMMAR={
 
 /* v58: the next tense layer, taught as useful speaking patterns first. */
 Object.assign(GRAMMAR,{
-  perfecto:{label:"Present perfect",intro:"Use he/has/ha + participle for experiences or actions connected to now. It is useful for talking about what you have done during a trip or today.",trick:"Keep the helper verb short: he, has, ha, hemos, han + -ado/-ido. He comido = I have eaten.",tables:[{title:"Haber + participle",sub:"he / has / ha / hemos / han + -ado or -ido",rows:[{pro:"Yo",verb:"he hablado",en:"I have spoken",tts:"yo he hablado"},{pro:"Tú",verb:"has comido",en:"you have eaten",tts:"tú has comido"},{pro:"Él/Ella",verb:"ha ido",en:"he/she has gone",tts:"él ha ido"},{pro:"Nosotros",verb:"hemos visto",en:"we have seen",tts:"nosotros hemos visto"},{pro:"Ellos",verb:"han llegado",en:"they have arrived",tts:"ellos han llegado"}]}],examples:[{es:"He practicado español esta semana.",en:"I have practiced Spanish this week.",tts:"He practicado español esta semana."},{es:"¿Has probado la arepa?",en:"Have you tried arepa?",tts:"¿Has probado la arepa?"},{es:"Ya hemos llegado al hotel.",en:"We have already arrived at the hotel.",tts:"Ya hemos llegado al hotel."}]},
-  condicional:{label:"Conditional",intro:"Use the conditional for polite requests, possibilities, and imagined situations. These forms are especially useful for sounding natural and respectful.",trick:"Keep the infinitive and add: -ía, -ías, -ía, -íamos, -ían. Me gustaría and podría are high-value chunks.",tables:[{title:"Useful conditional forms",sub:"infinitive + -ía endings",rows:[{pro:"Yo",verb:"me gustaría",en:"I would like",tts:"me gustaría"},{pro:"Tú",verb:"podrías",en:"you could",tts:"tú podrías"},{pro:"Él/Ella",verb:"debería",en:"he/she should",tts:"él debería"},{pro:"Nosotros",verb:"iríamos",en:"we would go",tts:"nosotros iríamos"},{pro:"Ellos",verb:"tendrían",en:"they would have",tts:"ellos tendrían"}]}],examples:[{es:"Me gustaría pedir una mesa.",en:"I would like to order a table.",tts:"Me gustaría pedir una mesa."},{es:"¿Podría repetir, por favor?",en:"Could you repeat, please?",tts:"¿Podría repetir, por favor?"},{es:"Deberíamos salir temprano.",en:"We should leave early.",tts:"Deberíamos salir temprano."}]},
-  "pasado-perfecto":{label:"Past perfect",intro:"Use había + participle for something that had already happened before another past event. Learn it after the preterite and imperfect contrast.",trick:"Put the earlier event in the background with había: Cuando llegué, ya había salido.",tables:[{title:"Había + participle",sub:"había / habías / había / habíamos / habían + -ado or -ido",rows:[{pro:"Yo",verb:"había hablado",en:"I had spoken",tts:"yo había hablado"},{pro:"Tú",verb:"habías comido",en:"you had eaten",tts:"tú habías comido"},{pro:"Él/Ella",verb:"había salido",en:"he/she had left",tts:"él había salido"},{pro:"Nosotros",verb:"habíamos visto",en:"we had seen",tts:"nosotros habíamos visto"},{pro:"Ellos",verb:"habían llegado",en:"they had arrived",tts:"ellos habían llegado"}]}],examples:[{es:"Cuando llegué, ya habían cerrado.",en:"When I arrived, they had already closed.",tts:"Cuando llegué, ya habían cerrado."},{es:"Nunca había usado esa aplicación.",en:"I had never used that app.",tts:"Nunca había usado esa aplicación."},{es:"Ya había comido cuando me llamaste.",en:"I had already eaten when you called me.",tts:"Ya había comido cuando me llamaste."}]},
-  "futuro-perfecto":{label:"Future perfect",intro:"Use habré + participle for something that will have happened by a future point. This is advanced; recognize it before trying to produce it quickly.",trick:"Think: by then, I will have… Habré llegado = I will have arrived.",tables:[{title:"Habré + participle",sub:"habré / habrás / habrá / habremos / habrán + -ado or -ido",rows:[{pro:"Yo",verb:"habré llegado",en:"I will have arrived",tts:"yo habré llegado"},{pro:"Tú",verb:"habrás terminado",en:"you will have finished",tts:"tú habrás terminado"},{pro:"Él/Ella",verb:"habrá salido",en:"he/she will have left",tts:"él habrá salido"},{pro:"Nosotros",verb:"habremos comido",en:"we will have eaten",tts:"nosotros habremos comido"},{pro:"Ellos",verb:"habrán llegado",en:"they will have arrived",tts:"ellos habrán llegado"}]}],examples:[{es:"Para las ocho, habré terminado.",en:"By eight, I will have finished.",tts:"Para las ocho, habré terminado."},{es:"Cuando llegues, ya habremos salido.",en:"When you arrive, we will have already left.",tts:"Cuando llegues, ya habremos salido."},{es:"En un año, habré aprendido mucho.",en:"In a year, I will have learned a lot.",tts:"En un año, habré aprendido mucho."}]}
+  perfecto:{label:"Present perfect",intro:"Use he/has/ha + participle for experiences or actions connected to now. It is useful for talking about what you have done during a trip or today.",trick:"Keep the helper verb short: he, has, ha, hemos, han + -ado/-ido. He comido = I have eaten.",tables:[{title:"Haber + participle",sub:"he / has / ha / hemos / han + -ado or -ido",rows:[{pro:"Yo",verb:"he hablado",en:"I have spoken",tts:"yo he hablado"},{pro:"Tú",verb:"has comido",en:"you have eaten",tts:"tú has comido"},{pro:"Él/Ella/Ud.",verb:"ha ido",en:"he/she has gone",tts:"él ha ido"},{pro:"Nosotros",verb:"hemos visto",en:"we have seen",tts:"nosotros hemos visto"},{pro:"Ellos/Uds.",verb:"han llegado",en:"they have arrived",tts:"ellos han llegado"}]}],examples:[{es:"He practicado español esta semana.",en:"I have practiced Spanish this week.",tts:"He practicado español esta semana."},{es:"¿Has probado la arepa?",en:"Have you tried arepa?",tts:"¿Has probado la arepa?"},{es:"Ya hemos llegado al hotel.",en:"We have already arrived at the hotel.",tts:"Ya hemos llegado al hotel."}]},
+  condicional:{label:"Conditional",intro:"Use the conditional for polite requests, possibilities, and imagined situations. These forms are especially useful for sounding natural and respectful.",trick:"Keep the infinitive and add: -ía, -ías, -ía, -íamos, -ían. Me gustaría and podría are high-value chunks.",tables:[{title:"Useful conditional forms",sub:"infinitive + -ía endings",rows:[{pro:"Yo",verb:"me gustaría",en:"I would like",tts:"me gustaría"},{pro:"Tú",verb:"podrías",en:"you could",tts:"tú podrías"},{pro:"Él/Ella/Ud.",verb:"debería",en:"he/she should",tts:"él debería"},{pro:"Nosotros",verb:"iríamos",en:"we would go",tts:"nosotros iríamos"},{pro:"Ellos/Uds.",verb:"tendrían",en:"they would have",tts:"ellos tendrían"}]}],examples:[{es:"Me gustaría pedir una mesa.",en:"I would like to order a table.",tts:"Me gustaría pedir una mesa."},{es:"¿Podría repetir, por favor?",en:"Could you repeat, please?",tts:"¿Podría repetir, por favor?"},{es:"Deberíamos salir temprano.",en:"We should leave early.",tts:"Deberíamos salir temprano."}]},
+  "pasado-perfecto":{label:"Past perfect",intro:"Use había + participle for something that had already happened before another past event. Learn it after the preterite and imperfect contrast.",trick:"Put the earlier event in the background with había: Cuando llegué, ya había salido.",tables:[{title:"Había + participle",sub:"había / habías / había / habíamos / habían + -ado or -ido",rows:[{pro:"Yo",verb:"había hablado",en:"I had spoken",tts:"yo había hablado"},{pro:"Tú",verb:"habías comido",en:"you had eaten",tts:"tú habías comido"},{pro:"Él/Ella/Ud.",verb:"había salido",en:"he/she had left",tts:"él había salido"},{pro:"Nosotros",verb:"habíamos visto",en:"we had seen",tts:"nosotros habíamos visto"},{pro:"Ellos/Uds.",verb:"habían llegado",en:"they had arrived",tts:"ellos habían llegado"}]}],examples:[{es:"Cuando llegué, ya habían cerrado.",en:"When I arrived, they had already closed.",tts:"Cuando llegué, ya habían cerrado."},{es:"Nunca había usado esa aplicación.",en:"I had never used that app.",tts:"Nunca había usado esa aplicación."},{es:"Ya había comido cuando me llamaste.",en:"I had already eaten when you called me.",tts:"Ya había comido cuando me llamaste."}]},
+  "futuro-perfecto":{label:"Future perfect",intro:"Use habré + participle for something that will have happened by a future point. This is advanced; recognize it before trying to produce it quickly.",trick:"Think: by then, I will have… Habré llegado = I will have arrived.",tables:[{title:"Habré + participle",sub:"habré / habrás / habrá / habremos / habrán + -ado or -ido",rows:[{pro:"Yo",verb:"habré llegado",en:"I will have arrived",tts:"yo habré llegado"},{pro:"Tú",verb:"habrás terminado",en:"you will have finished",tts:"tú habrás terminado"},{pro:"Él/Ella/Ud.",verb:"habrá salido",en:"he/she will have left",tts:"él habrá salido"},{pro:"Nosotros",verb:"habremos comido",en:"we will have eaten",tts:"nosotros habremos comido"},{pro:"Ellos/Uds.",verb:"habrán llegado",en:"they will have arrived",tts:"ellos habrán llegado"}]}],examples:[{es:"Para las ocho, habré terminado.",en:"By eight, I will have finished.",tts:"Para las ocho, habré terminado."},{es:"Cuando llegues, ya habremos salido.",en:"When you arrive, we will have already left.",tts:"Cuando llegues, ya habremos salido."},{es:"En un año, habré aprendido mucho.",en:"In a year, I will have learned a lot.",tts:"En un año, habré aprendido mucho."}]}
 });
 
 const V58_SPEAKING_GUIDE=[
@@ -1167,12 +1165,12 @@ const PRONOMBRES={
 
 // Reflexive verbs
 const REFLEXIVOS=[
-  {inf:"llamarse",en:"to be called (name)",forms:[{p:"Yo",v:"me llamo",e:"I am called / my name is"},{p:"Tú",v:"te llamas",e:"you are called"},{p:"Él/Ella",v:"se llama",e:"he/she is called"},{p:"Nosotros",v:"nos llamamos",e:"we are called"},{p:"Ellos",v:"se llaman",e:"they are called"}],example:{es:"Me llamo David. ¿Cómo te llamas?",en:"My name is David. What's your name?"}},
-  {inf:"levantarse",en:"to get up / to stand up",forms:[{p:"Yo",v:"me levanto",e:"I get up"},{p:"Tú",v:"te levantas",e:"you get up"},{p:"Él/Ella",v:"se levanta",e:"he/she gets up"},{p:"Nosotros",v:"nos levantamos",e:"we get up"},{p:"Ellos",v:"se levantan",e:"they get up"}],example:{es:"Me levanto a las seis.",en:"I get up at six o'clock."}},
-  {inf:"sentarse",en:"to sit down",forms:[{p:"Yo",v:"me siento",e:"I sit down"},{p:"Tú",v:"te sientas",e:"you sit down"},{p:"Él/Ella",v:"se sienta",e:"he/she sits down"},{p:"Nosotros",v:"nos sentamos",e:"we sit down"},{p:"Ellos",v:"se sientan",e:"they sit down"}],example:{es:"¿Puedo sentarme aquí?",en:"Can I sit here?"}},
-  {inf:"irse",en:"to leave / to go away",forms:[{p:"Yo",v:"me voy",e:"I'm leaving"},{p:"Tú",v:"te vas",e:"you're leaving"},{p:"Él/Ella",v:"se va",e:"he/she is leaving"},{p:"Nosotros",v:"nos vamos",e:"we're leaving"},{p:"Ellos",v:"se van",e:"they're leaving"}],example:{es:"¡Me voy! Hasta mañana.",en:"I'm leaving! See you tomorrow."}},
-  {inf:"sentirse",en:"to feel (emotion/physical)",forms:[{p:"Yo",v:"me siento",e:"I feel"},{p:"Tú",v:"te sientes",e:"you feel"},{p:"Él/Ella",v:"se siente",e:"he/she feels"},{p:"Nosotros",v:"nos sentimos",e:"we feel"},{p:"Ellos",v:"se sienten",e:"they feel"}],example:{es:"Me siento muy bien hoy.",en:"I feel very well today."}},
-  {inf:"despertarse",en:"to wake up",forms:[{p:"Yo",v:"me despierto",e:"I wake up"},{p:"Tú",v:"te despiertas",e:"you wake up"},{p:"Él/Ella",v:"se despierta",e:"he/she wakes up"},{p:"Nosotros",v:"nos despertamos",e:"we wake up"},{p:"Ellos",v:"se despiertan",e:"they wake up"}],example:{es:"Me despierto temprano en Colombia.",en:"I wake up early in Colombia."}},
+  {inf:"llamarse",en:"to be called (name)",forms:[{p:"Yo",v:"me llamo",e:"I am called / my name is"},{p:"Tú",v:"te llamas",e:"you are called"},{p:"Él/Ella/Ud.",v:"se llama",e:"he/she is called"},{p:"Nosotros",v:"nos llamamos",e:"we are called"},{p:"Ellos/Uds.",v:"se llaman",e:"they are called"}],example:{es:"Me llamo David. ¿Cómo te llamas?",en:"My name is David. What's your name?"}},
+  {inf:"levantarse",en:"to get up / to stand up",forms:[{p:"Yo",v:"me levanto",e:"I get up"},{p:"Tú",v:"te levantas",e:"you get up"},{p:"Él/Ella/Ud.",v:"se levanta",e:"he/she gets up"},{p:"Nosotros",v:"nos levantamos",e:"we get up"},{p:"Ellos/Uds.",v:"se levantan",e:"they get up"}],example:{es:"Me levanto a las seis.",en:"I get up at six o'clock."}},
+  {inf:"sentarse",en:"to sit down",forms:[{p:"Yo",v:"me siento",e:"I sit down"},{p:"Tú",v:"te sientas",e:"you sit down"},{p:"Él/Ella/Ud.",v:"se sienta",e:"he/she sits down"},{p:"Nosotros",v:"nos sentamos",e:"we sit down"},{p:"Ellos/Uds.",v:"se sientan",e:"they sit down"}],example:{es:"¿Puedo sentarme aquí?",en:"Can I sit here?"}},
+  {inf:"irse",en:"to leave / to go away",forms:[{p:"Yo",v:"me voy",e:"I'm leaving"},{p:"Tú",v:"te vas",e:"you're leaving"},{p:"Él/Ella/Ud.",v:"se va",e:"he/she is leaving"},{p:"Nosotros",v:"nos vamos",e:"we're leaving"},{p:"Ellos/Uds.",v:"se van",e:"they're leaving"}],example:{es:"¡Me voy! Hasta mañana.",en:"I'm leaving! See you tomorrow."}},
+  {inf:"sentirse",en:"to feel (emotion/physical)",forms:[{p:"Yo",v:"me siento",e:"I feel"},{p:"Tú",v:"te sientes",e:"you feel"},{p:"Él/Ella/Ud.",v:"se siente",e:"he/she feels"},{p:"Nosotros",v:"nos sentimos",e:"we feel"},{p:"Ellos/Uds.",v:"se sienten",e:"they feel"}],example:{es:"Me siento muy bien hoy.",en:"I feel very well today."}},
+  {inf:"despertarse",en:"to wake up",forms:[{p:"Yo",v:"me despierto",e:"I wake up"},{p:"Tú",v:"te despiertas",e:"you wake up"},{p:"Él/Ella/Ud.",v:"se despierta",e:"he/she wakes up"},{p:"Nosotros",v:"nos despertamos",e:"we wake up"},{p:"Ellos/Uds.",v:"se despiertan",e:"they wake up"}],example:{es:"Me despierto temprano en Colombia.",en:"I wake up early in Colombia."}},
 ];
 
 
@@ -1483,3 +1481,292 @@ const V60_FILL_BLANK_QUIZ=[
   {kind:"blank",focus:"pronombres",cat:"pronombres",es:"El proyecto es importante; mañana ___ mandamos al cliente.",en:"lo",tts:"El proyecto es importante; mañana lo mandamos al cliente.",trans:"The project is important; tomorrow we will send it to the client.",choices:["lo","la","le","los"]},
   {kind:"blank",focus:"present",cat:"fiesta",es:"La música ___ muy buena.",en:"está",tts:"La música está muy buena.",trans:"The music is really good.",choices:["está","es","fue","sea"]}
 ];
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v71 Conversational Roadmap Upgrade:
+   1. Colombian Polite Softeners, Diminutives, Time-Buyers (Muletillas), & Usted/Tú/Vos
+   2. Complete guideIds for all lessons (no generic fallbacks)
+   3. 5-Rung Sentence Expansion Ladders (Escalera de Oraciones)
+   4. Interactive 3-Column Slot-Swap Matrices (Constructor de Frases)
+   ═══════════════════════════════════════════════════════════════════════════ */
+SPEAKING_GUIDE.push(
+  {id:"cortesia-colombiana",title:"Colombian polite softeners",formula:"¿Me regala…? · ¿Será que…? · Qué pena con usted",explain:"In Colombia, direct requests like Quiero… or Deme… can sound abrupt with strangers. Soften requests with Qué pena con usted, ¿Me regala…?, or ¿Será que me puede…?",examples:[{es:"Qué pena con usted, ¿me regala un tintico?",en:"Sorry to bother you, can I have a black coffee?",tts:"Qué pena con usted, ¿me regala un tintico?"},{es:"¿Será que me puede ayudar con esta dirección?",en:"Could you possibly help me with this address?",tts:"¿Será que me puede ayudar con esta dirección?"},{es:"Veci, ¿me hace un favor?",en:"Neighbor/friend (shopkeeper), can you do me a favor?",tts:"Veci, ¿me hace un favor?"}],mistake:"Do not translate 'I want a coffee' as Yo quiero un café at a counter. Use ¿Me regala un tinto, por favor? or Quisiera…",exercise:"Ask for a coffee, the bill, and directions using ¿Me regala…? and ¿Será que…?"},
+  {id:"diminutivos",title:"Diminutives (-ito / -ico) for warmth",formula:"tinto → tintico · ahora → ahorita · momento → momentico",explain:"Colombians use -ito/-ita (and -ico/-ica after T, like tintico or momentico) to sound warm, polite, and relaxed—not just to describe small size.",examples:[{es:"Espéreme un momentico, por favor.",en:"Wait for me just a moment, please.",tts:"Espéreme un momentico, por favor."},{es:"Ahorita te llamo; estoy cerquita.",en:"I'll call you right now/shortly; I'm very close.",tts:"Ahorita te llamo; estoy cerquita."},{es:"¿Me habla más despacito, por favor?",en:"Can you speak a little more slowly to me, please?",tts:"¿Me habla más despacito, por favor?"}],mistake:"When a word ends in -to/-ta, Colombians switch to -tico/-tica: momentico, tintico, ratico (never momentito in Colombia).",exercise:"Soften un momento, ahora, despacio, and cerca using Colombian diminutives."},
+  {id:"muletillas",title:"Time-buyers while you think (Muletillas)",formula:"Pues… · A ver… · Es que… · Digamos que…",explain:"Native speakers use small filler chunks to hold the floor while organizing their next sentence. Using these prevents awkward silence while you think.",examples:[{es:"Pues, a ver… creo que vamos para el centro.",en:"Well, let's see… I think we are going downtown.",tts:"Pues, a ver… creo que vamos para el centro."},{es:"Es que todavía estoy aprendiendo español.",en:"It's just that I am still learning Spanish.",tts:"Es que todavía estoy aprendiendo español."},{es:"Digamos que necesito un poco más de práctica.",en:"Let's say I need a little more practice.",tts:"Digamos que necesito un poco más de práctica."}],mistake:"Instead of saying English 'uh / um' or freezing, start your answer with Pues, a ver… or Lo que pasa es que…",exercise:"Start three answers out loud with Pues, a ver…, Es que…, and O sea…"},
+  {id:"usted-tu-vos",title:"Usted, tú, sumercé, and vos in Colombia",formula:"usted = respect & daily Bogotá · tú = friendly · ustedes = plural you",explain:"Colombian pronoun choice is warm and regional. Usted is standard with drivers, shopkeepers, doctors, and often even friends in Bogotá. Ustedes is always used for plural 'you all'.",examples:[{es:"Disculpe, ¿usted me puede indicar la entrada?",en:"Excuse me, can you show me the entrance? (formal)",tts:"Disculpe, ¿usted me puede indicar la entrada?"},{es:"¿Tú vas a salir esta noche o te quedas?",en:"Are you going out tonight or staying in? (friendly)",tts:"¿Tú vas a salir esta noche o te quedas?"},{es:"¿Ustedes a qué hora abren mañana?",en:"What time do you all open tomorrow?",tts:"¿Ustedes a qué hora abren mañana?"}],mistake:"Remember that él, ella, and usted all share the exact same verb form (habla, tiene, va), and ellos/ustedes share the -n form (hablan, tienen, van).",exercise:"Ask the same question first to a friend with tú, then to a driver with usted."}
+);
+
+FRASES.push(
+  {section:"🙏 Cortesía colombiana — polite requests",quizCat:"cortesia",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[
+    {es:"Qué pena con usted.",en:"Sorry to bother you / Excuse me.",register:"Colombian · polite"},
+    {es:"¿Me regala un tintico, por favor?",en:"Can I have a black coffee, please?",register:"Colombian · everyday"},
+    {es:"¿Será que me puede ayudar?",en:"Could you possibly help me?",register:"Colombian · polite"},
+    {es:"¿Será que tiene cambio?",en:"Would you happen to have change?",register:"Colombian · polite"},
+    {es:"Veci, ¿cuánto le debo?",en:"Neighbor/shopkeeper, how much do I owe you?",register:"Colombian · everyday"},
+    {es:"¿Me hace un favor?",en:"Can you do me a favor?",register:"Everyday"},
+    {es:"Con mucho gusto.",en:"With pleasure / Happy to help.",register:"Colombian · polite"},
+    {es:"A la orden.",en:"At your service / You're welcome.",register:"Colombian · everyday"},
+    {es:"Dios le pague.",en:"Thank you very much (warm traditional).",register:"Colombian · warm"}
+  ]},
+  {section:"☕ Diminutivos y muletillas — sound local",quizCat:"muletillas",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[
+    {es:"Espéreme un momentico.",en:"Wait for me just a moment.",register:"Colombian · everyday"},
+    {es:"Ahorita vengo.",en:"I'll be right back / coming shortly.",register:"Colombian · everyday"},
+    {es:"Queda aquí cerquita.",en:"It's right nearby.",register:"Colombian · everyday"},
+    {es:"Hábleme más despacito, por favor.",en:"Speak to me a little more slowly, please.",register:"Colombian · polite"},
+    {es:"Nos vemos en un ratico.",en:"See you in a little while.",register:"Colombian · everyday"},
+    {es:"Pues, a ver…",en:"Well, let's see… (buying time)",register:"Everyday"},
+    {es:"Es que todavía estoy aprendiendo.",en:"It's just that I'm still learning.",register:"Everyday"},
+    {es:"Digamos que sí.",en:"Let's say yes / more or less.",register:"Everyday"},
+    {es:"¿Sí me entiende?",en:"Do you see what I mean?",register:"Colombian · everyday"}
+  ]}
+);
+
+CONVERSATIONS.push(
+  v60Dialogue("Cortesía en una tienda","Polite Colombian ordering with ¿Me regala…?, ¿Será que…?, and Veci",[
+    ["A","Buenas, veci. Qué pena con usted, ¿me regala un tintico?","Hi, neighbor. Sorry to bother you, can I have a black coffee?"],
+    ["B","Claro, con mucho gusto. ¿Lo quiere con azúcar?","Of course, with pleasure. Do you want it with sugar?"],
+    ["A","Sin azúcar, por favor. ¿Y será que tiene una arepa con queso?","Without sugar, please. And would you happen to have an arepa with cheese?"],
+    ["B","Sí, claro, ya le sale calentica.","Yes, of course, it's coming right out warm."],
+    ["A","Perfecto. ¿Cuánto le debo por todo?","Perfect. How much do I owe you for everything?"],
+    ["B","Son seis mil pesos. A la orden.","It's six thousand pesos. At your service."]
+  ],[{es:"Qué pena, ¿será que puedo pagar con Nequi o en efectivo?",en:"Excuse me, could I pay with Nequi or in cash?",tts:"Qué pena, ¿será que puedo pagar con Nequi o en efectivo?"},{es:"Muchas gracias, muy amable.",en:"Thank you very much, very kind of you.",tts:"Muchas gracias, muy amable."}]),
+  v60Dialogue("Ganar tiempo al hablar","Using muletillas and diminutives to keep a conversation flowing",[
+    ["A","Hola, ¿ya conoces bien el barrio?","Hi, do you know the neighborhood well yet?"],
+    ["B","Pues, a ver… apenas llevo unos días aquí, pero me gusta mucho.","Well, let's see… I've only been here a few days, but I like it a lot."],
+    ["A","¿Y dónde queda tu hotel?","And where is your hotel located?"],
+    ["B","Queda aquí cerquita, a dos cuadras del parque.","It's right nearby, two blocks from the park."],
+    ["A","¿Vamos por un tintico ahorita?","Shall we go for a coffee right now?"],
+    ["B","De una, espéreme un momentico y salimos.","I'm in, wait for me just a moment and we'll head out."]
+  ],[{es:"Lo que pasa es que todavía hablo despacito, pero ahí voy.",en:"The thing is I still speak slowly, but I'm getting there.",tts:"Lo que pasa es que todavía hablo despacito, pero ahí voy."},{es:"Nos vemos en un ratico en la esquina.",en:"See you in a little while on the corner.",tts:"Nos vemos en un ratico en la esquina."}])
+);
+
+Object.assign(LESSON_CONTENT,{
+  "cortesia-colombiana":{
+    goal:{es:"Qué pena con usted, ¿me regala un tintico y me dice cuánto le debo?",en:"Sorry to bother you, can I have a black coffee and can you tell me how much I owe you?"},
+    words:[{es:"Qué pena con usted",en:"Sorry to bother you"},{es:"¿Me regala…?",en:"Can I have…? (Colombian)"},{es:"¿Será que…?",en:"Could it be that…? (polite opener)"},{es:"Veci",en:"Friendly shopkeeper address"},{es:"Con mucho gusto",en:"With pleasure"},{es:"A la orden",en:"At your service"}],
+    phrases:[{en:"Sorry to bother you, can you help me?",es:"Qué pena con usted, ¿me puede ayudar?"},{en:"Can I have a black coffee, please?",es:"¿Me regala un tintico, por favor?"},{en:"Would you happen to have change?",es:"¿Será que tiene cambio?"},{en:"How much do I owe you for everything?",es:"¿Cuánto le debo por todo?"}]
+  },
+  "muletillas-diminutivos":{
+    goal:{es:"Pues, a ver… espéreme un momentico porque ya estoy cerquita.",en:"Well, let's see… wait for me just a moment because I am already very close."},
+    words:[{es:"un momentico",en:"just a moment"},{es:"ahorita",en:"right now / shortly"},{es:"cerquita",en:"very close"},{es:"despacito",en:"nice and slowly"},{es:"Pues, a ver…",en:"Well, let's see…"},{es:"Es que…",en:"It's just that…"}],
+    phrases:[{en:"Wait for me just a moment, please.",es:"Espéreme un momentico, por favor."},{en:"It's right nearby, across the way.",es:"Queda aquí cerquita, al frente."},{en:"Well, let's see… it's just that I'm still learning.",es:"Pues, a ver… es que todavía estoy aprendiendo."},{en:"I'll call you in a little while.",es:"Te llamo en un ratico."}]
+  }
+});
+
+Object.assign(LESSON_META,{
+  trabajo:{stage:"Daily Life",difficulty:"Easy",prereq:"Preséntate",guideIds:["presente","por-para"],readingId:"lectura-trabajo",missionId:"reunion-trabajo"},
+  casa:{stage:"Start Here",difficulty:"Easy",prereq:"Preséntate",guideIds:["ser-estar","hay"],missionId:"problema-casa"},
+  cocina:{stage:"Travel and Survival",difficulty:"Easy",prereq:"Tu casa",guideIds:["futuro","ir-venir"]},
+  gustos:{stage:"Start Here",difficulty:"Easy",prereq:"Preséntate",guideIds:["gustar","acuerdo"]},
+  planes:{stage:"Daily Life",difficulty:"Easy",prereq:"Gustos y familia",guideIds:["quedar","futuro"],readingId:"lectura-planes",missionId:"planes-fin-semana"},
+  sentirse:{stage:"Daily Life",difficulty:"Easy",prereq:"Tu casa",guideIds:["ser-estar","estructura"],missionId:"como-te-sientes"},
+  colombia:{stage:"Speak More Naturally",difficulty:"Easy",prereq:"Start Here",guideIds:["cortesia-colombiana","diminutivos"],readingId:"lectura-cafe",missionId:"tinto-por-favor"},
+  "uber-ride":{stage:"Travel and Survival",difficulty:"Easy",prereq:"Comunicación para aclarar",dialogue:"Uber: confirmar la recogida",vocab:"direcciones",quizCat:"uber",quizMode:"conversation",guideIds:["usted-tu-vos","por-para"],readingId:"lectura-uber",missionId:"taxi-aeropuerto"},
+  "hotel-checkin":{stage:"Travel and Survival",difficulty:"Easy",prereq:"Uber y transporte",dialogue:"Hotel: registrarse",vocab:"lugares",quizCat:"hotel",quizMode:"conversation",guideIds:["hay","cortesia-colombiana"],readingId:"lectura-hotel",missionId:"hotel-checkin"},
+  farmacia:{stage:"Travel and Survival",difficulty:"Moderate",prereq:"Hotel",dialogue:"Farmacia: explicar síntomas",vocab:"emociones",quizCat:"farmacia",quizMode:"conversation",guideIds:["ser-estar","negativas-preguntas"],missionId:"farmacia-sintomas"},
+  "daily-repair":{stage:"Daily Life",difficulty:"Moderate",prereq:"Travel and Survival",dialogue:"Teléfono: mala señal",vocab:"tecnologia",quizCat:"reparar",quizMode:"conversation",guideIds:["conectores","se-me"],readingId:"lectura-telefono"},
+  direcciones:{stage:"Travel and Survival",difficulty:"Easy",prereq:"En la calle",dialogue:"Uber: dirección equivocada",vocab:"direcciones",quizCat:"direcciones",quizMode:"conversation",guideIds:["hay","quedar"],readingId:"lectura-edificio",missionId:"edificio-direcciones"},
+  "cortesia-colombiana":{stage:"Start Here",difficulty:"Easy",prereq:"Preséntate",dialogue:"Cortesía en una tienda",vocab:"colombianismos",quizCat:"cortesia",quizMode:"conversation",guideIds:["cortesia-colombiana","usted-tu-vos"],readingId:"lectura-cafe",missionId:"tinto-por-favor"},
+  "muletillas-diminutivos":{stage:"Speak More Naturally",difficulty:"Easy",prereq:"Colombianismos",dialogue:"Ganar tiempo al hablar",vocab:"colombianismos",quizCat:"muletillas",quizMode:"conversation",guideIds:["diminutivos","muletillas"],readingId:"lectura-cafe",missionId:"saludo-parce"}
+});
+
+SPEAKING_FRAMES.push(
+  {id:"sera-que",title:"Soften a request the Colombian way",formula:"¿Será que + can / have…?",en:"Could it be that / Would you happen to…?",guide:"cortesia-colombiana",prompts:[
+    {en:"Could you possibly help me?",es:"¿Será que me puede ayudar?"},
+    {en:"Would you happen to have change?",es:"¿Será que tiene cambio?"},
+    {en:"Could we meet a little later?",es:"¿Será que nos vemos más tarde?"}
+  ]},
+  {id:"me-regala",title:"Order or ask politely in Colombia",formula:"¿Me regala + thing, por favor?",en:"Can I have…, please?",guide:"cortesia-colombiana",prompts:[
+    {en:"Can I have a black coffee, please?",es:"¿Me regala un tintico, por favor?"},
+    {en:"Can you give me the address, please?",es:"¿Me regala la dirección, por favor?"},
+    {en:"Can I have the bill, please?",es:"¿Me regala la cuenta, por favor?"}
+  ]},
+  {id:"pues-es-que",title:"Buy time while you think",formula:"Pues, a ver… es que + sentence",en:"Well, let's see… it's just that…",guide:"muletillas",prompts:[
+    {en:"Well, let's see… it's just that I am still learning.",es:"Pues, a ver… es que todavía estoy aprendiendo."},
+    {en:"It's just that I forgot the address.",es:"Es que se me olvidó la dirección."},
+    {en:"Well, let's see… I think it's over there.",es:"Pues, a ver… creo que queda por allá."}
+  ]}
+);
+
+const V71_QUIZ=[
+  {kind:"reply",focus:"present",cat:"cortesia",es:"Buenas, veci. ¿Me regala un tintico, por favor?",en:"Claro, con mucho gusto. ¿Con azúcar?",tts:"Buenas, veci. ¿Me regala un tintico, por favor?",choices:["Claro, con mucho gusto. ¿Con azúcar?","La llanta está baja.","Ayer trabajé en la oficina.","Juega Colombia esta noche."]},
+  {kind:"meaning",focus:"present",cat:"cortesia",es:"¿Será que me puede ayudar con esta dirección?",en:"Could you possibly help me with this address?",tts:"¿Será que me puede ayudar con esta dirección?",choices:["Could you possibly help me with this address?","Did you already send the address?","I forgot the address yesterday.","Go straight to the corner."]},
+  {kind:"reply",focus:"present",cat:"muletillas",es:"¿Vamos por un tintico ahorita?",en:"De una, espéreme un momentico y salimos.",tts:"¿Vamos por un tintico ahorita?",choices:["De una, espéreme un momentico y salimos.","No, la impresora no funciona.","Ayer fui al mercado.","El semáforo está en rojo."]},
+  {kind:"meaning",focus:"present",cat:"muletillas",es:"Queda aquí cerquita, a dos cuadras.",en:"It's right nearby, two blocks away.",tts:"Queda aquí cerquita, a dos cuadras.",choices:["It's right nearby, two blocks away.","It is very far from the airport.","I lived there last year.","The entrance is on the second floor."]}
+];
+V60_CONVERSATION_QUIZ.push(...V71_QUIZ);
+
+/* ── 5-Rung Sentence Expansion Ladders (Escalera de Oraciones) ─────────────
+   Teaches learners how to start with a 2-word anchor chunk and snap pieces
+   together into a complete conversational sentence, plus 3 slot-swaps. */
+const SENTENCE_LADDERS={
+  presentate:{
+    title:"Build your introduction step by step",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Me llamo…",en:"My name is…"},
+      {tag:"2. + Origin",es:"Me llamo Seth y soy de Estados Unidos.",en:"My name is Seth and I'm from the United States."},
+      {tag:"3. + Where you live",es:"Me llamo Seth, soy de Estados Unidos y vivo en Colombia.",en:"My name is Seth, I'm from the U.S. and I live in Colombia."},
+      {tag:"4. + Conversational softener",es:"Hola, mucho gusto. Me llamo Seth, soy de Estados Unidos y estoy aprendiendo español.",en:"Hi, nice to meet you. My name is Seth, I'm from the U.S. and I'm learning Spanish."}
+    ],
+    swaps:[
+      {label:"Swap city",es:"Vivo en Medellín, cerca del parque.",en:"I live in Medellín, near the park."},
+      {label:"Ask back",es:"Mucho gusto, ¿y tú de dónde eres?",en:"Nice to meet you, and where are you from?"},
+      {label:"Slow down",es:"Hablo un poquito de español; ¿me habla más despacito?",en:"I speak a little Spanish; can you speak more slowly to me?"}
+    ]
+  },
+  "cortesia-colombiana":{
+    title:"Grow a polite Colombian request",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Me regala…?",en:"Can I have…?"},
+      {tag:"2. + Warm diminutive",es:"¿Me regala un tintico, por favor?",en:"Can I have a black coffee, please?"},
+      {tag:"3. + Polite opener",es:"Buenas, veci. Qué pena con usted, ¿me regala un tintico?",en:"Hi, neighbor. Sorry to bother you, can I have a black coffee?"},
+      {tag:"4. + Second polite question",es:"Qué pena con usted, ¿me regala un tintico y será que tiene cambio?",en:"Sorry to bother you, can I have a black coffee and would you happen to have change?"}
+    ],
+    swaps:[
+      {label:"Swap for water",es:"Qué pena con usted, ¿me regala un vaso de agua?",en:"Sorry to bother you, can I have a glass of water?"},
+      {label:"Swap for the bill",es:"Veci, ¿me regala la cuenta cuando pueda?",en:"Neighbor, can I have the bill when you can?"},
+      {label:"Swap for directions",es:"Qué pena con usted, ¿será que me puede indicar la entrada?",en:"Sorry to bother you, could you possibly show me the entrance?"}
+    ]
+  },
+  plata:{
+    title:"Ask prices and negotiate naturally",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Cuánto cuesta?",en:"How much does it cost?"},
+      {tag:"2. + Specific item",es:"¿Cuánto cuestan estas arepas?",en:"How much do these arepas cost?"},
+      {tag:"3. + Quantity request",es:"¿Cuánto cuestan estas arepas? Me regala dos, por favor.",en:"How much do these arepas cost? Can I have two, please."},
+      {tag:"4. + Payment question",es:"Me regala dos arepas, por favor. ¿Será que puedo pagar con tarjeta?",en:"Can I have two arepas, please. Could I pay by card?"}
+    ],
+    swaps:[
+      {label:"Pay cash",es:"Pago en efectivo; ¿tiene cambio de cincuenta mil?",en:"I'll pay in cash; do you have change for fifty thousand?"},
+      {label:"Ask total",es:"Listo, ¿cuánto le debo por todo?",en:"Great, how much do I owe you for everything?"},
+      {label:"Ask discount",es:"Está un poquito caro; ¿me hace un descuento?",en:"It's a little expensive; can you give me a discount?"}
+    ]
+  },
+  "survival-communication":{
+    title:"Repair a fast conversation without freezing",
+    rungs:[
+      {tag:"1. Anchor stem",es:"No entendí.",en:"I didn't understand."},
+      {tag:"2. + Polite request",es:"Disculpe, no entendí bien.",en:"Excuse me, I didn't quite understand."},
+      {tag:"3. + Ask to slow down",es:"Disculpe, no entendí bien. ¿Me puede hablar más despacito?",en:"Excuse me, I didn't quite understand. Can you speak more slowly to me?"},
+      {tag:"4. + Explain why",es:"Disculpe, ¿me lo puede repetir más despacito? Es que todavía estoy aprendiendo español.",en:"Excuse me, can you repeat it more slowly for me? It's just that I'm still learning Spanish."}
+    ],
+    swaps:[
+      {label:"Buy time",es:"Espéreme un momentico, déjeme pensar.",en:"Wait for me just a moment, let me think."},
+      {label:"Ask meaning",es:"Perdón, ¿qué quiere decir esa palabra?",en:"Sorry, what does that word mean?"},
+      {label:"Check yourself",es:"¿Así está bien o cómo se dice?",en:"Is it okay like this, or how do you say it?"}
+    ]
+  },
+  "uber-ride":{
+    title:"Confirm your Uber pickup and destination",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Voy para…",en:"I'm headed to…"},
+      {tag:"2. + Destination",es:"Voy para este hotel.",en:"I'm headed to this hotel."},
+      {tag:"3. + Pickup location",es:"Buenas, estoy al frente y voy para este hotel.",en:"Hi, I'm out front and I'm headed to this hotel."},
+      {tag:"4. + Polite instruction",es:"Buenas, estoy al frente del edificio. Voy para este hotel; ¿me avisa cuando lleguemos?",en:"Hi, I'm in front of the building. I'm going to this hotel; can you let me know when we arrive?"}
+    ],
+    swaps:[
+      {label:"Drop-off",es:"¿Me puede dejar aquí en la esquina, por favor?",en:"Can you drop me off here on the corner, please?"},
+      {label:"Check traffic",es:"¿Hay mucho trancón por esta avenida?",en:"Is there a lot of traffic on this avenue?"},
+      {label:"Wrong entrance",es:"Creo que la entrada queda por allá; ¿se devuelve un poquito?",en:"I think the entrance is over there; can you go back a little?"}
+    ]
+  },
+  "action-chunks":{
+    title:"Snap action stems onto infinitives",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Tengo que…",en:"I have to…"},
+      {tag:"2. + Infinitive + object",es:"Tengo que pasar por el mercado.",en:"I have to stop by the market."},
+      {tag:"3. + Second clause",es:"Quiero ir para la casa, pero tengo que pasar por el mercado.",en:"I want to go home, but I have to stop by the market."},
+      {tag:"4. + Time + follow-up",es:"Quiero ir para la casa, pero primero tengo que pasar por el mercado; te aviso ahorita.",en:"I want to go home, but first I have to stop by the market; I'll let you know shortly."}
+    ],
+    swaps:[
+      {label:"Use Necesito",es:"Necesito encontrar la dirección antes de salir.",en:"I need to find the address before leaving."},
+      {label:"Use Me toca",es:"Hoy me toca trabajar hasta tarde en la oficina.",en:"Today I have to work late at the office."},
+      {label:"Use Acabo de",es:"Acabo de llegar al hotel y voy a descansar.",en:"I just arrived at the hotel and I'm going to rest."}
+    ]
+  }
+};
+
+/* ── 3-Column Interactive Slot-Swap Matrices (Constructor de Frases) ────────
+   Lets learners physically tap 1 opener + 1 core action + 1 connector/reason
+   to assemble dozens of real Colombian sentences and speak them out loud. */
+const SLOT_SWAP_MATRICES=[
+  {
+    id:"survival-polite",
+    title:"🇨🇴 Polite Requests & Survival",
+    sub:"Combine a Colombian opener + what you need + why",
+    col1Title:"1. Opener / Stem",
+    col2Title:"2. Action / Need",
+    col3Title:"3. Context / Reason",
+    col1:[
+      {es:"Qué pena con usted, necesito",en:"Sorry to bother you, I need"},
+      {es:"Disculpe, ¿será que puedo",en:"Excuse me, could I possibly"},
+      {es:"Buenas, veci, quisiera",en:"Hi neighbor, I would like"},
+      {es:"Perdón, tengo que",en:"Sorry, I have to"}
+    ],
+    col2:[
+      {es:"pedir un Uber para el hotel",en:"to order an Uber to the hotel"},
+      {es:"confirmar esta dirección",en:"to confirm this address"},
+      {es:"pagar la cuenta con tarjeta",en:"to pay the bill by card"},
+      {es:"cambiar la reserva para mañana",en:"to change the reservation for tomorrow"}
+    ],
+    col3:[
+      {es:"porque voy un poquito tarde.",en:"because I'm running a little late."},
+      {es:"pero todavía no tengo buena señal.",en:"but I still don't have good signal."},
+      {es:"antes de que empiece el trancón.",en:"before the traffic jam starts."},
+      {es:"si me hace el favor.",en:"if you'd do me the favor."}
+    ]
+  },
+  {
+    id:"daily-plans",
+    title:"📆 Plans, Work & Daily Flow",
+    sub:"Talk about what you're doing now and next",
+    col1Title:"1. Time + Stem",
+    col2Title:"2. Core Action",
+    col3Title:"3. Connector + Follow-up",
+    col1:[
+      {es:"Ahorita voy a",en:"Right now I'm going to"},
+      {es:"Después del trabajo quiero",en:"After work I want"},
+      {es:"Hoy me toca",en:"Today I have to"},
+      {es:"En este momento estoy tratando de",en:"Right now I'm trying to"}
+    ],
+    col2:[
+      {es:"pasar por el mercado",en:"to stop by the market"},
+      {es:"terminar el informe de la oficina",en:"to finish the office report"},
+      {es:"tomar un tintico con unos amigos",en:"to have a coffee with some friends"},
+      {es:"buscar la entrada del edificio",en:"to look for the building entrance"}
+    ],
+    col3:[
+      {es:"y te aviso en cuanto llegue.",en:"and I'll let you know as soon as I arrive."},
+      {es:"pero primero tengo una reunión.",en:"but first I have a meeting."},
+      {es:"porque mañana salgo temprano.",en:"because tomorrow I leave early."},
+      {es:"así que nos vemos en un ratico.",en:"so I'll see you in a little while."}
+    ]
+  },
+  {
+    id:"past-stories",
+    title:"⏮️ Telling What Happened (Past)",
+    sub:"Combine a past event with background context",
+    col1Title:"1. Past Anchor",
+    col2Title:"2. What Happened",
+    col3Title:"3. Background / Result",
+    col1:[
+      {es:"Ayer fui a",en:"Yesterday I went to"},
+      {es:"Anoche tuve que",en:"Last night I had to"},
+      {es:"Esta mañana iba a",en:"This morning I was going to"},
+      {es:"Hace un ratico acabé de",en:"A little while ago I finished"}
+    ],
+    col2:[
+      {es:"hacer una vuelta en el centro",en:"run an errand downtown"},
+      {es:"llamar al técnico del apartamento",en:"call the apartment technician"},
+      {es:"comprar comida para la cena",en:"buy food for dinner"},
+      {es:"hablar con mi compañero de trabajo",en:"talk with my coworker"}
+    ],
+    col3:[
+      {es:"porque estaba lloviendo muy fuerte.",en:"because it was raining very hard."},
+      {es:"pero había mucho trancón en la avenida.",en:"but there was a lot of traffic on the avenue."},
+      {es:"entonces llegué a la casa un poco cansado.",en:"so I arrived home a little tired."},
+      {es:"mientras esperaba el carro.",en:"while I was waiting for the car."}
+    ]
+  }
+];
+
