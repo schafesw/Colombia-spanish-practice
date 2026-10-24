@@ -1,10 +1,10 @@
-const CACHE_NAME = "espanol-co-v71.2";
+const CACHE_NAME = "espanol-co-v73.0";
 const ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=71.2",
-  "./data.js?v=71.2",
-  "./app.js?v=71.2",
+  "./styles.css?v=73.0",
+  "./data.js?v=73.0",
+  "./app.js?v=73.0",
   "./manifest.json"
 ];
 

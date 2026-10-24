@@ -7,17 +7,25 @@ const nativeStorage=window.localStorage;
 const PROFILE_LIST_KEY="esco-profiles-v1";
 const ACTIVE_PROFILE_KEY="esco-active-profile-v1";
 const PROFILE_MIGRATION_KEY="esco-profile-migrated-v1";
-const DEFAULT_PROFILES=[{id:"seth",label:"Seth",emoji:"🧑‍🎓"},{id:"brad",label:"Brad",emoji:"🧑‍💼"},{id:"guest",label:"Guest",emoji:"👤"}];
+const DEFAULT_PROFILES=[{id:"seth",label:"Seth",emoji:"🧑‍🎓"},{id:"guest",label:"Guest",emoji:"👤"}];
+const REMOVED_PROFILE_IDS=new Set(["brad"]);
 let profileList=DEFAULT_PROFILES.slice();
 let activeProfileId="seth";
 try{
   const savedProfiles=JSON.parse(nativeStorage.getItem(PROFILE_LIST_KEY)||"null");
   if(Array.isArray(savedProfiles)&&savedProfiles.length){
-    const savedById=new Map(savedProfiles.filter(p=>p&&p.id).map(p=>[p.id,p]));
-    profileList=DEFAULT_PROFILES.map(p=>savedById.get(p.id)||p).concat(savedProfiles.filter(p=>p&&p.id&&!DEFAULT_PROFILES.some(d=>d.id===p.id)));
+    const savedById=new Map(savedProfiles.filter(p=>p&&p.id&&!REMOVED_PROFILE_IDS.has(p.id)).map(p=>[p.id,p]));
+    profileList=DEFAULT_PROFILES.map(p=>savedById.get(p.id)||p).concat(savedProfiles.filter(p=>p&&p.id&&!REMOVED_PROFILE_IDS.has(p.id)&&!DEFAULT_PROFILES.some(d=>d.id===p.id)));
   }
   const savedActive=nativeStorage.getItem(ACTIVE_PROFILE_KEY);
   if(profileList.some(p=>p.id===savedActive))activeProfileId=savedActive;
+}catch(e){}
+/* Brad was a temporary test profile; remove it and its local progress from this build. */
+try{
+  if(REMOVED_PROFILE_IDS.has(activeProfileId))activeProfileId="seth";
+  const stale=[];
+  for(let i=0;i<nativeStorage.length;i++){const key=nativeStorage.key(i);if(key&&key.startsWith("esco-profile-brad-"))stale.push(key);}
+  stale.forEach(key=>nativeStorage.removeItem(key));
 }catch(e){}
 /* Preserve the existing single-profile app the first time profiles are used. */
 try{
@@ -122,6 +130,32 @@ function buildVoiceBars(sp=getSpanishVoices()){
   });
 }
 function chV(key){const v=getSpanishVoices().find(x=>voiceKey(x)===key);if(v){rememberVoice(v);syncVoiceSelectors();}}
+const IOS_SPEECH=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+let speechUnlocked=false;
+function unlockSpeech(){
+  if(!window.speechSynthesis)return;
+  try{window.speechSynthesis.resume();speechUnlocked=true;}catch(e){}
+}
+if(window.speechSynthesis){
+  document.addEventListener("touchend",unlockSpeech,{capture:true,passive:true});
+  document.addEventListener("click",unlockSpeech,{capture:true,passive:true});
+}
+function playUtterance(u,onEnd){
+  const synth=window.speechSynthesis;
+  let finished=false;
+  const done=()=>{if(finished)return;finished=true;if(onEnd)onEnd();};
+  u.onerror=done;
+  u.onend=done;
+  const start=()=>{try{synth.resume();synth.speak(u);}catch(e){done();}};
+  try{
+    if(synth.speaking||synth.pending){
+      synth.cancel();
+      /* iOS Safari can drop the next utterance when cancel() and speak() happen
+         in the same event loop. Give the native queue one short turn to reset. */
+      if(IOS_SPEECH)setTimeout(start,40);else start();
+    }else start();
+  }catch(e){done();}
+}
 function speak(t,r,onEnd){
   if(!window.speechSynthesis){if(onEnd)onEnd();return;}
   const sp=getSpanishVoices();
@@ -133,8 +167,7 @@ function speak(t,r,onEnd){
   const u=new SpeechSynthesisUtterance(t);
   if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
   u.rate=r||0.8;
-  if(onEnd){let finished=false;const done=()=>{if(finished)return;finished=true;onEnd();};u.onend=done;u.onerror=done;}
-  speechSynthesis.speak(u);
+  playUtterance(u,onEnd);
   rememberSpoken(t);
 }
 /* ── Lento (slow replay) ─────────────────────────────────────────────────────
@@ -154,11 +187,10 @@ function rememberSpoken(t){
       /* replay directly (not via speak) so it doesn't overwrite lastSpokenText rate context */
       const sp=getSpanishVoices();
       const voice=(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang))||chooseSpanishVoice(sp);
-      speechSynthesis.cancel();
       const u=new SpeechSynthesisUtterance(lastSpokenText);
       if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX";
       u.rate=0.45;
-      speechSynthesis.speak(u);
+      playUtterance(u);
     };
     document.body.appendChild(lentoBtn);
   }
