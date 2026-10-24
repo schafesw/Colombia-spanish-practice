@@ -7,17 +7,25 @@ const nativeStorage=window.localStorage;
 const PROFILE_LIST_KEY="esco-profiles-v1";
 const ACTIVE_PROFILE_KEY="esco-active-profile-v1";
 const PROFILE_MIGRATION_KEY="esco-profile-migrated-v1";
-const DEFAULT_PROFILES=[{id:"seth",label:"Seth",emoji:"🧑‍🎓"},{id:"brad",label:"Brad",emoji:"🧑‍💼"},{id:"guest",label:"Guest",emoji:"👤"}];
+const DEFAULT_PROFILES=[{id:"seth",label:"Seth",emoji:"🧑‍🎓"},{id:"guest",label:"Guest",emoji:"👤"}];
+const REMOVED_PROFILE_IDS=new Set(["brad"]);
 let profileList=DEFAULT_PROFILES.slice();
 let activeProfileId="seth";
 try{
   const savedProfiles=JSON.parse(nativeStorage.getItem(PROFILE_LIST_KEY)||"null");
   if(Array.isArray(savedProfiles)&&savedProfiles.length){
     const savedById=new Map(savedProfiles.filter(p=>p&&p.id).map(p=>[p.id,p]));
-    profileList=DEFAULT_PROFILES.map(p=>savedById.get(p.id)||p).concat(savedProfiles.filter(p=>p&&p.id&&!DEFAULT_PROFILES.some(d=>d.id===p.id)));
+    profileList=DEFAULT_PROFILES.map(p=>savedById.get(p.id)||p).concat(savedProfiles.filter(p=>p&&p.id&&!REMOVED_PROFILE_IDS.has(p.id)&&!DEFAULT_PROFILES.some(d=>d.id===p.id)));
   }
   const savedActive=nativeStorage.getItem(ACTIVE_PROFILE_KEY);
   if(profileList.some(p=>p.id===savedActive))activeProfileId=savedActive;
+}catch(e){}
+try{
+  for(let i=nativeStorage.length-1;i>=0;i--){
+    const key=nativeStorage.key(i);
+    if(key&&key.startsWith("esco-profile-brad-"))nativeStorage.removeItem(key);
+  }
+  if(activeProfileId==="brad")activeProfileId="seth";
 }catch(e){}
 /* Preserve the existing single-profile app the first time profiles are used. */
 try{
@@ -60,7 +68,9 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  bar.append(label,select,reset);host.appendChild(bar);
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v76.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);
+  bar.append(label,select,reset,ver);host.appendChild(bar);
 }
 buildProfileBar();
 let voices=[],selV=null;
@@ -73,7 +83,13 @@ function voiceLabel(v){return `${v.lang||"es"} · ${(v.name||"Spanish voice").re
 function getSpanishVoices(){
   if(!window.speechSynthesis)return [];
   voices=window.speechSynthesis.getVoices()||[];
-  return voices.filter(v=>/^es(?:-|_|$)/i.test(String(v.lang||"")));
+  const seen=new Set();
+  return voices.filter(v=>/^es(?:-|_|$)/i.test(String(v.lang||""))).filter(v=>{
+    const key=`${String(v.name||"").trim().toLowerCase()}|${String(v.lang||"").trim().toLowerCase()}`;
+    if(seen.has(key))return false;
+    seen.add(key);
+    return true;
+  });
 }
 function chooseSpanishVoice(sp){
   const saved=sp.find(v=>voiceKey(v)===savedVoiceKey||(`${v.name}::${v.lang}`===savedVoiceKey));
@@ -94,7 +110,7 @@ function rememberVoice(v){
   try{localStorage.setItem(VOICE_KEY,savedVoiceKey);}catch(e){}
 }
 function syncVoiceSelectors(){
-  const key=voiceKey(selV);
+  const key=selV?voiceKey(selV):"";
   document.querySelectorAll(".voice-choice").forEach(s=>{if(key)s.value=key;});
 }
 function loadV(){
@@ -121,7 +137,10 @@ function buildVoiceBars(sp=getSpanishVoices()){
     bar.append(label,select,test);host.appendChild(bar);
   });
 }
-function chV(key){const v=getSpanishVoices().find(x=>voiceKey(x)===key);if(v){rememberVoice(v);syncVoiceSelectors();}}
+function chV(key){
+  const v=getSpanishVoices().find(x=>voiceKey(x)===key);
+  if(v){rememberVoice(v);syncVoiceSelectors();}
+}
 function speak(t,r,onEnd){
   if(!window.speechSynthesis){if(onEnd)onEnd();return;}
   const sp=getSpanishVoices();
@@ -882,7 +901,18 @@ const PHRASE_EN={
   "🗣️ Palabras para conversar — everyday glue":"Conversation glue",
   "🧱 Marcos para construir frases":"Sentence-building frames",
   "⚡ Acciones para hablar cada día":"Everyday action phrases",
-  "🇨🇴 Expresiones sociales colombianas":"Colombian social expressions"
+  "🇨🇴 Expresiones sociales colombianas":"Colombian social expressions",
+  "🗣️ Pedir, repetir y aclarar":"Ask, repeat, and clarify",
+  "🚗 Un viaje completo en Uber":"A complete Uber ride",
+  "🍽️ Comer fuera — conversación real":"Eating out — real conversation",
+  "🛍️ Mercado — comprar y negociar":"Market — buying and negotiating",
+  "🔄 Actividades en progreso":"Activities in progress (-ando/-iendo)",
+  "🤝 Salir con amigos":"Going out with friends",
+  "🎉 En una fiesta":"At a party",
+  "⚽ Ver el partido":"Watching the soccer game",
+  "🧑‍💼 Oficina — conversación real":"Office — real conversation",
+  "🙏 Cortesía colombiana — polite requests":"Colombian politeness — ¿Me regala…? & ¿Será que…?",
+  "☕ Diminutivos y muletillas — sound local":"Diminutives & time-buyers — tintico, ahorita, pues…"
 };
 const DIALOGUE_EN={
   "Saludos formales":"Formal greetings and introductions",
@@ -898,7 +928,18 @@ const DIALOGUE_EN={
   "Profesión":"Profession","¿Dónde vives?":"Where do you live?","Cocinar juntos":"Cooking together",
   "El baño":"The bathroom","Partes del carro":"Car parts","Uber: pedir que repita":"Uber: asking for repetition",
   "Uber: dirección equivocada":"Uber: wrong address","Restaurante: pedir y cambiar":"Restaurant: ordering and changing an order",
-  "Mercado: comprar comida":"Market: buying food","Problema con apartamento o carro":"Apartment or car problem"
+  "Mercado: comprar comida":"Market: buying food","Problema con apartamento o carro":"Apartment or car problem",
+  "Comunicación: pedir y aclarar":"Communication: asking and clarifying",
+  "Uber: viaje completo":"Uber: complete trip from pickup to drop-off",
+  "Restaurante: una comida completa":"Restaurant: a full meal and the bill",
+  "Mercado: comprar y negociar":"Market: buying food and negotiating",
+  "Cocinar y hablar de lo que haces":"Cooking and talking about what you're doing",
+  "Salir con amigos":"Going out with friends",
+  "En una fiesta":"Meeting people at a party",
+  "Ver el partido":"Watching the soccer match",
+  "Oficina: proyecto y retraso":"Office: project progress and delays",
+  "Cortesía en una tienda":"Polite ordering at a neighborhood shop",
+  "Ganar tiempo al hablar":"Buying time with muletillas and diminutives"
 };
 function phraseEnglishTitle(title){return PHRASE_EN[title]||"Useful phrases";}
 function dialogueEnglishTitle(title){return DIALOGUE_EN[title]||"Practice conversation";}
@@ -1205,8 +1246,10 @@ const LESSONS=[
   {id:"gram-conectores",icon:"🔗",title:"Conecta tus ideas",sub:"Usa pero, porque y entonces para sonar natural",vocab:"gustos",dialogue:"Contar lo que pasó",quizCat:"all",quizMode:"conversation"},
   {id:"gram-groserias",icon:"⚠️",title:"Groserías colombianas",sub:"Reconócelas y aprende el contexto antes de usarlas",vocab:"colombianismos",dialogue:"Groserías colombianas",quizCat:"groserias",quizMode:"conversation"},
   {id:"gram-pronombres",icon:"👤",title:"Pronombres en conversación",sub:"Practica lo, la, le y las combinaciones comunes",vocab:"gustos",dialogue:"Pronombres en acción",quizCat:"pronombres",quizMode:"conversation",quizFocus:"pronombres",readingId:"lectura-pronombres-ubicacion"},
-  {id:"survival-communication",icon:"🧰",title:"Hazte entender",sub:"Pide repetición, tiempo y ayuda cuando no entiendes",vocab:"gustos",dialogue:"Uber: español limitado",quizCat:"reparar"},
+  {id:"survival-communication",icon:"🧰",title:"Hazte entender",sub:"Pide repetición, tiempo y ayuda cuando no entiendes",vocab:"gustos",dialogue:"Uber: hablo poquito español",quizCat:"reparar"},
+  {id:"cortesia-colombiana",icon:"🙏",title:"Cortesía colombiana",sub:"Usa ¿Me regala…?, ¿Será que…? y Qué pena con usted",vocab:"colombianismos",dialogue:"Cortesía en una tienda",quizCat:"cortesia",quizMode:"conversation"},
   {id:"uber-ride",icon:"🚕",title:"Uber en español",sub:"Confirma la recogida, la dirección y el destino",vocab:"direcciones",dialogue:"Uber: confirmar la recogida",quizCat:"uber",quizMode:"conversation"},
+  {id:"direcciones",icon:"🏢",title:"Edificios y entradas",sub:"Encuentra la entrada, el piso y el edificio correcto",vocab:"direcciones",dialogue:"Uber: dirección equivocada",quizCat:"direcciones",quizMode:"conversation"},
   {id:"hotel-checkin",icon:"🏨",title:"Llegada al hotel",sub:"Regístrate, pregunta por el desayuno y ubícate",vocab:"lugares",dialogue:"Hotel: registrarse",quizCat:"hotel",quizMode:"conversation"},
   {id:"farmacia",icon:"💊",title:"En la farmacia",sub:"Explica síntomas y pregunta cómo tomar algo",vocab:"emociones",dialogue:"Farmacia: explicar síntomas",quizCat:"farmacia",quizMode:"conversation"},
   {id:"daily-repair",icon:"📱",title:"Resolver una llamada",sub:"Repara la conversación cuando hay mala señal",vocab:"tecnologia",dialogue:"Teléfono: mala señal",quizCat:"reparar",quizMode:"conversation"},
@@ -1215,6 +1258,7 @@ const LESSONS=[
   {id:"function-words",icon:"🗣️",title:"Palabras para conversar",sub:"Usa frases pequeñas para conectar ideas y mantener la charla",vocab:"gustos",dialogue:"Palabras para conversar",quizCat:"conectores",quizMode:"mixed"},
   {id:"action-chunks",icon:"⚡",title:"Acciones de todos los días",sub:"Quiero, necesito, tengo que y voy a… para decir lo que haces",vocab:"acciones",dialogue:"Acciones de todos los días",quizCat:"acciones",quizMode:"conversation"},
   {id:"social-colombia-v36",icon:"🇨🇴",title:"Habla más colombiano",sub:"Expresiones sociales con registro y contexto",vocab:"colombianismos",dialogue:"Compañeros de trabajo",quizCat:"expresiones",quizMode:"conversation"},
+  {id:"muletillas-diminutivos",icon:"☕",title:"Tintico, ahorita y muletillas",sub:"Gana tiempo al hablar y suena más colombiano",vocab:"colombianismos",dialogue:"Ganar tiempo al hablar",quizCat:"muletillas",quizMode:"conversation"},
   {id:"gram-perfecto",icon:"✅",title:"Lo que has hecho",sub:"He visto, has probado, hemos llegado",vocab:"acciones",dialogue:"Contar lo que pasó",quizCat:"frases",quizMode:"blank",quizFocus:"perfecto"},
   {id:"gram-condicional",icon:"🙏",title:"Pedir con cortesía",sub:"Me gustaría, podría y debería",vocab:"acciones",dialogue:"Restaurante: pedir y cambiar",quizCat:"frases",quizMode:"blank",quizFocus:"condicional"},
   {id:"gram-pasado-perfecto",icon:"⏪",title:"Lo que ya había pasado",sub:"Había llegado, había visto, ya había terminado",vocab:"acciones",dialogue:"Contar lo que pasó",quizCat:"frases",quizMode:"blank",quizFocus:"pasado-perfecto"},
@@ -1258,6 +1302,7 @@ try{dayInfo=Object.assign(dayInfo,JSON.parse(localStorage.getItem(DAY_KEY)||"{}"
 
 /* Lesson player state */
 let lpLesson=null,lpSteps=[],lpStep=0,lpScore=0,lpQs=[],lpQi=0,lpAnswered=false,lpPracticed=new Set();
+let lpFullMode=false,lpLadderStep=1,lpRoleSim=true,lpRoleTurn=0;
 function lessonDialogue(lesson){return PHRASE_DIALOGUES.find(x=>x.title===lesson.dialogue);}
 function lessonResponsePair(lesson,c){
   const d=lessonDialogue(lesson);
@@ -1272,13 +1317,65 @@ function lessonResponsePair(lesson,c){
   if(model&&mission.prompt)return {questionEs:mission.prompt,questionEn:mission.scenario||"Answer the situation in your own words.",questionTts:mission.prompt,answerEs:model.es,answerEn:model.en||"A natural response",answerTts:model.tts||model.es,alternate:mission.models[1]||null};
   return null;
 }
-function openLesson(lesson){
+function getLessonLadder(lesson,c){
+  if(typeof SENTENCE_LADDERS!=="undefined"&&SENTENCE_LADDERS[lesson.id])return SENTENCE_LADDERS[lesson.id];
+  if(!c)return null;
+  const sorted=(c.phrases||[]).slice().sort((a,b)=>a.es.length-b.es.length);
+  const p1=sorted[0]||{es:c.goal.es,en:c.goal.en};
+  const p2=sorted[Math.min(1,sorted.length-1)]||p1;
+  const w0=(c.words&&c.words[0])||{es:p1.es,en:p1.en};
+  const rest=(c.phrases||[]).filter(p=>p!==p1&&p!==p2).slice(0,3);
+  const swaps=(rest.length?rest:(c.words||[]).slice(1,4)).map((item,i)=>({
+    label:`Variation ${i+1}`,
+    es:item.es,
+    en:item.en
+  }));
+  return {
+    title:"Start small and build into a full sentence",
+    rungs:[
+      {tag:"1. Anchor chunk",es:w0.es,en:w0.en},
+      {tag:"2. Core sentence",es:p1.es,en:p1.en},
+      {tag:"3. Expanded detail",es:p2.es,en:p2.en},
+      {tag:"4. Full conversational turn",es:c.goal.es,en:c.goal.en}
+    ],
+    swaps
+  };
+}
+function buildLessonSteps(lesson,c,full){
+  if(!c)return ["fin"];
+  const hasResp=!!lessonResponsePair(lesson,c);
+  if(!full){
+    return ["objetivo","estructura","palabras","escalera","escucha",...(hasResp?["respuesta"]:[]),"hablaA","mision","fin"];
+  }
+  return ["objetivo","estructura","palabras","escalera","escucha",...(hasResp?["respuesta"]:[]),"frases","matching","building","typing","hablaA","hablaB","pronun","lectura","quiz","mision","fin"];
+}
+function openLesson(lesson,fullMode){
   lpLesson=lesson;lpStep=0;lpScore=0;lpQi=0;lpAnswered=false;lpPracticed=new Set();
+  lpLadderStep=1;lpRoleSim=true;lpRoleTurn=0;
+  if(typeof fullMode==="boolean")lpFullMode=fullMode;
   const c=LESSON_CONTENT[lesson.id];
-  /* Speaking-first order: hear a useful chunk, produce it, role-play it,
-     then study the grammar that explains what you just said. */
-  lpSteps=c?["objetivo","palabras","escucha",...(lessonResponsePair(lesson,c)?["respuesta"]:[]),"frases","matching","building","typing","hablaA","hablaB","estructura","pronun","lectura","quiz","mision","fin"]:["fin"];
+  lpSteps=buildLessonSteps(lesson,c,lpFullMode);
   if(c)buildLessonQuiz(lesson,c);
+  renderLessonStep();
+}
+function switchLessonPathMode(full){
+  if(!lpLesson||lpFullMode===full)return;
+  const currentStepName=lpSteps[lpStep];
+  lpFullMode=full;
+  const c=LESSON_CONTENT[lpLesson.id];
+  lpSteps=buildLessonSteps(lpLesson,c,lpFullMode);
+  const idx=lpSteps.indexOf(currentStepName);
+  lpStep=idx>=0?idx:0;
+  renderLessonStep();
+}
+function openBonusStep(stepName){
+  if(!lpLesson)return;
+  lpFullMode=true;
+  const c=LESSON_CONTENT[lpLesson.id];
+  lpSteps=buildLessonSteps(lpLesson,c,true);
+  const idx=lpSteps.indexOf(stepName);
+  lpStep=idx>=0?idx:0;
+  lpAnswered=false;
   renderLessonStep();
 }
 function buildLessonQuiz(lesson,c){
@@ -1305,9 +1402,19 @@ function buildLessonQuiz(lesson,c){
 }
 function lpEl(cls,html){const d=document.createElement("div");d.className=cls;if(html!==undefined)d.innerHTML=html;return d;}
 function lpSpeakBtn(text,label){const b=document.createElement("button");b.type="button";b.className="lp-speak";b.textContent=label||"🔊 Escuchar";b.onclick=()=>speak(text,0.75);return b;}
+function scrollAppTop(){
+  const s=document.querySelector(".scroll");
+  if(s)s.scrollTop=0;
+  window.scrollTo(0,0);
+}
+function setLeccionesFocusMode(active){
+  const page=document.getElementById("page-lecciones");
+  if(page)page.classList.toggle("lesson-focus-mode",!!active);
+  scrollAppTop();
+}
 function renderLessonStep(){
   const root=document.getElementById("lesson-list");if(!root||!lpLesson)return;root.innerHTML="";
-  const scroll=document.querySelector(".scroll");if(scroll)scroll.scrollTop=0;
+  setLeccionesFocusMode(true);
   const c=LESSON_CONTENT[lpLesson.id];
   const step=lpSteps[lpStep];
   saveResume();
@@ -1315,6 +1422,10 @@ function renderLessonStep(){
   back.innerHTML="<span>‹</span><span>Back to lessons</span>";
   back.onclick=()=>{lpLesson=null;renderLessons();};
   root.appendChild(back);
+  const modeBar=lpEl("lp-mode-switch");
+  const coreBtn=document.createElement("button");coreBtn.type="button";coreBtn.className="lp-mode-btn"+(!lpFullMode?" active":"");coreBtn.textContent="⚡ Speaking Core (8 steps)";coreBtn.onclick=()=>switchLessonPathMode(false);
+  const fullBtn=document.createElement("button");fullBtn.type="button";fullBtn.className="lp-mode-btn"+(lpFullMode?" active":"");fullBtn.textContent="📚 Full Practice (16 steps)";fullBtn.onclick=()=>switchLessonPathMode(true);
+  modeBar.append(coreBtn,fullBtn);root.appendChild(modeBar);
   const progress=lpEl("lp-progress-head");
   progress.innerHTML=`<span>${escapeVocabHtml(lpLesson.title||"Lesson")}</span><strong>Step ${lpStep+1} of ${lpSteps.length}</strong>`;
   root.appendChild(progress);
@@ -1325,16 +1436,73 @@ function renderLessonStep(){
   card.appendChild(title);card.appendChild(body);root.appendChild(card);
   const nav=lpEl("lp-nav");root.appendChild(nav);
   const navBtn=(label,fn,primary)=>{const b=document.createElement("button");b.type="button";b.className="lp-nav-btn"+(primary?" primary":"");b.textContent=label;b.onclick=fn;nav.appendChild(b);return b;};
-  const next=()=>{lpStep++;lpAnswered=false;renderLessonStep();};
-  const prev=()=>{if(lpStep>0){lpStep--;renderLessonStep();}};
+  const next=()=>{lpStep++;lpAnswered=false;lpRoleTurn=0;renderLessonStep();};
+  const prev=()=>{if(lpStep>0){lpStep--;lpRoleTurn=0;renderLessonStep();}};
   if(step==="objetivo"){
     title.textContent="🎯 Goal — by the end you will be able to say:";
-    body.appendChild(lpEl("lp-goal-es",c.goal.es));
+    const goalEs=lpEl("lp-goal-es",c.goal.es);
+    goalEs.style.cursor="pointer";
+    goalEs.onclick=()=>speak(c.goal.es,0.75);
+    body.appendChild(goalEs);
     body.appendChild(lpEl("lp-goal-en",c.goal.en));
     body.appendChild(lpSpeakBtn(c.goal.es));
     attachMic(body,c.goal.es);
-    body.appendChild(lpEl("lp-hint","Listen to it, then say it out loud twice before moving on."));
+    body.appendChild(lpEl("lp-hint","Tap the Spanish sentence or 🔊 button to listen, then say it out loud twice."));
     navBtn("Start →",next,true);
+  }
+  else if(step==="escalera"){
+    const ladder=getLessonLadder(lpLesson,c);
+    title.textContent="🪜 Sentence Expansion Ladder — start small, build to full sentences";
+    if(!ladder){body.appendChild(lpEl("lp-hint","No ladder available."));navBtn("‹ Back",prev);navBtn("Next →",next,true);}
+    else{
+      body.appendChild(lpEl("lp-activity-note",`${ladder.title} · Tap any unlocked layer to hear it, then say it out loud before adding the next piece.`));
+      const rungsWrap=lpEl("ladder-rungs");
+      const maxRung=Math.min(Math.max(lpLadderStep,1),ladder.rungs.length);
+      ladder.rungs.forEach((rung,idx)=>{
+        const unlocked=idx<maxRung;
+        const row=lpEl("ladder-rung"+(unlocked?" unlocked":" locked")+(idx===maxRung-1?" active":""));
+        if(unlocked){
+          const cleanEs=rung.es.replace(/\.\.\.|…/g,"").trim();
+          row.innerHTML=`<div class="ladder-rung-head"><span class="ladder-tag">${escapeVocabHtml(rung.tag)}</span></div><div class="ladder-es">${escapeVocabHtml(rung.es)}</div><div class="ladder-en">${escapeVocabHtml(rung.en)}</div><div class="ladder-actions"></div>`;
+          row.style.cursor="pointer";
+          row.onclick=e=>{if(!e.target.closest("button")){markPractice("phrases",cleanEs);speak(cleanEs,0.74);}};
+          const act=row.querySelector(".ladder-actions");
+          const hear=document.createElement("button");hear.type="button";hear.className="warmup-btn";hear.textContent="🔊 Hear";hear.onclick=e=>{e.stopPropagation();markPractice("phrases",cleanEs);speak(cleanEs,0.74);};
+          act.appendChild(hear);
+          attachMic(act,cleanEs,"phrases");
+        }else{
+          row.innerHTML=`<div class="ladder-rung-head"><span class="ladder-tag">${escapeVocabHtml(rung.tag)}</span><span class="ladder-lock">🔒 Tap below to add this layer</span></div>`;
+        }
+        rungsWrap.appendChild(row);
+      });
+      body.appendChild(rungsWrap);
+      if(maxRung<ladder.rungs.length){
+        const addLayer=document.createElement("button");addLayer.type="button";addLayer.className="lp-nav-btn primary ladder-expand-btn";
+        addLayer.textContent=`➕ Add layer ${maxRung+1} of ${ladder.rungs.length} →`;
+        addLayer.onclick=()=>{
+          lpLadderStep=maxRung+1;
+          const nextRung=ladder.rungs[lpLadderStep-1];
+          renderLessonStep();
+          if(nextRung)speak(nextRung.es.replace(/\.\.\.|…/g,"").trim(),0.74);
+        };
+        body.appendChild(addLayer);
+      }else if(Array.isArray(ladder.swaps)&&ladder.swaps.length){
+        const swapsBox=lpEl("ladder-swaps");
+        swapsBox.innerHTML=`<div class="ladder-swaps-title">🔄 Rung 5 · Swap a piece and say 3 new sentences out loud</div><div class="ladder-swaps-sub">Tap any variation to hear it:</div>`;
+        ladder.swaps.forEach(sw=>{
+          const cleanEs=sw.es.replace(/\.\.\.|…/g,"").trim();
+          const sRow=lpEl("ladder-swap-card",`<div class="ladder-swap-copy"><small>${escapeVocabHtml(sw.label)}</small><strong>${escapeVocabHtml(sw.es)}</strong><em>${escapeVocabHtml(sw.en)}</em></div><div class="ladder-actions"></div>`);
+          sRow.style.cursor="pointer";
+          sRow.onclick=e=>{if(!e.target.closest("button")){markPractice("phrases",cleanEs);speak(cleanEs,0.74);}};
+          const act=sRow.querySelector(".ladder-actions");
+          const hear=document.createElement("button");hear.type="button";hear.className="warmup-btn";hear.textContent="🔊";hear.onclick=e=>{e.stopPropagation();markPractice("phrases",cleanEs);speak(cleanEs,0.74);};
+          act.appendChild(hear);attachMic(act,cleanEs,"phrases");
+          swapsBox.appendChild(sRow);
+        });
+        body.appendChild(swapsBox);
+      }
+      navBtn("‹ Back",prev);navBtn("Next →",next,true);
+    }
   }
   else if(step==="escucha"){
     title.textContent="👂 Listen to the conversation";
@@ -1403,7 +1571,7 @@ function renderLessonStep(){
     }
   }
   else if(step==="palabras"){
-    title.textContent="🔑 Key words — tap, listen, repeat out loud";
+    title.textContent="🔑 Key building blocks — tap, listen, repeat out loud";
     const grid=lpEl("lp-grid");
     c.words.forEach(w=>{
       const wc=lpEl("lp-word","<div class='lp-word-es'>"+w.es+"</div><div class='lp-word-en'>"+w.en+"</div><span>🔊</span>");
@@ -1475,7 +1643,7 @@ function renderLessonStep(){
     navBtn("‹ Back",prev);navBtn("Next →",next,true);
   }
   else if(step==="estructura"){
-    title.textContent="🧱 Understand the pattern, then say it";
+    title.textContent="🧱 Understand the pattern first — how sentences snap together";
     const ids=lpLesson.guideIds||["estructura"];
     ids.map(id=>SPEAKING_GUIDE.find(g=>g.id===id)).filter(Boolean).forEach(g=>{
       const box=lpEl("lp-structure-guide");
@@ -1486,23 +1654,81 @@ function renderLessonStep(){
     navBtn("‹ Back",prev);navBtn("Next →",next,true);
   }
   else if(step==="hablaA"||step==="hablaB"){
-    const who=step==="hablaA"?"A":"B";
-    title.textContent="🎭 Your turn — you are Person "+who+". Say your lines out loud, tap to check";
-    const help=document.createElement("button");help.type="button";help.className="lp-english-help";help.textContent="💡 Show English help";let englishShown=false;
-    help.onclick=()=>{englishShown=!englishShown;body.querySelectorAll(".lp-line-en").forEach(x=>x.hidden=!englishShown);help.textContent=englishShown?"🙈 Hide English help":"💡 Show English help";};body.appendChild(help);
+    const who=step==="hablaA"?"B":"A"; /* Default to B in hablaA so Person A speaks first! */
+    title.textContent=`🎭 Roleplay — you are Person ${who}`;
+    const simControls=lpEl("lp-role-controls");
+    const simBtn=document.createElement("button");simBtn.type="button";simBtn.className="lp-mode-btn"+(lpRoleSim?" active":"");simBtn.textContent="💬 Turn-by-Turn Simulator";
+    simBtn.onclick=()=>{lpRoleSim=true;lpRoleTurn=0;renderLessonStep();};
+    const scriptBtn=document.createElement("button");scriptBtn.type="button";scriptBtn.className="lp-mode-btn"+(!lpRoleSim?" active":"");scriptBtn.textContent="📜 Full Script";
+    scriptBtn.onclick=()=>{lpRoleSim=false;renderLessonStep();};
+    const switchRoleBtn=document.createElement("button");switchRoleBtn.type="button";switchRoleBtn.className="lp-mode-btn";switchRoleBtn.textContent=`🔄 Switch to Person ${who==="A"?"B":"A"}`;
+    switchRoleBtn.onclick=()=>{lpSteps[lpStep]=step==="hablaA"?"hablaB":"hablaA";lpRoleTurn=0;renderLessonStep();};
+    simControls.append(simBtn,scriptBtn,switchRoleBtn);body.appendChild(simControls);
+
     const d=lessonDialogue(lpLesson);
     const lines=d?d.versions[0].lines:[];
-    lines.forEach(L=>{
-      const hidden=L.who===who;
-      const row=lpEl("lp-line"+(hidden?" lp-me":""),"<strong>"+L.who+":</strong> <span class='lp-line-es"+(hidden?" lp-blur":"")+"'>"+L.es+"</span><div class='lp-line-en' hidden>"+L.en+"</div>");
-      row.onclick=()=>{
-        const esEl=row.querySelector(".lp-line-es");
-        if(esEl.classList.contains("lp-blur"))esEl.classList.remove("lp-blur");
-        speak(L.tts,0.75);
-      };
-      attachMic(row,L.tts);
-      body.appendChild(row);
-    });
+    if(lpRoleSim&&lines.length){
+      const currentIdx=Math.min(lpRoleTurn,lines.length-1);
+      const historyWrap=lpEl("lp-sim-history");
+      for(let i=0;i<=currentIdx;i++){
+        const L=lines[i];
+        const isMe=L.who===who;
+        const isCurrent=i===currentIdx;
+        const row=lpEl("lp-line"+(isMe?" lp-me":""));
+        if(isMe&&isCurrent){
+          row.innerHTML=`<div class="lp-sim-prompt-tag">🎯 YOUR TURN (Person ${who}) — Say this in Spanish:</div><div class="lp-sim-intent">“${escapeVocabHtml(L.en)}”</div><div class="lp-line-es lp-blur">${escapeVocabHtml(L.es)}</div><div class="lp-sim-actions"></div>`;
+          const act=row.querySelector(".lp-sim-actions");
+          const revealBtn=document.createElement("button");revealBtn.type="button";revealBtn.className="warmup-btn";revealBtn.textContent="👀 Reveal & Hear Spanish";
+          revealBtn.onclick=e=>{
+            e.stopPropagation();
+            row.querySelector(".lp-line-es").classList.remove("lp-blur");
+            markPractice("phrases",L.es);
+            speak(L.tts,0.75);
+          };
+          act.appendChild(revealBtn);
+          attachMic(act,L.tts,"phrases");
+        }else{
+          row.innerHTML=`<strong>${L.who}:</strong> <span class='lp-line-es'>${escapeVocabHtml(L.es)}</span><div class='lp-line-en'>${escapeVocabHtml(L.en)}</div>`;
+          row.onclick=()=>speak(L.tts,0.75);
+          attachMic(row,L.tts,"phrases");
+        }
+        historyWrap.appendChild(row);
+      }
+      body.appendChild(historyWrap);
+      const curLine=lines[currentIdx];
+      const turnNav=lpEl("lp-sim-turn-nav");
+      if(currentIdx<lines.length-1){
+        const nextTurn=document.createElement("button");nextTurn.type="button";nextTurn.className="lp-nav-btn primary";
+        nextTurn.textContent=curLine.who===who?"✅ I said my line — next turn →":"🔊 Continue to next turn →";
+        nextTurn.onclick=()=>{
+          lpRoleTurn=currentIdx+1;
+          const nl=lines[lpRoleTurn];
+          renderLessonStep();
+          if(nl&&nl.who!==who)speak(nl.tts,0.75);
+        };
+        turnNav.appendChild(nextTurn);
+      }else{
+        const restartSim=document.createElement("button");restartSim.type="button";restartSim.className="lp-nav-btn";
+        restartSim.textContent="🔁 Replay conversation";
+        restartSim.onclick=()=>{lpRoleTurn=0;renderLessonStep();};
+        turnNav.appendChild(restartSim);
+      }
+      body.appendChild(turnNav);
+    }else{
+      const help=document.createElement("button");help.type="button";help.className="lp-english-help";help.textContent="💡 Show English help";let englishShown=false;
+      help.onclick=()=>{englishShown=!englishShown;body.querySelectorAll(".lp-line-en").forEach(x=>x.hidden=!englishShown);help.textContent=englishShown?"🙈 Hide English help":"💡 Show English help";};body.appendChild(help);
+      lines.forEach(L=>{
+        const hidden=L.who===who;
+        const row=lpEl("lp-line"+(hidden?" lp-me":""),"<strong>"+L.who+":</strong> <span class='lp-line-es"+(hidden?" lp-blur":"")+"'>"+L.es+"</span><div class='lp-line-en' hidden>"+L.en+"</div>");
+        row.onclick=()=>{
+          const esEl=row.querySelector(".lp-line-es");
+          if(esEl.classList.contains("lp-blur"))esEl.classList.remove("lp-blur");
+          speak(L.tts,0.75);
+        };
+        attachMic(row,L.tts);
+        body.appendChild(row);
+      });
+    }
     navBtn("‹ Back",prev);navBtn("Next →",next,true);
   }
   else if(step==="pronun"){
@@ -1591,9 +1817,25 @@ function renderLessonStep(){
   }
   else{
     title.textContent="🎉 Lesson complete!";
-    if(lpQs.length)body.appendChild(lpEl("lp-goal-es","Mini-quiz: "+lpScore+" of "+lpQs.length));
+    if(lpFullMode&&lpQs.length)body.appendChild(lpEl("lp-goal-es","Mini-quiz: "+lpScore+" of "+lpQs.length));
     if(c){body.appendChild(lpEl("lp-hint","You can now say:"));body.appendChild(lpEl("lp-goal-es",c.goal.es));body.appendChild(lpSpeakBtn(c.goal.es));attachMic(body,c.goal.es);}
     lessonProgress[lpLesson.id]=true;saveLessons();
+    if(c){
+      const bonus=lpEl("lp-explore","<div class='lp-hint'>➕ Optional bonus drills for this lesson:</div><div class='lp-bonus-grid'></div>");
+      const bGrid=bonus.querySelector(".lp-bonus-grid");
+      [
+        ["🗣️ Flash phrases","frases"],
+        ["🧩 Match pairs","matching"],
+        ["🧱 Word chips","building"],
+        ["⌨️ Type Spanish","typing"],
+        ["🎙️ Pronunciation","pronun"],
+        ["📖 Reading","lectura"],
+        ["🧪 Mini-quiz","quiz"]
+      ].forEach(([lbl,st])=>{
+        const b=document.createElement("button");b.type="button";b.className="lp-nav-btn";b.textContent=lbl;b.onclick=()=>openBonusStep(st);bGrid.appendChild(b);
+      });
+      body.appendChild(bonus);
+    }
     const explore=lpEl("lp-explore","<div class='lp-hint'>Explore more:</div>");
     const mk=(label,fn)=>{const b=document.createElement("button");b.type="button";b.className="lp-nav-btn";b.textContent=label;b.onclick=fn;explore.appendChild(b);};
     mk("📚 Vocabulary",()=>{showPage("vocab");sCat(lpLesson.vocab);});
@@ -1679,10 +1921,11 @@ function rrCancelRecording(){
   rrStopStream();rrCloseAudio();
 }
 function rrStop(){
+  const wasActive=!!(rrTimer||rrRecorder||rrStream);
   rrPromptToken++;
   if(rrTimer){clearInterval(rrTimer);rrTimer=null;}
   rrCancelRecording();
-  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  if(wasActive){if(window.speechSynthesis&&(speechSynthesis.speaking||speechSynthesis.pending))window.speechSynthesis.cancel();if(typeof ttsAudio!=="undefined"&&ttsAudio){try{ttsAudio.pause();}catch(e){}}}
 }
 function rrExit(){rrStop();renderLessons();}
 function rrSetStatus(text,cls){
@@ -1744,6 +1987,7 @@ function renderRapida(keepSame,questionRate){
   const promptToken=rrPromptToken;
   const root=document.getElementById("lesson-list");if(!root)return;
   if(!RR_BANK.length){renderLessons();return;}
+  setLeccionesFocusMode(true);
   const pace=rrDifficultyConfig();
   const pool=rrQuestionPool();
   if(!keepSame||!rrCurrent||!pool.includes(rrCurrent)){rrCurrent=pool[Math.floor(Math.random()*pool.length)];rrSession++;}
@@ -1879,13 +2123,15 @@ function recordSpeakingError(target,source){
 function clearSpeakingError(target){const id=speakingErrorId(target);if(!id)return;delete speakingErrors[id];saveSpeakingErrors();}
 function renderSpeakingErrorJournal(root){
   const entries=Object.values(speakingErrors||{}).sort((a,b)=>(b.last||0)-(a.last||0));
-  const card=document.createElement("section");card.className="error-journal";card.dataset.lessonView="today";
-  card.innerHTML=`<div class="error-journal-head"><div><div class="error-journal-kicker">🧠 YOUR PRACTICE LIST</div><div class="error-journal-title">Turn hesitation into progress</div></div><span class="error-journal-count">${entries.length}</span></div><p class="error-journal-sub">When a sentence feels difficult, it stays here until you can say it comfortably.</p>`;
+  const card=document.createElement("details");card.className="error-journal-fold";card.dataset.lessonView="today";
+  if(entries.length>0)card.open=true;
+  card.innerHTML=`<summary class="error-journal-summary"><span>🧠 <strong>Your speaking practice list</strong> <small>${entries.length?`${entries.length} sentence${entries.length===1?"":"s"} to review`:"Empty — tricky phrases appear here"}</small></span><span class="error-journal-count">${entries.length}</span></summary>`;
   const list=document.createElement("div");list.className="error-journal-list";
   if(!entries.length){const empty=document.createElement("div");empty.className="error-journal-empty";empty.textContent="Your list is empty. Use “Need more practice” after a quiz or speaking frame.";list.appendChild(empty);}
   entries.slice(0,8).forEach(item=>{
     const row=document.createElement("div");row.className="error-journal-row";
     const copy=document.createElement("div");copy.className="error-journal-copy";copy.innerHTML=`<strong>${escapeVocabHtml(item.text)}</strong><small>${escapeVocabHtml(item.source||"practice")} · ${item.count||1} attempt${(item.count||1)===1?"":"s"}</small>`;
+    copy.style.cursor="pointer";copy.onclick=()=>speak(item.text,0.75);
     const actions=document.createElement("div");actions.className="error-journal-actions";
     const hear=document.createElement("button");hear.type="button";hear.className="error-journal-btn";hear.textContent="🔊";hear.title="Hear sentence";hear.setAttribute("aria-label","Hear sentence");hear.onclick=()=>speak(item.text,0.75);
     const record=document.createElement("button");record.type="button";record.className="error-journal-btn";record.textContent="🎙️";record.title="Record yourself";record.setAttribute("aria-label","Record yourself");record.onclick=()=>openMicPanel(item.text);
@@ -1901,6 +2147,7 @@ function saveMissions(){try{localStorage.setItem(MISSION_KEY,JSON.stringify(miss
 function renderMission(mission){
   if(typeof rrStop==="function")rrStop();
   const root=document.getElementById("lesson-list");if(!root)return;root.innerHTML="";
+  setLeccionesFocusMode(true);
   const back=document.createElement("button");back.type="button";back.className="phrase-back";back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=renderLessons;root.appendChild(back);
   const card=lpEl("lp-card mission-card");card.appendChild(lpEl("lp-step-title","🗣️ Conversation mission"));card.appendChild(lpEl("mission-title",mission.title));card.appendChild(lpEl("mission-scenario",mission.scenario));card.appendChild(lpEl("mission-prompt",mission.prompt));
   const say=lpEl("mission-say","Answer out loud before looking at the examples.");card.appendChild(say);
@@ -1913,22 +2160,109 @@ function renderMission(mission){
   const done=document.createElement("button");done.type="button";done.className="lesson-start";done.textContent=inRoutine?"✅ Finish today’s speaking path":(missionProgress[mission.id]?"✅ Mission completed — practice again":"✅ I answered out loud");done.onclick=()=>{missionProgress[mission.id]=true;saveMissions();if(inRoutine)routineFinishMission();else renderMission(mission);};card.appendChild(done);root.appendChild(card);
 }
 
-/* v56: Sentence-frame trainer — turns familiar grammar into spoken output. */
-let frameSessionIndex=0;
+/* v56 + v71: Sentence-frame trainer & Interactive 3-Column Slot-Swapper. */
+let frameSessionIndex=0,frameMode="slots",slotMatrixIndex=0,slotPick=[0,0,0];
 function frameDayNumber(){return Math.floor(Date.now()/86400000);}
 function renderFramePractice(advance){
   if(typeof rrStop==="function")rrStop();
   const root=document.getElementById("lesson-list");
   if(!root||typeof SPEAKING_FRAMES==="undefined"||!SPEAKING_FRAMES.length){renderLessons();return;}
   if(advance)frameSessionIndex=(frameSessionIndex+1)%SPEAKING_FRAMES.length;
+  root.innerHTML="";
+  setLeccionesFocusMode(true);
+  const back=document.createElement("button");back.type="button";back.className="phrase-back";back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=renderLessons;root.appendChild(back);
+  const modeBar=lpEl("lp-mode-switch");
+  const slotTab=document.createElement("button");slotTab.type="button";slotTab.className="lp-mode-btn"+(frameMode==="slots"?" active":"");slotTab.textContent="🎰 Slot-Swapper (Mix & Speak)";
+  slotTab.onclick=()=>{frameMode="slots";renderFramePractice(false);};
+  const cardTab=document.createElement("button");cardTab.type="button";cardTab.className="lp-mode-btn"+(frameMode==="cards"?" active":"");cardTab.textContent=`🧱 Pattern Cards (${SPEAKING_FRAMES.length})`;
+  cardTab.onclick=()=>{frameMode="cards";renderFramePractice(false);};
+  modeBar.append(slotTab,cardTab);root.appendChild(modeBar);
+
+  if(frameMode==="slots"&&typeof SLOT_SWAP_MATRICES!=="undefined"&&SLOT_SWAP_MATRICES.length){
+    const matrix=SLOT_SWAP_MATRICES[slotMatrixIndex%SLOT_SWAP_MATRICES.length];
+    const card=lpEl("lp-card frame-practice-card");
+    card.appendChild(lpEl("frame-kicker","🎰 CONSTRUCTOR DE FRASES · MIX & SPEAK"));
+    card.appendChild(lpEl("frame-title",matrix.title));
+    card.appendChild(lpEl("frame-explain",matrix.sub+" Tap one piece in each column below to hear it, then say your complete sentence out loud."));
+    const mSwitch=lpEl("slot-matrix-tabs");
+    SLOT_SWAP_MATRICES.forEach((m,idx)=>{
+      const b=document.createElement("button");b.type="button";b.className="lp-mode-btn"+(idx===slotMatrixIndex?" active":"");b.textContent=m.title;
+      b.onclick=()=>{slotMatrixIndex=idx;slotPick=[0,0,0];renderFramePractice(false);};
+      mSwitch.appendChild(b);
+    });
+    card.appendChild(mSwitch);
+
+    const c1=matrix.col1[slotPick[0]]||matrix.col1[0];
+    const c2=matrix.col2[slotPick[1]]||matrix.col2[0];
+    const c3=matrix.col3[slotPick[2]]||matrix.col3[0];
+    const isQuestion=c1.es.trim().startsWith("¿");
+    const rawCombined=`${c1.es} ${c2.es} ${c3.es}`.replace(/\s+/g," ").trim();
+    const assembledEs=isQuestion?(rawCombined.replace(/\.$/,"")+"?"):rawCombined;
+    const assembledEn=`${c1.en} ${c2.en} ${c3.en}`.replace(/\s+/g," ").trim();
+
+    const preview=lpEl("slot-assembled-box");
+    preview.innerHTML=`<div class="slot-assembled-label">🗣️ Your assembled Colombian sentence (tap to hear):</div><div class="slot-assembled-es">${escapeVocabHtml(assembledEs)}</div><div class="slot-assembled-en">${escapeVocabHtml(assembledEn)}</div><div class="slot-assembled-actions"></div>`;
+    preview.style.cursor="pointer";
+    preview.onclick=e=>{if(!e.target.closest("button")){markPractice("phrases",assembledEs);speak(assembledEs,0.76);}};
+    const pAct=preview.querySelector(".slot-assembled-actions");
+    const hearBtn=document.createElement("button");hearBtn.type="button";hearBtn.className="lp-nav-btn primary";hearBtn.textContent="🔊 Hear sentence";
+    hearBtn.onclick=e=>{e.stopPropagation();markPractice("phrases",assembledEs);speak(assembledEs,0.76);};
+    const slowBtn=document.createElement("button");slowBtn.type="button";slowBtn.textContent="🐢 Slow";slowBtn.className="lp-nav-btn";
+    slowBtn.onclick=e=>{e.stopPropagation();speak(assembledEs,0.52);};
+    const randBtn=document.createElement("button");randBtn.type="button";randBtn.className="lp-nav-btn";randBtn.textContent="🎲 Randomize";
+    randBtn.onclick=e=>{
+      e.stopPropagation();
+      slotPick=[
+        Math.floor(Math.random()*matrix.col1.length),
+        Math.floor(Math.random()*matrix.col2.length),
+        Math.floor(Math.random()*matrix.col3.length)
+      ];
+      renderFramePractice(false);
+      const r1=matrix.col1[slotPick[0]]||matrix.col1[0],r2=matrix.col2[slotPick[1]]||matrix.col2[0],r3=matrix.col3[slotPick[2]]||matrix.col3[0];
+      const rQ=r1.es.trim().startsWith("¿");
+      const rRaw=`${r1.es} ${r2.es} ${r3.es}`.replace(/\s+/g," ").trim();
+      speak(rQ?(rRaw.replace(/\.$/,"")+"?"):rRaw,0.76);
+    };
+    pAct.append(hearBtn,slowBtn,randBtn);
+    attachMic(pAct,assembledEs,"phrases");
+    card.appendChild(preview);
+
+    const grid=lpEl("slot-columns-grid");
+    [
+      [matrix.col1Title,matrix.col1,0],
+      [matrix.col2Title,matrix.col2,1],
+      [matrix.col3Title,matrix.col3,2]
+    ].forEach(([colTitle,items,colIdx])=>{
+      const col=lpEl("slot-column");
+      col.appendChild(lpEl("slot-col-title",colTitle));
+      items.forEach((item,rowIdx)=>{
+        const b=document.createElement("button");b.type="button";
+        b.className="slot-chip"+(slotPick[colIdx]===rowIdx?" active":"");
+        b.innerHTML=`<strong>${escapeVocabHtml(item.es)}</strong><small>${escapeVocabHtml(item.en)}</small>`;
+        b.onclick=()=>{
+          slotPick[colIdx]=rowIdx;
+          renderFramePractice(false);
+          speak(item.es.replace(/\.\.\.|…/g,"").trim(),0.78);
+        };
+        col.appendChild(b);
+      });
+      grid.appendChild(col);
+    });
+    card.appendChild(grid);
+    root.appendChild(card);
+    return;
+  }
+
   const day=frameDayNumber();
   const frame=SPEAKING_FRAMES[frameSessionIndex];
   const prompt=frame.prompts[(day+frameSessionIndex)%frame.prompts.length];
   const guide=typeof SPEAKING_GUIDE!=="undefined"?SPEAKING_GUIDE.find(g=>g.id===frame.guide):null;
-  root.innerHTML="";
-  const back=document.createElement("button");back.type="button";back.className="phrase-back";back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=renderLessons;root.appendChild(back);
   const card=lpEl("lp-card frame-practice-card");
   card.appendChild(lpEl("frame-kicker",`🧱 BUILD A SENTENCE · FRAME ${frameSessionIndex+1} OF ${SPEAKING_FRAMES.length}`));
+  const jumpSelect=document.createElement("select");jumpSelect.className="voice-select frame-jump-select";jumpSelect.setAttribute("aria-label","Jump to sentence frame");
+  SPEAKING_FRAMES.forEach((f,idx)=>{const opt=document.createElement("option");opt.value=String(idx);opt.textContent=`${idx+1}. ${f.title} (${f.formula})`;if(idx===frameSessionIndex)opt.selected=true;jumpSelect.appendChild(opt);});
+  jumpSelect.onchange=()=>{frameSessionIndex=Number(jumpSelect.value)||0;renderFramePractice(false);};
+  card.appendChild(jumpSelect);
   card.appendChild(lpEl("frame-title",frame.title));
   const formula=lpEl("frame-formula");formula.innerHTML=`<strong>${escapeVocabHtml(frame.formula)}</strong><span>${escapeVocabHtml(frame.en)}</span>`;card.appendChild(formula);
   if(guide)card.appendChild(lpEl("frame-explain",guide.explain));
@@ -1938,8 +2272,10 @@ function renderFramePractice(advance){
   const reveal=document.createElement("button");reveal.type="button";reveal.className="lp-nav-btn primary frame-reveal";reveal.textContent="👀 Reveal model sentence";
   const model=lpEl("frame-model");model.hidden=true;
   model.innerHTML=`<div class="frame-model-label">Natural answer</div><div class="frame-model-es">${escapeVocabHtml(prompt.es)}</div><div class="frame-model-en">${escapeVocabHtml(prompt.en)}</div>`;
+  model.style.cursor="pointer";
+  model.onclick=e=>{if(!e.target.closest("button"))speak(prompt.es,0.75);};
   const modelSpeak=lpSpeakBtn(prompt.es,"🔊 Repeat the sentence");model.appendChild(modelSpeak);
-  reveal.onclick=()=>{model.hidden=false;reveal.remove();markPractice("frames",frame.id);};
+  reveal.onclick=()=>{model.hidden=false;reveal.remove();markPractice("frames",frame.id);speak(prompt.es,0.75);};
   card.appendChild(reveal);card.appendChild(model);attachMic(card,prompt.es);
   const more=document.createElement("details");more.className="frame-more";more.innerHTML="<summary>More ways to use this frame</summary><div class='frame-more-list'></div>";
   const moreList=more.querySelector(".frame-more-list");
@@ -1963,6 +2299,7 @@ function saveReadings(){try{localStorage.setItem(READING_KEY,JSON.stringify(read
 function renderReading(reading){
   if(typeof rrStop==="function")rrStop();
   const root=document.getElementById("lesson-list");if(!root)return;root.innerHTML="";
+  setLeccionesFocusMode(true);
   const back=document.createElement("button");back.type="button";back.className="phrase-back";back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=renderLessons;root.appendChild(back);
   const card=lpEl("lp-card reading-card");
   card.appendChild(lpEl("reading-kicker",`${reading.level} · LECTURA`));
@@ -2118,10 +2455,11 @@ function setLessonView(view){
   const root=document.getElementById("lesson-list");if(!root)return;
   root.querySelectorAll(".lesson-view-tab").forEach(b=>b.classList.toggle("active",b.dataset.view===lessonView));
   root.querySelectorAll("[data-lesson-view]").forEach(el=>el.classList.toggle("lesson-view-hidden",el.dataset.lessonView!==lessonView));
+  scrollAppTop();
 }
 function buildLessonViewTabs(root){
   const nav=document.createElement("nav");nav.className="lesson-view-tabs";nav.setAttribute("aria-label","Lesson views");
-  [["today","Today / Hoy","Your next practice"],["path","Learning path / Ruta","Tenses and lessons"],["practice","Practice library / Biblioteca","Missions, readings, backup"]].forEach(([id,title,sub])=>{
+  [["today","Today / Hoy","Daily hub"],["path","Learning path / Ruta","34 lessons"],["practice","Practice / Biblioteca","Missions & stories"]].forEach(([id,title,sub])=>{
     const b=document.createElement("button");b.type="button";b.className="lesson-view-tab";b.dataset.view=id;b.innerHTML=`<strong>${title}</strong><small>${sub}</small>`;b.onclick=()=>setLessonView(id);nav.appendChild(b);
   });
   root.appendChild(nav);
@@ -2132,6 +2470,7 @@ function setSessionLength(value){
   root.querySelectorAll(".session-length-btn").forEach(b=>b.classList.toggle("selected",b.dataset.minutes===sessionLength));
 }
 function startSelectedSession(){
+  scrollAppTop();
   if(sessionLength==="5"){renderFramePractice(false);return;}
   if(sessionLength==="20"){
     const target=LESSONS.find(l=>!lessonProgress[l.id])||LESSONS[0];
@@ -2146,15 +2485,15 @@ function renderRoutineCard(root){
   const wrap=document.createElement("section");wrap.className="daily-routine-card";wrap.dataset.lessonView="today";
   const complete=routineState.step>=ROUTINE_STEPS.length;
   const current=ROUTINE_STEPS[Math.min(routineState.step,ROUTINE_STEPS.length-1)];
-  wrap.innerHTML=`<div class='routine-top'><div><div class='routine-kicker'>🎓 DAILY SPEAKING PATH</div><div class='routine-title'>${complete?"Routine complete for today":"Your next 10-minute speaking practice"}</div></div><div class='routine-count'>${complete?`${ROUTINE_STEPS.length}/${ROUTINE_STEPS.length}`:`${routineState.step}/${ROUTINE_STEPS.length}`}</div></div><div class='routine-track'><span style='width:${Math.round(routineState.step/ROUTINE_STEPS.length*100)}%'></span></div><div class='routine-note'>Listen → say it → compare → continue</div>`;
+  wrap.innerHTML=`<div class='routine-top'><div><div class='routine-kicker'>🎯 10-MINUTE DAILY SPEAKING ROUTINE</div><div class='routine-title'>${complete?"Routine complete for today":"Step "+(routineState.step+1)+" of "+ROUTINE_STEPS.length+": "+current.title}</div></div><div class='routine-count'>${complete?`${ROUTINE_STEPS.length}/${ROUTINE_STEPS.length}`:`${routineState.step}/${ROUTINE_STEPS.length}`}</div></div><div class='routine-track'><span style='width:${Math.round(routineState.step/ROUTINE_STEPS.length*100)}%'></span></div>`;
   if(!complete){
     const step=lpEl("routine-current");step.innerHTML=`<span class='routine-current-icon'>${current.icon}</span><span><strong>${current.title}</strong><small>${current.sub}</small></span>`;
     const actions=lpEl("routine-actions");
-    const open=document.createElement("button");open.type="button";open.className="lp-nav-btn primary";open.textContent="Start step";open.onclick=()=>routineOpen(current.id);
-    const done=document.createElement("button");done.type="button";done.className="lp-nav-btn";done.textContent="I practiced";done.onclick=routineComplete;
+    const open=document.createElement("button");open.type="button";open.className="lp-nav-btn primary";open.textContent="▶ Start routine step";open.onclick=()=>routineOpen(current.id);
+    const done=document.createElement("button");done.type="button";done.className="lp-nav-btn";done.textContent="Skip / Mark done";done.onclick=routineComplete;
     actions.append(open,done);wrap.append(step,actions);
   }else{
-    const replay=document.createElement("button");replay.type="button";replay.className="lp-nav-btn";replay.textContent="↻ Start again tomorrow";replay.disabled=true;wrap.appendChild(replay);
+    const replay=document.createElement("button");replay.type="button";replay.className="lp-nav-btn";replay.textContent="↻ Replay daily routine";replay.onclick=()=>{routineState.step=0;saveRoutine();routineOpen(ROUTINE_STEPS[0].id);};wrap.appendChild(replay);
   }
   root.appendChild(wrap);
 }
@@ -2162,16 +2501,10 @@ function renderRoutineCard(root){
 function renderProgressDashboard(root,done){
   const vocabCount=Object.keys((practiceStore&&practiceStore.vocab)||{}).length;
   const phraseCount=Object.keys((practiceStore&&practiceStore.phrases)||{}).length;
-  const activeCards=Object.keys(srsStore||{}).length;
   const mastered=Object.values(srsStore||{}).filter(c=>(c.interval||0)>=SRS_INTERVALS.length).length;
-  const due=srsDueCount();
   const rapid=rrStats.attempts||0;
-  const card=document.createElement("section");card.className="progress-dashboard";card.dataset.lessonView="today";
-  card.innerHTML=`<div class="progress-dashboard-head"><div><div class="progress-kicker">📈 YOUR SPEAKING PROGRESS</div><div class="progress-title">Small steps become conversation</div></div><div class="progress-streak">🔥 ${dayInfo.streak}</div></div><div class="progress-metrics"><div><strong>${done}/${LESSONS.length}</strong><small>lessons</small></div><div><strong>${vocabCount}</strong><small>words practiced</small></div><div><strong>${phraseCount}</strong><small>phrases practiced</small></div><div><strong>${mastered}</strong><small>cards mastered</small></div></div><div class="progress-dashboard-note">${due?`🔁 ${due} review card${due===1?"":"s"} due today`:`✅ No review cards due today`} · ⚡ ${rapid} rapid response${rapid===1?"":"s"}</div>`;
-  const percent=LESSONS.length?done/LESSONS.length:0;
-  const pathLevel=percent<0.16?"A0 · Getting started":percent<0.38?"A1 · Everyday basics":percent<0.68?"A2 · Connected speech":"B1 · More natural conversation";
-  const ladder=document.createElement("div");ladder.className="progress-ladder";ladder.innerHTML=`<div class="progress-ladder-head"><strong>🧭 Your speaking path</strong><span>${pathLevel}</span></div><div class="progress-ladder-steps"><span class="on">Foundations</span><span class="${percent>=0.16?"on":""}">Daily life</span><span class="${percent>=0.38?"on":""}">Stories</span><span class="${percent>=0.68?"on":""}">Natural speech</span></div>`;
-  card.appendChild(ladder);
+  const card=document.createElement("section");card.className="progress-dashboard compact-stats-card";card.dataset.lessonView="today";
+  card.innerHTML=`<div class="progress-metrics"><div><strong>${done}/${LESSONS.length}</strong><small>lessons</small></div><div><strong>${vocabCount}</strong><small>words</small></div><div><strong>${phraseCount}</strong><small>phrases</small></div><div><strong>${mastered}</strong><small>mastered</small></div></div><details class="lesson-overview"><summary><span>ⓘ How the speaking path works</span><small>8-step core · ${rapid} rapid drills</small></summary><div class="lesson-flow">Recommended path: Start Here → Travel → Daily Life → Build Sentences → Speak Naturally<br>⚡ Speaking Core (8 steps): 🎯 Goal → 🧱 Frame → 🔑 Words → 🪜 Sentence Ladder → 💬 Dialogue → 🎭 Role-play → 🗣️ Speak Out Loud</div></details>`;
   root.appendChild(card);
 }
 
@@ -2250,55 +2583,59 @@ function openReviewSession(){qMissedOnly=false;showPage("quiz");qMode="mixed";qC
 function renderLessons(){
   const root=document.getElementById("lesson-list");if(!root)return;
   if(lpLesson){renderLessonStep();return;}
+  setLeccionesFocusMode(false);
   root.innerHTML="";
   buildLessonViewTabs(root);
   const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
-  const intro=document.createElement("div");intro.className="lesson-intro";intro.dataset.lessonView="today";
-  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><details class="lesson-overview"><summary><span>ⓘ How the learning path works</span><small>Recognition → speaking</small></summary><div class="lesson-flow">Recommended path: Start Here → Travel → Daily Life → Build Sentences → Speak Naturally<br>Each lesson moves from recognition to production: 🎯 Goal → 🔑 Words → 👂 Listen → 🎧 Respond → 🧩 Match → 🧱 Build → ⌨️ Type → 🎭 Role-play → 📖 Read → 🧪 Quiz → 🎯 Mission</div></details>`;
-  root.appendChild(intro);
-  renderRoutineCard(root);
-  /* Continue / Start here (v21) */
+  const percent=LESSONS.length?done/LESSONS.length:0;
+  const pathLevel=percent<0.16?"A0 · Foundations":percent<0.38?"A1 · Everyday basics":percent<0.68?"A2 · Connected speech":"B1 · Conversational";
   const resume=loadResume();
   const resLesson=resume&&LESSONS.find(l=>l.id===resume.id);
   const nextLesson=LESSONS.find(l=>!lessonProgress[l.id]);
-  const homeHub=document.createElement("section");homeHub.className="today-hub";homeHub.dataset.lessonView="today";
-  homeHub.innerHTML="<div class='today-hub-kicker'>🧭 START HERE · YOUR NEXT FEW MINUTES</div><div class='today-hub-title'>Choose one clear action</div><div class='today-hub-sub'>The app is most useful when you say something every session—not when you open every section.</div>";
-  const homeActions=document.createElement("div");homeActions.className="today-hub-actions";
-  const addHomeAction=(icon,title,sub,fn,primary)=>{const b=document.createElement("button");b.type="button";b.className="today-action"+(primary?" primary":"");b.innerHTML=`<span class='today-action-icon'>${icon}</span><span><strong>${title}</strong><small>${sub}</small></span><span class='today-action-arrow'>›</span>`;b.onclick=fn;homeActions.appendChild(b);};
-  if(resLesson&&!lessonProgress[resLesson.id])addHomeAction("▶️","Continue / Continuar",`${resLesson.title} · step ${(resume.step|0)+1}`,()=>openLessonAt(resLesson,resume.step,resume.qi,resume.score),true);
-  else if(nextLesson)addHomeAction("🎓","Start next lesson / Empezar",nextLesson.title,()=>openLesson(nextLesson),true);
-  else addHomeAction("🎓","Review your path / Repasar","Replay a completed lesson",()=>{const first=LESSONS[0];if(first)openLesson(first);},true);
-  const dueHome=srsDueCount();
-  addHomeAction("🔁","Review due cards / Repasar",dueHome?`${dueHome} card${dueHome===1?"":"s"} due today`:"Keep your memory active",openReviewSession,false);
-  const missedHome=storedMissedQuestionCount();
-  addHomeAction("🧠","Missed questions / Falladas",missedHome?`${missedHome} waiting · correct answers remove them`:"Queue empty — keep practicing",()=>{if(missedHome)openMissedQueue();else alert("Your missed-question queue is empty.");},false);
-  addHomeAction("🧱","Speak with frames / Construir", "Turn patterns into sentences",()=>renderFramePractice(false),false);
-  homeHub.appendChild(homeActions);root.appendChild(homeHub);
+
+  /* 1. Unified Hero Card — Status + Primary Lesson CTA + 1-Tap Session Launchers */
+  const hero=document.createElement("section");hero.className="today-hero-card";hero.dataset.lessonView="today";
+  hero.innerHTML=`<div class="today-hero-status"><span class="hero-pill streak">🔥 ${dayInfo.streak}d streak</span><span class="hero-pill level">🧭 ${pathLevel}</span><span class="hero-pill count">${done}/${LESSONS.length} lessons</span></div><div class="lesson-progress"><span style="width:${Math.round(percent*100)}%"></span></div>`;
+
+  const primaryLesson=(resLesson&&!lessonProgress[resLesson.id])?resLesson:(nextLesson||LESSONS[0]);
+  const isResuming=!!(resLesson&&!lessonProgress[resLesson.id]);
+  const heroCta=document.createElement("button");heroCta.type="button";heroCta.className="today-hero-cta";
+  heroCta.innerHTML=`<div class="today-hero-cta-icon">${primaryLesson.icon||"🎓"}</div><div class="today-hero-cta-copy"><span class="today-hero-cta-kicker">${isResuming?`▶️ CONTINUE · STEP ${(resume.step|0)+1}`:(done===0?"🚀 START HERE · LESSON 1":"🎓 NEXT LESSON")}</span><strong>${escapeVocabHtml(primaryLesson.title)}</strong><small>${escapeVocabHtml(primaryLesson.sub)}</small></div><div class="today-hero-cta-badge">${isResuming?"Resume →":"Start →"}</div>`;
+  heroCta.onclick=()=>{if(isResuming)openLessonAt(resLesson,resume.step,resume.qi,resume.score);else openLesson(primaryLesson);};
+  hero.appendChild(heroCta);
+
   const sessionBox=document.createElement("div");sessionBox.className="session-picker";
-  sessionBox.innerHTML="<div class='session-picker-copy'><strong>Choose your session</strong><small>Pick a realistic amount of speaking for today.</small></div><div class='session-lengths'></div><button type='button' class='session-start'>▶ Start session</button>";
+  sessionBox.innerHTML="<div class='session-picker-copy'><strong>Or jump straight into a timed session:</strong></div><div class='session-lengths'></div>";
   const sessionLengths=sessionBox.querySelector(".session-lengths");
-  [["5","5 min","Quick sentence frames"],["10","10 min","Daily speaking path"],["20","20 min","Full lesson + practice"]].forEach(([minutes,label,sub])=>{const b=document.createElement("button");b.type="button";b.className="session-length-btn";b.dataset.minutes=minutes;b.innerHTML=`<strong>${label}</strong><small>${sub}</small>`;b.onclick=()=>setSessionLength(minutes);sessionLengths.appendChild(b);});
-  sessionBox.querySelector(".session-start").onclick=startSelectedSession;
-  homeHub.appendChild(sessionBox);
+  [["5","⚡ 5 min","Sentence builder"],["10","🎯 10 min","Daily routine"],["20","🎓 20 min","Full lesson"]].forEach(([minutes,label,sub])=>{
+    const b=document.createElement("button");b.type="button";b.className="session-length-btn";b.dataset.minutes=minutes;
+    b.innerHTML=`<strong>${label}</strong><small>${sub}</small>`;
+    b.onclick=()=>{setSessionLength(minutes);startSelectedSession();};
+    sessionLengths.appendChild(b);
+  });
+  hero.appendChild(sessionBox);
+  root.appendChild(hero);
   setSessionLength(sessionLength);
-  const cont=document.createElement("div");cont.className="continue-card";
-  let cTitle,cSub,cAction;
-  if(resLesson&&!lessonProgress[resLesson.id]){
-    cTitle="▶️ Continue: "+resLesson.title;
-    cSub="Step "+((resume.step|0)+1)+" of "+lpSteps.length+" — pick up where you left off";
-    cAction=()=>openLessonAt(resLesson,resume.step,resume.qi,resume.score);
-  }else if(nextLesson){
-    cTitle=(done===0?"▶️ Start here: ":"▶️ Next lesson: ")+nextLesson.title;
-    cSub=nextLesson.sub;
-    cAction=()=>openLesson(nextLesson);
-  }else{
-    cTitle="🎉 All lessons complete";
-    cSub="Replay any lesson below, or drill with Reacción Rápida";
-    cAction=null;
-  }
-  cont.innerHTML=`<div class="continue-title">${cTitle}</div><div class="continue-sub">${cSub}</div>`;
-  if(cAction){cont.onclick=cAction;cont.classList.add("tappable");}
-  /* The primary resume action now lives in today-hub above; keep one clear CTA. */
+
+  /* 2. Clean 2x2 Quick Practice Grid */
+  const dueHome=srsDueCount();
+  const missedHome=storedMissedQuestionCount();
+  const quickGrid=document.createElement("section");quickGrid.className="today-quick-grid";quickGrid.dataset.lessonView="today";
+  [
+    ["🎰","Slot-Swapper","Mix & speak sentences",()=>renderFramePractice(false)],
+    ["⚡","Reacción Rápida","Timed audio prompts",()=>{rrSession=0;renderRapida(false);}],
+    ["🔁","Review Cards",dueHome?`${dueHome} due today`:"Spaced repetition",openReviewSession],
+    ["🧠","Missed Queue",missedHome?`${missedHome} waiting`:"All clear ✓",()=>{if(missedHome)openMissedQueue();else openReviewSession();}]
+  ].forEach(([icon,title,sub,fn])=>{
+    const tile=document.createElement("button");tile.type="button";tile.className="today-quick-tile";
+    tile.innerHTML=`<span class="today-quick-icon">${icon}</span><span class="today-quick-copy"><strong>${title}</strong><small>${sub}</small></span>`;
+    tile.onclick=fn;
+    quickGrid.appendChild(tile);
+  });
+  root.appendChild(quickGrid);
+
+  /* 3. Guided 10-Min Routine + Compact Stats + Collapsible Practice List */
+  renderRoutineCard(root);
   renderProgressDashboard(root,done);
   renderSpeakingErrorJournal(root);
   /* Daily practice — one compact row (v22) */
@@ -2329,11 +2666,11 @@ function renderLessons(){
 
   /* Lessons grouped into a speaking-first progression */
   const LESSON_STAGES=[
-    {name:"🌱 Stage 1 · Start Here",sub:"Greetings, basic needs, numbers, and repairing misunderstandings.",ids:["presentate","plata","survival-communication","casa","gustos"]},
-    {name:"🧭 Stage 2 · Travel and Survival",sub:"Uber, directions, hotels, food, shopping, repair, and the pharmacy.",ids:["uber-ride","uber-completo","hotel-checkin","calle","cocina","restaurante-real","mercado-negociar","commands-repair","farmacia"]},
+    {name:"🌱 Stage 1 · Start Here",sub:"Greetings, Colombian politeness, numbers, and repairing misunderstandings.",ids:["presentate","cortesia-colombiana","plata","survival-communication","casa","gustos"]},
+    {name:"🧭 Stage 2 · Travel and Survival",sub:"Uber, buildings, directions, hotels, food, shopping, repair, and the pharmacy.",ids:["uber-ride","uber-completo","hotel-checkin","calle","direcciones","cocina","restaurante-real","mercado-negociar","commands-repair","farmacia"]},
     {name:"🏠 Stage 3 · Daily Life",sub:"Work, office, phone calls, feelings, activities, and everyday routines.",ids:["trabajo","oficina-real","daily-repair","planes","gerundios-actividades","sentirse"]},
     {name:"🧱 Stage 4 · Build Sentences",sub:"Present, future, past, contrast, perfect tenses, conditional, action chunks, connectors, and pronouns.",ids:["sentence-structure","action-chunks","connectors-v36","function-words","gram-presente","gram-futuro","gram-pasado","gram-pasado-historia","gram-pasado-contraste","gram-perfecto","gram-condicional","gram-pasado-perfecto","gram-futuro-perfecto","gram-subjuntivo","gram-necesidades","gram-conectores","gram-pronombres"]},
-    {name:"🇨🇴 Stage 5 · Speak More Naturally",sub:"Colombian everyday expressions, social plans, parties, sports, and register.",ids:["colombia","social-colombia-v36","social-salida","fiesta-gathering","deportes-partido","gram-groserias"]},
+    {name:"🇨🇴 Stage 5 · Speak More Naturally",sub:"Colombian everyday expressions, diminutives, muletillas, social plans, parties, sports, and register.",ids:["colombia","muletillas-diminutivos","social-colombia-v36","social-salida","fiesta-gathering","deportes-partido","gram-groserias"]},
     {name:"🎯 Stage 6 · Conversation Challenge",sub:"Read aloud, react quickly, and complete real speaking missions.",ids:["conversation-challenge"]}
   ];
   const tenseRoadmap=document.createElement("section");tenseRoadmap.className="tense-roadmap";tenseRoadmap.dataset.lessonView="path";
@@ -2843,7 +3180,7 @@ FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
 /* Vocabulary examples remain in Vocab as full context. Only the authored
    prompts above enter Fill blank; generic example sentences stay out. */
 
-const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"reparar",label:"🧰 Repair"},{id:"conectores",label:"🔗 Connectors"},{id:"direcciones",label:"🧭 Directions"},{id:"uber",label:"🚕 Uber"},{id:"uber-real",label:"🚕 Uber · full trip"},{id:"hotel",label:"🏨 Hotel"},{id:"restaurante",label:"🍽️ Restaurant"},{id:"restaurante-real",label:"🍽️ Restaurant · real"},{id:"compras",label:"🛒 Shopping"},{id:"mercado",label:"🛍️ Market"},{id:"farmacia",label:"💊 Pharmacy"},{id:"expresiones",label:"🇨🇴 Expressions"},{id:"social",label:"🤝 Social"},{id:"fiesta",label:"🎉 Party"},{id:"deportes",label:"⚽ Sports"},{id:"oficina-real",label:"🧑‍💼 Office"},{id:"gerundios",label:"🔄 Actions in progress"},{id:"mandatos",label:"🗣️ Commands"},{id:"estructura",label:"🧱 Structure"},{id:"subjuntivo",label:"🌱 Subjuntivo"},{id:"pronunciacion",label:"🔊 Sounds"},{id:"groserias",label:"⚠️ Groserías"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
+const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"cortesia",label:"🙏 Courtesy"},{id:"muletillas",label:"☕ Diminutives & Fillers"},{id:"reparar",label:"🧰 Repair"},{id:"conectores",label:"🔗 Connectors"},{id:"direcciones",label:"🧭 Directions"},{id:"uber",label:"🚕 Uber"},{id:"uber-real",label:"🚕 Uber · full trip"},{id:"hotel",label:"🏨 Hotel"},{id:"restaurante",label:"🍽️ Restaurant"},{id:"restaurante-real",label:"🍽️ Restaurant · real"},{id:"compras",label:"🛒 Shopping"},{id:"mercado",label:"🛍️ Market"},{id:"farmacia",label:"💊 Pharmacy"},{id:"expresiones",label:"🇨🇴 Expressions"},{id:"social",label:"🤝 Social"},{id:"fiesta",label:"🎉 Party"},{id:"deportes",label:"⚽ Sports"},{id:"oficina-real",label:"🧑‍💼 Office"},{id:"gerundios",label:"🔄 Actions in progress"},{id:"mandatos",label:"🗣️ Commands"},{id:"estructura",label:"🧱 Structure"},{id:"subjuntivo",label:"🌱 Subjuntivo"},{id:"pronunciacion",label:"🔊 Sounds"},{id:"groserias",label:"⚠️ Groserías"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
 const QUIZ_MODES=[
   {id:"mixed",label:"Mixed"},{id:"es-en",label:"ES → EN"},{id:"en-es",label:"EN → ES"},
   {id:"listening",label:"🎧 Listening"},{id:"dictation",label:"⌨️ Dictation"},{id:"blank",label:"✏️ Fill blank"},{id:"conversation",label:"💬 Conversation"}
