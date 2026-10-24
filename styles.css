@@ -1136,6 +1136,63 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
   .phonetic-jump-row label{font-size:.58rem;}
 }
 
+/* v78: focused lesson player and tactile mobile polish. The curriculum stays
+   intact; the player simply gives the learner one obvious action at a time. */
+body.lesson-focus-active .tab-bar{display:none;}
+body.lesson-focus-active .scroll{padding-bottom:calc(var(--safe-bottom) + 118px);}
+#page-lecciones.lesson-focus-mode{padding-top:0;}
+.lp-focus-top{display:flex;align-items:center;gap:10px;margin:0 0 12px;}
+.lp-exit{display:flex;align-items:center;gap:6px;flex:0 0 auto;min-height:38px;padding:6px 9px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.045);color:var(--muted);font:800 .66rem 'Nunito',sans-serif;}
+.lp-exit:active{transform:translateY(2px);}
+.lp-exit-icon{font-size:1.25rem;line-height:1;color:var(--pink);}
+.lp-focus-progress{height:7px;flex:1;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.1);}
+.lp-focus-progress span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .25s ease;}
+#page-lecciones.lesson-focus-mode .lp-nav{position:fixed;left:50%;bottom:calc(var(--safe-bottom) + 12px);z-index:1001;width:min(calc(100% - 24px),var(--content-max));margin:0;padding:10px;border:1px solid rgba(232,180,74,.38);border-radius:17px;background:rgba(15,22,29,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 -8px 30px rgba(0,0,0,.42);transform:translateX(-50%);}
+#page-lecciones.lesson-focus-mode .lp-nav .lp-nav-btn{min-height:52px;border-radius:12px;box-shadow:0 3px 0 rgba(0,0,0,.25);}
+#page-lecciones.lesson-focus-mode .lp-nav .lp-nav-btn:active{transform:translateY(2px);box-shadow:none;}
+.lp-completion-hero{display:flex;flex-direction:column;align-items:center;gap:3px;margin:-2px 0 16px;padding:16px 12px;border:1px solid rgba(232,180,74,.42);border-radius:16px;background:linear-gradient(145deg,rgba(232,180,74,.16),rgba(74,168,160,.1));text-align:center;}
+.lp-completion-emoji{font-size:2.35rem;line-height:1;margin-bottom:3px;animation:pop .3s ease;}
+.lp-completion-hero>strong{font-size:1.2rem;color:var(--gold);}
+.lp-completion-hero>span{font-size:.7rem;color:var(--muted);}
+.lp-completion-stats{display:grid;grid-template-columns:repeat(3,1fr);width:100%;gap:7px;margin-top:10px;}
+.lp-completion-stats span{display:flex;flex-direction:column;gap:2px;padding:8px 4px;border-radius:10px;background:rgba(0,0,0,.15);}
+.lp-completion-stats b{font-size:.9rem;color:#fff;}
+.lp-completion-stats small{font-size:.56rem;color:var(--muted);}
+
+/* Stepping-stone visual treatment for the learning path. */
+#page-lecciones:not(.lesson-focus-mode) .lesson-card{position:relative;margin-left:8px;border-radius:15px;transition:transform .14s ease,border-color .14s ease,box-shadow .14s ease;}
+#page-lecciones:not(.lesson-focus-mode) .lesson-card:before{content:"";position:absolute;left:-9px;top:50%;width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.24);box-shadow:0 0 0 3px rgba(255,255,255,.04);}
+#page-lecciones:not(.lesson-focus-mode) .lesson-card.complete:before{background:var(--teal);box-shadow:0 0 0 3px rgba(74,168,160,.14);}
+#page-lecciones:not(.lesson-focus-mode) .lesson-card.recommended:before{background:var(--gold);box-shadow:0 0 0 4px rgba(232,180,74,.16);}
+#page-lecciones:not(.lesson-focus-mode) .lesson-card.recommended{box-shadow:0 7px 22px rgba(232,180,74,.11);}
+#page-lecciones:not(.lesson-focus-mode) .lesson-card:active{transform:translateX(2px) scale(.995);}
+.stage-label{margin-top:20px;padding:10px 11px;border-left:3px solid var(--gold);border-radius:0 11px 11px 0;background:rgba(232,180,74,.06);}
+
+/* Role-play becomes a conversation thread without changing the underlying
+   turn-by-turn controls or the learner's English reveal. */
+.lp-sim-history{display:flex;flex-direction:column;gap:9px;}
+.lp-chat-message{display:flex;align-items:flex-end;gap:7px;max-width:94%;}
+.lp-chat-message.partner{align-self:flex-start;}
+.lp-chat-message.me{align-self:flex-end;flex-direction:row-reverse;}
+.lp-chat-message.current{max-width:100%;}
+.lp-chat-avatar{display:grid;place-items:center;flex:0 0 29px;width:29px;height:29px;border-radius:50%;background:rgba(74,168,160,.18);font-size:.9rem;}
+.lp-chat-message.me .lp-chat-avatar{background:rgba(167,139,250,.2);}
+.lp-chat-bubble{min-width:0;padding:10px 11px;border:1px solid rgba(255,255,255,.11);border-radius:15px 15px 15px 4px;background:rgba(255,255,255,.055);cursor:pointer;}
+.lp-chat-message.me .lp-chat-bubble{border-color:rgba(167,139,250,.3);border-radius:15px 15px 4px 15px;background:rgba(167,139,250,.1);}
+.lp-chat-message.current .lp-chat-bubble{width:100%;border-color:rgba(232,180,74,.38);background:rgba(232,180,74,.09);cursor:default;}
+.lp-chat-bubble>strong{display:block;margin-bottom:4px;color:var(--teal);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;}
+.lp-chat-message.me .lp-chat-bubble>strong{color:var(--purple);}
+.lp-chat-bubble .lp-line-es{display:block;color:#fff;font-size:.86rem;font-weight:800;line-height:1.4;}
+.lp-chat-bubble .lp-line-en{display:block;margin-top:4px;}
+.lp-chat-bubble .lp-sim-prompt-tag{margin-bottom:5px;}
+.lp-chat-bubble .lp-sim-intent{font-size:.76rem;}
+.lp-chat-bubble .lp-sim-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.lp-chat-bubble .lp-sim-actions button{flex:1 1 130px;}
+
+/* Small raised edge and pressed state on primary actions. */
+.today-hero-cta,.session-length-btn.selected,.lp-nav-btn.primary,.lesson-start,.warmup-continue,.routine-next-large{box-shadow:0 3px 0 rgba(0,0,0,.28);}
+.today-hero-cta:active,.session-length-btn:active,.lp-nav-btn:active,.lesson-start:active,.warmup-continue:active,.routine-next-large:active{transform:translateY(2px);box-shadow:none;}
+
 /* v59: Rapid speaking pace is visible, selectable, and thumb-friendly. */
 .rr-difficulty-row{margin:12px 0 14px;padding:10px;border:1px solid rgba(232,180,74,.22);border-radius:13px;background:rgba(232,180,74,.06);text-align:left;}
 .rr-difficulty-label{display:block;margin-bottom:7px;color:var(--gold);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;font-weight:950;}
