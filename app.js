@@ -83,25 +83,21 @@ function voiceLabel(v){return `${v.lang||"es"} · ${(v.name||"Spanish voice").re
 function getSpanishVoices(){
   if(!window.speechSynthesis)return [];
   voices=window.speechSynthesis.getVoices()||[];
-  const seen=new Set();
-  return voices.filter(v=>/^es(?:-|_|$)/i.test(String(v.lang||""))).filter(v=>{
-    const key=`${String(v.name||"").trim().toLowerCase()}|${String(v.lang||"").trim().toLowerCase()}`;
-    if(seen.has(key))return false;
-    seen.add(key);
-    return true;
-  });
+  /* Do not collapse voices by name/language. iOS can expose two entries with the
+     same label but different voiceURI values; one can be the usable local voice. */
+  return voices.filter(v=>/^es(?:-|_|$)/i.test(String(v.lang||"")));
 }
 function chooseSpanishVoice(sp){
   const saved=sp.find(v=>voiceKey(v)===savedVoiceKey||(`${v.name}::${v.lang}`===savedVoiceKey));
   if(saved)return saved;
-  if(!savedVoiceKey){
-    for(const p of["es-CO","es-419","es-MX","es-US","es-AR","es-ES"]){
-      const v=sp.find(x=>String(x.lang||"").toUpperCase().startsWith(p.toUpperCase()));
-      if(v)return v;
-    }
-  }
   const kept=selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang);
   if(kept)return kept;
+  /* A voice saved by an older iOS release can disappear after an update. Do not
+     let that stale key prevent selection of a working Spanish fallback. */
+  for(const p of["es-CO","es-419","es-MX","es-US","es-AR","es-ES"]){
+    const v=sp.find(x=>String(x.lang||"").toUpperCase().startsWith(p.toUpperCase()));
+    if(v)return v;
+  }
   return sp[0]||null;
 }
 function rememberVoice(v){
@@ -141,19 +137,41 @@ function chV(key){
   const v=getSpanishVoices().find(x=>voiceKey(x)===key);
   if(v){rememberVoice(v);syncVoiceSelectors();}
 }
-function speak(t,r,onEnd){
+let activeUtterance=null,speechRequest=0;
+function playSpeech(t,r,onEnd){
   if(!window.speechSynthesis){if(onEnd)onEnd();return;}
+  const request=++speechRequest;
   const sp=getSpanishVoices();
   const saved=savedVoiceKey&&sp.find(v=>voiceKey(v)===savedVoiceKey); /* saved pick wins the moment the list recovers */
   const live=saved||(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang));
   const voice=live||chooseSpanishVoice(sp);
   if(voice)selV=voice; /* use it, but do NOT persist — only an explicit dropdown pick (chV) saves, so a flaky iOS voice list can't overwrite the user's choice */
-  speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(t);
-  if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
-  u.rate=r||0.8;
-  if(onEnd){let finished=false;const done=()=>{if(finished)return;finished=true;onEnd();};u.onend=done;u.onerror=done;}
-  speechSynthesis.speak(u);
+  const launch=()=>{
+    if(request!==speechRequest)return;
+    const u=new SpeechSynthesisUtterance(t);
+    activeUtterance=u; /* Safari can stop an utterance if no strong reference remains. */
+    if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX";
+    u.rate=r||0.8;
+    let finished=false;
+    const done=()=>{
+      if(finished)return;
+      finished=true;
+      if(activeUtterance===u)activeUtterance=null;
+      if(onEnd)onEnd();
+    };
+    u.onend=done;u.onerror=done;
+    speechSynthesis.resume();
+    speechSynthesis.speak(u);
+  };
+  /* On iPhone, cancel() immediately followed by speak() can silently discard the
+     new utterance. Only cancel when necessary and allow Safari to settle first. */
+  if(speechSynthesis.speaking||speechSynthesis.pending){
+    speechSynthesis.cancel();
+    setTimeout(launch,60);
+  }else launch();
+}
+function speak(t,r,onEnd){
+  playSpeech(t,r,onEnd);
   rememberSpoken(t);
 }
 /* ── Lento (slow replay) ─────────────────────────────────────────────────────
@@ -171,13 +189,7 @@ function rememberSpoken(t){
     lentoBtn.onclick=()=>{
       if(!lastSpokenText)return;
       /* replay directly (not via speak) so it doesn't overwrite lastSpokenText rate context */
-      const sp=getSpanishVoices();
-      const voice=(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang))||chooseSpanishVoice(sp);
-      speechSynthesis.cancel();
-      const u=new SpeechSynthesisUtterance(lastSpokenText);
-      if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX";
-      u.rate=0.45;
-      speechSynthesis.speak(u);
+      playSpeech(lastSpokenText,0.45);
     };
     document.body.appendChild(lentoBtn);
   }
