@@ -1,4 +1,4 @@
-﻿// Spanish learning app behavior
+// Spanish learning app behavior
 // ── Voice ─────────────────────────────────────────────────────────────────────
 // ── Local profiles ──────────────────────────────────────────────────────────
 // Profiles are intentionally local to this browser/device. They keep quiz,
@@ -53,13 +53,17 @@ const localStorage=profileStorage;
 function buildProfileBar(){
   const host=document.getElementById("profile-host");if(!host)return;
   host.innerHTML="";
+  const currentProfile=profileList.find(p=>p.id===activeProfileId)||{label:activeProfileId,emoji:"👤"};
+  const drawer=document.createElement("details");drawer.className="top-utility-drawer profile-utility-drawer";
+  const summary=document.createElement("summary");summary.className="top-utility-summary";
+  summary.innerHTML=`<span>👤 Profile</span><small>${currentProfile.emoji||"👤"} ${currentProfile.label}</small>`;
+  const utilityBody=document.createElement("div");utilityBody.className="top-utility-body";
   const bar=document.createElement("div");bar.className="profile-bar";
-  const label=document.createElement("span");label.className="profile-label";label.textContent="👤 Profile";
+  const label=document.createElement("span");label.className="profile-label";label.textContent="Profile";
   const select=document.createElement("select");select.className="profile-select";select.setAttribute("aria-label","Choose local profile");
   profileList.forEach(p=>{const o=document.createElement("option");o.value=p.id;o.textContent=(p.emoji||"👤")+" "+p.label;select.appendChild(o);});
   select.value=activeProfileId;
   select.onchange=()=>{activeProfileId=select.value;nativeStorage.setItem(ACTIVE_PROFILE_KEY,activeProfileId);location.reload();};
-  const currentProfile=profileList.find(p=>p.id===activeProfileId)||{label:activeProfileId};
   const reset=document.createElement("button");reset.type="button";reset.className="profile-reset";reset.textContent=`Reset ${currentProfile.label}`;reset.title=`Clear ${currentProfile.label} progress only`;
   reset.onclick=()=>{
     if(!confirm(`Clear the ${currentProfile.label} profile's saved progress? Other profiles will not change.`))return;
@@ -68,9 +72,9 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v76.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v78.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);
-  bar.append(label,select,reset,ver);host.appendChild(bar);
+  bar.append(label,select,reset,ver);utilityBody.appendChild(bar);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
 buildProfileBar();
 let voices=[],selV=null;
@@ -95,6 +99,11 @@ function chooseSpanishVoice(sp){
   const saved=sp.find(v=>voiceKey(v)===savedVoiceKey||(`${v.name}::${v.lang}`===savedVoiceKey));
   if(saved)return saved;
   if(!savedVoiceKey){
+    /* Paulina is the app's default Spanish voice. Keep an explicit saved
+       choice above this preference so users can still choose another voice. */
+    const paulina=sp.find(v=>/^paulina$/i.test(String(v.name||"")))||
+      sp.find(v=>/paulina/i.test(String(v.name||"")));
+    if(paulina)return paulina;
     for(const p of["es-CO","es-419","es-MX","es-US","es-AR","es-ES"]){
       const v=sp.find(x=>String(x.lang||"").toUpperCase().startsWith(p.toUpperCase()));
       if(v)return v;
@@ -123,6 +132,10 @@ function buildVoiceBars(sp=getSpanishVoices()){
   VOICE_HOSTS.forEach(id=>{
     const host=document.getElementById(`voice-bar-${id}`);if(!host)return;
     host.innerHTML="";
+    const drawer=document.createElement("details");drawer.className="top-utility-drawer";
+    const summary=document.createElement("summary");summary.className="top-utility-summary";
+    summary.innerHTML=`<span>⚙️ Audio settings</span><small>${escapeVocabHtml(selV?voiceLabel(selV):"Choose Spanish voice")}</small>`;
+    const utilityBody=document.createElement("div");utilityBody.className="top-utility-body";
     const bar=document.createElement("div");bar.className="voice-bar";
     const label=document.createElement("span");label.className="voice-label";label.textContent="🎙️ Voz";
     const select=document.createElement("select");select.className="voice-select voice-choice";select.setAttribute("aria-label","Spanish voice");
@@ -134,12 +147,12 @@ function buildVoiceBars(sp=getSpanishVoices()){
     }
     select.onchange=()=>chV(select.value);
     const test=document.createElement("button");test.type="button";test.className="voice-test";test.textContent="Probar";test.onclick=()=>speak("Hola, buenos días Colombia",0.8);
-    bar.append(label,select,test);host.appendChild(bar);
+    bar.append(label,select,test);utilityBody.appendChild(bar);drawer.append(summary,utilityBody);host.appendChild(drawer);
   });
 }
 function chV(key){
   const v=getSpanishVoices().find(x=>voiceKey(x)===key);
-  if(v){rememberVoice(v);syncVoiceSelectors();}
+  if(v){rememberVoice(v);syncVoiceSelectors();document.querySelectorAll(".top-utility-summary small").forEach(x=>x.textContent=voiceLabel(v));}
 }
 function speak(t,r,onEnd){
   if(!window.speechSynthesis){if(onEnd)onEnd();return;}
@@ -1410,6 +1423,7 @@ function scrollAppTop(){
 function setLeccionesFocusMode(active){
   const page=document.getElementById("page-lecciones");
   if(page)page.classList.toggle("lesson-focus-mode",!!active);
+  document.body.classList.toggle("lesson-focus-active",!!active);
   scrollAppTop();
 }
 function renderLessonStep(){
@@ -1418,10 +1432,12 @@ function renderLessonStep(){
   const c=LESSON_CONTENT[lpLesson.id];
   const step=lpSteps[lpStep];
   saveResume();
-  const back=document.createElement("button");back.type="button";back.className="phrase-back";
-  back.innerHTML="<span>‹</span><span>Back to lessons</span>";
+  const focusTop=lpEl("lp-focus-top");
+  const back=document.createElement("button");back.type="button";back.className="lp-exit";
+  back.innerHTML="<span class='lp-exit-icon'>×</span><span>Exit lesson</span>";
   back.onclick=()=>{lpLesson=null;renderLessons();};
-  root.appendChild(back);
+  const focusProgress=lpEl("lp-focus-progress",`<span style="width:${Math.round(((lpStep+1)/lpSteps.length)*100)}%"></span>`);
+  focusTop.append(back,focusProgress);root.appendChild(focusTop);
   const modeBar=lpEl("lp-mode-switch");
   const coreBtn=document.createElement("button");coreBtn.type="button";coreBtn.className="lp-mode-btn"+(!lpFullMode?" active":"");coreBtn.textContent="⚡ Speaking Core (8 steps)";coreBtn.onclick=()=>switchLessonPathMode(false);
   const fullBtn=document.createElement("button");fullBtn.type="button";fullBtn.className="lp-mode-btn"+(lpFullMode?" active":"");fullBtn.textContent="📚 Full Practice (16 steps)";fullBtn.onclick=()=>switchLessonPathMode(true);
@@ -1674,9 +1690,9 @@ function renderLessonStep(){
         const L=lines[i];
         const isMe=L.who===who;
         const isCurrent=i===currentIdx;
-        const row=lpEl("lp-line"+(isMe?" lp-me":""));
+        const row=lpEl("lp-chat-message"+(isMe?" me":" partner")+(isCurrent?" current":""));
         if(isMe&&isCurrent){
-          row.innerHTML=`<div class="lp-sim-prompt-tag">🎯 YOUR TURN (Person ${who}) — Say this in Spanish:</div><div class="lp-sim-intent">“${escapeVocabHtml(L.en)}”</div><div class="lp-line-es lp-blur">${escapeVocabHtml(L.es)}</div><div class="lp-sim-actions"></div>`;
+          row.innerHTML=`<div class="lp-chat-avatar">👤</div><div class="lp-chat-bubble"><div class="lp-sim-prompt-tag">🎯 YOUR TURN · Person ${who}</div><div class="lp-sim-intent">“${escapeVocabHtml(L.en)}”</div><div class="lp-line-es lp-blur">${escapeVocabHtml(L.es)}</div><div class="lp-sim-actions"></div></div>`;
           const act=row.querySelector(".lp-sim-actions");
           const revealBtn=document.createElement("button");revealBtn.type="button";revealBtn.className="warmup-btn";revealBtn.textContent="👀 Reveal & Hear Spanish";
           revealBtn.onclick=e=>{
@@ -1688,8 +1704,8 @@ function renderLessonStep(){
           act.appendChild(revealBtn);
           attachMic(act,L.tts,"phrases");
         }else{
-          row.innerHTML=`<strong>${L.who}:</strong> <span class='lp-line-es'>${escapeVocabHtml(L.es)}</span><div class='lp-line-en'>${escapeVocabHtml(L.en)}</div>`;
-          row.onclick=()=>speak(L.tts,0.75);
+          row.innerHTML=`<div class="lp-chat-avatar">${L.who===who?"👤":"🗣️"}</div><div class="lp-chat-bubble"><strong>${L.who===who?"You":"Partner"}</strong><span class='lp-line-es'>${escapeVocabHtml(L.es)}</span><div class='lp-line-en'>${escapeVocabHtml(L.en)}</div></div>`;
+          row.querySelector(".lp-chat-bubble").onclick=()=>speak(L.tts,0.75);
           attachMic(row,L.tts,"phrases");
         }
         historyWrap.appendChild(row);
@@ -1817,6 +1833,9 @@ function renderLessonStep(){
   }
   else{
     title.textContent="🎉 Lesson complete!";
+    const completion=lpEl("lp-completion-hero");
+    completion.innerHTML=`<div class="lp-completion-emoji">🎉</div><strong>¡Muy bien!</strong><span>You completed this lesson.</span><div class="lp-completion-stats"><span><b>${lpPracticed.size}</b><small>spoken</small></span><span><b>${lpFullMode&&lpQs.length?`${lpScore}/${lpQs.length}`:"—"}</b><small>quiz</small></span><span><b>🔥</b><small>keep going</small></span></div>`;
+    body.appendChild(completion);
     if(lpFullMode&&lpQs.length)body.appendChild(lpEl("lp-goal-es","Mini-quiz: "+lpScore+" of "+lpQs.length));
     if(c){body.appendChild(lpEl("lp-hint","You can now say:"));body.appendChild(lpEl("lp-goal-es",c.goal.es));body.appendChild(lpSpeakBtn(c.goal.es));attachMic(body,c.goal.es);}
     lessonProgress[lpLesson.id]=true;saveLessons();
@@ -3528,3 +3547,4 @@ function runDataValidator(){
   return issues;
 }
 runDataValidator();
+
