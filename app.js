@@ -42,16 +42,23 @@ const profileStorage={
 };
 // Existing app code can continue using localStorage; this proxy scopes it.
 const localStorage=profileStorage;
+let voices=[],selV=null;
 function buildProfileBar(){
   const host=document.getElementById("profile-host");if(!host)return;
   host.innerHTML="";
+  const currentProfile=profileList.find(p=>p.id===activeProfileId)||{label:activeProfileId,emoji:"👤"};
+  const drawer=document.createElement("details");drawer.className="top-utility-drawer";
+  const summary=document.createElement("summary");summary.className="top-utility-summary";
+  const vShort=selV?voiceLabel(selV).split("·")[0].trim():"Español";
+  summary.innerHTML=`<span>${currentProfile.emoji||"👤"} <strong>${currentProfile.label}</strong> · 🎙️ <span class="top-utility-voice-tag">${vShort}</span></span><small>⚙️ Audio & Profile</small>`;
+  const body=document.createElement("div");body.className="top-utility-body";
+  const vWrap=document.createElement("div");vWrap.id="voice-bar-lecciones-inner";
   const bar=document.createElement("div");bar.className="profile-bar";
   const label=document.createElement("span");label.className="profile-label";label.textContent="👤 Profile";
   const select=document.createElement("select");select.className="profile-select";select.setAttribute("aria-label","Choose local profile");
   profileList.forEach(p=>{const o=document.createElement("option");o.value=p.id;o.textContent=(p.emoji||"👤")+" "+p.label;select.appendChild(o);});
   select.value=activeProfileId;
   select.onchange=()=>{activeProfileId=select.value;nativeStorage.setItem(ACTIVE_PROFILE_KEY,activeProfileId);location.reload();};
-  const currentProfile=profileList.find(p=>p.id===activeProfileId)||{label:activeProfileId};
   const reset=document.createElement("button");reset.type="button";reset.className="profile-reset";reset.textContent=`Reset ${currentProfile.label}`;reset.title=`Clear ${currentProfile.label} progress only`;
   reset.onclick=()=>{
     if(!confirm(`Clear the ${currentProfile.label} profile's saved progress? Other profiles will not change.`))return;
@@ -60,10 +67,12 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  bar.append(label,select,reset);host.appendChild(bar);
+  bar.append(label,select,reset);
+  body.append(vWrap,bar);
+  drawer.append(summary,body);
+  host.appendChild(drawer);
 }
 buildProfileBar();
-let voices=[],selV=null;
 const VOICE_KEY="esco-selected-voice-v1";
 const VOICE_HOSTS=["fonetica","lecciones","vocab","frases","gram","quiz"];
 let savedVoiceKey="";
@@ -96,16 +105,21 @@ function rememberVoice(v){
 function syncVoiceSelectors(){
   const key=voiceKey(selV);
   document.querySelectorAll(".voice-choice").forEach(s=>{if(key)s.value=key;});
+  const tag=document.querySelector(".top-utility-voice-tag");
+  if(tag&&selV)tag.textContent=voiceLabel(selV);
 }
 function loadV(){
   const sp=getSpanishVoices();
   const next=chooseSpanishVoice(sp);
   if(next)selV=next;
   buildVoiceBars(sp);
+  syncVoiceSelectors();
 }
 function buildVoiceBars(sp=getSpanishVoices()){
   VOICE_HOSTS.forEach(id=>{
-    const host=document.getElementById(`voice-bar-${id}`);if(!host)return;
+    const host=id==="lecciones"?(document.getElementById("voice-bar-lecciones-inner")||document.getElementById("voice-bar-lecciones")):document.getElementById(`voice-bar-${id}`);
+    const outerLec=document.getElementById("voice-bar-lecciones");if(outerLec)outerLec.innerHTML="";
+    if(!host)return;
     host.innerHTML="";
     const bar=document.createElement("div");bar.className="voice-bar";
     const label=document.createElement("span");label.className="voice-label";label.textContent="🎙️ Voz";
@@ -122,20 +136,46 @@ function buildVoiceBars(sp=getSpanishVoices()){
   });
 }
 function chV(key){const v=getSpanishVoices().find(x=>voiceKey(x)===key);if(v){rememberVoice(v);syncVoiceSelectors();}}
+let speakTimer=null;
 function speak(t,r,onEnd){
-  if(!window.speechSynthesis){if(onEnd)onEnd();return;}
+  if(!t||!window.speechSynthesis){if(onEnd)onEnd();return;}
+  if(speakTimer){clearTimeout(speakTimer);speakTimer=null;}
   const sp=getSpanishVoices();
-  const saved=savedVoiceKey&&sp.find(v=>voiceKey(v)===savedVoiceKey); /* saved pick wins the moment the list recovers */
+  const saved=savedVoiceKey&&sp.find(v=>voiceKey(v)===savedVoiceKey);
   const live=saved||(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang));
   const voice=live||chooseSpanishVoice(sp);
-  if(voice)selV=voice; /* use it, but do NOT persist — only an explicit dropdown pick (chV) saves, so a flaky iOS voice list can't overwrite the user's choice */
-  speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(t);
-  if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
-  u.rate=r||0.8;
-  if(onEnd){let finished=false;const done=()=>{if(finished)return;finished=true;onEnd();};u.onend=done;u.onerror=done;}
-  speechSynthesis.speak(u);
+  if(voice)selV=voice;
   rememberSpoken(t);
+  const fire=()=>{
+    try{if(speechSynthesis.paused)speechSynthesis.resume();}catch(e){}
+    const u=new SpeechSynthesisUtterance(String(t));
+    if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX";
+    u.rate=r||0.8;
+    let finished=false;
+    const done=()=>{if(finished)return;finished=true;if(onEnd)onEnd();};
+    u.onend=done;
+    u.onerror=e=>{
+      if(finished)return;
+      if(voice&&e&&e.error!=="canceled"&&e.error!=="interrupted"){
+        try{
+          const u2=new SpeechSynthesisUtterance(String(t));
+          u2.lang=voice.lang||"es-MX";
+          u2.rate=r||0.8;
+          u2.onend=done;u2.onerror=done;
+          speechSynthesis.speak(u2);
+          return;
+        }catch(err){}
+      }
+      done();
+    };
+    speechSynthesis.speak(u);
+  };
+  if(speechSynthesis.speaking||speechSynthesis.pending){
+    speechSynthesis.cancel();
+    speakTimer=setTimeout(fire,55);
+  }else{
+    fire();
+  }
 }
 /* ── Lento (slow replay) ─────────────────────────────────────────────────────
    Every speak() remembers its text; the floating 🐢 button replays it at 0.45x. */
@@ -151,14 +191,7 @@ function rememberSpoken(t){
     lentoBtn.setAttribute("aria-label","Repetir la última frase despacio");
     lentoBtn.onclick=()=>{
       if(!lastSpokenText)return;
-      /* replay directly (not via speak) so it doesn't overwrite lastSpokenText rate context */
-      const sp=getSpanishVoices();
-      const voice=(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang))||chooseSpanishVoice(sp);
-      speechSynthesis.cancel();
-      const u=new SpeechSynthesisUtterance(lastSpokenText);
-      if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX";
-      u.rate=0.45;
-      speechSynthesis.speak(u);
+      speak(lastSpokenText,0.45);
     };
     document.body.appendChild(lentoBtn);
   }
@@ -1383,9 +1416,19 @@ function buildLessonQuiz(lesson,c){
 }
 function lpEl(cls,html){const d=document.createElement("div");d.className=cls;if(html!==undefined)d.innerHTML=html;return d;}
 function lpSpeakBtn(text,label){const b=document.createElement("button");b.type="button";b.className="lp-speak";b.textContent=label||"🔊 Escuchar";b.onclick=()=>speak(text,0.75);return b;}
+function scrollAppTop(){
+  const s=document.querySelector(".scroll");
+  if(s)s.scrollTop=0;
+  window.scrollTo(0,0);
+}
+function setLeccionesFocusMode(active){
+  const page=document.getElementById("page-lecciones");
+  if(page)page.classList.toggle("lesson-focus-mode",!!active);
+  scrollAppTop();
+}
 function renderLessonStep(){
   const root=document.getElementById("lesson-list");if(!root||!lpLesson)return;root.innerHTML="";
-  const scroll=document.querySelector(".scroll");if(scroll)scroll.scrollTop=0;
+  setLeccionesFocusMode(true);
   const c=LESSON_CONTENT[lpLesson.id];
   const step=lpSteps[lpStep];
   saveResume();
@@ -1411,11 +1454,14 @@ function renderLessonStep(){
   const prev=()=>{if(lpStep>0){lpStep--;lpRoleTurn=0;renderLessonStep();}};
   if(step==="objetivo"){
     title.textContent="🎯 Goal — by the end you will be able to say:";
-    body.appendChild(lpEl("lp-goal-es",c.goal.es));
+    const goalEs=lpEl("lp-goal-es",c.goal.es);
+    goalEs.style.cursor="pointer";
+    goalEs.onclick=()=>speak(c.goal.es,0.75);
+    body.appendChild(goalEs);
     body.appendChild(lpEl("lp-goal-en",c.goal.en));
     body.appendChild(lpSpeakBtn(c.goal.es));
     attachMic(body,c.goal.es);
-    body.appendChild(lpEl("lp-hint","Listen to it, then say it out loud twice. Next, we will break down the pattern and build up to this sentence piece by piece."));
+    body.appendChild(lpEl("lp-hint","Tap the Spanish sentence or 🔊 button to listen, then say it out loud twice."));
     navBtn("Start →",next,true);
   }
   else if(step==="escalera"){
@@ -1423,7 +1469,7 @@ function renderLessonStep(){
     title.textContent="🪜 Sentence Expansion Ladder — start small, build to full sentences";
     if(!ladder){body.appendChild(lpEl("lp-hint","No ladder available."));navBtn("‹ Back",prev);navBtn("Next →",next,true);}
     else{
-      body.appendChild(lpEl("lp-activity-note",`${ladder.title} · Say each layer out loud before adding the next piece. Notice how small chunks snap together.`));
+      body.appendChild(lpEl("lp-activity-note",`${ladder.title} · Tap any unlocked layer to hear it, then say it out loud before adding the next piece.`));
       const rungsWrap=lpEl("ladder-rungs");
       const maxRung=Math.min(Math.max(lpLadderStep,1),ladder.rungs.length);
       ladder.rungs.forEach((rung,idx)=>{
@@ -1432,6 +1478,8 @@ function renderLessonStep(){
         if(unlocked){
           const cleanEs=rung.es.replace(/\.\.\.|…/g,"").trim();
           row.innerHTML=`<div class="ladder-rung-head"><span class="ladder-tag">${escapeVocabHtml(rung.tag)}</span></div><div class="ladder-es">${escapeVocabHtml(rung.es)}</div><div class="ladder-en">${escapeVocabHtml(rung.en)}</div><div class="ladder-actions"></div>`;
+          row.style.cursor="pointer";
+          row.onclick=e=>{if(!e.target.closest("button")){markPractice("phrases",cleanEs);speak(cleanEs,0.74);}};
           const act=row.querySelector(".ladder-actions");
           const hear=document.createElement("button");hear.type="button";hear.className="warmup-btn";hear.textContent="🔊 Hear";hear.onclick=e=>{e.stopPropagation();markPractice("phrases",cleanEs);speak(cleanEs,0.74);};
           act.appendChild(hear);
@@ -1454,10 +1502,12 @@ function renderLessonStep(){
         body.appendChild(addLayer);
       }else if(Array.isArray(ladder.swaps)&&ladder.swaps.length){
         const swapsBox=lpEl("ladder-swaps");
-        swapsBox.innerHTML=`<div class="ladder-swaps-title">🔄 Rung 5 · Swap a piece and say 3 new sentences out loud</div><div class="ladder-swaps-sub">Same pattern, new real-life situations:</div>`;
+        swapsBox.innerHTML=`<div class="ladder-swaps-title">🔄 Rung 5 · Swap a piece and say 3 new sentences out loud</div><div class="ladder-swaps-sub">Tap any variation to hear it:</div>`;
         ladder.swaps.forEach(sw=>{
           const cleanEs=sw.es.replace(/\.\.\.|…/g,"").trim();
           const sRow=lpEl("ladder-swap-card",`<div class="ladder-swap-copy"><small>${escapeVocabHtml(sw.label)}</small><strong>${escapeVocabHtml(sw.es)}</strong><em>${escapeVocabHtml(sw.en)}</em></div><div class="ladder-actions"></div>`);
+          sRow.style.cursor="pointer";
+          sRow.onclick=e=>{if(!e.target.closest("button")){markPractice("phrases",cleanEs);speak(cleanEs,0.74);}};
           const act=sRow.querySelector(".ladder-actions");
           const hear=document.createElement("button");hear.type="button";hear.className="warmup-btn";hear.textContent="🔊";hear.onclick=e=>{e.stopPropagation();markPractice("phrases",cleanEs);speak(cleanEs,0.74);};
           act.appendChild(hear);attachMic(act,cleanEs,"phrases");
@@ -1883,10 +1933,11 @@ function rrCancelRecording(){
   rrStopStream();rrCloseAudio();
 }
 function rrStop(){
+  const wasActive=!!(rrTimer||rrRecorder||rrStream);
   rrPromptToken++;
   if(rrTimer){clearInterval(rrTimer);rrTimer=null;}
   rrCancelRecording();
-  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  if(wasActive&&window.speechSynthesis&&(speechSynthesis.speaking||speechSynthesis.pending))window.speechSynthesis.cancel();
 }
 function rrExit(){rrStop();renderLessons();}
 function rrSetStatus(text,cls){
@@ -1948,6 +1999,7 @@ function renderRapida(keepSame,questionRate){
   const promptToken=rrPromptToken;
   const root=document.getElementById("lesson-list");if(!root)return;
   if(!RR_BANK.length){renderLessons();return;}
+  setLeccionesFocusMode(true);
   const pace=rrDifficultyConfig();
   const pool=rrQuestionPool();
   if(!keepSame||!rrCurrent||!pool.includes(rrCurrent)){rrCurrent=pool[Math.floor(Math.random()*pool.length)];rrSession++;}
@@ -2083,13 +2135,15 @@ function recordSpeakingError(target,source){
 function clearSpeakingError(target){const id=speakingErrorId(target);if(!id)return;delete speakingErrors[id];saveSpeakingErrors();}
 function renderSpeakingErrorJournal(root){
   const entries=Object.values(speakingErrors||{}).sort((a,b)=>(b.last||0)-(a.last||0));
-  const card=document.createElement("section");card.className="error-journal";card.dataset.lessonView="today";
-  card.innerHTML=`<div class="error-journal-head"><div><div class="error-journal-kicker">🧠 YOUR PRACTICE LIST</div><div class="error-journal-title">Turn hesitation into progress</div></div><span class="error-journal-count">${entries.length}</span></div><p class="error-journal-sub">When a sentence feels difficult, it stays here until you can say it comfortably.</p>`;
+  const card=document.createElement("details");card.className="error-journal-fold";card.dataset.lessonView="today";
+  if(entries.length>0)card.open=true;
+  card.innerHTML=`<summary class="error-journal-summary"><span>🧠 <strong>Your speaking practice list</strong> <small>${entries.length?`${entries.length} sentence${entries.length===1?"":"s"} to review`:"Empty — tricky phrases appear here"}</small></span><span class="error-journal-count">${entries.length}</span></summary>`;
   const list=document.createElement("div");list.className="error-journal-list";
   if(!entries.length){const empty=document.createElement("div");empty.className="error-journal-empty";empty.textContent="Your list is empty. Use “Need more practice” after a quiz or speaking frame.";list.appendChild(empty);}
   entries.slice(0,8).forEach(item=>{
     const row=document.createElement("div");row.className="error-journal-row";
     const copy=document.createElement("div");copy.className="error-journal-copy";copy.innerHTML=`<strong>${escapeVocabHtml(item.text)}</strong><small>${escapeVocabHtml(item.source||"practice")} · ${item.count||1} attempt${(item.count||1)===1?"":"s"}</small>`;
+    copy.style.cursor="pointer";copy.onclick=()=>speak(item.text,0.75);
     const actions=document.createElement("div");actions.className="error-journal-actions";
     const hear=document.createElement("button");hear.type="button";hear.className="error-journal-btn";hear.textContent="🔊";hear.title="Hear sentence";hear.setAttribute("aria-label","Hear sentence");hear.onclick=()=>speak(item.text,0.75);
     const record=document.createElement("button");record.type="button";record.className="error-journal-btn";record.textContent="🎙️";record.title="Record yourself";record.setAttribute("aria-label","Record yourself");record.onclick=()=>openMicPanel(item.text);
@@ -2105,6 +2159,7 @@ function saveMissions(){try{localStorage.setItem(MISSION_KEY,JSON.stringify(miss
 function renderMission(mission){
   if(typeof rrStop==="function")rrStop();
   const root=document.getElementById("lesson-list");if(!root)return;root.innerHTML="";
+  setLeccionesFocusMode(true);
   const back=document.createElement("button");back.type="button";back.className="phrase-back";back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=renderLessons;root.appendChild(back);
   const card=lpEl("lp-card mission-card");card.appendChild(lpEl("lp-step-title","🗣️ Conversation mission"));card.appendChild(lpEl("mission-title",mission.title));card.appendChild(lpEl("mission-scenario",mission.scenario));card.appendChild(lpEl("mission-prompt",mission.prompt));
   const say=lpEl("mission-say","Answer out loud before looking at the examples.");card.appendChild(say);
@@ -2126,6 +2181,7 @@ function renderFramePractice(advance){
   if(!root||typeof SPEAKING_FRAMES==="undefined"||!SPEAKING_FRAMES.length){renderLessons();return;}
   if(advance)frameSessionIndex=(frameSessionIndex+1)%SPEAKING_FRAMES.length;
   root.innerHTML="";
+  setLeccionesFocusMode(true);
   const back=document.createElement("button");back.type="button";back.className="phrase-back";back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=renderLessons;root.appendChild(back);
   const modeBar=lpEl("lp-mode-switch");
   const slotTab=document.createElement("button");slotTab.type="button";slotTab.className="lp-mode-btn"+(frameMode==="slots"?" active":"");slotTab.textContent="🎰 Slot-Swapper (Mix & Speak)";
@@ -2139,7 +2195,7 @@ function renderFramePractice(advance){
     const card=lpEl("lp-card frame-practice-card");
     card.appendChild(lpEl("frame-kicker","🎰 CONSTRUCTOR DE FRASES · MIX & SPEAK"));
     card.appendChild(lpEl("frame-title",matrix.title));
-    card.appendChild(lpEl("frame-explain",matrix.sub+" Tap one piece in each column below, then say your complete sentence out loud."));
+    card.appendChild(lpEl("frame-explain",matrix.sub+" Tap one piece in each column below to hear it, then say your complete sentence out loud."));
     const mSwitch=lpEl("slot-matrix-tabs");
     SLOT_SWAP_MATRICES.forEach((m,idx)=>{
       const b=document.createElement("button");b.type="button";b.className="lp-mode-btn"+(idx===slotMatrixIndex?" active":"");b.textContent=m.title;
@@ -2157,20 +2213,27 @@ function renderFramePractice(advance){
     const assembledEn=`${c1.en} ${c2.en} ${c3.en}`.replace(/\s+/g," ").trim();
 
     const preview=lpEl("slot-assembled-box");
-    preview.innerHTML=`<div class="slot-assembled-label">🗣️ Your assembled Colombian sentence:</div><div class="slot-assembled-es">${escapeVocabHtml(assembledEs)}</div><div class="slot-assembled-en">${escapeVocabHtml(assembledEn)}</div><div class="slot-assembled-actions"></div>`;
+    preview.innerHTML=`<div class="slot-assembled-label">🗣️ Your assembled Colombian sentence (tap to hear):</div><div class="slot-assembled-es">${escapeVocabHtml(assembledEs)}</div><div class="slot-assembled-en">${escapeVocabHtml(assembledEn)}</div><div class="slot-assembled-actions"></div>`;
+    preview.style.cursor="pointer";
+    preview.onclick=e=>{if(!e.target.closest("button")){markPractice("phrases",assembledEs);speak(assembledEs,0.76);}};
     const pAct=preview.querySelector(".slot-assembled-actions");
     const hearBtn=document.createElement("button");hearBtn.type="button";hearBtn.className="lp-nav-btn primary";hearBtn.textContent="🔊 Hear sentence";
-    hearBtn.onclick=()=>{markPractice("phrases",assembledEs);speak(assembledEs,0.76);};
-    const slowBtn=document.createElement("button");slowBtn.type="button";slowBtn.className="lp-nav-btn";slowBtn.textContent="🐢 Slow";
-    slowBtn.onclick=()=>speak(assembledEs,0.52);
+    hearBtn.onclick=e=>{e.stopPropagation();markPractice("phrases",assembledEs);speak(assembledEs,0.76);};
+    const slowBtn=document.createElement("button");slowBtn.type="button";slowBtn.textContent="🐢 Slow";slowBtn.className="lp-nav-btn";
+    slowBtn.onclick=e=>{e.stopPropagation();speak(assembledEs,0.52);};
     const randBtn=document.createElement("button");randBtn.type="button";randBtn.className="lp-nav-btn";randBtn.textContent="🎲 Randomize";
-    randBtn.onclick=()=>{
+    randBtn.onclick=e=>{
+      e.stopPropagation();
       slotPick=[
         Math.floor(Math.random()*matrix.col1.length),
         Math.floor(Math.random()*matrix.col2.length),
         Math.floor(Math.random()*matrix.col3.length)
       ];
       renderFramePractice(false);
+      const r1=matrix.col1[slotPick[0]]||matrix.col1[0],r2=matrix.col2[slotPick[1]]||matrix.col2[0],r3=matrix.col3[slotPick[2]]||matrix.col3[0];
+      const rQ=r1.es.trim().startsWith("¿");
+      const rRaw=`${r1.es} ${r2.es} ${r3.es}`.replace(/\s+/g," ").trim();
+      speak(rQ?(rRaw.replace(/\.$/,"")+"?"):rRaw,0.76);
     };
     pAct.append(hearBtn,slowBtn,randBtn);
     attachMic(pAct,assembledEs,"phrases");
@@ -2188,7 +2251,11 @@ function renderFramePractice(advance){
         const b=document.createElement("button");b.type="button";
         b.className="slot-chip"+(slotPick[colIdx]===rowIdx?" active":"");
         b.innerHTML=`<strong>${escapeVocabHtml(item.es)}</strong><small>${escapeVocabHtml(item.en)}</small>`;
-        b.onclick=()=>{slotPick[colIdx]=rowIdx;renderFramePractice(false);};
+        b.onclick=()=>{
+          slotPick[colIdx]=rowIdx;
+          renderFramePractice(false);
+          speak(item.es.replace(/\.\.\.|…/g,"").trim(),0.78);
+        };
         col.appendChild(b);
       });
       grid.appendChild(col);
@@ -2217,8 +2284,10 @@ function renderFramePractice(advance){
   const reveal=document.createElement("button");reveal.type="button";reveal.className="lp-nav-btn primary frame-reveal";reveal.textContent="👀 Reveal model sentence";
   const model=lpEl("frame-model");model.hidden=true;
   model.innerHTML=`<div class="frame-model-label">Natural answer</div><div class="frame-model-es">${escapeVocabHtml(prompt.es)}</div><div class="frame-model-en">${escapeVocabHtml(prompt.en)}</div>`;
+  model.style.cursor="pointer";
+  model.onclick=e=>{if(!e.target.closest("button"))speak(prompt.es,0.75);};
   const modelSpeak=lpSpeakBtn(prompt.es,"🔊 Repeat the sentence");model.appendChild(modelSpeak);
-  reveal.onclick=()=>{model.hidden=false;reveal.remove();markPractice("frames",frame.id);};
+  reveal.onclick=()=>{model.hidden=false;reveal.remove();markPractice("frames",frame.id);speak(prompt.es,0.75);};
   card.appendChild(reveal);card.appendChild(model);attachMic(card,prompt.es);
   const more=document.createElement("details");more.className="frame-more";more.innerHTML="<summary>More ways to use this frame</summary><div class='frame-more-list'></div>";
   const moreList=more.querySelector(".frame-more-list");
@@ -2242,6 +2311,7 @@ function saveReadings(){try{localStorage.setItem(READING_KEY,JSON.stringify(read
 function renderReading(reading){
   if(typeof rrStop==="function")rrStop();
   const root=document.getElementById("lesson-list");if(!root)return;root.innerHTML="";
+  setLeccionesFocusMode(true);
   const back=document.createElement("button");back.type="button";back.className="phrase-back";back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=renderLessons;root.appendChild(back);
   const card=lpEl("lp-card reading-card");
   card.appendChild(lpEl("reading-kicker",`${reading.level} · LECTURA`));
@@ -2397,10 +2467,11 @@ function setLessonView(view){
   const root=document.getElementById("lesson-list");if(!root)return;
   root.querySelectorAll(".lesson-view-tab").forEach(b=>b.classList.toggle("active",b.dataset.view===lessonView));
   root.querySelectorAll("[data-lesson-view]").forEach(el=>el.classList.toggle("lesson-view-hidden",el.dataset.lessonView!==lessonView));
+  scrollAppTop();
 }
 function buildLessonViewTabs(root){
   const nav=document.createElement("nav");nav.className="lesson-view-tabs";nav.setAttribute("aria-label","Lesson views");
-  [["today","Today / Hoy","Your next practice"],["path","Learning path / Ruta","Tenses and lessons"],["practice","Practice library / Biblioteca","Missions, readings, backup"]].forEach(([id,title,sub])=>{
+  [["today","Today / Hoy","Daily hub"],["path","Learning path / Ruta","34 lessons"],["practice","Practice / Biblioteca","Missions & stories"]].forEach(([id,title,sub])=>{
     const b=document.createElement("button");b.type="button";b.className="lesson-view-tab";b.dataset.view=id;b.innerHTML=`<strong>${title}</strong><small>${sub}</small>`;b.onclick=()=>setLessonView(id);nav.appendChild(b);
   });
   root.appendChild(nav);
@@ -2411,6 +2482,7 @@ function setSessionLength(value){
   root.querySelectorAll(".session-length-btn").forEach(b=>b.classList.toggle("selected",b.dataset.minutes===sessionLength));
 }
 function startSelectedSession(){
+  scrollAppTop();
   if(sessionLength==="5"){renderFramePractice(false);return;}
   if(sessionLength==="20"){
     const target=LESSONS.find(l=>!lessonProgress[l.id])||LESSONS[0];
@@ -2425,15 +2497,15 @@ function renderRoutineCard(root){
   const wrap=document.createElement("section");wrap.className="daily-routine-card";wrap.dataset.lessonView="today";
   const complete=routineState.step>=ROUTINE_STEPS.length;
   const current=ROUTINE_STEPS[Math.min(routineState.step,ROUTINE_STEPS.length-1)];
-  wrap.innerHTML=`<div class='routine-top'><div><div class='routine-kicker'>🎓 DAILY SPEAKING PATH</div><div class='routine-title'>${complete?"Routine complete for today":"Your next 10-minute speaking practice"}</div></div><div class='routine-count'>${complete?`${ROUTINE_STEPS.length}/${ROUTINE_STEPS.length}`:`${routineState.step}/${ROUTINE_STEPS.length}`}</div></div><div class='routine-track'><span style='width:${Math.round(routineState.step/ROUTINE_STEPS.length*100)}%'></span></div><div class='routine-note'>Listen → say it → compare → continue</div>`;
+  wrap.innerHTML=`<div class='routine-top'><div><div class='routine-kicker'>🎯 10-MINUTE DAILY SPEAKING ROUTINE</div><div class='routine-title'>${complete?"Routine complete for today":"Step "+(routineState.step+1)+" of "+ROUTINE_STEPS.length+": "+current.title}</div></div><div class='routine-count'>${complete?`${ROUTINE_STEPS.length}/${ROUTINE_STEPS.length}`:`${routineState.step}/${ROUTINE_STEPS.length}`}</div></div><div class='routine-track'><span style='width:${Math.round(routineState.step/ROUTINE_STEPS.length*100)}%'></span></div>`;
   if(!complete){
     const step=lpEl("routine-current");step.innerHTML=`<span class='routine-current-icon'>${current.icon}</span><span><strong>${current.title}</strong><small>${current.sub}</small></span>`;
     const actions=lpEl("routine-actions");
-    const open=document.createElement("button");open.type="button";open.className="lp-nav-btn primary";open.textContent="Start step";open.onclick=()=>routineOpen(current.id);
-    const done=document.createElement("button");done.type="button";done.className="lp-nav-btn";done.textContent="I practiced";done.onclick=routineComplete;
+    const open=document.createElement("button");open.type="button";open.className="lp-nav-btn primary";open.textContent="▶ Start routine step";open.onclick=()=>routineOpen(current.id);
+    const done=document.createElement("button");done.type="button";done.className="lp-nav-btn";done.textContent="Skip / Mark done";done.onclick=routineComplete;
     actions.append(open,done);wrap.append(step,actions);
   }else{
-    const replay=document.createElement("button");replay.type="button";replay.className="lp-nav-btn";replay.textContent="↻ Start again tomorrow";replay.disabled=true;wrap.appendChild(replay);
+    const replay=document.createElement("button");replay.type="button";replay.className="lp-nav-btn";replay.textContent="↻ Replay daily routine";replay.onclick=()=>{routineState.step=0;saveRoutine();routineOpen(ROUTINE_STEPS[0].id);};wrap.appendChild(replay);
   }
   root.appendChild(wrap);
 }
@@ -2441,16 +2513,10 @@ function renderRoutineCard(root){
 function renderProgressDashboard(root,done){
   const vocabCount=Object.keys((practiceStore&&practiceStore.vocab)||{}).length;
   const phraseCount=Object.keys((practiceStore&&practiceStore.phrases)||{}).length;
-  const activeCards=Object.keys(srsStore||{}).length;
   const mastered=Object.values(srsStore||{}).filter(c=>(c.interval||0)>=SRS_INTERVALS.length).length;
-  const due=srsDueCount();
   const rapid=rrStats.attempts||0;
-  const card=document.createElement("section");card.className="progress-dashboard";card.dataset.lessonView="today";
-  card.innerHTML=`<div class="progress-dashboard-head"><div><div class="progress-kicker">📈 YOUR SPEAKING PROGRESS</div><div class="progress-title">Small steps become conversation</div></div><div class="progress-streak">🔥 ${dayInfo.streak}</div></div><div class="progress-metrics"><div><strong>${done}/${LESSONS.length}</strong><small>lessons</small></div><div><strong>${vocabCount}</strong><small>words practiced</small></div><div><strong>${phraseCount}</strong><small>phrases practiced</small></div><div><strong>${mastered}</strong><small>cards mastered</small></div></div><div class="progress-dashboard-note">${due?`🔁 ${due} review card${due===1?"":"s"} due today`:`✅ No review cards due today`} · ⚡ ${rapid} rapid response${rapid===1?"":"s"}</div>`;
-  const percent=LESSONS.length?done/LESSONS.length:0;
-  const pathLevel=percent<0.16?"A0 · Getting started":percent<0.38?"A1 · Everyday basics":percent<0.68?"A2 · Connected speech":"B1 · More natural conversation";
-  const ladder=document.createElement("div");ladder.className="progress-ladder";ladder.innerHTML=`<div class="progress-ladder-head"><strong>🧭 Your speaking path</strong><span>${pathLevel}</span></div><div class="progress-ladder-steps"><span class="on">Foundations</span><span class="${percent>=0.16?"on":""}">Daily life</span><span class="${percent>=0.38?"on":""}">Stories</span><span class="${percent>=0.68?"on":""}">Natural speech</span></div>`;
-  card.appendChild(ladder);
+  const card=document.createElement("section");card.className="progress-dashboard compact-stats-card";card.dataset.lessonView="today";
+  card.innerHTML=`<div class="progress-metrics"><div><strong>${done}/${LESSONS.length}</strong><small>lessons</small></div><div><strong>${vocabCount}</strong><small>words</small></div><div><strong>${phraseCount}</strong><small>phrases</small></div><div><strong>${mastered}</strong><small>mastered</small></div></div><details class="lesson-overview"><summary><span>ⓘ How the speaking path works</span><small>8-step core · ${rapid} rapid drills</small></summary><div class="lesson-flow">Recommended path: Start Here → Travel → Daily Life → Build Sentences → Speak Naturally<br>⚡ Speaking Core (8 steps): 🎯 Goal → 🧱 Frame → 🔑 Words → 🪜 Sentence Ladder → 💬 Dialogue → 🎭 Role-play → 🗣️ Speak Out Loud</div></details>`;
   root.appendChild(card);
 }
 
@@ -2529,55 +2595,59 @@ function openReviewSession(){qMissedOnly=false;showPage("quiz");qMode="mixed";qC
 function renderLessons(){
   const root=document.getElementById("lesson-list");if(!root)return;
   if(lpLesson){renderLessonStep();return;}
+  setLeccionesFocusMode(false);
   root.innerHTML="";
   buildLessonViewTabs(root);
   const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
-  const intro=document.createElement("div");intro.className="lesson-intro";intro.dataset.lessonView="today";
-  intro.innerHTML=`<div class="lesson-intro-title">${done} de ${LESSONS.length} complete · 🔥 ${dayInfo.streak}-day streak</div><div class="lesson-progress"><span style="width:${Math.round(done/LESSONS.length*100)}%"></span></div><details class="lesson-overview"><summary><span>ⓘ How the learning path works</span><small>Small blocks → full sentences</small></summary><div class="lesson-flow">Recommended path: Start Here → Travel → Daily Life → Build Sentences → Speak Naturally<br>⚡ Speaking Core (8 steps): 🎯 Goal → 🔑 Words → 🧱 Frame → 🪜 Sentence Ladder → 💬 Dialogue → 🎭 Role-play → 🧪 Quiz → 🗣️ Speak Out Loud (switch to 📚 Full 16-step Practice anytime)</div></details>`;
-  root.appendChild(intro);
-  renderRoutineCard(root);
-  /* Continue / Start here (v21) */
+  const percent=LESSONS.length?done/LESSONS.length:0;
+  const pathLevel=percent<0.16?"A0 · Foundations":percent<0.38?"A1 · Everyday basics":percent<0.68?"A2 · Connected speech":"B1 · Conversational";
   const resume=loadResume();
   const resLesson=resume&&LESSONS.find(l=>l.id===resume.id);
   const nextLesson=LESSONS.find(l=>!lessonProgress[l.id]);
-  const homeHub=document.createElement("section");homeHub.className="today-hub";homeHub.dataset.lessonView="today";
-  homeHub.innerHTML="<div class='today-hub-kicker'>🧭 START HERE · YOUR NEXT FEW MINUTES</div><div class='today-hub-title'>Choose one clear action</div><div class='today-hub-sub'>The app is most useful when you say something every session—not when you open every section.</div>";
-  const homeActions=document.createElement("div");homeActions.className="today-hub-actions";
-  const addHomeAction=(icon,title,sub,fn,primary)=>{const b=document.createElement("button");b.type="button";b.className="today-action"+(primary?" primary":"");b.innerHTML=`<span class='today-action-icon'>${icon}</span><span><strong>${title}</strong><small>${sub}</small></span><span class='today-action-arrow'>›</span>`;b.onclick=fn;homeActions.appendChild(b);};
-  if(resLesson&&!lessonProgress[resLesson.id])addHomeAction("▶️","Continue / Continuar",`${resLesson.title} · step ${(resume.step|0)+1}`,()=>openLessonAt(resLesson,resume.step,resume.qi,resume.score),true);
-  else if(nextLesson)addHomeAction("🎓","Start next lesson / Empezar",nextLesson.title,()=>openLesson(nextLesson),true);
-  else addHomeAction("🎓","Review your path / Repasar","Replay a completed lesson",()=>{const first=LESSONS[0];if(first)openLesson(first);},true);
-  const dueHome=srsDueCount();
-  addHomeAction("🔁","Review due cards / Repasar",dueHome?`${dueHome} card${dueHome===1?"":"s"} due today`:"Keep your memory active",openReviewSession,false);
-  const missedHome=storedMissedQuestionCount();
-  addHomeAction("🧠","Missed questions / Falladas",missedHome?`${missedHome} waiting · correct answers remove them`:"Queue empty — keep practicing",()=>{if(missedHome)openMissedQueue();else alert("Your missed-question queue is empty.");},false);
-  addHomeAction("🧱","Speak with frames / Construir", "Turn patterns into sentences",()=>renderFramePractice(false),false);
-  homeHub.appendChild(homeActions);root.appendChild(homeHub);
+
+  /* 1. Unified Hero Card — Status + Primary Lesson CTA + 1-Tap Session Launchers */
+  const hero=document.createElement("section");hero.className="today-hero-card";hero.dataset.lessonView="today";
+  hero.innerHTML=`<div class="today-hero-status"><span class="hero-pill streak">🔥 ${dayInfo.streak}d streak</span><span class="hero-pill level">🧭 ${pathLevel}</span><span class="hero-pill count">${done}/${LESSONS.length} lessons</span></div><div class="lesson-progress"><span style="width:${Math.round(percent*100)}%"></span></div>`;
+
+  const primaryLesson=(resLesson&&!lessonProgress[resLesson.id])?resLesson:(nextLesson||LESSONS[0]);
+  const isResuming=!!(resLesson&&!lessonProgress[resLesson.id]);
+  const heroCta=document.createElement("button");heroCta.type="button";heroCta.className="today-hero-cta";
+  heroCta.innerHTML=`<div class="today-hero-cta-icon">${primaryLesson.icon||"🎓"}</div><div class="today-hero-cta-copy"><span class="today-hero-cta-kicker">${isResuming?`▶️ CONTINUE · STEP ${(resume.step|0)+1}`:(done===0?"🚀 START HERE · LESSON 1":"🎓 NEXT LESSON")}</span><strong>${escapeVocabHtml(primaryLesson.title)}</strong><small>${escapeVocabHtml(primaryLesson.sub)}</small></div><div class="today-hero-cta-badge">${isResuming?"Resume →":"Start →"}</div>`;
+  heroCta.onclick=()=>{if(isResuming)openLessonAt(resLesson,resume.step,resume.qi,resume.score);else openLesson(primaryLesson);};
+  hero.appendChild(heroCta);
+
   const sessionBox=document.createElement("div");sessionBox.className="session-picker";
-  sessionBox.innerHTML="<div class='session-picker-copy'><strong>Choose your session</strong><small>Pick a realistic amount of speaking for today.</small></div><div class='session-lengths'></div><button type='button' class='session-start'>▶ Start session</button>";
+  sessionBox.innerHTML="<div class='session-picker-copy'><strong>Or jump straight into a timed session:</strong></div><div class='session-lengths'></div>";
   const sessionLengths=sessionBox.querySelector(".session-lengths");
-  [["5","5 min","Quick sentence frames"],["10","10 min","Daily speaking path"],["20","20 min","Full lesson + practice"]].forEach(([minutes,label,sub])=>{const b=document.createElement("button");b.type="button";b.className="session-length-btn";b.dataset.minutes=minutes;b.innerHTML=`<strong>${label}</strong><small>${sub}</small>`;b.onclick=()=>setSessionLength(minutes);sessionLengths.appendChild(b);});
-  sessionBox.querySelector(".session-start").onclick=startSelectedSession;
-  homeHub.appendChild(sessionBox);
+  [["5","⚡ 5 min","Sentence builder"],["10","🎯 10 min","Daily routine"],["20","🎓 20 min","Full lesson"]].forEach(([minutes,label,sub])=>{
+    const b=document.createElement("button");b.type="button";b.className="session-length-btn";b.dataset.minutes=minutes;
+    b.innerHTML=`<strong>${label}</strong><small>${sub}</small>`;
+    b.onclick=()=>{setSessionLength(minutes);startSelectedSession();};
+    sessionLengths.appendChild(b);
+  });
+  hero.appendChild(sessionBox);
+  root.appendChild(hero);
   setSessionLength(sessionLength);
-  const cont=document.createElement("div");cont.className="continue-card";
-  let cTitle,cSub,cAction;
-  if(resLesson&&!lessonProgress[resLesson.id]){
-    cTitle="▶️ Continue: "+resLesson.title;
-    cSub="Step "+((resume.step|0)+1)+" of "+lpSteps.length+" — pick up where you left off";
-    cAction=()=>openLessonAt(resLesson,resume.step,resume.qi,resume.score);
-  }else if(nextLesson){
-    cTitle=(done===0?"▶️ Start here: ":"▶️ Next lesson: ")+nextLesson.title;
-    cSub=nextLesson.sub;
-    cAction=()=>openLesson(nextLesson);
-  }else{
-    cTitle="🎉 All lessons complete";
-    cSub="Replay any lesson below, or drill with Reacción Rápida";
-    cAction=null;
-  }
-  cont.innerHTML=`<div class="continue-title">${cTitle}</div><div class="continue-sub">${cSub}</div>`;
-  if(cAction){cont.onclick=cAction;cont.classList.add("tappable");}
-  /* The primary resume action now lives in today-hub above; keep one clear CTA. */
+
+  /* 2. Clean 2x2 Quick Practice Grid */
+  const dueHome=srsDueCount();
+  const missedHome=storedMissedQuestionCount();
+  const quickGrid=document.createElement("section");quickGrid.className="today-quick-grid";quickGrid.dataset.lessonView="today";
+  [
+    ["🎰","Slot-Swapper","Mix & speak sentences",()=>renderFramePractice(false)],
+    ["⚡","Reacción Rápida","Timed audio prompts",()=>{rrSession=0;renderRapida(false);}],
+    ["🔁","Review Cards",dueHome?`${dueHome} due today`:"Spaced repetition",openReviewSession],
+    ["🧠","Missed Queue",missedHome?`${missedHome} waiting`:"All clear ✓",()=>{if(missedHome)openMissedQueue();else openReviewSession();}]
+  ].forEach(([icon,title,sub,fn])=>{
+    const tile=document.createElement("button");tile.type="button";tile.className="today-quick-tile";
+    tile.innerHTML=`<span class="today-quick-icon">${icon}</span><span class="today-quick-copy"><strong>${title}</strong><small>${sub}</small></span>`;
+    tile.onclick=fn;
+    quickGrid.appendChild(tile);
+  });
+  root.appendChild(quickGrid);
+
+  /* 3. Guided 10-Min Routine + Compact Stats + Collapsible Practice List */
+  renderRoutineCard(root);
   renderProgressDashboard(root,done);
   renderSpeakingErrorJournal(root);
   /* Daily practice — one compact row (v22) */

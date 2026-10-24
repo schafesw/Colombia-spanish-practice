@@ -1,10 +1,10 @@
-const CACHE_NAME = "espanol-co-v71";
+const CACHE_NAME = "espanol-co-v71.2";
 const ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=71.0",
-  "./data.js?v=71.0",
-  "./app.js?v=71.0",
+  "./styles.css?v=71.2",
+  "./data.js?v=71.2",
+  "./app.js?v=71.2",
   "./manifest.json"
 ];
 
@@ -22,15 +22,16 @@ self.addEventListener("activate", event => {
   );
 });
 
+/* Network-first when online so GitHub updates show immediately; fallback to cache offline */
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
   event.respondWith(
-    caches.match(event.request).then(cached =>
-      cached || fetch(event.request).then(response => {
+    fetch(event.request)
+      .then(response => {
         const clone = response.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone)).catch(() => {});
         return response;
-      }).catch(() => cached)
-    )
+      })
+      .catch(() => caches.match(event.request))
   );
 });
