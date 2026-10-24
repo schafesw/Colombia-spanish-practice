@@ -68,14 +68,13 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v74.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v75.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);
   bar.append(label,select,reset,ver);host.appendChild(bar);
 }
 buildProfileBar();
-let voices=[],selV=null,activeUtterance=null;
-const IS_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent||"")||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
-const VOICE_KEY="esco-selected-voice-v3";
+let voices=[],selV=null;
+const VOICE_KEY="esco-selected-voice-v1";
 const VOICE_HOSTS=["fonetica","lecciones","vocab","frases","gram","quiz"];
 let savedVoiceKey="";
 try{savedVoiceKey=localStorage.getItem(VOICE_KEY)||"";}catch(e){}
@@ -84,27 +83,20 @@ function voiceLabel(v){return `${v.lang||"es"} · ${(v.name||"Spanish voice").re
 function getSpanishVoices(){
   if(!window.speechSynthesis)return [];
   voices=window.speechSynthesis.getVoices()||[];
-  const seen=new Set();
-  return voices.filter(v=>/^es(?:-|_|$)/i.test(String(v.lang||""))).filter(v=>{
-    const key=`${v.name||""}|${v.lang||""}`;
-    if(seen.has(key))return false;
-    seen.add(key);return true;
-  });
+  return voices.filter(v=>/^es(?:-|_|$)/i.test(String(v.lang||"")));
 }
 function chooseSpanishVoice(sp){
   const saved=sp.find(v=>voiceKey(v)===savedVoiceKey||(`${v.name}::${v.lang}`===savedVoiceKey));
   if(saved)return saved;
-  const clean=sp.filter(v=>!/Grandma|Grandpa|Rocko|Reed|Shelley|Sandy|Flo|Eddy/i.test(String(v.name||"")));
-  const pool=clean.length?clean:sp;
   if(!savedVoiceKey){
     for(const p of["es-CO","es-419","es-MX","es-US","es-AR","es-ES"]){
-      const v=pool.find(x=>String(x.lang||"").toUpperCase().startsWith(p.toUpperCase()));
+      const v=sp.find(x=>String(x.lang||"").toUpperCase().startsWith(p.toUpperCase()));
       if(v)return v;
     }
   }
-  const kept=selV&&pool.find(v=>v.name===selV.name&&v.lang===selV.lang);
+  const kept=selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang);
   if(kept)return kept;
-  return pool[0]||sp[0]||null;
+  return sp[0]||null;
 }
 function rememberVoice(v){
   if(!v)return;
@@ -130,10 +122,10 @@ function buildVoiceBars(sp=getSpanishVoices()){
     const select=document.createElement("select");select.className="voice-select voice-choice";select.setAttribute("aria-label","Spanish voice");
     if(sp.length){
       sp.forEach(v=>{const option=document.createElement("option");option.value=voiceKey(v);option.textContent=voiceLabel(v);select.appendChild(option);});
+      if(selV)select.value=voiceKey(selV);
     }else{
       const option=document.createElement("option");option.textContent="Loading Spanish voices…";option.disabled=true;option.selected=true;select.appendChild(option);
     }
-    if(selV)select.value=voiceKey(selV);
     select.onchange=()=>chV(select.value);
     const test=document.createElement("button");test.type="button";test.className="voice-test";test.textContent="Probar";test.onclick=()=>speak("Hola, buenos días Colombia",0.8);
     bar.append(label,select,test);host.appendChild(bar);
@@ -143,40 +135,19 @@ function chV(key){
   const v=getSpanishVoices().find(x=>voiceKey(x)===key);
   if(v){rememberVoice(v);syncVoiceSelectors();}
 }
-function unlockSpeech(){
-  if(!window.speechSynthesis)return;
-  try{window.speechSynthesis.resume();}catch(e){}
-}
-function playUtterance(u,onEnd){
-  const synth=window.speechSynthesis;
-  let finished=false;
-  const done=()=>{if(finished)return;finished=true;if(onEnd)onEnd();};
-  u.onend=done;
-  u.onerror=done;
-  const start=()=>{try{synth.resume();synth.speak(u);}catch(e){done();}};
-  try{
-    if(synth.speaking||synth.pending){
-      synth.cancel();
-      if(IS_IOS)setTimeout(start,60);else start();
-    }else start();
-  }catch(e){done();}
-}
 function speak(t,r,onEnd){
   if(!window.speechSynthesis){if(onEnd)onEnd();return;}
   const sp=getSpanishVoices();
-  const saved=savedVoiceKey&&sp.find(v=>voiceKey(v)===savedVoiceKey);
+  const saved=savedVoiceKey&&sp.find(v=>voiceKey(v)===savedVoiceKey); /* saved pick wins the moment the list recovers */
   const live=saved||(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang));
   const voice=live||chooseSpanishVoice(sp);
-  if(voice)selV=voice;
-  try{
-    speechSynthesis.cancel();
-    if(speechSynthesis.paused)speechSynthesis.resume();
-  }catch(e){}
-  const u=new SpeechSynthesisUtterance(String(t||""));
-  activeUtterance=u;
-  if(voice){u.voice=voice;u.lang=voice.lang||"es-MX";}else u.lang="es-MX";
+  if(voice)selV=voice; /* use it, but do NOT persist — only an explicit dropdown pick (chV) saves, so a flaky iOS voice list can't overwrite the user's choice */
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);
+  if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
   u.rate=r||0.8;
-  playUtterance(u,onEnd);
+  if(onEnd){let finished=false;const done=()=>{if(finished)return;finished=true;onEnd();};u.onend=done;u.onerror=done;}
+  speechSynthesis.speak(u);
   rememberSpoken(t);
 }
 /* ── Lento (slow replay) ─────────────────────────────────────────────────────
@@ -193,7 +164,14 @@ function rememberSpoken(t){
     lentoBtn.setAttribute("aria-label","Repetir la última frase despacio");
     lentoBtn.onclick=()=>{
       if(!lastSpokenText)return;
-      speak(lastSpokenText,0.45);
+      /* replay directly (not via speak) so it doesn't overwrite lastSpokenText rate context */
+      const sp=getSpanishVoices();
+      const voice=(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang))||chooseSpanishVoice(sp);
+      speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(lastSpokenText);
+      if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX";
+      u.rate=0.45;
+      speechSynthesis.speak(u);
     };
     document.body.appendChild(lentoBtn);
   }
@@ -204,10 +182,6 @@ if(window.speechSynthesis){
   window.speechSynthesis.onvoiceschanged=loadV;
   setTimeout(loadV,100);
   setTimeout(loadV,500);
-  document.addEventListener("touchend",unlockSpeech,{capture:true,passive:true});
-  document.addEventListener("click",unlockSpeech,{capture:true,passive:true});
-}else{
-  buildVoiceBars([]);
 }
 
 // ── Build Letras ──────────────────────────────────────────────────────────────
