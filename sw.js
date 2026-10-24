@@ -1,37 +1,14 @@
-const CACHE_NAME = "espanol-co-v73.0";
-const ASSETS = [
-  "./",
-  "./index.html",
-  "./styles.css?v=73.0",
-  "./data.js?v=73.0",
-  "./app.js?v=73.0",
-  "./manifest.json"
-];
-
+/* Self-unregistering Service Worker to clear any stuck iOS/browser caches */
 self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting())
-  );
+  self.skipWaiting();
 });
 
 self.addEventListener("activate", event => {
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)))
-    ).then(() => self.clients.claim())
-  );
-});
-
-/* Network-first when online so GitHub updates show immediately; fallback to cache offline */
-self.addEventListener("fetch", event => {
-  if (event.request.method !== "GET") return;
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone)).catch(() => {});
-        return response;
-      })
-      .catch(() => caches.match(event.request))
+    caches.keys()
+      .then(keys => Promise.all(keys.map(key => caches.delete(key))))
+      .then(() => self.registration.unregister())
+      .then(() => self.clients.matchAll())
+      .then(clients => clients.forEach(client => client.navigate(client.url)))
   );
 });
