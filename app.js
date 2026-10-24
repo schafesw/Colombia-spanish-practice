@@ -68,7 +68,7 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v75.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v76.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);
   bar.append(label,select,reset,ver);host.appendChild(bar);
 }
@@ -83,7 +83,13 @@ function voiceLabel(v){return `${v.lang||"es"} · ${(v.name||"Spanish voice").re
 function getSpanishVoices(){
   if(!window.speechSynthesis)return [];
   voices=window.speechSynthesis.getVoices()||[];
-  return voices.filter(v=>/^es(?:-|_|$)/i.test(String(v.lang||"")));
+  const seen=new Set();
+  return voices.filter(v=>/^es(?:-|_|$)/i.test(String(v.lang||""))).filter(v=>{
+    const key=`${String(v.name||"").trim().toLowerCase()}|${String(v.lang||"").trim().toLowerCase()}`;
+    if(seen.has(key))return false;
+    seen.add(key);
+    return true;
+  });
 }
 function chooseSpanishVoice(sp){
   const saved=sp.find(v=>voiceKey(v)===savedVoiceKey||(`${v.name}::${v.lang}`===savedVoiceKey));
