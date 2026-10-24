@@ -1692,4 +1692,54 @@ body.lesson-focus-active .scroll{padding-bottom:calc(var(--safe-bottom) + 118px)
   border-top:1px solid rgba(255,255,255,.06);
 }
 
+/* v79: compact focus header — one row instead of four stacked controls. */
+#page-lecciones.lesson-focus-mode .lp-progress-head,
+#page-lecciones.lesson-focus-mode .lp-dots{display:none;}
+#page-lecciones.lesson-focus-mode .lp-focus-top{gap:7px;margin-bottom:10px;}
+.lp-focus-step{flex:0 0 auto;color:var(--gold);font-size:.7rem;font-weight:950;white-space:nowrap;}
+#page-lecciones.lesson-focus-mode .lp-mode-switch{display:flex;flex:0 0 auto;gap:4px;margin:0;}
+#page-lecciones.lesson-focus-mode .lp-mode-btn{min-width:0;min-height:32px;padding:5px 7px;font-size:.58rem;white-space:nowrap;}
+
+/* v79: stage accordions keep the learning path readable without removing content. */
+.lesson-stage{margin:0 0 9px;}
+.lesson-stage>summary{list-style:none;cursor:pointer;}
+.lesson-stage>summary::-webkit-details-marker{display:none;}
+.lesson-stage .stage-label{position:relative;margin-top:15px;padding:11px 34px 11px 12px;}
+.lesson-stage .stage-label:after{content:"⌄";position:absolute;right:12px;top:50%;color:var(--gold);font-size:1rem;line-height:1;transform:translateY(-50%);transition:transform .18s ease;}
+.lesson-stage:not([open]) .stage-label:after{transform:translateY(-50%) rotate(-90deg);}
+.stage-progress{height:4px;margin-top:9px;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.1);}
+.stage-progress span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--teal),var(--gold));}
+
+/* v79: active ladder choices turn sentence expansion into a quick production decision. */
+.ladder-choice{margin-top:12px;padding:12px;border:1px solid rgba(232,180,74,.28);border-radius:14px;background:rgba(232,180,74,.07);}
+.ladder-choice-title{color:var(--gold);font-size:.82rem;font-weight:950;}
+.ladder-choice-help{margin-top:4px;color:var(--muted);font-size:.7rem;line-height:1.4;}
+.ladder-choice-options{display:grid;gap:7px;margin-top:10px;}
+.ladder-choice-btn{min-height:44px;padding:9px 10px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.055);color:#fff;font:inherit;font-size:.72rem;font-weight:800;text-align:left;}
+.ladder-choice-btn.correct{border-color:var(--teal);background:rgba(74,168,160,.18);color:var(--teal);}
+.ladder-choice-btn.wrong{border-color:var(--pink);background:rgba(232,93,117,.13);color:var(--pink);}
+.ladder-choice-feedback{min-height:18px;margin-top:8px;color:var(--gold);font-size:.68rem;font-weight:800;line-height:1.35;}
+.ladder-choice-skip{margin-top:7px;border:0;background:none;color:var(--muted);font:inherit;font-size:.64rem;text-decoration:underline;cursor:pointer;}
+
+/* v79: feedback stays in a stable tray instead of pushing the answer layout. */
+.feedback-tray{display:none;}
+#page-lecciones.lesson-focus-mode .feedback-tray.visible,
+#page-quiz .feedback-tray.visible{display:block;position:fixed;left:12px;right:12px;z-index:1002;padding:10px 12px;border:1px solid rgba(74,168,160,.45);border-radius:13px;background:rgba(16,25,31,.97);box-shadow:0 -6px 24px rgba(0,0,0,.35);text-align:left;}
+#page-lecciones.lesson-focus-mode .feedback-tray.visible{bottom:calc(var(--safe-bottom) + 84px);}
+#page-quiz .feedback-tray.visible{bottom:calc(var(--tab-h) + var(--safe-bottom) + 76px);}
+.feedback-tray .lp-reveal{margin-top:5px;}
+
+/* v79: rapid prompt packs. */
+.rr-pack-row{margin:0 0 13px;padding:10px;border:1px solid rgba(74,168,160,.22);border-radius:13px;background:rgba(74,168,160,.06);text-align:left;}
+.rr-pack-label{display:block;margin-bottom:7px;color:var(--teal);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;font-weight:950;}
+.rr-pack-buttons{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.rr-pack-btn{min-height:42px;padding:7px 6px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.045);color:var(--muted);font:inherit;font-size:.63rem;font-weight:850;line-height:1.2;}
+.rr-pack-btn.selected{border-color:rgba(74,168,160,.75);background:rgba(74,168,160,.16);color:var(--teal);}
+.rr-pack-btn:active{transform:scale(.98);}
+@media(max-width:360px){
+  #page-lecciones.lesson-focus-mode .lp-exit span:last-child{display:none;}
+  #page-lecciones.lesson-focus-mode .lp-mode-btn{padding-left:5px;padding-right:5px;font-size:.54rem;}
+  .rr-pack-buttons{grid-template-columns:1fr;}
+}
+
 
