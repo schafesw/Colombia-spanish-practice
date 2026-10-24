@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
@@ -6,11 +6,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Español CO"/>
-<meta name="theme-color" content="#0d0d1a"/>
 <title>Español · Colombia</title>
-<link rel="manifest" href="manifest.json"/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="styles.css?v=71.2"/>
+  <link rel="stylesheet" href="styles.css?v=72.0"/>
 </head>
 <body>
 <div id="app">
@@ -269,7 +267,7 @@
 </div>
 </div>
 
-  <script src="data.js?v=71.2"></script><script src="app.js?v=71.2"></script>
-  <script>if('serviceWorker' in navigator&&location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}</script>
+  <script src="data.js?v=72.0"></script><script src="app.js?v=72.0"></script>
+  <script>if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{});if(window.caches)caches.keys().then(ks=>ks.forEach(k=>caches.delete(k))).catch(()=>{});}</script>
 </body>
 </html>

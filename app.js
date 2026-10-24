@@ -1,4 +1,4 @@
-// Spanish learning app behavior
+﻿// Spanish learning app behavior
 // ── Voice ─────────────────────────────────────────────────────────────────────
 // ── Local profiles ──────────────────────────────────────────────────────────
 // Profiles are intentionally local to this browser/device. They keep quiz,
@@ -42,23 +42,16 @@ const profileStorage={
 };
 // Existing app code can continue using localStorage; this proxy scopes it.
 const localStorage=profileStorage;
-let voices=[],selV=null;
 function buildProfileBar(){
   const host=document.getElementById("profile-host");if(!host)return;
   host.innerHTML="";
-  const currentProfile=profileList.find(p=>p.id===activeProfileId)||{label:activeProfileId,emoji:"👤"};
-  const drawer=document.createElement("details");drawer.className="top-utility-drawer";
-  const summary=document.createElement("summary");summary.className="top-utility-summary";
-  const vShort=selV?voiceLabel(selV).split("·")[0].trim():"Español";
-  summary.innerHTML=`<span>${currentProfile.emoji||"👤"} <strong>${currentProfile.label}</strong> · 🎙️ <span class="top-utility-voice-tag">${vShort}</span></span><small>⚙️ Audio & Profile</small>`;
-  const body=document.createElement("div");body.className="top-utility-body";
-  const vWrap=document.createElement("div");vWrap.id="voice-bar-lecciones-inner";
   const bar=document.createElement("div");bar.className="profile-bar";
   const label=document.createElement("span");label.className="profile-label";label.textContent="👤 Profile";
   const select=document.createElement("select");select.className="profile-select";select.setAttribute("aria-label","Choose local profile");
   profileList.forEach(p=>{const o=document.createElement("option");o.value=p.id;o.textContent=(p.emoji||"👤")+" "+p.label;select.appendChild(o);});
   select.value=activeProfileId;
   select.onchange=()=>{activeProfileId=select.value;nativeStorage.setItem(ACTIVE_PROFILE_KEY,activeProfileId);location.reload();};
+  const currentProfile=profileList.find(p=>p.id===activeProfileId)||{label:activeProfileId};
   const reset=document.createElement("button");reset.type="button";reset.className="profile-reset";reset.textContent=`Reset ${currentProfile.label}`;reset.title=`Clear ${currentProfile.label} progress only`;
   reset.onclick=()=>{
     if(!confirm(`Clear the ${currentProfile.label} profile's saved progress? Other profiles will not change.`))return;
@@ -67,12 +60,10 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  bar.append(label,select,reset);
-  body.append(vWrap,bar);
-  drawer.append(summary,body);
-  host.appendChild(drawer);
+  bar.append(label,select,reset);host.appendChild(bar);
 }
 buildProfileBar();
+let voices=[],selV=null;
 const VOICE_KEY="esco-selected-voice-v1";
 const VOICE_HOSTS=["fonetica","lecciones","vocab","frases","gram","quiz"];
 let savedVoiceKey="";
@@ -105,21 +96,16 @@ function rememberVoice(v){
 function syncVoiceSelectors(){
   const key=voiceKey(selV);
   document.querySelectorAll(".voice-choice").forEach(s=>{if(key)s.value=key;});
-  const tag=document.querySelector(".top-utility-voice-tag");
-  if(tag&&selV)tag.textContent=voiceLabel(selV);
 }
 function loadV(){
   const sp=getSpanishVoices();
   const next=chooseSpanishVoice(sp);
   if(next)selV=next;
   buildVoiceBars(sp);
-  syncVoiceSelectors();
 }
 function buildVoiceBars(sp=getSpanishVoices()){
   VOICE_HOSTS.forEach(id=>{
-    const host=id==="lecciones"?(document.getElementById("voice-bar-lecciones-inner")||document.getElementById("voice-bar-lecciones")):document.getElementById(`voice-bar-${id}`);
-    const outerLec=document.getElementById("voice-bar-lecciones");if(outerLec)outerLec.innerHTML="";
-    if(!host)return;
+    const host=document.getElementById(`voice-bar-${id}`);if(!host)return;
     host.innerHTML="";
     const bar=document.createElement("div");bar.className="voice-bar";
     const label=document.createElement("span");label.className="voice-label";label.textContent="🎙️ Voz";
@@ -136,46 +122,20 @@ function buildVoiceBars(sp=getSpanishVoices()){
   });
 }
 function chV(key){const v=getSpanishVoices().find(x=>voiceKey(x)===key);if(v){rememberVoice(v);syncVoiceSelectors();}}
-let speakTimer=null;
 function speak(t,r,onEnd){
-  if(!t||!window.speechSynthesis){if(onEnd)onEnd();return;}
-  if(speakTimer){clearTimeout(speakTimer);speakTimer=null;}
+  if(!window.speechSynthesis){if(onEnd)onEnd();return;}
   const sp=getSpanishVoices();
-  const saved=savedVoiceKey&&sp.find(v=>voiceKey(v)===savedVoiceKey);
+  const saved=savedVoiceKey&&sp.find(v=>voiceKey(v)===savedVoiceKey); /* saved pick wins the moment the list recovers */
   const live=saved||(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang));
   const voice=live||chooseSpanishVoice(sp);
-  if(voice)selV=voice;
+  if(voice)selV=voice; /* use it, but do NOT persist — only an explicit dropdown pick (chV) saves, so a flaky iOS voice list can't overwrite the user's choice */
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);
+  if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
+  u.rate=r||0.8;
+  if(onEnd){let finished=false;const done=()=>{if(finished)return;finished=true;onEnd();};u.onend=done;u.onerror=done;}
+  speechSynthesis.speak(u);
   rememberSpoken(t);
-  const fire=()=>{
-    try{if(speechSynthesis.paused)speechSynthesis.resume();}catch(e){}
-    const u=new SpeechSynthesisUtterance(String(t));
-    if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX";
-    u.rate=r||0.8;
-    let finished=false;
-    const done=()=>{if(finished)return;finished=true;if(onEnd)onEnd();};
-    u.onend=done;
-    u.onerror=e=>{
-      if(finished)return;
-      if(voice&&e&&e.error!=="canceled"&&e.error!=="interrupted"){
-        try{
-          const u2=new SpeechSynthesisUtterance(String(t));
-          u2.lang=voice.lang||"es-MX";
-          u2.rate=r||0.8;
-          u2.onend=done;u2.onerror=done;
-          speechSynthesis.speak(u2);
-          return;
-        }catch(err){}
-      }
-      done();
-    };
-    speechSynthesis.speak(u);
-  };
-  if(speechSynthesis.speaking||speechSynthesis.pending){
-    speechSynthesis.cancel();
-    speakTimer=setTimeout(fire,55);
-  }else{
-    fire();
-  }
 }
 /* ── Lento (slow replay) ─────────────────────────────────────────────────────
    Every speak() remembers its text; the floating 🐢 button replays it at 0.45x. */
@@ -191,7 +151,14 @@ function rememberSpoken(t){
     lentoBtn.setAttribute("aria-label","Repetir la última frase despacio");
     lentoBtn.onclick=()=>{
       if(!lastSpokenText)return;
-      speak(lastSpokenText,0.45);
+      /* replay directly (not via speak) so it doesn't overwrite lastSpokenText rate context */
+      const sp=getSpanishVoices();
+      const voice=(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang))||chooseSpanishVoice(sp);
+      speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(lastSpokenText);
+      if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX";
+      u.rate=0.45;
+      speechSynthesis.speak(u);
     };
     document.body.appendChild(lentoBtn);
   }
@@ -1710,14 +1677,16 @@ function renderLessonStep(){
       }
       body.appendChild(historyWrap);
       const curLine=lines[currentIdx];
-      if(curLine&&curLine.who!==who){
-        setTimeout(()=>speak(curLine.tts,0.75),220);
-      }
       const turnNav=lpEl("lp-sim-turn-nav");
       if(currentIdx<lines.length-1){
         const nextTurn=document.createElement("button");nextTurn.type="button";nextTurn.className="lp-nav-btn primary";
         nextTurn.textContent=curLine.who===who?"✅ I said my line — next turn →":"🔊 Continue to next turn →";
-        nextTurn.onclick=()=>{lpRoleTurn=currentIdx+1;renderLessonStep();};
+        nextTurn.onclick=()=>{
+          lpRoleTurn=currentIdx+1;
+          const nl=lines[lpRoleTurn];
+          renderLessonStep();
+          if(nl&&nl.who!==who)speak(nl.tts,0.75);
+        };
         turnNav.appendChild(nextTurn);
       }else{
         const restartSim=document.createElement("button");restartSim.type="button";restartSim.className="lp-nav-btn";
