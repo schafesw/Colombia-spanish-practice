@@ -2961,3 +2961,523 @@ const CONNECTOR_BRIDGE_DRILLS=[
     tip:"Use 'para que + subjunctive' whenever you do something so that someone else can do something."
   }
 ];
+// ── V93.0 COLOMBIAN SPEAKING MASTERY & PRO COACHING EXPANSION ───────────────
+/* 1. 4 New Real-World Colombian Scenarios (Phrases, Dialogues, Readings, Missions, Lessons, Ladders):
+      - Direcciones, cuadras y seguridad ("No dar papaya" & Colombian address grid)
+      - Panadería, tinto y jugos naturales (pandebono, almojábana, perico, lulo en agua/leche)
+      - Terminal, peajes y paseo de finca (puente festivo, buses, pueblos)
+      - Reacciones, empatía y amistad (¡Qué pecado!, ¡Qué embarrada!, ¡No me digas!) */
+
+FRASES.push(
+  {section:"🧭 Cuadras, carreras y seguridad",quizCat:"direcciones",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[
+    {es:"Queda en la carrera séptima con calle setenta y dos.",en:"It is at Carrera 7 and Calle 72.",register:"Colombian · address grid"},
+    {es:"Suba dos cuadras hacia los cerros y voltee a la derecha.",en:"Go up two blocks toward the hills and turn right.",register:"Bogotá · navigation"},
+    {es:"El edificio queda justo al frente del parque, pasando el semáforo.",en:"The building is right across from the park, past the traffic light.",register:"Colombian · everyday"},
+    {es:"Qué pena, ¿este sector es tranquilo para caminar de noche?",en:"Excuse me, is this area safe/calm to walk at night?",register:"Street smart · polite"},
+    {es:"Es mejor no dar papaya con el celular en la calle.",en:"It's better not to make yourself an easy target with your phone on the street.",register:"Colombian · essential idiom"},
+    {es:"¿Por dónde es mejor coger para no meternos en el trancón?",en:"Which way is better to take so we don't get stuck in traffic?",register:"Colombian · everyday"}
+  ]},
+  {section:"🥐 Panadería, café y jugos",quizCat:"panaderia",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[
+    {es:"Buenas, veci. ¿Los pandebonos y las almojábanas salieron calienticos?",en:"Hi neighbor. Did the pandebonos and almojábanas come out warm/fresh?",register:"Colombian · panadería"},
+    {es:"Me regala un perico y un buñuelo para comer aquí, por favor.",en:"Can I have a small coffee with milk and a buñuelo to eat here, please.",register:"Bogotá & Eje Cafetero"},
+    {es:"¿Qué jugos naturales tiene hoy? ¿Tiene de lulo o de maracuyá?",en:"What fresh fruit juices do you have today? Do you have lulo or passionfruit?",register:"Colombian · everyday"},
+    {es:"Me da un jugo de guanábana en leche, bajito de azúcar, por favor.",en:"Give me a soursop juice in milk, low on sugar, please.",register:"Colombian · everyday"},
+    {es:"Y para mí un jugo de mora en agua, sin azúcar.",en:"And for me a blackberry juice in water, without sugar.",register:"Colombian · everyday"},
+    {es:"¿Me regala dos empanadas con ají aparte para llevar?",en:"Can I have two empanadas with hot sauce on the side to go?",register:"Colombian · everyday"}
+  ]},
+  {section:"🌄 Buses, pueblos y paseo de finca",quizCat:"viajes-finca",cls:"color:var(--green);background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2)",items:[
+    {es:"Buenas, ¿a qué hora sale el próximo bus para Villa de Leyva?",en:"Hi, what time does the next bus leave for Villa de Leyva?",register:"Travel · bus terminal"},
+    {es:"Me vende dos pasajes para las diez de la mañana, por favor.",en:"Sell me two tickets for ten in the morning, please.",register:"Travel · everyday"},
+    {es:"¿Por cuál plataforma o módulo abordamos el bus?",en:"From which platform or bay do we board the bus?",register:"Travel · bus terminal"},
+    {es:"Maestro, ¿me puede dejar en la entrada de la vereda después del peaje?",en:"Driver, can you drop me off at the rural road entrance after the toll booth?",register:"Colombian · rural travel"},
+    {es:"Este puente festivo vamos de paseo a una finca en tierra caliente.",en:"This long holiday weekend we're going on a trip to a country house in warm country.",register:"Colombian · social"},
+    {es:"¿Cuánto se demora el viaje si no hay mucho trancón en la salida?",en:"How long does the trip take if there isn't much traffic leaving town?",register:"Colombian · everyday"}
+  ]},
+  {section:"💛 Empatía, reacciones y amistad",quizCat:"empatia",cls:"color:var(--pink);background:rgba(232,93,117,0.1);border:1px solid rgba(232,93,117,0.2)",items:[
+    {es:"¡No me digas! ¿En serio te pasó todo eso ayer?",en:"You don't say! Did all of that really happen to you yesterday?",register:"Colombian · reaction"},
+    {es:"¡Qué embarrada! Lo siento mucho, cuenta conmigo para lo que necesites.",en:"What a bummer / mess! I'm so sorry, count on me for whatever you need.",register:"Colombian · empathy"},
+    {es:"¡Ay, qué pecado! Ojalá se mejore muy pronto.",en:"Oh, what a shame / poor thing! Hopefully they get better very soon.",register:"Colombian · warm empathy"},
+    {es:"¡Qué nota! Me alegra muchísimo por ti, te lo mereces.",en:"How awesome! I'm so happy for you, you deserve it.",register:"Colombian · celebration"},
+    {es:"Me caes súper bien; qué chévere hablar contigo.",en:"I really like you (as a person); how great talking with you.",register:"Colombian · friendship & dating"},
+    {es:"¿Te gustaría volver a vernos esta semana para tomar un café?",en:"Would you like to see each other again this week to grab a coffee?",register:"Colombian · warm invite"}
+  ]}
+);
+
+CONVERSATIONS.push(
+  v60Dialogue("Direcciones, cuadras y seguridad","Decoding Colombian street addresses, landmarks, and asking about neighborhood safety",[
+    ["A","Disculpe, vecino, qué pena con usted. Busco la carrera séptima con calle setenta y dos, número once veinticuatro.","Excuse me, neighbor, sorry to bother you. I'm looking for Carrera 7 and Calle 72, number 11-24."],
+    ["B","Con mucho gusto. Suba dos cuadras hacia los cerros y voltee a la izquierda en el semáforo.","With pleasure. Go up two blocks toward the hills and turn left at the traffic light."],
+    ["A","Ah, listo. ¿Queda pasando el parque o antes de llegar al banco?","Ah, got it. Is it past the park or before getting to the bank?"],
+    ["B","Queda justo al frente del banco, al lado de una panadería grande.","It's right across from the bank, next to a big bakery."],
+    ["A","Perfecto. Una pregunta más: ¿este sector es tranquilo para caminar por la noche?","Perfect. One more question: is this area safe to walk at night?"],
+    ["B","Sí, por esta avenida es tranquilo, pero igual es mejor no dar papaya con el celular.","Yes, along this avenue it's calm, but still it's better not to flash your phone on the street."]
+  ],[{es:"¿Cuántas cuadras faltan para llegar a la estación?",en:"How many blocks are left to get to the station?",tts:"¿Cuántas cuadras faltan para llegar a la estación?"},{es:"Por la noche es mejor pedir un Uber desde la portería.",en:"At night it's better to order an Uber from the front desk.",tts:"Por la noche es mejor pedir un Uber desde la portería."}]),
+  v60Dialogue("Panadería, tinto y jugos naturales","Ordering warm pandebonos, coffee, and fresh fruit juices in water or milk",[
+    ["A","Buenos días, bienvenido. ¿Qué se va a servir hoy? Acabaron de salir pandebonos y almojábanas.","Good morning, welcome. What will you have today? Pandebonos and almojábanas just came out of the oven."],
+    ["B","Buenos días, veci. ¡Qué rico! Me regala dos pandebonos calienticos y un perico, por favor.","Good morning, neighbor. How delicious! Can I have two warm pandebonos and a small coffee with milk, please."],
+    ["A","Claro que sí. ¿Y para tomar algo frío? Hoy tenemos jugo natural de lulo, maracuyá, guanábana y mora.","Of course. And for something cold to drink? Today we have fresh lulo, passionfruit, soursop, and blackberry juice."],
+    ["B","Me da un jugo de lulo en agua y otro de guanábana en leche, ambos bajitos de azúcar.","Give me a lulo juice in water and a soursop juice in milk, both low on sugar."],
+    ["A","Con mucho gusto. ¿Para comer aquí en la mesa o se los empaco para llevar?","With pleasure. To eat here at the table or should I pack them to go?"],
+    ["B","Para comer aquí, y me incluye también una empanada con ají aparte, por favor.","To eat here, and please also include an empanada with hot sauce on the side."]
+  ],[{es:"¿Me regala un tintico sin azúcar y un pan de yuca?",en:"Can I have a black coffee without sugar and a yuca cheese bread?",tts:"¿Me regala un tintico sin azúcar y un pan de yuca?"},{es:"¿El jugo de maracuyá lo prefiere en agua o en leche?",en:"Do you prefer the passionfruit juice in water or in milk?",tts:"¿El jugo de maracuyá lo prefiere en agua o en leche?"}]),
+  v60Dialogue("Terminal, peajes y paseo de finca","Buying bus tickets, asking about holiday traffic, and getting off on a rural road",[
+    ["A","Buenas tardes. ¿Para dónde viaja hoy? Tenemos salida para Medellín, Guatapé y el Eje Cafetero.","Good afternoon. Where are you traveling to today? We have departures for Medellín, Guatapé, and the Coffee Region."],
+    ["B","Buenas tardes. Me vende dos pasajes para el próximo bus que salga, por favor. ¿Cuánto se demora?","Good afternoon. Sell me two tickets for the next bus leaving, please. How long does it take?"],
+    ["A","Normalmente son dos horas, pero como hoy es puente festivo hay bastante tráfico en el peaje.","Normally it's two hours, but since today is a holiday weekend there is quite a bit of traffic at the toll booth."],
+    ["B","Entiendo. ¿El conductor nos puede dejar sobre la vía principal en la entrada de la vereda?","I understand. Can the driver drop us off on the main road at the entrance to the rural lane?"],
+    ["A","Sí, señor, usted le avisa al conductor diez minutos antes de llegar para que pare con cuidado.","Yes, sir, just let the driver know ten minutes before arriving so he can pull over safely."],
+    ["B","Excelente, muchas gracias. ¿Por cuál plataforma abordamos y dónde entregamos las maletas?","Excellent, thank you very much. From which platform do we board and where do we hand over the suitcases?"]
+  ],[{es:"Este puente festivo nos vamos de paseo a una finca con los amigos.",en:"This long weekend we're going on a trip to a finca with friends.",tts:"Este puente festivo nos vamos de paseo a una finca con los amigos."},{es:"Maestro, ¿me avisa cuando pasemos el segundo peaje, por favor?",en:"Driver, can you let me know when we pass the second toll booth, please?",tts:"Maestro, ¿me avisa cuando pasemos el segundo peaje, por favor?"}]),
+  v60Dialogue("Reacciones, empatía y amistad","Reacting naturally with empathy, celebrating good news, and building real friendships",[
+    ["A","¡Hola! Qué alegría verte. No te imaginas la semana tan pesada que tuve en el trabajo.","Hi! So good to see you. You can't imagine what a rough week I had at work."],
+    ["B","¡No me digas! ¿Qué pasó? Cuéntame mientras nos tomamos un café.","You don't say! What happened? Tell me while we have a coffee."],
+    ["A","Se nos cayó el sistema el martes y además perdí las llaves del apartamento bajo el aguacero.","Our system crashed on Tuesday and on top of that I lost my apartment keys in the downpour."],
+    ["B","¡Uy, qué embarrada! Qué pesar contigo, de verdad. ¿Y al final cómo lograste entrar?","Oh, what a bummer! I feel so bad for you, really. And how did you manage to get in at the end?"],
+    ["A","Por suerte el vecino de la portería tenía una copia. Pero bueno, la buena noticia es que me ascendieron hoy.","Luckily the doorman at the front desk had a spare. But anyway, the good news is I got promoted today."],
+    ["B","¡¿En serio?! ¡Qué nota, te felicito! Me alegra muchísimo, tenemos que celebrar este viernes.","Seriously?! How awesome, congratulations! I'm so happy for you, we have to celebrate this Friday."]
+  ],[{es:"¡Ay, qué pecado! Ojalá todo se solucione rápido.",en:"Oh, what a shame! Hopefully everything gets sorted out quickly.",tts:"¡Ay, qué pecado! Ojalá todo se solucione rápido."},{es:"Me caes súper bien; qué chévere conversar contigo siempre.",en:"I really like you; it's always so nice talking with you.",tts:"Me caes súper bien; qué chévere conversar contigo siempre."}])
+);
+
+READINGS.push(
+  {id:"lectura-cuadras",level:"A2",title:"Cómo funcionan las direcciones en Colombia",lesson:"direcciones-cuadras",intro:"Learn how Colombians navigate using Calles, Carreras, numbers, and mountain landmarks.",lines:[
+    {es:"En la mayoría de las ciudades colombianas, las direcciones usan un sistema de cuadrícula con calles y carreras.",en:"In most Colombian cities, addresses use a grid system with calles (streets) and carreras (avenues).",tts:"En la mayoría de las ciudades colombianas, las direcciones usan un sistema de cuadrícula con calles y carreras."},
+    {es:"En Bogotá, las carreras van de sur a norte paralelas a los cerros, y las calles suben o bajan.",en:"In Bogotá, carreras run south to north parallel to the mountains, and calles go up or down.",tts:"En Bogotá, las carreras van de sur a norte paralelas a los cerros, y las calles suben o bajan."},
+    {es:"Cuando alguien dice Carrera séptima con Calle setenta y dos, número once veinticuatro, el último número indica los metros desde la esquina.",en:"When someone says Carrera 7 with Calle 72, #11-24, the last number indicates the meters from the corner.",tts:"Cuando alguien dice Carrera séptima con Calle setenta y dos, número once veinticuatro, el último número indica los metros desde la esquina."},
+    {es:"Además, los colombianos siempre recomiendan no dar papaya y guardar el celular al caminar.",en:"In addition, Colombians always recommend 'no dar papaya' (not making yourself a target) and putting your phone away when walking.",tts:"Además, los colombianos siempre recomiendan no dar papaya y guardar el celular al caminar."}
+  ],questions:[{q:"¿Qué significa 'no dar papaya' en Colombia?",choices:["No exponerse ni descuidar objetos de valor","No comer fruta en la mañana","Caminar siempre hacia los cerros"],answer:"No exponerse ni descuidar objetos de valor"}]},
+  {id:"lectura-panaderia",level:"A2",title:"La panadería del barrio y los jugos",lesson:"panaderia-jugos",intro:"Discover Colombia's beloved neighborhood bakery and fresh tropical fruit juice culture.",lines:[
+    {es:"Por la mañana en Colombia siempre huele a pan recién horneado en la panadería de la esquina.",en:"In the morning in Colombia it always smells like freshly baked bread at the corner bakery.",tts:"Por la mañana en Colombia siempre huele a pan recién horneado en la panadería de la esquina."},
+    {es:"La gente pasa temprano a pedir un tinto o un perico acompañado de un pandebono o una almojábana calientica.",en:"People stop by early to order a black coffee or small milk coffee with a warm pandebono or almojábana.",tts:"La gente pasa temprano a pedir un tinto o un perico acompañado de un pandebono o una almojábana calientica."},
+    {es:"Al mediodía es muy común pedir un jugo natural de lulo, maracuyá, mora o guanábana.",en:"At noon it is very common to order a fresh juice made of lulo, passionfruit, blackberry, or soursop.",tts:"Al mediodía es muy común pedir un jugo natural de lulo, maracuyá, mora o guanábana."},
+    {es:"El mesero siempre pregunta si lo quieres en agua o en leche, y puedes pedirlo bajito de azúcar.",en:"The waiter always asks if you want it in water or in milk, and you can ask for it low on sugar.",tts:"El mesero siempre pregunta si lo quieres en agua o en leche, y puedes pedirlo bajito de azúcar."}
+  ],questions:[{q:"¿Qué pregunta siempre hacen cuando pides un jugo natural en Colombia?",choices:["¿En agua o en leche?","¿A cuántas cuotas?","¿Por cuál plataforma sale?"],answer:"¿En agua o en leche?"}]},
+  {id:"lectura-finca",level:"B1",title:"Un puente festivo en una finca",lesson:"viajes-finca",intro:"Colombia has more public holidays (puentes festivos) than almost any country—and people love heading to a finca.",lines:[
+    {es:"Colombia es famosa por sus puentes festivos, cuando el feriado se traslada al lunes para tener tres días libres.",en:"Colombia is famous for its long holiday weekends, when the holiday moves to Monday for three days off.",tts:"Colombia es famosa por sus puentes festivos, cuando el feriado se traslada al lunes para tener tres días libres."},
+    {es:"Muchas familias y grupos de amigos viajan desde la terminal de transporte hacia pueblos de tierra caliente.",en:"Many families and friend groups travel from the bus terminal toward warm-weather towns.",tts:"Muchas familias y grupos de amigos viajan desde la terminal de transporte hacia pueblos de tierra caliente."},
+    {es:"En el camino pasamos varios peajes y paramos a comer arepas de choclo en la carretera.",en:"Along the way we pass several toll booths and stop to eat sweet corn arepas on the highway.",tts:"En el camino pasamos varios peajes y paramos a comer arepas de choclo en la carretera."},
+    {es:"Al llegar a la entrada de la vereda, caminamos diez minutos hasta la finca para descansar todo el fin de semana.",en:"Upon arriving at the rural lane entrance, we walk ten minutes to the finca to relax all weekend.",tts:"Al llegar a la entrada de la vereda, caminamos diez minutos hasta la finca para descansar todo el fin de semana."}
+  ],questions:[{q:"¿Qué es un 'puente festivo' en Colombia?",choices:["Un fin de semana largo con lunes feriado","Un puente sobre un río en Bogotá","Un boleto de autobús"],answer:"Un fin de semana largo con lunes feriado"}]},
+  {id:"lectura-empatia",level:"B1",title:"Ponerse al día con un amigo",lesson:"empatia-reacciones",intro:"Sound warm and human in Spanish by using authentic Colombian empathy reactions.",lines:[
+    {es:"Cuando un colombiano te cuenta una historia, espera que reacciones con emoción y calidez.",en:"When a Colombian tells you a story, they expect you to react with emotion and warmth.",tts:"Cuando un colombiano te cuenta una historia, espera que reacciones con emoción y calidez."},
+    {es:"Si algo salió mal o hubo un problema, puedes decir: ¡Uy, qué embarrada! o ¡Qué pesar contigo!",en:"If something went wrong or there was a problem, you can say: 'Uy, qué embarrada!' or 'Qué pesar contigo!'",tts:"Si algo salió mal o hubo un problema, puedes decir: ¡Uy, qué embarrada! o ¡Qué pesar contigo!"},
+    {es:"Si te cuentan algo tierno o triste de alguien más, la expresión más natural es: ¡Ay, qué pecado!",en:"If they tell you something touching or sad about someone else, the most natural expression is: 'Ay, qué pecado!'",tts:"Si te cuentan algo tierno o triste de alguien más, la expresión más natural es: ¡Ay, qué pecado!"},
+    {es:"Y cuando te dan una excelente noticia, celebra diciendo: ¡No me digas! ¡Qué nota, me alegra mucho!",en:"And when they give you great news, celebrate by saying: 'No me digas! Qué nota, I'm so glad!'",tts:"Y cuando te dan una excelente noticia, celebra diciendo: ¡No me digas! ¡Qué nota, me alegra mucho!"}
+  ],questions:[{q:"¿Qué expresión colombiana se usa cuando pasa un problema o contratiempo frustrante?",choices:["¡Qué embarrada!","A una sola cuota","En agua sin azúcar"],answer:"¡Qué embarrada!"}]}
+);
+
+CONVERSATION_MISSIONS.push(
+  {id:"mision-cuadras",title:"Da una dirección con cuadras y puntos de referencia",scenario:"A delivery driver or friend asks where your building is located relative to the avenue and park.",prompt:"Explica la dirección y da una recomendación de seguridad:",lesson:"direcciones-cuadras",models:[
+    {es:"Queda en la carrera séptima con calle setenta y dos, dos cuadras arriba del parque, al frente del banco.",en:"It's at Carrera 7 and Calle 72, two blocks up from the park, across from the bank.",tts:"Queda en la carrera séptima con calle setenta y dos, dos cuadras arriba del parque, al frente del banco."},
+    {es:"El sector es muy tranquilo, pero de noche es mejor no dar papaya con el celular en la calle.",en:"The area is very calm, but at night it's better not to flash your phone on the street.",tts:"El sector es muy tranquilo, pero de noche es mejor no dar papaya con el celular en la calle."}
+  ]},
+  {id:"mision-panaderia",title:"Pide en la panadería y personaliza tu jugo",scenario:"You walk into a neighborhood panadería in the morning. Ask what came out warm and order coffee and a fresh fruit juice.",prompt:"Haz tu pedido completo al panadero:",lesson:"panaderia-jugos",models:[
+    {es:"Buenas, veci. ¿Salieron calienticos los pandebonos? Me regala dos, un perico y un jugo de lulo en agua bajito de azúcar.",en:"Hi neighbor. Did the pandebonos come out warm? Can I have two, a small coffee with milk, and a lulo juice in water low on sugar.",tts:"Buenas, veci. ¿Salieron calienticos los pandebonos? Me regala dos, un perico y un jugo de lulo en agua bajito de azúcar."},
+    {es:"Me da una almojábana, una empanada con ají aparte y un jugo de guanábana en leche, por favor.",en:"Give me an almojábana, an empanada with hot sauce on the side, and a soursop juice in milk, please.",tts:"Me da una almojábana, una empanada con ají aparte y un jugo de guanábana en leche, por favor."}
+  ]},
+  {id:"mision-finca",title:"Compra pasajes y coordina la parada del bus",scenario:"You are at the bus terminal heading to a town for a puente festivo. Buy two tickets and ask the driver to drop you at the finca entrance.",prompt:"Habla en la taquilla y con el conductor:",lesson:"viajes-finca",models:[
+    {es:"Buenas, me vende dos pasajes para el próximo bus. Maestro, ¿nos deja en la entrada de la vereda después del peaje?",en:"Hi, sell me two tickets for the next bus. Driver, can you drop us at the rural road entrance after the toll?",tts:"Buenas, me vende dos pasajes para el próximo bus. Maestro, ¿nos deja en la entrada de la vereda después del peaje?"},
+    {es:"¿A qué hora sale el bus y por cuál plataforma abordamos? Llevamos dos maletas.",en:"What time does the bus leave and from which platform do we board? We have two suitcases.",tts:"¿A qué hora sale el bus y por cuál plataforma abordamos? Llevamos dos maletas."}
+  ]},
+  {id:"mision-empatia",title:"Reacciona con empatía a lo que te cuenta un amigo",scenario:"Your Colombian friend tells you their flight got canceled in the rain, and then invites you for coffee tomorrow.",prompt:"Reacciona con empatía natural y acepta el plan:",lesson:"empatia-reacciones",models:[
+    {es:"¡No me digas! ¡Uy, qué embarrada contigo! Claro que sí, mañana nos tomamos un café y me cuentas todo.",en:"You don't say! Oh, what a bummer for you! Of course, tomorrow we'll grab a coffee and you can tell me everything.",tts:"¡No me digas! ¡Uy, qué embarrada contigo! Claro que sí, mañana nos tomamos un café y me cuentas todo."},
+    {es:"¡Qué pesar! Menos mal ya estás en casa. Me caes súper bien, nos vemos mañana sin falta.",en:"What a shame! Thankfully you're already home. I really like you, see you tomorrow without fail.",tts:"¡Qué pesar! Menos mal ya estás en casa. Me caes súper bien, nos vemos mañana sin falta."}
+  ]}
+);
+
+Object.assign(LESSON_CONTENT,{
+  "direcciones-cuadras":{
+    goal:{es:"Queda en la carrera séptima con calle setenta y dos, dos cuadras arriba del parque.",en:"It is at Carrera 7 and Calle 72, two blocks up from the park."},
+    words:[{es:"la carrera / la calle",en:"avenue (N-S) / street (E-W)"},{es:"dos cuadras arriba",en:"two blocks up (toward hills)"},{es:"al frente de",en:"across from / in front of"},{es:"pasando el semáforo",en:"past the traffic light"},{es:"sector tranquilo",en:"safe / calm area"},{es:"no dar papaya",en:"don't make yourself an easy target"}],
+    phrases:[{en:"It is at Carrera 7 and Calle 72.",es:"Queda en la carrera séptima con calle setenta y dos."},{en:"Go up two blocks and turn right.",es:"Suba dos cuadras y voltee a la derecha."},{en:"Is this area safe to walk at night?",es:"¿Este sector es tranquilo para caminar de noche?"},{en:"It's better not to flash your phone on the street.",es:"Es mejor no dar papaya con el celular en la calle."}]
+  },
+  "panaderia-jugos":{
+    goal:{es:"Veci, me regala un pandebono calientico, un perico y un jugo de lulo en agua bajito de azúcar.",en:"Neighbor, can I have a warm pandebono, a small coffee with milk, and a lulo juice in water low on sugar."},
+    words:[{es:"el pandebono / la almojábana",en:"Colombian cheese breads"},{es:"calientico/a",en:"nice and warm / fresh out of the oven"},{es:"un perico / un tinto",en:"small milk coffee / black coffee"},{es:"jugo de lulo / maracuyá",en:"lulo / passionfruit juice"},{es:"en agua o en leche",en:"in water or in milk"},{es:"bajito de azúcar",en:"low on sugar"}],
+    phrases:[{en:"Did the pandebonos come out warm?",es:"¿Salieron calienticos los pandebonos?"},{en:"Can I have a small coffee with milk and an almojábana?",es:"¿Me regala un perico y una almojábana?"},{en:"Give me a soursop juice in milk, low on sugar.",es:"Me da un jugo de guanábana en leche, bajito de azúcar."},{en:"And a blackberry juice in water without sugar.",es:"Y un jugo de mora en agua sin azúcar."}]
+  },
+  "viajes-finca":{
+    goal:{es:"Me vende dos pasajes para el próximo bus. ¿Me deja en la entrada de la vereda después del peaje?",en:"Sell me two tickets for the next bus. Can you drop me at the rural road entrance after the toll booth?"},
+    words:[{es:"el puente festivo",en:"long holiday weekend"},{es:"la terminal de transporte",en:"bus terminal"},{es:"dos pasajes",en:"two tickets"},{es:"el peaje",en:"highway toll booth"},{es:"la entrada de la vereda",en:"rural lane entrance"},{es:"ir de paseo a una finca",en:"go on a trip to a country house"}],
+    phrases:[{en:"What time does the next bus leave?",es:"¿A qué hora sale el próximo bus?"},{en:"Sell me two tickets for ten in the morning.",es:"Me vende dos pasajes para las diez de la mañana."},{en:"Can you drop me off after the toll booth?",es:"¿Me puede dejar después del peaje?"},{en:"This holiday weekend we are going to a finca.",es:"Este puente festivo vamos a una finca."}]
+  },
+  "empatia-reacciones":{
+    goal:{es:"¡No me digas! ¡Uy, qué embarrada contigo! Cuenta conmigo para lo que necesites.",en:"You don't say! Oh, what a bummer for you! Count on me for whatever you need."},
+    words:[{es:"¡No me digas!",en:"You don't say! / No way!"},{es:"¡Qué embarrada!",en:"What a bummer / mess!"},{es:"¡Qué pecado!",en:"What a shame / poor thing!"},{es:"¡Qué pesar!",en:"I feel so bad / what a pity!"},{es:"¡Qué nota!",en:"How awesome / cool!"},{es:"me caes súper bien",en:"I really like you (friendly)"}],
+    phrases:[{en:"You don't say! Did that really happen?",es:"¡No me digas! ¿En serio pasó eso?"},{en:"What a bummer! I am so sorry.",es:"¡Qué embarrada! Lo siento mucho."},{en:"How awesome! I'm really happy for you.",es:"¡Qué nota! Me alegra muchísimo por ti."},{en:"I really like you; how nice talking with you.",es:"Me caes súper bien; qué chévere hablar contigo."}]
+  }
+});
+
+Object.assign(LESSON_META,{
+  "direcciones-cuadras":{stage:"Travel and Survival",difficulty:"Easy",prereq:"En la calle",dialogue:"Direcciones, cuadras y seguridad",vocab:"direcciones",quizCat:"direcciones",quizMode:"conversation",guideIds:["mandatos","por-para"],readingId:"lectura-cuadras",missionId:"mision-cuadras"},
+  "panaderia-jugos":{stage:"Travel and Survival",difficulty:"Easy",prereq:"Cortesía colombiana",dialogue:"Panadería, tinto y jugos naturales",vocab:"comida",quizCat:"panaderia",quizMode:"conversation",guideIds:["cortesia-colombiana","usted-tu-vos"],readingId:"lectura-panaderia",missionId:"mision-panaderia"},
+  "viajes-finca":{stage:"Daily Life",difficulty:"Moderate",prereq:"Llegada al hotel",dialogue:"Terminal, peajes y paseo de finca",vocab:"lugares",quizCat:"viajes-finca",quizMode:"conversation",guideIds:["futuro","por-para"],readingId:"lectura-finca",missionId:"mision-finca"},
+  "empatia-reacciones":{stage:"Speak More Naturally",difficulty:"Easy",prereq:"Colombianismos",dialogue:"Reacciones, empatía y amistad",vocab:"colombianismos",quizCat:"empatia",quizMode:"conversation",guideIds:["gustar","subjuntivo"],readingId:"lectura-empatia",missionId:"mision-empatia"}
+});
+
+Object.assign(SENTENCE_LADDERS,{
+  "direcciones-cuadras":{
+    title:"Decode Colombian street grids, landmarks, and safety",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Queda en la carrera séptima…",en:"It is on Carrera 7…"},
+      {tag:"2. + Cross street",es:"Queda en la carrera séptima con calle setenta y dos.",en:"It is at Carrera 7 and Calle 72."},
+      {tag:"3. + Landmark & blocks",es:"Suba dos cuadras hacia los cerros; queda al frente del parque.",en:"Go up two blocks toward the hills; it's across from the park."},
+      {tag:"4. + Street safety check",es:"Queda dos cuadras arriba del parque; el sector es tranquilo, pero de noche es mejor no dar papaya con el celular.",en:"It's two blocks up from the park; the area is calm, but at night it's better not to flash your phone."}
+    ],
+    swaps:[
+      {label:"Address number",es:"Busco la calle ochenta y cinco con carrera quince, número doce treinta.",en:"I'm looking for Calle 85 and Carrera 15, number 12-30."},
+      {label:"Past traffic light",es:"Siga derecho pasando el semáforo y voltee en la panadería.",en:"Go straight past the traffic light and turn at the bakery."},
+      {label:"Safe at night",es:"Qué pena, ¿por qué calle es mejor caminar a esta hora?",en:"Excuse me, which street is better to walk along at this hour?"}
+    ]
+  },
+  "panaderia-jugos":{
+    title:"Order warm bakery treats, coffee, and fresh fruit juices",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Me regala un pandebono?",en:"Can I have a pandebono?"},
+      {tag:"2. + Freshness & coffee",es:"Veci, ¿me regala un pandebono calientico y un perico?",en:"Neighbor, can I have a warm pandebono and a small milk coffee?"},
+      {tag:"3. + Fresh fruit juice",es:"Me regala un pandebono calientico y un jugo de lulo en agua.",en:"Can I have a warm pandebono and a lulo juice in water."},
+      {tag:"4. + Full panadería order",es:"Buenos días, veci; me regala dos pandebonos calienticos, un perico y un jugo de guanábana en leche bajito de azúcar.",en:"Good morning, neighbor; can I have two warm pandebonos, a small milk coffee, and a soursop juice in milk low on sugar."}
+    ],
+    swaps:[
+      {label:"Almojábana & tinto",es:"¿Salieron calienticas las almojábanas? Me da una con un tintico.",en:"Did the almojábanas come out warm? Give me one with a black coffee."},
+      {label:"Maracuyá sin azúcar",es:"Para tomar quiero un jugo natural de maracuyá en agua, sin azúcar.",en:"To drink I want a fresh passionfruit juice in water, without sugar."},
+      {label:"Empanadas con ají",es:"¿Me empaca tres empanadas para llevar con el ají aparte, por favor?",en:"Can you pack three empanadas to go with the hot sauce on the side, please?"}
+    ]
+  },
+  "viajes-finca":{
+    title:"Buy bus tickets and coordinate rural finca drop-offs",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Me vende dos pasajes…",en:"Sell me two tickets…"},
+      {tag:"2. + Destination & time",es:"Me vende dos pasajes para el próximo bus a Guatapé.",en:"Sell me two tickets for the next bus to Guatapé."},
+      {tag:"3. + Boarding gate",es:"Me vende dos pasajes, por favor. ¿Por cuál plataforma sale el bus?",en:"Sell me two tickets, please. From which platform does the bus leave?"},
+      {tag:"4. + Rural drop-off",es:"Maestro, vamos para una finca este puente festivo; ¿nos puede dejar en la entrada de la vereda después del peaje?",en:"Driver, we're going to a finca this holiday weekend; can you drop us at the rural road entrance after the toll booth?"}
+    ],
+    swaps:[
+      {label:"Travel duration",es:"¿Cuánto se demora el bus si hay trancón saliendo de la ciudad?",en:"How long does the bus take if there is traffic leaving the city?"},
+      {label:"Luggage tag",es:"¿Dónde entrego esta maleta grande para que la guarden en la bodega?",en:"Where do I hand over this large suitcase so they put it in the luggage hold?"},
+      {label:"Return ticket",es:"¿A qué hora sale el último bus de regreso el lunes festivo?",en:"What time does the last bus back leave on holiday Monday?"}
+    ]
+  },
+  "empatia-reacciones":{
+    title:"React with authentic Colombian warmth, empathy, and celebration",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¡No me digas!",en:"You don't say!"},
+      {tag:"2. + Empathy reaction",es:"¡No me digas! ¡Uy, qué embarrada contigo!",en:"You don't say! Oh, what a bummer for you!"},
+      {tag:"3. + Offer support",es:"¡Qué embarrada lo que pasó! Cuenta conmigo para lo que necesites.",en:"What a bummer what happened! Count on me for whatever you need."},
+      {tag:"4. + Warm connection",es:"¡Qué nota que ya todo salió bien! Me caes súper bien; tenemos que vernos esta semana para celebrar.",en:"How awesome that everything worked out! I really like you; we have to meet up this week to celebrate."}
+    ],
+    swaps:[
+      {label:"Sympathy (Qué pecado)",es:"¡Ay, qué pecado! Ojalá se recupere muy pronto de la gripa.",en:"Oh, poor thing! Hopefully they recover very soon from the flu."},
+      {label:"Excitement (En serio)",es:"¡¿En serio te dieron el trabajo?! ¡Qué alegría, te felicito!",en:"Did they seriously give you the job?! What great news, congratulations!"},
+      {label:"Second date / coffee",es:"Qué chévere hablar contigo hoy; ¿te gustaría salir otra vez el viernes?",en:"So nice talking with you today; would you like to go out again on Friday?"}
+    ]
+  }
+});
+
+/* 2. 8 New Everyday & Empathy Colombianismos (60 total) */
+COLOMBIANISMOS.push(
+  {word:"¡Qué embarrada!",en:"What a bummer! / What a mess!",region:"all",register:"Colombian · essential empathy",registerGroup:"everyday",usage:"The go-to safe Colombian reaction when someone tells you about a frustrating problem, canceled plan, or mistake.",example:"¡Uy, qué embarrada que se te quedó el celular en el taxi!",tts:"¡Uy, qué embarrada que se te quedó el celular en el taxi!"},
+  {word:"¡Qué pecado!",en:"Poor thing! / What a shame!",region:"all",register:"Colombian · warm empathy",registerGroup:"everyday",usage:"Does NOT mean 'what a sin' in daily Colombia—it expresses warm sympathy or tenderness ('Aw, poor thing!').",example:"¡Ay, qué pecado, el perrito se quedó afuera bajo la lluvia!",tts:"¡Ay, qué pecado, el perrito se quedó afuera bajo la lluvia!"},
+  {word:"¡No me digas! / ¡No me diga!",en:"You don't say! / No way!",region:"all",register:"Colombian · storytelling",registerGroup:"everyday",usage:"Used constantly while listening to someone's story to show active interest and surprise.",example:"¡No me digas! ¿Y qué hiciste cuando cerraron el aeropuerto?",tts:"¡No me digas! ¿Y qué hiciste cuando cerraron el aeropuerto?"},
+  {word:"No dar papaya",en:"Don't make yourself an easy target",region:"all",register:"Colombian · #1 street rule",registerGroup:"everyday",usage:"The single most famous Colombian proverb: don't flash valuables or leave yourself vulnerable ('Papaya puesta, papaya partida').",example:"El barrio es chévere, pero no des papaya con el teléfono en la acera.",tts:"El barrio es chévere, pero no des papaya con el teléfono en la acera."},
+  {word:"Calientico/a",en:"Nice and warm / fresh out of the oven",region:"all",register:"Colombian · panadería & food",registerGroup:"everyday",usage:"Colombians love using the diminutive '-ico' for warm bread, pandebonos, arepas, and coffee.",example:"Veci, ¿esos pandebonos acaban de salir calienticos?",tts:"Veci, ¿esos pandebonos acaban de salir calienticos?"},
+  {word:"Perico / Pintado",en:"Small coffee with steamed milk",region:"bogota",register:"Bogotá & Eje · panadería",registerGroup:"everyday",usage:"In Bogotá and the Coffee Region, ordering 'un perico' at a bakery means a small coffee with milk (in Medellín/Cali they often say 'pintado' or 'café con leche').",example:"Buenos días, me regala un perico y dos almojábanas, por favor.",tts:"Buenos días, me regala un perico y dos almojábanas, por favor."},
+  {word:"Puente festivo",en:"Three-day holiday weekend",region:"all",register:"Colombian · travel & social",registerGroup:"everyday",usage:"Colombia moves most public holidays to Monday ('Ley Emiliani'), creating 18+ holidays and frequent 'puentes festivos' for finca trips.",example:"¿Qué vas a hacer este puente festivo? Vamos para una finca.",tts:"¿Qué vas a hacer este puente festivo? Vamos para una finca."},
+  {word:"¡Qué nota!",en:"How awesome! / How cool!",region:"all",register:"Colombian · positive reaction",registerGroup:"everyday",usage:"Friendly, upbeat expression heard across Colombia to celebrate good news or compliment a great plan.",example:"¡Qué nota que viniste a visitarnos a Colombia!",tts:"¡Qué nota que viniste a visitarnos a Colombia!"}
+);
+
+/* 3. 2 New 3-Column Slot-Swapper Matrices (9 total) */
+SLOT_SWAP_MATRICES.push(
+  {
+    id:"panaderia-jugos-matrix",
+    title:"🥐 Panadería, Café & Jugos",
+    sub:"Order fresh Colombian bakery items, coffee, and fruit juices in water or milk",
+    col1Title:"1. Bakery Opener",
+    col2Title:"2. Bread, Coffee or Juice",
+    col3Title:"3. Colombian Customization",
+    col1:[
+      {es:"Buenos días, veci, ¿me regala",en:"Good morning neighbor, can I have"},
+      {es:"Qué pena, ¿me da por favor",en:"Excuse me, can you please give me"},
+      {es:"Para desayunar quisiera pedir",en:"For breakfast I'd like to order"},
+      {es:"¿Será que me empaca",en:"Could you possibly pack for me"}
+    ],
+    col2:[
+      {es:"dos pandebonos calienticos y un perico",en:"two warm pandebonos and a small milk coffee"},
+      {es:"un jugo natural de lulo y una almojábana",en:"a fresh lulo juice and an almojábana"},
+      {es:"un jugo de guanábana y dos empanadas",en:"a soursop juice and two empanadas"},
+      {es:"un tintico y un buñuelo recién salido",en:"a black coffee and a freshly made buñuelo"}
+    ],
+    col3:[
+      {es:"en agua y bajito de azúcar, por favor.",en:"in water and low on sugar, please."},
+      {es:"en leche, para tomar aquí en la mesa.",en:"in milk, to drink here at the table."},
+      {es:"con el ají aparte para llevar.",en:"with the hot sauce on the side to go."},
+      {es:"y me dice cuánto le debo por Nequi.",en:"and tell me how much I owe you on Nequi."}
+    ]
+  },
+  {
+    id:"empatia-reacciones-matrix",
+    title:"💛 Empathy & Story Reactions",
+    sub:"React warmly to good news or bad news and follow up like a true Colombian friend",
+    col1Title:"1. Emotional Reaction",
+    col2Title:"2. Empathy / Validation",
+    col3Title:"3. Warm Follow-Up",
+    col1:[
+      {es:"¡No me digas! ¡Uy, qué embarrada",en:"You don't say! Oh, what a bummer"},
+      {es:"¡Ay, qué pesar contigo, pero menos mal",en:"Oh, I feel so bad for you, but thankfully"},
+      {es:"¡¿En serio?! ¡Qué nota",en:"Seriously?! How awesome"},
+      {es:"¡Qué alegría escucharte! Me encanta",en:"So great to hear you! I love"}
+    ],
+    col2:[
+      {es:"todo lo que te pasó ayer en el viaje,",en:"everything that happened to you yesterday on the trip,"},
+      {es:"que ya lograste solucionar ese chicharrón,",en:"that you already managed to solve that hassle,"},
+      {es:"que te haya salido tan bien el proyecto,",en:"that the project turned out so well for you,"},
+      {es:"poder conversar un rato contigo,",en:"being able to chat for a bit with you,"}
+    ],
+    col3:[
+      {es:"cuenta conmigo para lo que necesites.",en:"count on me for whatever you need."},
+      {es:"así que esta semana nos tomamos un café.",en:"so this week we'll grab a coffee."},
+      {es:"porque de verdad te lo mereces mucho.",en:"because you really deserve it so much."},
+      {es:"y me avisas cómo sigues mañana.",en:"and let me know how you're doing tomorrow."}
+    ]
+  }
+);
+
+/* 4. Interactive Colombian Register Switcher (Tú vs Usted vs Vos vs Sumercé) */
+const REGISTER_SWITCHER=[
+  {
+    id:"reg-wait",
+    intent:"⏱️ Ask someone to wait a moment",
+    when:"Use 'usted' at counters/banks or in Bogotá; 'tú' with peers/Coast; 'vos' in Medellín & Cali; 'sumercé' for warm Bogotá/Boyacá respect.",
+    ust:{es:"¿Me espera un momentico, por favor?",note:"Bogotá formal, strangers & respectful daily use"},
+    tu:{es:"¿Me esperas un momentico, porfa?",note:"Bogotá friends/peers & Caribbean Coast"},
+    vos:{es:"¿Me esperás un momentico, parce?",note:"Medellín (Paisa) & Cali (Valluno) informal"},
+    sumerce:{es:"¿Sumercé me espera un momentico?",note:"Bogotá & Boyacá affectionate/warm polite"}
+  },
+  {
+    id:"reg-coffee",
+    intent:"☕ Invite someone for a coffee (un tintico)",
+    when:"Notice how reflexive 'tomarse' shifts: se toma (usted/sumercé) → te tomas (tú) → te tomás (vos).",
+    ust:{es:"¿Le gustaría tomarse un tintico conmigo?",note:"Polite invite / Bogotá traditional"},
+    tu:{es:"¿Te tomas un tintico conmigo ahorita?",note:"Casual invite with friends or date"},
+    vos:{es:"¿Te tomás un tintico conmigo pues?",note:"Medellín & Cali natural invite"},
+    sumerce:{es:"¿Sumercé se toma un tintico conmigo?",note:"Warm, endearing Bogotá/Boyacá invite"}
+  },
+  {
+    id:"reg-repeat",
+    intent:"🔁 Ask someone to repeat what they said",
+    when:"Essential repair reflex when someone speaks fast.",
+    ust:{es:"Qué pena con usted, ¿me repite por favor?",note:"Standard polite with drivers, clerks & elders"},
+    tu:{es:"Perdona, ¿me repites eso otra vez?",note:"Casual with friends & peers"},
+    vos:{es:"Parce, ¿me repetís eso porfa?",note:"Medellín & Cali everyday"},
+    sumerce:{es:"¿Sumercé me repite un momentico?",note:"Warm & respectful Bogotá/Boyacá"}
+  },
+  {
+    id:"reg-where",
+    intent:"📍 Ask where someone is from or where they live",
+    when:"Look at 'ser' and 'vivir': es/vive (usted) → eres/vives (tú) → sos/vivís (vos).",
+    ust:{es:"¿Usted de dónde es y por dónde vive?",note:"Polite conversation starter"},
+    tu:{es:"¿Tú de dónde eres y por dónde vives?",note:"Bogotá & Coast social/party"},
+    vos:{es:"¿Vos de dónde sos y por dónde vivís?",note:"Medellín & Cali signature 'sos / vivís'"},
+    sumerce:{es:"¿Sumercé de qué parte es?",note:"Warm Andean Colombian"}
+  },
+  {
+    id:"reg-directions",
+    intent:"🧭 Ask for directions on the street",
+    when:"On the street with strangers, always lead with 'usted' or 'sumercé'.",
+    ust:{es:"Disculpe, ¿me indica cómo llego al parque?",note:"Safe everywhere in Colombia"},
+    tu:{es:"Oye, ¿me dices cómo llego al parque?",note:"Among young peers / classmates"},
+    vos:{es:"Mirá ve, ¿me decís cómo llego al parque?",note:"Cali ('mirá ve') & Medellín ('mirá')"},
+    sumerce:{es:"Veci, ¿sumercé me indica por dónde cojo?",note:"Bogotá neighborhood favorite"}
+  },
+  {
+    id:"reg-food",
+    intent:"🍽️ Ask if someone has already eaten",
+    when:"In Colombia, offering food is how people show care.",
+    ust:{es:"¿Usted ya almorzó? Si quiere, vamos.",note:"Respectful coworker, host, or family"},
+    tu:{es:"¿Tú ya almorzaste? Si quieres, vamos.",note:"Friends & peers"},
+    vos:{es:"¿Vos ya almorzaste? Si querés, vamos.",note:"Note: preterite is 'almorzaste' and present is 'querés'"},
+    sumerce:{es:"¿Sumercé ya almorzó? Si gusta, le sirvo.",note:"Classic warm family/host hospitality"}
+  },
+  {
+    id:"reg-ready",
+    intent:"🚪 Check if someone is ready to head out",
+    when:"Great for coordinating departures with friends or family.",
+    ust:{es:"¿Ya está listo? Cuando quiera nos vamos.",note:"Polite / Bogotá family"},
+    tu:{es:"¿Ya estás listo? ¡Vamos saliendo!",note:"Bogotá & Coast friends"},
+    vos:{es:"¿Ya estás listo? ¡Hágale pues, vámonos!",note:"Medellín & Eje Cafetero"},
+    sumerce:{es:"¿Sumercé ya está listo para salir?",note:"Warm Bogotá/Boyacá"}
+  },
+  {
+    id:"reg-late",
+    intent:"🚕 Apologize for running a little late",
+    when:"Imperative shift: disculpe (usted/sumercé) → disculpa/perdona (tú) → perdoná (vos).",
+    ust:{es:"Discúlpeme la demora, había mucho trancón.",note:"Formal / work / service"},
+    tu:{es:"Perdona la demora, había mucho trancón.",note:"Friends & casual dates"},
+    vos:{es:"Perdoná la demora, había un taco tenaz.",note:"Medellín ('taco' = traffic jam)"},
+    sumerce:{es:"Sumercé disculpe la demora, ya estoy llegando.",note:"Warm polite"}
+  }
+];
+
+/* 5. Interactive Colombian Street Grid & Safety Decoder */
+const STREET_GRID_DECODER=[
+  {
+    part:"Carrera 7",
+    label:"1. La Carrera (Norte ↔ Sur)",
+    title:"Carreras run parallel to the mountains",
+    explain:"In Bogotá, Carreras run South–North (parallel to the eastern hills, Los Cerros). Lower numbers (Carrera 1–7) are closer to the mountains; higher numbers go west.",
+    exampleEs:"Estoy en la carrera séptima y voy subiendo hacia la quinta.",
+    exampleEn:"I am on Carrera 7 and I'm heading up toward Carrera 5."
+  },
+  {
+    part:"con Calle 72",
+    label:"2. La Calle (Oriente ↔ Occidente)",
+    title:"Calles cross the Carreras perpendicular to the hills",
+    explain:"Calles run East–West. In Bogotá, numbers increase as you go North (Calle 10 is downtown; Calle 72 is Chapinero/financial district; Calle 100+ is el Norte).",
+    exampleEs:"El restaurante queda en la calle setenta y dos con carrera diez.",
+    exampleEn:"The restaurant is at Calle 72 and Carrera 10."
+  },
+  {
+    part:"# 11 - 24",
+    label:"3. El Número (# 11-24)",
+    title:"Exact meter distance from the corner!",
+    explain:"Colombian addresses are mathematical: in 'Calle 72 # 11-24', 11 is the cross-Carrera (Carrera 11), and 24 means the door is 24 meters past Carrera 11!",
+    exampleEs:"Busco la calle setenta y dos, número once veinticuatro.",
+    exampleEn:"I'm looking for Calle 72, number 11-24 (24 meters past Carrera 11)."
+  },
+  {
+    part:"Suba 2 cuadras",
+    label:"4. Cuadras, Arriba y Abajo",
+    title:"'Subir' means toward the mountains; 'Bajar' means away",
+    explain:"One 'cuadra' is one city block. In Bogotá, 'subir' means walking East toward the mountains (even on flat ground!), and 'bajar' means walking West.",
+    exampleEs:"Suba dos cuadras hacia los cerros y gire a la izquierda.",
+    exampleEn:"Go up two blocks toward the hills and turn left."
+  },
+  {
+    part:"No dar papaya",
+    label:"5. Regla de Oro (Street Safety)",
+    title:"Ask locals & keep your phone put away on sidewalks",
+    explain:"Colombians are super helpful if you ask '¿Este sector es tranquilo?'. Follow the golden rule: 'No dar papaya'—step inside a shop or portería before pulling out your phone.",
+    exampleEs:"¿Este sector es tranquilo de noche, o mejor pido Uber en la puerta?",
+    exampleEn:"Is this area calm at night, or should I better order an Uber at the door?"
+  }
+];
+
+/* 6. Conversation Curveballs & Repair Drills (⚡ Imprevistos) */
+const CONVERSATION_CURVEBALLS=[
+  {
+    id:"cb-uber-gate",
+    cat:"travel",
+    title:"🚕 El Uber no puede entrar a la portería",
+    curveballEs:"No me dejan entrar al conjunto; lo espero afuera sobre la avenida principal.",
+    curveballEn:"They won't let me into the complex; I'll wait for you outside on the main avenue.",
+    repairEs:"Listo, maestro, ya salgo caminando a la portería. ¿Me confirma el color del carro?",
+    repairEn:"Got it, boss, I'm walking out to the front gate now. Can you confirm the car color?",
+    backupEs:"Espéreme ahí al frente de la tienda de la esquina, ya voy saliendo.",
+    backupEn:"Wait for me right across from the corner shop, I'm heading out now.",
+    tip:"In Colombia, residential complexes ('conjuntos') usually require you to walk out to the 'portería' (guard gate)."
+  },
+  {
+    id:"cb-uber-cancel",
+    cat:"travel",
+    title:"📱 El conductor pide cancelar o cambiar ruta",
+    curveballEs:"Parce, hay un trancón horrible por la séptima. ¿Nos metemos por abajo o qué hacemos?",
+    curveballEn:"Buddy, there's a terrible traffic jam on 7th. Shall we cut through down below or what do we do?",
+    repairEs:"Sí, hágale, váyase por donde le marque mejor el Waze para no quedarnos en el trancón.",
+    repairEn:"Yes, go for it, go whichever way Waze shows best so we don't get stuck in traffic.",
+    backupEs:"No conozco bien esa vía, pero si es más rápido por ahí, dele tranquilo.",
+    backupEn:"I don't know that road well, but if it's faster that way, go right ahead.",
+    tip:"Drivers in Colombia use Waze constantly and will ask '¿Nos vamos por lo que diga Waze?'."
+  },
+  {
+    id:"cb-bus-gate",
+    cat:"travel",
+    title:"🚌 Cambio de plataforma en la terminal",
+    curveballEs:"Señor, el bus de las diez se retrasó por el trancón en el peaje; sale por la plataforma cuatro.",
+    curveballEn:"Sir, the 10 o'clock bus was delayed by traffic at the toll; it's leaving from platform 4.",
+    repairEs:"Gracias por avisarme. ¿Por dónde bajo a la plataforma cuatro y a qué hora abordamos?",
+    repairEn:"Thanks for letting me know. Which way do I go down to platform 4 and what time do we board?",
+    backupEs:"¿Con este mismo tiquete puedo subir o tengo que cambiarlo en la taquilla?",
+    backupEn:"Can I board with this same ticket or do I have to exchange it at the ticket booth?",
+    tip:"At Colombian bus terminals, 'taquilla' is the ticket counter and 'plataforma / módulo' is the departure gate."
+  },
+  {
+    id:"cb-panaderia-out",
+    cat:"food",
+    title:"🥐 Se acabó el pandebono o la fruta del jugo",
+    curveballEs:"Qué pena, veci, ya se me acabó el pandebono y tampoco queda jugo de lulo hoy.",
+    curveballEn:"So sorry, neighbor, I just ran out of pandebono and there's no lulo juice left today either.",
+    repairEs:"Tranquilo, no pasa nada. Entonces deme una almojábana calientica y un jugo de maracuyá en agua.",
+    repairEn:"No worries at all. Then give me a warm almojábana and a passionfruit juice in water.",
+    backupEs:"Bueno, ¿y qué pan acabó de salir calientico del horno?",
+    backupEn:"Okay, and what bread just came out warm from the oven?",
+    tip:"Pivoting with 'Tranquilo, entonces deme…' keeps the interaction warm and effortless."
+  },
+  {
+    id:"cb-datafono-down",
+    cat:"food",
+    title:"💳 No hay sistema en el datáfono",
+    curveballEs:"Qué pena con usted, se cayó la señal del datáfono y no están pasando las tarjetas.",
+    curveballEn:"So sorry to bother you, the card terminal lost signal and cards aren't going through.",
+    repairEs:"¿Tiene código QR de Nequi para hacerle la transferencia, o le pago en efectivo?",
+    repairEn:"Do you have a Nequi QR code so I can transfer to you, or shall I pay you in cash?",
+    backupEs:"Espéreme un momentico, voy al cajero de la esquina a sacar efectivo y ya vuelvo.",
+    backupEn:"Wait for me a moment, I'll go to the ATM on the corner to take out cash and be right back.",
+    tip:"'No hay sistema' or 'se cayó el datáfono' happens often—always have Nequi or a 50-mil bill as backup!"
+  },
+  {
+    id:"cb-porteria-guest",
+    cat:"daily",
+    title:"🏢 La portería pide autorización del anfitrión",
+    curveballEs:"Buenas, vecino. No me aparece autorizado en la minuta; necesito que el propietario llame a portería.",
+    curveballEn:"Hi, neighbor. You don't appear authorized in the logbook; I need the owner to call the front desk.",
+    repairEs:"Claro, don Carlos. Ya mismo le escribo por WhatsApp al dueño para que baje o llame al citófono.",
+    repairEn:"Of course, Don Carlos. I'll message the owner on WhatsApp right now so they come down or call the intercom.",
+    backupEs:"Aquí tengo el número del apartamento y mi documento de identidad mientras nos confirman.",
+    backupEn:"Here is the apartment number and my ID while they confirm for us.",
+    tip:"Colombian building security is strict—the logbook at the desk is called 'la minuta' or 'la bitácora'."
+  },
+  {
+    id:"cb-landmark-cai",
+    cat:"daily",
+    title:"🧭 Dirección con punto de referencia local (el CAI)",
+    curveballEs:"Siga derecho hasta el CAI de la policía, suba media cuadra y es el portón gris.",
+    curveballEn:"Go straight to the police post (CAI), go up half a block, and it's the gray gate.",
+    repairEs:"Para confirmar: ¿el CAI queda pasando el semáforo hacia los cerros?",
+    repairEn:"Just to confirm: is the police post past the traffic light toward the hills?",
+    backupEs:"Qué pena, ¿me señala con la mano hacia qué lado queda el CAI?",
+    backupEn:"Excuse me, can you point with your hand which way the police post is?",
+    tip:"A 'CAI' (Comando de Atención Inmediata) is a small neighborhood police station used constantly as a landmark."
+  },
+  {
+    id:"cb-social-rain",
+    cat:"social",
+    title:"🌧️ Aguacero repentino antes de salir con amigos",
+    curveballEs:"¡Parce, se largó un aguacero tenaz y no consigo Uber por ningún lado!",
+    curveballEn:"Buddy, a massive downpour just started and I can't get an Uber anywhere!",
+    repairEs:"¡Uy, qué embarrada! Tranquilo, escampa un ratico y nos vemos media hora más tarde.",
+    repairEn:"Oh, what a bummer! No worries, wait for the rain to let up a bit and we'll meet half an hour later.",
+    backupEs:"Si quieres, paso por ti en taxi que yo ya voy en camino por tu barrio.",
+    backupEn:"If you want, I'll swing by for you in a taxi since I'm already on my way through your neighborhood.",
+    tip:"'Escampar' is the essential Colombian verb meaning 'to wait under shelter until the rain stops'!"
+  }
+];
+
+/* 7. New Quiz Questions for v93 Scenarios (Direcciones/Cuadras, Panadería/Jugos, Finca/Buses, Empatía) */
+V60_CONVERSATION_QUIZ.push(
+  {kind:"reply",focus:"present",cat:"direcciones",es:"Disculpe, ¿este sector es tranquilo para caminar de noche?",en:"Sí, por la avenida es tranquilo, pero es mejor no dar papaya con el celular.",tts:"Disculpe, ¿este sector es tranquilo para caminar de noche?",choices:["Sí, por la avenida es tranquilo, pero es mejor no dar papaya con el celular.","En leche y bajito de azúcar, por favor.","A una sola cuota sin factura electrónica.","Bajito a los lados con la máquina dos."]},
+  {kind:"meaning",focus:"present",cat:"direcciones",es:"Suba dos cuadras hacia los cerros y voltee a la derecha.",en:"Go up two blocks toward the hills and turn right.",tts:"Suba dos cuadras hacia los cerros y voltee a la derecha.",choices:["Go up two blocks toward the hills and turn right.","Give me two warm pandebonos and a black coffee.","Include the tip on the card terminal, please.","Take one pill every eight hours after eating."]},
+  {kind:"reply",focus:"present",cat:"panaderia",es:"Buenos días, veci. ¿El jugo de guanábana lo quiere en agua o en leche?",en:"En leche y bajito de azúcar, por favor.",tts:"Buenos días, veci. ¿El jugo de guanábana lo quiere en agua o en leche?",choices:["En leche y bajito de azúcar, por favor.","Vengo por turismo durante dos semanas.","Suba dos cuadras hacia los cerros.","Por la plataforma número cuatro."]},
+  {kind:"meaning",focus:"present",cat:"panaderia",es:"¿Los pandebonos y las almojábanas salieron calienticos?",en:"Did the pandebonos and almojábanas come out warm/fresh?",tts:"¿Los pandebonos y las almojábanas salieron calienticos?",choices:["Did the pandebonos and almojábanas come out warm/fresh?","Where is the baggage claim belt?","Can you authorize the delivery driver to come up?","How long does the bus take to get to the town?"]},
+  {kind:"reply",focus:"future",cat:"viajes-finca",es:"Buenas tardes, ¿a qué hora sale el próximo bus y por cuál plataforma abordamos?",en:"Sale en veinte minutos por la plataforma cuatro.",tts:"Buenas tardes, ¿a qué hora sale el próximo bus y por cuál plataforma abordamos?",choices:["Sale en veinte minutos por la plataforma cuatro.","En agua sin azúcar, por favor.","No soy alérgico a ningún medicamento.","Quiero un desvanecido con tijera arriba."]},
+  {kind:"meaning",focus:"present",cat:"viajes-finca",es:"Maestro, ¿me puede dejar en la entrada de la vereda después del peaje?",en:"Driver, can you drop me off at the rural road entrance after the toll booth?",tts:"Maestro, ¿me puede dejar en la entrada de la vereda después del peaje?",choices:["Driver, can you drop me off at the rural road entrance after the toll booth?","Neighbor, can I have a small coffee with milk and a buñuelo?","Doorman, did a Rappi delivery arrive for apartment 502?","Doctor, I have had a fever and stomachache since last night."]},
+  {kind:"reply",focus:"past",cat:"empatia",es:"Se me quedó el celular en el taxi bajo el aguacero.",en:"¡Uy, qué embarrada! ¿Y ya intentaste llamar al número?",tts:"Se me quedó el celular en el taxi bajo el aguacero.",choices:["¡Uy, qué embarrada! ¿Y ya intentaste llamar al número?","Cuenta de ahorros a una sola cuota.","Con el ají aparte para llevar, por favor.","Siga derecho hasta el reclamo de equipaje."]},
+  {kind:"meaning",focus:"present",cat:"empatia",es:"¡Qué nota! Me alegra muchísimo por ti, te lo mereces.",en:"How awesome! I'm so happy for you, you deserve it.",tts:"¡Qué nota! Me alegra muchísimo por ti, te lo mereces.",choices:["How awesome! I'm so happy for you, you deserve it.","It's better not to flash your phone on the street.","Sell me two bus tickets for the holiday weekend.","The internet went down in the building this morning."]}
+);
+
+V60_FILL_BLANK_QUIZ.push(
+  {kind:"blank",focus:"present",cat:"direcciones",es:"El barrio es tranquilo, pero es mejor no dar ___ con el celular.",en:"papaya",tts:"El barrio es tranquilo, pero es mejor no dar papaya con el celular.",trans:"The neighborhood is calm, but it's better not to make yourself an easy target with your phone.",choices:["papaya","cuota","maleta","tijera"]},
+  {kind:"blank",focus:"present",cat:"panaderia",es:"Me da un jugo de lulo en ___ y bajito de azúcar, por favor.",en:"agua",tts:"Me da un jugo de lulo en agua y bajito de azúcar, por favor.",trans:"Give me a lulo juice in water and low on sugar, please.",choices:["agua","cuadra","peaje","portería"]},
+  {kind:"blank",focus:"present",cat:"panaderia",es:"Veci, ¿los pandebonos acabaron de salir ___ del horno?",en:"calienticos",tts:"Veci, ¿los pandebonos acabaron de salir calienticos del horno?",trans:"Neighbor, did the pandebonos just come out warm from the oven?",choices:["calienticos","alérgicos","atrasados","cerrados"]},
+  {kind:"blank",focus:"future",cat:"viajes-finca",es:"Este ___ festivo vamos de paseo a una finca.",en:"puente",tts:"Este puente festivo vamos de paseo a una finca.",trans:"This long holiday weekend we are going on a trip to a finca.",choices:["puente","datáfono","semáforo","citófono"]},
+  {kind:"blank",focus:"present",cat:"viajes-finca",es:"Maestro, ¿nos deja en la entrada de la vereda después del ___?",en:"peaje",tts:"Maestro, ¿nos deja en la entrada de la vereda después del peaje?",trans:"Driver, can you drop us at the rural road entrance after the toll booth?",choices:["peaje","equipaje","almuerzo","desvanecido"]},
+  {kind:"blank",focus:"past",cat:"empatia",es:"¡Uy, qué ___ que se fue la luz justo en tu reunión!",en:"embarrada",tts:"¡Uy, qué embarrada que se fue la luz justo en tu reunión!",trans:"Oh, what a bummer that the power went out right during your meeting!",choices:["embarrada","almojábana","plataforma","cuadra"]}
+);

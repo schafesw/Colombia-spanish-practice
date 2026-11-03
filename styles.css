@@ -2216,3 +2216,356 @@ body.lesson-focus-active .scroll{padding-bottom:calc(var(--safe-bottom) + 118px)
   border-color: var(--gold);
   box-shadow: 0 4px 14px rgba(232, 180, 74, 0.35);
 }
+/* ── v93.0 Pro Coaching & Colombian Speaking Mastery Styles ─────────────── */
+/* 1. Smart Coach Focus Strip ("Enfoque de Hoy · 60s Warm-Up") */
+.coach-focus-strip {
+  margin: 0 0 12px;
+  padding: 12px 13px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(232, 180, 74, 0.12), rgba(74, 168, 160, 0.09));
+  border: 1px solid rgba(232, 180, 74, 0.34);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+}
+.coach-focus-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+.coach-focus-kicker {
+  display: block;
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 900;
+  color: var(--gold);
+}
+.coach-focus-head strong {
+  font-size: 0.82rem;
+  color: #fff;
+}
+.coach-focus-playall {
+  flex: 0 0 auto;
+  padding: 6px 11px;
+  border-radius: 99px;
+  border: 1px solid rgba(232, 180, 74, 0.5);
+  background: rgba(232, 180, 74, 0.18);
+  color: var(--gold);
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+.coach-focus-chips {
+  display: grid;
+  gap: 6px;
+}
+.coach-focus-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 32, 0.62);
+  color: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+.coach-focus-chip:active {
+  transform: scale(0.99);
+}
+.coach-chip-tag {
+  flex: 0 0 auto;
+  padding: 2px 7px;
+  border-radius: 99px;
+  font-size: 0.58rem;
+  font-weight: 850;
+  background: rgba(74, 168, 160, 0.18);
+  color: var(--teal);
+  border: 1px solid rgba(74, 168, 160, 0.35);
+}
+.coach-focus-chip strong {
+  flex: 1;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.3;
+}
+.coach-chip-spk {
+  flex: 0 0 auto;
+  font-size: 0.82rem;
+}
+
+/* 2. Cross-Tab Deep-Link Pills inside Lesson Cards */
+.lesson-deeplinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+}
+.lesson-deeplink-pill {
+  padding: 3px 9px;
+  border-radius: 99px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.82);
+  font: inherit;
+  font-size: 0.62rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.lesson-deeplink-pill:hover,
+.lesson-deeplink-pill:active {
+  background: rgba(74, 168, 160, 0.2);
+  border-color: var(--teal);
+  color: #fff;
+}
+
+/* 3. Curveball & Repair Mode (⚡ Imprevisto) in Frases */
+.curveball-trigger-btn {
+  border-color: rgba(232, 180, 74, 0.45) !important;
+  color: var(--gold) !important;
+  background: rgba(232, 180, 74, 0.1) !important;
+}
+.curveball-trigger-btn.active {
+  background: var(--gold) !important;
+  color: #111827 !important;
+}
+.curveball-panel {
+  margin: 0 0 12px;
+  padding: 13px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(232, 180, 74, 0.13), rgba(232, 93, 117, 0.08));
+  border: 1px solid rgba(232, 180, 74, 0.45);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+}
+.curveball-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+.curveball-kicker {
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.curveball-close {
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+.curveball-title {
+  font-size: 0.86rem;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.curveball-prompt-box {
+  padding: 10px 12px;
+  border-radius: 11px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(232, 93, 117, 0.35);
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.curveball-prompt-label {
+  font-size: 0.62rem;
+  font-weight: 850;
+  color: var(--pink);
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.curveball-prompt-es {
+  font-size: 0.88rem;
+  font-weight: 850;
+  color: #fff;
+  line-height: 1.35;
+}
+.curveball-prompt-en {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 3px;
+}
+.curveball-repairs-label {
+  font-size: 0.68rem;
+  font-weight: 850;
+  color: var(--teal);
+  margin-bottom: 7px;
+}
+.curveball-repairs {
+  display: grid;
+  gap: 8px;
+}
+.curveball-option {
+  padding: 9px 11px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(74, 168, 160, 0.32);
+}
+.curveball-opt-tag {
+  display: inline-block;
+  font-size: 0.58rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 3px;
+}
+.curveball-opt-es {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.35;
+}
+.curveball-opt-en {
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.curveball-opt-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 7px;
+}
+.curveball-tip {
+  margin-top: 9px;
+  font-size: 0.7rem;
+  color: var(--gold);
+  line-height: 1.35;
+}
+.curveball-footer {
+  margin-top: 9px;
+}
+
+/* 4. Interactive Colombian Register Switcher & Street Grid Decoder */
+.reg-tabs-row,
+.street-formula-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 9px 0;
+}
+.reg-tab-btn,
+.street-seg-chip {
+  padding: 6px 11px;
+  border-radius: 99px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font: inherit;
+  font-size: 0.71rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+.reg-tab-btn.active,
+.street-seg-chip.active {
+  background: var(--gold);
+  color: #111827;
+  border-color: var(--gold);
+}
+.reg-active-box,
+.street-detail-box {
+  padding: 11px 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(232, 180, 74, 0.35);
+  cursor: pointer;
+  margin-bottom: 9px;
+}
+.reg-active-region,
+.street-detail-label {
+  font-size: 0.65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.reg-active-es {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.35;
+}
+.reg-active-note,
+.street-detail-explain {
+  font-size: 0.73rem;
+  color: var(--muted);
+  margin-top: 5px;
+  line-height: 1.4;
+}
+.reg-compare-grid {
+  display: grid;
+  gap: 5px;
+}
+.reg-compare-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: #fff;
+  font: inherit;
+  font-size: 0.74rem;
+  text-align: left;
+  cursor: pointer;
+}
+.reg-compare-row.current {
+  border-color: var(--teal);
+  background: rgba(74, 168, 160, 0.14);
+}
+.reg-cmp-badge {
+  flex: 0 0 88px;
+  font-weight: 850;
+  color: var(--gold);
+  font-size: 0.68rem;
+}
+.reg-cmp-es {
+  flex: 1;
+  font-weight: 700;
+}
+.street-example-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(74, 168, 160, 0.38);
+  background: rgba(74, 168, 160, 0.13);
+  color: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.street-example-btn strong {
+  display: block;
+  font-size: 0.8rem;
+}
+.street-example-btn small {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
