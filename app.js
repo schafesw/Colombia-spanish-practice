@@ -72,63 +72,39 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v89.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v90.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);
   bar.append(label,select,reset,ver);utilityBody.appendChild(bar);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
 buildProfileBar();
-let voices=[],selV=null,activeUtterance=null;
-const VOICE_KEY="esco-selected-voice-v1";
+let voices=[],selV=null;
+const VOICE_KEY="esco-selected-voice-v45";
 const VOICE_HOSTS=["fonetica","lecciones","vocab","frases","gram","quiz"];
-const NOVELTY_VOICE_RE=/Grandma|Grandpa|Rocko|Reed|Shelley|Sandy|Flo|Eddy|Bells|Bubbles|Cellos|Bad News|Good News|Organ|Trinoids|Whisper|Zarvox|Boing|Deranged|Hysterical|Jester|Wobble|Bahh|Albert|Fred|Junior|Kathy|Ralph/i;
 let savedVoiceKey="";
-try{savedVoiceKey=localStorage.getItem(VOICE_KEY)||"";}catch(e){}
+try{
+  localStorage.removeItem("esco-selected-voice-v1");
+  localStorage.removeItem("esco-selected-voice-v3");
+  savedVoiceKey=localStorage.getItem(VOICE_KEY)||"";
+}catch(e){}
 function voiceKey(v){return v?(v.voiceURI||`${v.name}::${v.lang}`):"";}
 function voiceLabel(v){return `${v.lang||"es"} · ${(v.name||"Spanish voice").replace("com.apple.","").replace("voice.","")}`;}
 function getSpanishVoices(){
   if(!window.speechSynthesis)return [];
   voices=window.speechSynthesis.getVoices()||[];
-  /* Do NOT deduplicate by name|lang here: iOS Safari exposes multiple
-     SpeechSynthesisVoice entries with the same display name and lang where one
-     is a non-speaking stub and another (localService) is the working voice. */
   return voices.filter(v=>/^es(?:-|_|$)/i.test(String(v.lang||"")));
 }
-function uniqueDisplayedVoices(sp){
-  const byNameLang=new Map();
-  sp.forEach(v=>{
-    const k=`${String(v.name||"").trim().toLowerCase()}::${String(v.lang||"").trim().toLowerCase()}`;
-    const prev=byNameLang.get(k);
-    if(!prev||(!prev.localService&&v.localService))byNameLang.set(k,v);
-  });
-  return Array.from(byNameLang.values());
-}
 function chooseSpanishVoice(sp){
-  if(!sp||!sp.length)return null;
-  if(savedVoiceKey){
-    const exactUri=sp.find(v=>v.localService&&voiceKey(v)===savedVoiceKey)||sp.find(v=>voiceKey(v)===savedVoiceKey);
-    if(exactUri)return exactUri;
-    const byPair=sp.find(v=>v.localService&&`${v.name}::${v.lang}`===savedVoiceKey)||sp.find(v=>`${v.name}::${v.lang}`===savedVoiceKey);
-    if(byPair)return byPair;
+  const saved=sp.find(v=>voiceKey(v)===savedVoiceKey||(`${v.name}::${v.lang}`===savedVoiceKey));
+  if(saved)return saved;
+  if(!savedVoiceKey){
+    for(const p of["es-CO","es-419","es-MX","es-US","es-AR","es-ES"]){
+      const v=sp.find(x=>String(x.lang||"").toUpperCase().startsWith(p.toUpperCase()));
+      if(v)return v;
+    }
   }
-  const natural=sp.filter(v=>!NOVELTY_VOICE_RE.test(String(v.name||"")));
-  const pool=natural.length?natural:sp;
-  if(selV){
-    const kept=pool.find(v=>v.localService&&v.name===selV.name&&v.lang===selV.lang)||pool.find(v=>v.name===selV.name&&v.lang===selV.lang);
-    if(kept)return kept;
-  }
-  const paulina=pool.find(v=>v.localService&&/^paulina$/i.test(String(v.name||"")))||
-    pool.find(v=>/^paulina$/i.test(String(v.name||"")))||
-    pool.find(v=>v.localService&&/paulina/i.test(String(v.name||"")))||
-    pool.find(v=>/paulina/i.test(String(v.name||"")));
-  if(paulina)return paulina;
-  for(const p of["es-CO","es-419","es-MX","es-US","es-AR","es-ES"]){
-    const target=p.toUpperCase();
-    const localMatch=pool.find(x=>x.localService&&String(x.lang||"").replace("_","-").toUpperCase().startsWith(target));
-    if(localMatch)return localMatch;
-    const anyMatch=pool.find(x=>String(x.lang||"").replace("_","-").toUpperCase().startsWith(target));
-    if(anyMatch)return anyMatch;
-  }
-  return pool.find(x=>x.localService)||pool[0]||null;
+  const kept=selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang);
+  if(kept)return kept;
+  return sp[0]||null;
 }
 function rememberVoice(v){
   if(!v)return;
@@ -136,7 +112,7 @@ function rememberVoice(v){
   try{localStorage.setItem(VOICE_KEY,savedVoiceKey);}catch(e){}
 }
 function syncVoiceSelectors(){
-  const key=selV?voiceKey(selV):"";
+  const key=voiceKey(selV);
   document.querySelectorAll(".voice-choice").forEach(s=>{if(key)s.value=key;});
 }
 function loadV(){
@@ -146,53 +122,37 @@ function loadV(){
   buildVoiceBars(sp);
 }
 function buildVoiceBars(sp=getSpanishVoices()){
-  const displayed=uniqueDisplayedVoices(sp);
   VOICE_HOSTS.forEach(id=>{
     const host=document.getElementById(`voice-bar-${id}`);if(!host)return;
     host.innerHTML="";
-    const drawer=document.createElement("details");drawer.className="top-utility-drawer";
-    const summary=document.createElement("summary");summary.className="top-utility-summary";
-    summary.innerHTML=`<span>⚙️ Audio settings</span><small>${escapeVocabHtml(selV?voiceLabel(selV):"Choose Spanish voice")}</small>`;
-    const utilityBody=document.createElement("div");utilityBody.className="top-utility-body";
     const bar=document.createElement("div");bar.className="voice-bar";
     const label=document.createElement("span");label.className="voice-label";label.textContent="🎙️ Voz";
     const select=document.createElement("select");select.className="voice-select voice-choice";select.setAttribute("aria-label","Spanish voice");
-    if(displayed.length){
-      displayed.forEach(v=>{const option=document.createElement("option");option.value=voiceKey(v);option.textContent=voiceLabel(v);select.appendChild(option);});
-      if(selV){
-        const match=displayed.find(v=>voiceKey(v)===voiceKey(selV))||displayed.find(v=>v.name===selV.name&&v.lang===selV.lang);
-        if(match)select.value=voiceKey(match);
-      }
+    if(sp.length){
+      sp.forEach(v=>{const option=document.createElement("option");option.value=voiceKey(v);option.textContent=voiceLabel(v);select.appendChild(option);});
+      if(selV)select.value=voiceKey(selV);
     }else{
       const option=document.createElement("option");option.textContent="Loading Spanish voices…";option.disabled=true;option.selected=true;select.appendChild(option);
     }
     select.onchange=()=>chV(select.value);
     const test=document.createElement("button");test.type="button";test.className="voice-test";test.textContent="Probar";test.onclick=()=>speak("Hola, buenos días Colombia",0.8);
-    bar.append(label,select,test);utilityBody.appendChild(bar);drawer.append(summary,utilityBody);host.appendChild(drawer);
+    bar.append(label,select,test);host.appendChild(bar);
   });
 }
-function chV(key){
-  const sp=getSpanishVoices();
-  const v=sp.find(x=>x.localService&&voiceKey(x)===key)||sp.find(x=>voiceKey(x)===key);
-  if(v){rememberVoice(v);syncVoiceSelectors();document.querySelectorAll(".top-utility-summary small").forEach(x=>x.textContent=voiceLabel(v));}
-}
+function chV(key){const v=getSpanishVoices().find(x=>voiceKey(x)===key);if(v){rememberVoice(v);syncVoiceSelectors();}}
 function speak(t,r,onEnd){
-  if(!window.speechSynthesis||t===undefined||t===null||String(t).trim()===""){if(onEnd)onEnd();return;}
+  if(!window.speechSynthesis){if(onEnd)onEnd();return;}
   const sp=getSpanishVoices();
-  const voice=chooseSpanishVoice(sp);
+  const saved=savedVoiceKey&&sp.find(v=>voiceKey(v)===savedVoiceKey); /* saved pick wins the moment the list recovers */
+  const live=saved||(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang));
+  const voice=live||chooseSpanishVoice(sp);
   if(voice)selV=voice; /* use it, but do NOT persist — only an explicit dropdown pick (chV) saves, so a flaky iOS voice list can't overwrite the user's choice */
-  try{
-    speechSynthesis.cancel();
-    if(speechSynthesis.paused)speechSynthesis.resume();
-  }catch(e){}
-  const u=new SpeechSynthesisUtterance(String(t));
-  activeUtterance=u;
-  if(voice){u.voice=voice;u.lang=voice.lang||"es-MX";}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);
+  if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
   u.rate=r||0.8;
-  let finished=false;
-  const done=()=>{if(activeUtterance===u)activeUtterance=null;if(finished)return;finished=true;if(onEnd)onEnd();};
-  u.onend=done;u.onerror=done;
-  try{speechSynthesis.speak(u);}catch(e){done();}
+  if(onEnd){let finished=false;const done=()=>{if(finished)return;finished=true;onEnd();};u.onend=done;u.onerror=done;}
+  speechSynthesis.speak(u);
   rememberSpoken(t);
 }
 /* ── Lento (slow replay) ─────────────────────────────────────────────────────
@@ -211,17 +171,12 @@ function rememberSpoken(t){
       if(!lastSpokenText)return;
       /* replay directly (not via speak) so it doesn't overwrite lastSpokenText rate context */
       const sp=getSpanishVoices();
-      const voice=chooseSpanishVoice(sp);
-      try{
-        speechSynthesis.cancel();
-        if(speechSynthesis.paused)speechSynthesis.resume();
-      }catch(e){}
-      const u=new SpeechSynthesisUtterance(String(lastSpokenText));
-      activeUtterance=u;
-      if(voice){u.voice=voice;u.lang=voice.lang||"es-MX";}else u.lang="es-MX";
+      const voice=(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang))||chooseSpanishVoice(sp);
+      speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(lastSpokenText);
+      if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX";
       u.rate=0.45;
-      u.onend=u.onerror=()=>{if(activeUtterance===u)activeUtterance=null;};
-      try{speechSynthesis.speak(u);}catch(e){}
+      speechSynthesis.speak(u);
     };
     document.body.appendChild(lentoBtn);
   }
@@ -232,13 +187,6 @@ if(window.speechSynthesis){
   window.speechSynthesis.onvoiceschanged=loadV;
   setTimeout(loadV,100);
   setTimeout(loadV,500);
-  const unlockSpeech=()=>{
-    if(!window.speechSynthesis)return;
-    try{if(speechSynthesis.paused)speechSynthesis.resume();}catch(e){}
-    if(!voices.length)loadV();
-  };
-  document.addEventListener("touchend",unlockSpeech,{passive:true});
-  document.addEventListener("click",unlockSpeech,{passive:true});
 }
 
 // ── Build Letras ──────────────────────────────────────────────────────────────
@@ -587,7 +535,7 @@ const SPEECH_CHECK_ENABLED=true;
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition||null;
 let micPanel=null,micRecorder=null,micChunks=[],micUrl=null,micTarget="",micStream=null,micPracticeType="";
 function micSupported(){return !!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder);}
-function micStopStream(){if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null;if(window.speechSynthesis&&speechSynthesis.paused){try{speechSynthesis.resume();}catch(e){}}}}
+function micStopStream(){if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null;}}
 function closeMicPanel(){if(micPanel)micPanel.style.display="none";micStopStream();try{if(micRecorder&&micRecorder.state==="recording")micRecorder.stop();}catch(e){}}
 function openMicPanel(target,practiceType){
   micTarget=target;
@@ -2017,7 +1965,7 @@ let rrStats={attempts:0,got:0,practice:0,skipped:0};
 try{rrStats=Object.assign(rrStats,JSON.parse(localStorage.getItem(RR_STATS_KEY)||"{}"));}catch(e){}
 function saveRRStats(){try{localStorage.setItem(RR_STATS_KEY,JSON.stringify(rrStats));}catch(e){}}
 function rrClearRecording(){if(rrUrl){try{URL.revokeObjectURL(rrUrl);}catch(e){}rrUrl=null;}rrChunks=[];}
-function rrStopStream(){if(rrStream){rrStream.getTracks().forEach(t=>t.stop());rrStream=null;if(window.speechSynthesis&&speechSynthesis.paused){try{speechSynthesis.resume();}catch(e){}}}}
+function rrStopStream(){if(rrStream){rrStream.getTracks().forEach(t=>t.stop());rrStream=null;}}
 function rrCloseAudio(){if(rrAudioContext){try{rrAudioContext.close();}catch(e){}rrAudioContext=null;}rrAnalyser=null;}
 function rrCancelRecording(){
   if(rrSilenceTimer){clearInterval(rrSilenceTimer);rrSilenceTimer=null;}
