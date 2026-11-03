@@ -1,4 +1,4 @@
-﻿// Spanish learning app behavior
+// Spanish learning app behavior
 // ── Voice ─────────────────────────────────────────────────────────────────────
 // ── Local profiles ──────────────────────────────────────────────────────────
 // Profiles are intentionally local to this browser/device. They keep quiz,
@@ -53,13 +53,17 @@ const localStorage=profileStorage;
 function buildProfileBar(){
   const host=document.getElementById("profile-host");if(!host)return;
   host.innerHTML="";
+  const currentProfile=profileList.find(p=>p.id===activeProfileId)||{label:activeProfileId,emoji:"👤"};
+  const drawer=document.createElement("details");drawer.className="top-utility-drawer profile-utility-drawer";
+  const summary=document.createElement("summary");summary.className="top-utility-summary";
+  summary.innerHTML=`<span>👤 Profile</span><small>${currentProfile.emoji||"👤"} ${currentProfile.label}</small>`;
+  const utilityBody=document.createElement("div");utilityBody.className="top-utility-body";
   const bar=document.createElement("div");bar.className="profile-bar";
-  const label=document.createElement("span");label.className="profile-label";label.textContent="👤 Profile";
+  const label=document.createElement("span");label.className="profile-label";label.textContent="Profile";
   const select=document.createElement("select");select.className="profile-select";select.setAttribute("aria-label","Choose local profile");
   profileList.forEach(p=>{const o=document.createElement("option");o.value=p.id;o.textContent=(p.emoji||"👤")+" "+p.label;select.appendChild(o);});
   select.value=activeProfileId;
   select.onchange=()=>{activeProfileId=select.value;nativeStorage.setItem(ACTIVE_PROFILE_KEY,activeProfileId);location.reload();};
-  const currentProfile=profileList.find(p=>p.id===activeProfileId)||{label:activeProfileId};
   const reset=document.createElement("button");reset.type="button";reset.className="profile-reset";reset.textContent=`Reset ${currentProfile.label}`;reset.title=`Clear ${currentProfile.label} progress only`;
   reset.onclick=()=>{
     if(!confirm(`Clear the ${currentProfile.label} profile's saved progress? Other profiles will not change.`))return;
@@ -68,14 +72,15 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v76.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v89.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);
-  bar.append(label,select,reset,ver);host.appendChild(bar);
+  bar.append(label,select,reset,ver);utilityBody.appendChild(bar);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
 buildProfileBar();
-let voices=[],selV=null;
+let voices=[],selV=null,activeUtterance=null;
 const VOICE_KEY="esco-selected-voice-v1";
 const VOICE_HOSTS=["fonetica","lecciones","vocab","frases","gram","quiz"];
+const NOVELTY_VOICE_RE=/Grandma|Grandpa|Rocko|Reed|Shelley|Sandy|Flo|Eddy|Bells|Bubbles|Cellos|Bad News|Good News|Organ|Trinoids|Whisper|Zarvox|Boing|Deranged|Hysterical|Jester|Wobble|Bahh|Albert|Fred|Junior|Kathy|Ralph/i;
 let savedVoiceKey="";
 try{savedVoiceKey=localStorage.getItem(VOICE_KEY)||"";}catch(e){}
 function voiceKey(v){return v?(v.voiceURI||`${v.name}::${v.lang}`):"";}
@@ -83,22 +88,47 @@ function voiceLabel(v){return `${v.lang||"es"} · ${(v.name||"Spanish voice").re
 function getSpanishVoices(){
   if(!window.speechSynthesis)return [];
   voices=window.speechSynthesis.getVoices()||[];
-  /* Do not collapse voices by name/language. iOS can expose two entries with the
-     same label but different voiceURI values; one can be the usable local voice. */
+  /* Do NOT deduplicate by name|lang here: iOS Safari exposes multiple
+     SpeechSynthesisVoice entries with the same display name and lang where one
+     is a non-speaking stub and another (localService) is the working voice. */
   return voices.filter(v=>/^es(?:-|_|$)/i.test(String(v.lang||"")));
 }
+function uniqueDisplayedVoices(sp){
+  const byNameLang=new Map();
+  sp.forEach(v=>{
+    const k=`${String(v.name||"").trim().toLowerCase()}::${String(v.lang||"").trim().toLowerCase()}`;
+    const prev=byNameLang.get(k);
+    if(!prev||(!prev.localService&&v.localService))byNameLang.set(k,v);
+  });
+  return Array.from(byNameLang.values());
+}
 function chooseSpanishVoice(sp){
-  const saved=sp.find(v=>voiceKey(v)===savedVoiceKey||(`${v.name}::${v.lang}`===savedVoiceKey));
-  if(saved)return saved;
-  const kept=selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang);
-  if(kept)return kept;
-  /* A voice saved by an older iOS release can disappear after an update. Do not
-     let that stale key prevent selection of a working Spanish fallback. */
-  for(const p of["es-CO","es-419","es-MX","es-US","es-AR","es-ES"]){
-    const v=sp.find(x=>String(x.lang||"").toUpperCase().startsWith(p.toUpperCase()));
-    if(v)return v;
+  if(!sp||!sp.length)return null;
+  if(savedVoiceKey){
+    const exactUri=sp.find(v=>v.localService&&voiceKey(v)===savedVoiceKey)||sp.find(v=>voiceKey(v)===savedVoiceKey);
+    if(exactUri)return exactUri;
+    const byPair=sp.find(v=>v.localService&&`${v.name}::${v.lang}`===savedVoiceKey)||sp.find(v=>`${v.name}::${v.lang}`===savedVoiceKey);
+    if(byPair)return byPair;
   }
-  return sp[0]||null;
+  const natural=sp.filter(v=>!NOVELTY_VOICE_RE.test(String(v.name||"")));
+  const pool=natural.length?natural:sp;
+  if(selV){
+    const kept=pool.find(v=>v.localService&&v.name===selV.name&&v.lang===selV.lang)||pool.find(v=>v.name===selV.name&&v.lang===selV.lang);
+    if(kept)return kept;
+  }
+  const paulina=pool.find(v=>v.localService&&/^paulina$/i.test(String(v.name||"")))||
+    pool.find(v=>/^paulina$/i.test(String(v.name||"")))||
+    pool.find(v=>v.localService&&/paulina/i.test(String(v.name||"")))||
+    pool.find(v=>/paulina/i.test(String(v.name||"")));
+  if(paulina)return paulina;
+  for(const p of["es-CO","es-419","es-MX","es-US","es-AR","es-ES"]){
+    const target=p.toUpperCase();
+    const localMatch=pool.find(x=>x.localService&&String(x.lang||"").replace("_","-").toUpperCase().startsWith(target));
+    if(localMatch)return localMatch;
+    const anyMatch=pool.find(x=>String(x.lang||"").replace("_","-").toUpperCase().startsWith(target));
+    if(anyMatch)return anyMatch;
+  }
+  return pool.find(x=>x.localService)||pool[0]||null;
 }
 function rememberVoice(v){
   if(!v)return;
@@ -116,62 +146,53 @@ function loadV(){
   buildVoiceBars(sp);
 }
 function buildVoiceBars(sp=getSpanishVoices()){
+  const displayed=uniqueDisplayedVoices(sp);
   VOICE_HOSTS.forEach(id=>{
     const host=document.getElementById(`voice-bar-${id}`);if(!host)return;
     host.innerHTML="";
+    const drawer=document.createElement("details");drawer.className="top-utility-drawer";
+    const summary=document.createElement("summary");summary.className="top-utility-summary";
+    summary.innerHTML=`<span>⚙️ Audio settings</span><small>${escapeVocabHtml(selV?voiceLabel(selV):"Choose Spanish voice")}</small>`;
+    const utilityBody=document.createElement("div");utilityBody.className="top-utility-body";
     const bar=document.createElement("div");bar.className="voice-bar";
     const label=document.createElement("span");label.className="voice-label";label.textContent="🎙️ Voz";
     const select=document.createElement("select");select.className="voice-select voice-choice";select.setAttribute("aria-label","Spanish voice");
-    if(sp.length){
-      sp.forEach(v=>{const option=document.createElement("option");option.value=voiceKey(v);option.textContent=voiceLabel(v);select.appendChild(option);});
-      if(selV)select.value=voiceKey(selV);
+    if(displayed.length){
+      displayed.forEach(v=>{const option=document.createElement("option");option.value=voiceKey(v);option.textContent=voiceLabel(v);select.appendChild(option);});
+      if(selV){
+        const match=displayed.find(v=>voiceKey(v)===voiceKey(selV))||displayed.find(v=>v.name===selV.name&&v.lang===selV.lang);
+        if(match)select.value=voiceKey(match);
+      }
     }else{
       const option=document.createElement("option");option.textContent="Loading Spanish voices…";option.disabled=true;option.selected=true;select.appendChild(option);
     }
     select.onchange=()=>chV(select.value);
     const test=document.createElement("button");test.type="button";test.className="voice-test";test.textContent="Probar";test.onclick=()=>speak("Hola, buenos días Colombia",0.8);
-    bar.append(label,select,test);host.appendChild(bar);
+    bar.append(label,select,test);utilityBody.appendChild(bar);drawer.append(summary,utilityBody);host.appendChild(drawer);
   });
 }
 function chV(key){
-  const v=getSpanishVoices().find(x=>voiceKey(x)===key);
-  if(v){rememberVoice(v);syncVoiceSelectors();}
-}
-let activeUtterance=null,speechRequest=0;
-function playSpeech(t,r,onEnd){
-  if(!window.speechSynthesis){if(onEnd)onEnd();return;}
-  const request=++speechRequest;
   const sp=getSpanishVoices();
-  const saved=savedVoiceKey&&sp.find(v=>voiceKey(v)===savedVoiceKey); /* saved pick wins the moment the list recovers */
-  const live=saved||(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang));
-  const voice=live||chooseSpanishVoice(sp);
-  if(voice)selV=voice; /* use it, but do NOT persist — only an explicit dropdown pick (chV) saves, so a flaky iOS voice list can't overwrite the user's choice */
-  const launch=()=>{
-    if(request!==speechRequest)return;
-    const u=new SpeechSynthesisUtterance(t);
-    activeUtterance=u; /* Safari can stop an utterance if no strong reference remains. */
-    if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX";
-    u.rate=r||0.8;
-    let finished=false;
-    const done=()=>{
-      if(finished)return;
-      finished=true;
-      if(activeUtterance===u)activeUtterance=null;
-      if(onEnd)onEnd();
-    };
-    u.onend=done;u.onerror=done;
-    speechSynthesis.resume();
-    speechSynthesis.speak(u);
-  };
-  /* On iPhone, cancel() immediately followed by speak() can silently discard the
-     new utterance. Only cancel when necessary and allow Safari to settle first. */
-  if(speechSynthesis.speaking||speechSynthesis.pending){
-    speechSynthesis.cancel();
-    setTimeout(launch,60);
-  }else launch();
+  const v=sp.find(x=>x.localService&&voiceKey(x)===key)||sp.find(x=>voiceKey(x)===key);
+  if(v){rememberVoice(v);syncVoiceSelectors();document.querySelectorAll(".top-utility-summary small").forEach(x=>x.textContent=voiceLabel(v));}
 }
 function speak(t,r,onEnd){
-  playSpeech(t,r,onEnd);
+  if(!window.speechSynthesis||t===undefined||t===null||String(t).trim()===""){if(onEnd)onEnd();return;}
+  const sp=getSpanishVoices();
+  const voice=chooseSpanishVoice(sp);
+  if(voice)selV=voice; /* use it, but do NOT persist — only an explicit dropdown pick (chV) saves, so a flaky iOS voice list can't overwrite the user's choice */
+  try{
+    speechSynthesis.cancel();
+    if(speechSynthesis.paused)speechSynthesis.resume();
+  }catch(e){}
+  const u=new SpeechSynthesisUtterance(String(t));
+  activeUtterance=u;
+  if(voice){u.voice=voice;u.lang=voice.lang||"es-MX";}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
+  u.rate=r||0.8;
+  let finished=false;
+  const done=()=>{if(activeUtterance===u)activeUtterance=null;if(finished)return;finished=true;if(onEnd)onEnd();};
+  u.onend=done;u.onerror=done;
+  try{speechSynthesis.speak(u);}catch(e){done();}
   rememberSpoken(t);
 }
 /* ── Lento (slow replay) ─────────────────────────────────────────────────────
@@ -189,7 +210,18 @@ function rememberSpoken(t){
     lentoBtn.onclick=()=>{
       if(!lastSpokenText)return;
       /* replay directly (not via speak) so it doesn't overwrite lastSpokenText rate context */
-      playSpeech(lastSpokenText,0.45);
+      const sp=getSpanishVoices();
+      const voice=chooseSpanishVoice(sp);
+      try{
+        speechSynthesis.cancel();
+        if(speechSynthesis.paused)speechSynthesis.resume();
+      }catch(e){}
+      const u=new SpeechSynthesisUtterance(String(lastSpokenText));
+      activeUtterance=u;
+      if(voice){u.voice=voice;u.lang=voice.lang||"es-MX";}else u.lang="es-MX";
+      u.rate=0.45;
+      u.onend=u.onerror=()=>{if(activeUtterance===u)activeUtterance=null;};
+      try{speechSynthesis.speak(u);}catch(e){}
     };
     document.body.appendChild(lentoBtn);
   }
@@ -200,6 +232,13 @@ if(window.speechSynthesis){
   window.speechSynthesis.onvoiceschanged=loadV;
   setTimeout(loadV,100);
   setTimeout(loadV,500);
+  const unlockSpeech=()=>{
+    if(!window.speechSynthesis)return;
+    try{if(speechSynthesis.paused)speechSynthesis.resume();}catch(e){}
+    if(!voices.length)loadV();
+  };
+  document.addEventListener("touchend",unlockSpeech,{passive:true});
+  document.addEventListener("click",unlockSpeech,{passive:true});
 }
 
 // ── Build Letras ──────────────────────────────────────────────────────────────
@@ -548,7 +587,7 @@ const SPEECH_CHECK_ENABLED=true;
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition||null;
 let micPanel=null,micRecorder=null,micChunks=[],micUrl=null,micTarget="",micStream=null,micPracticeType="";
 function micSupported(){return !!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder);}
-function micStopStream(){if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null;}}
+function micStopStream(){if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null;if(window.speechSynthesis&&speechSynthesis.paused){try{speechSynthesis.resume();}catch(e){}}}}
 function closeMicPanel(){if(micPanel)micPanel.style.display="none";micStopStream();try{if(micRecorder&&micRecorder.state==="recording")micRecorder.stop();}catch(e){}}
 function openMicPanel(target,practiceType){
   micTarget=target;
@@ -1422,6 +1461,7 @@ function scrollAppTop(){
 function setLeccionesFocusMode(active){
   const page=document.getElementById("page-lecciones");
   if(page)page.classList.toggle("lesson-focus-mode",!!active);
+  document.body.classList.toggle("lesson-focus-active",!!active);
   scrollAppTop();
 }
 function renderLessonStep(){
@@ -1430,14 +1470,17 @@ function renderLessonStep(){
   const c=LESSON_CONTENT[lpLesson.id];
   const step=lpSteps[lpStep];
   saveResume();
-  const back=document.createElement("button");back.type="button";back.className="phrase-back";
-  back.innerHTML="<span>‹</span><span>Back to lessons</span>";
+  const focusTop=lpEl("lp-focus-top");
+  const back=document.createElement("button");back.type="button";back.className="lp-exit";
+  back.innerHTML="<span class='lp-exit-icon'>×</span><span>Exit lesson</span>";
   back.onclick=()=>{lpLesson=null;renderLessons();};
-  root.appendChild(back);
+  const focusProgress=lpEl("lp-focus-progress",`<span style="width:${Math.round(((lpStep+1)/lpSteps.length)*100)}%"></span>`);
+  const focusStep=lpEl("lp-focus-step",`${lpStep+1}/${lpSteps.length}`);
+  focusTop.append(back,focusProgress,focusStep);root.appendChild(focusTop);
   const modeBar=lpEl("lp-mode-switch");
-  const coreBtn=document.createElement("button");coreBtn.type="button";coreBtn.className="lp-mode-btn"+(!lpFullMode?" active":"");coreBtn.textContent="⚡ Speaking Core (8 steps)";coreBtn.onclick=()=>switchLessonPathMode(false);
-  const fullBtn=document.createElement("button");fullBtn.type="button";fullBtn.className="lp-mode-btn"+(lpFullMode?" active":"");fullBtn.textContent="📚 Full Practice (16 steps)";fullBtn.onclick=()=>switchLessonPathMode(true);
-  modeBar.append(coreBtn,fullBtn);root.appendChild(modeBar);
+  const coreBtn=document.createElement("button");coreBtn.type="button";coreBtn.className="lp-mode-btn"+(!lpFullMode?" active":"");coreBtn.textContent="⚡ Core";coreBtn.title="Speaking Core";coreBtn.onclick=()=>switchLessonPathMode(false);
+  const fullBtn=document.createElement("button");fullBtn.type="button";fullBtn.className="lp-mode-btn"+(lpFullMode?" active":"");fullBtn.textContent="📚 Full";fullBtn.title="Full Practice";fullBtn.onclick=()=>switchLessonPathMode(true);
+  modeBar.append(coreBtn,fullBtn);focusTop.appendChild(modeBar);
   const progress=lpEl("lp-progress-head");
   progress.innerHTML=`<span>${escapeVocabHtml(lpLesson.title||"Lesson")}</span><strong>Step ${lpStep+1} of ${lpSteps.length}</strong>`;
   root.appendChild(progress);
@@ -1489,15 +1532,39 @@ function renderLessonStep(){
       });
       body.appendChild(rungsWrap);
       if(maxRung<ladder.rungs.length){
-        const addLayer=document.createElement("button");addLayer.type="button";addLayer.className="lp-nav-btn primary ladder-expand-btn";
-        addLayer.textContent=`➕ Add layer ${maxRung+1} of ${ladder.rungs.length} →`;
-        addLayer.onclick=()=>{
+        const nextRung=ladder.rungs[maxRung];
+        const choice=lpEl("ladder-choice");
+        choice.appendChild(lpEl("ladder-choice-title","🧩 Choose the next building block"));
+        choice.appendChild(lpEl("ladder-choice-help",`Layer ${maxRung+1} · ${escapeVocabHtml(nextRung.tag)}<br><span>${escapeVocabHtml(nextRung.en)}</span>`));
+        const optionWrap=lpEl("ladder-choice-options");
+        const candidates=[nextRung,...ladder.rungs.slice(maxRung+1),...(ladder.swaps||[])]
+          .filter(Boolean)
+          .filter((item,i,all)=>all.findIndex(x=>x.es===item.es)===i)
+          .slice(0,4)
+          .sort(()=>Math.random()-.5);
+        const feedback=lpEl("ladder-choice-feedback"," ");
+        let unlocked=false;
+        const unlock=()=>{
+          if(unlocked)return;
+          unlocked=true;
+          const nextText=nextRung.es.replace(/\.\.\.|…/g,"").trim();
+          /* Keep this speech call inside the tap handler for iPhone Safari. */
+          speak(nextText,0.74);
           lpLadderStep=maxRung+1;
-          const nextRung=ladder.rungs[lpLadderStep-1];
           renderLessonStep();
-          if(nextRung)speak(nextRung.es.replace(/\.\.\.|…/g,"").trim(),0.74);
         };
-        body.appendChild(addLayer);
+        candidates.forEach(item=>{
+          const b=document.createElement("button");b.type="button";b.className="ladder-choice-btn";b.textContent=item.es;
+          b.onclick=()=>{
+            if(unlocked)return;
+            if(item.es===nextRung.es){b.classList.add("correct");feedback.textContent="✅ Correct — now say the new sentence out loud.";unlock();}
+            else{b.classList.add("wrong");feedback.textContent="Try again. Listen for the next layer in the ladder.";}
+          };
+          optionWrap.appendChild(b);
+        });
+        choice.appendChild(optionWrap);choice.appendChild(feedback);
+        const skip=document.createElement("button");skip.type="button";skip.className="ladder-choice-skip";skip.textContent="Show the next layer";skip.onclick=unlock;choice.appendChild(skip);
+        body.appendChild(choice);
       }else if(Array.isArray(ladder.swaps)&&ladder.swaps.length){
         const swapsBox=lpEl("ladder-swaps");
         swapsBox.innerHTML=`<div class="ladder-swaps-title">🔄 Rung 5 · Swap a piece and say 3 new sentences out loud</div><div class="ladder-swaps-sub">Tap any variation to hear it:</div>`;
@@ -1548,19 +1615,26 @@ function renderLessonStep(){
       const normal=document.createElement("button");normal.type="button";normal.className="lp-nav-btn";normal.textContent="🔊 Hear normally";normal.onclick=()=>speak(pair.questionTts,0.75);
       const hide=document.createElement("button");hide.type="button";hide.className="lp-nav-btn primary";hide.textContent="I understand the idea →";
       const help=document.createElement("button");help.type="button";help.className="lp-english-help";help.textContent="💡 Hide English help";
+      help.setAttribute("aria-expanded","true");
       let stage=1,english=true,modelShown=false;
       const setStage=n=>{
         stage=n;
         rail.querySelectorAll(".lp-response-stage").forEach((item,i)=>item.classList.toggle("on",i<n));
         promptEs.hidden=n>=3;
-        promptEn.hidden=!english||n>=3;
+        // Hide the translation when it is time to answer, but leave it
+        // available through the English-help button if the learner needs it.
+        if(n>=3)english=false;
+        // Keep the English-help toggle authoritative at every response stage.
+        // Stage 3 hides the Spanish prompt so the learner answers from memory,
+        // but the learner must still be able to reveal the English help text.
+        promptEn.hidden=!english;
         help.textContent=english?"🙈 Hide English help":"💡 Show English help";
         if(n===2)status.textContent="Step 2 · Hear it at normal speed. Then hide the text.";
         if(n===3)status.textContent="Step 3 · Answer out loud now. You can use any natural answer that fits.";
         if(n>=4)status.textContent="Step 4 · Compare with a natural model answer. Your wording can be different.";
       };
       hide.onclick=()=>{setStage(2);speak(pair.questionTts,0.75);};
-      help.onclick=()=>{english=!english;promptEn.hidden=!english||stage>=3;help.textContent=english?"🙈 Hide English help":"💡 Show English help";};
+      help.onclick=()=>{english=!english;promptEn.hidden=!english;help.textContent=english?"🙈 Hide English help":"💡 Show English help";help.setAttribute("aria-expanded",String(english));};
       actions.append(slow,normal,hide);body.appendChild(actions);body.appendChild(help);
       const responseActions=lpEl("lp-response-actions");
       const answerBtn=document.createElement("button");answerBtn.type="button";answerBtn.className="lp-nav-btn primary";answerBtn.textContent="🎙️ Record my response";answerBtn.disabled=true;
@@ -1578,7 +1652,7 @@ function renderLessonStep(){
       body.appendChild(rating);
       const unlock=()=>{answerBtn.disabled=false;reveal.disabled=false;};
       hide.addEventListener("click",unlock);normal.addEventListener("click",()=>{if(stage>=2)unlock();});
-      setStage(1);setTimeout(()=>speak(pair.questionTts,0.55),250);
+      setStage(1);speak(pair.questionTts,0.55);
       navBtn("‹ Back",prev);navBtn("Next →",next,true);
     }
   }
@@ -1686,9 +1760,9 @@ function renderLessonStep(){
         const L=lines[i];
         const isMe=L.who===who;
         const isCurrent=i===currentIdx;
-        const row=lpEl("lp-line"+(isMe?" lp-me":""));
+        const row=lpEl("lp-chat-message"+(isMe?" me":" partner")+(isCurrent?" current":""));
         if(isMe&&isCurrent){
-          row.innerHTML=`<div class="lp-sim-prompt-tag">🎯 YOUR TURN (Person ${who}) — Say this in Spanish:</div><div class="lp-sim-intent">“${escapeVocabHtml(L.en)}”</div><div class="lp-line-es lp-blur">${escapeVocabHtml(L.es)}</div><div class="lp-sim-actions"></div>`;
+          row.innerHTML=`<div class="lp-chat-avatar">👤</div><div class="lp-chat-bubble"><div class="lp-sim-prompt-tag">🎯 YOUR TURN · Person ${who}</div><div class="lp-sim-intent">“${escapeVocabHtml(L.en)}”</div><div class="lp-line-es lp-blur">${escapeVocabHtml(L.es)}</div><div class="lp-sim-actions"></div></div>`;
           const act=row.querySelector(".lp-sim-actions");
           const revealBtn=document.createElement("button");revealBtn.type="button";revealBtn.className="warmup-btn";revealBtn.textContent="👀 Reveal & Hear Spanish";
           revealBtn.onclick=e=>{
@@ -1700,8 +1774,8 @@ function renderLessonStep(){
           act.appendChild(revealBtn);
           attachMic(act,L.tts,"phrases");
         }else{
-          row.innerHTML=`<strong>${L.who}:</strong> <span class='lp-line-es'>${escapeVocabHtml(L.es)}</span><div class='lp-line-en'>${escapeVocabHtml(L.en)}</div>`;
-          row.onclick=()=>speak(L.tts,0.75);
+          row.innerHTML=`<div class="lp-chat-avatar">${L.who===who?"👤":"🗣️"}</div><div class="lp-chat-bubble"><strong>${L.who===who?"You":"Partner"}</strong><span class='lp-line-es'>${escapeVocabHtml(L.es)}</span><div class='lp-line-en'>${escapeVocabHtml(L.en)}</div></div>`;
+          row.querySelector(".lp-chat-bubble").onclick=()=>speak(L.tts,0.75);
           attachMic(row,L.tts,"phrases");
         }
         historyWrap.appendChild(row);
@@ -1727,8 +1801,8 @@ function renderLessonStep(){
       }
       body.appendChild(turnNav);
     }else{
-      const help=document.createElement("button");help.type="button";help.className="lp-english-help";help.textContent="💡 Show English help";let englishShown=false;
-      help.onclick=()=>{englishShown=!englishShown;body.querySelectorAll(".lp-line-en").forEach(x=>x.hidden=!englishShown);help.textContent=englishShown?"🙈 Hide English help":"💡 Show English help";};body.appendChild(help);
+      const help=document.createElement("button");help.type="button";help.className="lp-english-help";help.textContent="💡 Show English help";help.setAttribute("aria-expanded","false");let englishShown=false;
+      help.onclick=()=>{englishShown=!englishShown;body.querySelectorAll(".lp-line-en").forEach(x=>x.hidden=!englishShown);help.textContent=englishShown?"🙈 Hide English help":"💡 Show English help";help.setAttribute("aria-expanded",String(englishShown));};body.appendChild(help);
       lines.forEach(L=>{
         const hidden=L.who===who;
         const row=lpEl("lp-line"+(hidden?" lp-me":""),"<strong>"+L.who+":</strong> <span class='lp-line-es"+(hidden?" lp-blur":"")+"'>"+L.es+"</span><div class='lp-line-en' hidden>"+L.en+"</div>");
@@ -1764,8 +1838,8 @@ function renderLessonStep(){
     const q=lpQs[lpQi];
     title.textContent="🧪 Mini-quiz "+(lpQi+1)+" of "+lpQs.length+" — "+q.label;
     body.appendChild(lpEl("lp-quiz-prompt",q.prompt));
-    if(q.autoTts)setTimeout(()=>speak(q.autoTts,0.7),300);
-    const fb=lpEl("lp-quiz-fb","");
+    if(q.autoTts)speak(q.autoTts,0.7);
+    const fb=lpEl("lp-quiz-fb","");fb.classList.add("feedback-tray");
     const grid=lpEl("lp-grid lp-quiz-grid");
     q.options.forEach(opt=>{
       const b=document.createElement("button");b.type="button";b.className="lp-opt";b.textContent=opt;
@@ -1773,6 +1847,7 @@ function renderLessonStep(){
         if(lpAnswered)return;lpAnswered=true;
         if(quizAnswerMatches(q,opt)){b.classList.add("correct");clearSpeakingError(q.revEs);lpScore++;fb.innerHTML="✅ ¡Correcto! <div class='lp-reveal'>📖 "+q.revEs+" — "+q.revEn+"</div>";speak(q.afterTts,0.75);}
         else{b.classList.add("wrong");recordSpeakingError(q.revEs,"lesson quiz");grid.querySelectorAll(".lp-opt").forEach(x=>{if(x.textContent===q.answer)x.classList.add("reveal");});fb.innerHTML="❌ Not quite. <div class='lp-reveal'>📖 "+q.revEs+" — "+q.revEn+"</div><small>Saved in your practice list.</small>";}
+        fb.classList.add("visible");
         attachMic(fb,q.revEs);
         navBtn(lpQi<lpQs.length-1?"Next question →":"Finish →",()=>{
           if(lpQi<lpQs.length-1){lpQi++;lpAnswered=false;renderLessonStep();}
@@ -1829,6 +1904,9 @@ function renderLessonStep(){
   }
   else{
     title.textContent="🎉 Lesson complete!";
+    const completion=lpEl("lp-completion-hero");
+    completion.innerHTML=`<div class="lp-completion-emoji">🎉</div><strong>¡Muy bien!</strong><span>You completed this lesson.</span><div class="lp-completion-stats"><span><b>${lpPracticed.size}</b><small>spoken</small></span><span><b>${lpFullMode&&lpQs.length?`${lpScore}/${lpQs.length}`:"—"}</b><small>quiz</small></span><span><b>🔥</b><small>keep going</small></span></div>`;
+    body.appendChild(completion);
     if(lpFullMode&&lpQs.length)body.appendChild(lpEl("lp-goal-es","Mini-quiz: "+lpScore+" of "+lpQs.length));
     if(c){body.appendChild(lpEl("lp-hint","You can now say:"));body.appendChild(lpEl("lp-goal-es",c.goal.es));body.appendChild(lpSpeakBtn(c.goal.es));attachMic(body,c.goal.es);}
     lessonProgress[lpLesson.id]=true;saveLessons();
@@ -1902,6 +1980,19 @@ const RR_BANK=[];
     }
   });});
 })();
+/* v79: Colombian service-counter reflexes. These are short, high-frequency
+   prompts learners hear at shops, banks, restaurants, and on the street. */
+const RR_SERVICE_REFLEXES=[
+  {q:"¿Con bolsa?",qEs:"¿Con bolsa?",qEn:"With a bag?",aEs:"Sí, por favor.",aTts:"Sí, por favor.",aEn:"Yes, please.",level:"easy",service:true},
+  {q:"¿Desea incluir el servicio?",qEs:"¿Desea incluir el servicio?",qEn:"Would you like to include the service charge?",aEs:"Sí, agréguelo, por favor.",aTts:"Sí, agréguelo, por favor.",aEn:"Yes, please add it.",level:"moderate",service:true},
+  {q:"¿A cuántas cuotas?",qEs:"¿A cuántas cuotas?",qEn:"How many installments?",aEs:"A una cuota, por favor.",aTts:"A una cuota, por favor.",aEn:"One installment, please.",level:"easy",service:true},
+  {q:"¿Ahorros o corriente?",qEs:"¿Ahorros o corriente?",qEn:"Savings or checking?",aEs:"Ahorros, por favor.",aTts:"Ahorros, por favor.",aEn:"Savings, please.",level:"easy",service:true},
+  {q:"¿Me confirma la dirección?",qEs:"¿Me confirma la dirección?",qEn:"Can you confirm the address?",aEs:"Sí, es la de la calle diez con carrera séptima.",aTts:"Sí, es la de la calle diez con carrera séptima.",aEn:"Yes, it is the one at Calle 10 and Carrera 7.",level:"moderate",service:true},
+  {q:"¿Para llevar o para comer aquí?",qEs:"¿Para llevar o para comer aquí?",qEn:"To go or to eat here?",aEs:"Para llevar, por favor.",aTts:"Para llevar, por favor.",aEn:"To go, please.",level:"easy",service:true},
+  {q:"¿Tiene sencillo?",qEs:"¿Tiene sencillo?",qEn:"Do you have smaller change?",aEs:"Sí, tengo un billete de diez mil.",aTts:"Sí, tengo un billete de diez mil.",aEn:"Yes, I have a ten-thousand-peso bill.",level:"moderate",service:true},
+  {q:"¿Le ayudo con algo más?",qEs:"¿Le ayudo con algo más?",qEn:"Can I help you with anything else?",aEs:"No, gracias. Eso es todo.",aTts:"No, gracias. Eso es todo.",aEn:"No, thank you. That is all.",level:"easy",service:true}
+];
+RR_BANK.push(...RR_SERVICE_REFLEXES);
 let rrTimer=null,rrCurrent=null,rrSession=0,rrPromptToken=0;
 let rrRecorder=null,rrStream=null,rrChunks=[],rrUrl=null,rrSilenceTimer=null,rrMaxTimer=null,rrAudioContext=null,rrAnalyser=null,rrRated=false;
 const RR_DIFFICULTY_KEY="esco-rapid-difficulty-v1";
@@ -1914,17 +2005,19 @@ let rrDifficulty="moderate";
 try{const saved=localStorage.getItem(RR_DIFFICULTY_KEY);if(RR_DIFFICULTIES[saved])rrDifficulty=saved;}catch(e){}
 function rrSaveDifficulty(){try{localStorage.setItem(RR_DIFFICULTY_KEY,rrDifficulty);}catch(e){}}
 function rrDifficultyConfig(){return RR_DIFFICULTIES[rrDifficulty]||RR_DIFFICULTIES.moderate;}
+let rrPack="all";
 function rrQuestionPool(){
   const level=rrDifficulty;
-  const matching=RR_BANK.filter(item=>item.level===level);
-  return matching.length>=3?matching:RR_BANK;
+  const source=rrPack==="service"?RR_BANK.filter(item=>item.service):RR_BANK;
+  const matching=source.filter(item=>item.level===level);
+  return matching.length>=3?matching:source;
 }
 const RR_STATS_KEY="esco-rapid-stats-v1";
 let rrStats={attempts:0,got:0,practice:0,skipped:0};
 try{rrStats=Object.assign(rrStats,JSON.parse(localStorage.getItem(RR_STATS_KEY)||"{}"));}catch(e){}
 function saveRRStats(){try{localStorage.setItem(RR_STATS_KEY,JSON.stringify(rrStats));}catch(e){}}
 function rrClearRecording(){if(rrUrl){try{URL.revokeObjectURL(rrUrl);}catch(e){}rrUrl=null;}rrChunks=[];}
-function rrStopStream(){if(rrStream){rrStream.getTracks().forEach(t=>t.stop());rrStream=null;}}
+function rrStopStream(){if(rrStream){rrStream.getTracks().forEach(t=>t.stop());rrStream=null;if(window.speechSynthesis&&speechSynthesis.paused){try{speechSynthesis.resume();}catch(e){}}}}
 function rrCloseAudio(){if(rrAudioContext){try{rrAudioContext.close();}catch(e){}rrAudioContext=null;}rrAnalyser=null;}
 function rrCancelRecording(){
   if(rrSilenceTimer){clearInterval(rrSilenceTimer);rrSilenceTimer=null;}
@@ -2019,6 +2112,14 @@ function renderRapida(keepSame,questionRate){
     difficultyButtons.appendChild(b);
   });
   difficultyRow.appendChild(difficultyButtons);card.appendChild(difficultyRow);
+  const packRow=lpEl("rr-pack-row");
+  packRow.appendChild(lpEl("rr-pack-label","Choose a prompt pack"));
+  const packButtons=lpEl("rr-pack-buttons");
+  [["all","All conversation prompts"],["service","🇨🇴 Colombian counter reflexes"]].forEach(([key,label])=>{
+    const b=document.createElement("button");b.type="button";b.className="rr-pack-btn"+(key===rrPack?" selected":"");b.textContent=label;
+    b.onclick=()=>{if(key===rrPack)return;rrPack=key;rrCurrent=null;renderRapida(false);};packButtons.appendChild(b);
+  });
+  packRow.appendChild(packButtons);card.appendChild(packRow);
   const qBox=lpEl("rr-question",rrCurrent.qEs);
   qBox.onclick=()=>speak(rrCurrent.q,0.75);
   card.appendChild(qBox);
@@ -2471,7 +2572,7 @@ function setLessonView(view){
 }
 function buildLessonViewTabs(root){
   const nav=document.createElement("nav");nav.className="lesson-view-tabs";nav.setAttribute("aria-label","Lesson views");
-  [["today","Today / Hoy","Daily hub"],["path","Learning path / Ruta","34 lessons"],["practice","Practice / Biblioteca","Missions & stories"]].forEach(([id,title,sub])=>{
+  [["today","Today / Hoy","Daily hub"],["path","Learning path / Ruta",`${LESSONS.length} lessons`],["practice","Practice / Biblioteca","Missions & stories"]].forEach(([id,title,sub])=>{
     const b=document.createElement("button");b.type="button";b.className="lesson-view-tab";b.dataset.view=id;b.innerHTML=`<strong>${title}</strong><small>${sub}</small>`;b.onclick=()=>setLessonView(id);nav.appendChild(b);
   });
   root.appendChild(nav);
@@ -2590,6 +2691,14 @@ function storedMissedQuestionCount(){
     return Object.values(missed).filter(value=>Number(value)>0).length;
   }catch(e){return 0;}
 }
+function syncMissedQueueLauncher(){
+  const host=document.getElementById("quiz-review-launch");if(!host)return;
+  const count=storedMissedQuestionCount();
+  host.hidden=qMissedOnly||count===0;
+  if(host.hidden){host.innerHTML="";return;}
+  host.innerHTML=`<span>🧠 <strong>${count} missed question${count===1?"":"s"}</strong> waiting for review</span><button type="button" class="quiz-review-launch-btn">Review missed →</button>`;
+  const btn=host.querySelector("button");if(btn)btn.onclick=openMissedQueue;
+}
 function openReviewSession(){qMissedOnly=false;showPage("quiz");qMode="mixed";qCat="all";qFocus="all";syncQuizControls();repasoLeft=10;resetQuizRound();nQ();}
 
 function renderLessons(){
@@ -2679,7 +2788,7 @@ function renderLessons(){
   /* Lessons grouped into a speaking-first progression */
   const LESSON_STAGES=[
     {name:"🌱 Stage 1 · Start Here",sub:"Greetings, Colombian politeness, numbers, and repairing misunderstandings.",ids:["presentate","cortesia-colombiana","plata","survival-communication","casa","gustos"]},
-    {name:"🧭 Stage 2 · Travel and Survival",sub:"Uber, buildings, directions, hotels, food, shopping, repair, and the pharmacy.",ids:["uber-ride","uber-completo","hotel-checkin","calle","direcciones","cocina","restaurante-real","mercado-negociar","commands-repair","farmacia"]},
+    {name:"🧭 Stage 2 · Travel and Survival",sub:"Uber, buildings, directions, hotels, food, shopping, Colombian counter reflexes, repair, and the pharmacy.",ids:["uber-ride","uber-completo","hotel-checkin","calle","direcciones","cocina","restaurante-real","mercado-negociar","commands-repair","farmacia"]},
     {name:"🏠 Stage 3 · Daily Life",sub:"Work, office, phone calls, feelings, activities, and everyday routines.",ids:["trabajo","oficina-real","daily-repair","planes","gerundios-actividades","sentirse"]},
     {name:"🧱 Stage 4 · Build Sentences",sub:"Present, future, past, contrast, perfect tenses, conditional, action chunks, connectors, and pronouns.",ids:["sentence-structure","action-chunks","connectors-v36","function-words","gram-presente","gram-futuro","gram-pasado","gram-pasado-historia","gram-pasado-contraste","gram-perfecto","gram-condicional","gram-pasado-perfecto","gram-futuro-perfecto","gram-subjuntivo","gram-necesidades","gram-conectores","gram-pronombres"]},
     {name:"🇨🇴 Stage 5 · Speak More Naturally",sub:"Colombian everyday expressions, diminutives, muletillas, social plans, parties, sports, and register.",ids:["colombia","muletillas-diminutivos","social-colombia-v36","social-salida","fiesta-gathering","deportes-partido","gram-groserias"]},
@@ -2696,16 +2805,19 @@ function renderLessons(){
   roadmap.dataset.lessonView="path";
   roadmap.appendChild(lpEl("lesson-roadmap-title","🧭 Recommended path · browse any stage anytime"));
   const roadmapRow=lpEl("lesson-roadmap-row");
-  LESSON_STAGES.forEach((stage,i)=>{const b=document.createElement("button");b.type="button";b.className="lesson-roadmap-btn";b.textContent=stage.name.replace(/^.*?Stage /,"Stage ");b.onclick=()=>{const target=document.getElementById("lesson-stage-"+i);if(target)target.scrollIntoView({behavior:"smooth",block:"start"});};roadmapRow.appendChild(b);});
+  LESSON_STAGES.forEach((stage,i)=>{const b=document.createElement("button");b.type="button";b.className="lesson-roadmap-btn";b.textContent=stage.name.replace(/^.*?Stage /,"Stage ");b.onclick=()=>{const target=document.getElementById("lesson-stage-"+i);if(target){target.open=true;target.scrollIntoView({behavior:"smooth",block:"start"});}};roadmapRow.appendChild(b);});
   roadmap.appendChild(roadmapRow);root.appendChild(roadmap);
   let lessonNum=0;
-  LESSON_STAGES.forEach(stage=>{
+  LESSON_STAGES.forEach((stage,stageIndex)=>{
     const stageLessons=stage.ids.map(id=>LESSONS.find(l=>l.id===id)).filter(Boolean);
     if(!stageLessons.length)return;
     const sDone=stageLessons.filter(l=>lessonProgress[l.id]).length;
-    const sh=document.createElement("div");sh.className="stage-label";sh.dataset.lessonView="path";sh.id="lesson-stage-"+LESSON_STAGES.indexOf(stage);
-    sh.innerHTML=`<div class="stage-label-main"><span>${stage.name}</span><span class="stage-count">${sDone}/${stageLessons.length}</span></div><div class="stage-sub">${stage.sub}</div>`;
-    root.appendChild(sh);
+    const stageWrap=document.createElement("details");stageWrap.className="lesson-stage";stageWrap.dataset.lessonView="path";stageWrap.id="lesson-stage-"+stageIndex;
+    const isCurrentStage=!!(nextLesson&&stageLessons.some(l=>l.id===nextLesson.id));
+    if(isCurrentStage||(!nextLesson&&stageIndex===0))stageWrap.open=true;
+    const sh=document.createElement("summary");sh.className="stage-label";
+    sh.innerHTML=`<div class="stage-label-main"><span>${stage.name}</span><span class="stage-count">${sDone}/${stageLessons.length}</span></div><div class="stage-sub">${stage.sub}</div><div class="stage-progress"><span style="width:${Math.round((sDone/Math.max(stageLessons.length,1))*100)}%"></span></div>`;
+    stageWrap.appendChild(sh);root.appendChild(stageWrap);
     stageLessons.forEach(lesson=>{
       lessonNum++;
       const recommended=nextLesson&&nextLesson.id===lesson.id;
@@ -2713,7 +2825,7 @@ function renderLessons(){
       card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div><div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
       card.onclick=()=>openLesson(lesson);
       card.querySelector(".lesson-check").onclick=(e)=>{e.stopPropagation();if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();renderLessons();};
-      root.appendChild(card);
+      stageWrap.appendChild(card);
     });
   });
   /* Any lesson not assigned to a stage still shows (future-proofing weekly additions) */
@@ -3233,7 +3345,8 @@ document.getElementById("q-streak").textContent="🔥 "+qS;
     document.getElementById("q-correct").textContent=0;
     document.getElementById("q-total").textContent=0;
     document.getElementById("q-streak").textContent="🔥 0";
-    document.getElementById("quiz-fb").textContent="";
+     /* nQ() clears feedback while preserving the unified reveal element. */
+     document.getElementById("quiz-fb").classList.remove("visible");
     nQ();
   };
   bar.appendChild(btn);
@@ -3303,16 +3416,31 @@ function normalizeQuizText(text){return String(text||"").toLowerCase().normalize
    compares duplicate records. */
 function normalizeQuizPrompt(text){return String(text||"").toLowerCase().replace(/[¿?¡!.,;:…]+/g,"").replace(/\s+/g," ").trim();}
 function normalizeQuizAnswer(text){return String(text||"").toLowerCase().replace(/\([^)]*\)/g,"").replace(/[¿?¡!.,;:…]+/g,"").replace(/\s+/g," ").trim();}
-function quizItemKey(q){return normalizeQuizText(`${q.kind||""}|${q.es}|${q.answer}`);}
+/* Treat a plain vocabulary translation and an authored `meaning` question
+   with the same Spanish/English pair as one learning item. Keep other kinds
+   separate: a reply, tense check, listening item, or pronoun drill can share
+   a prompt while testing a different skill. */
+function quizItemKey(q){
+  const family=q.kind==="meaning"||!q.kind?"meaning":q.kind;
+  return normalizeQuizText(`${family}|${q.es}|${q.answer}`);
+}
 function quizRoundPromptKey(q){
   const text=(qMode==="listening"||q.prompt==="🎧")?(q.tts||q.es):(q.prompt||q.es);
   return normalizeQuizPrompt(text);
 }
 function cleanQuizPool(pool){
-  const seen=new Set();
-  return pool.filter(q=>{
-    if(!q||!q.es||q.answer===undefined)return false;
-    const key=quizItemKey(q);if(seen.has(key))return false;seen.add(key);
+  const chosen=new Map();
+  pool.forEach(q=>{
+    if(!q||!q.es||q.answer===undefined)return;
+    const key=quizItemKey(q),previous=chosen.get(key);
+    /* Authored questions have stronger context and hand-picked distractors;
+       prefer them over a plain vocabulary record when both represent the
+       same translation pair. */
+    const authored=!!(q.kind||q.quizPrompt||Array.isArray(q.choices));
+    const previousAuthored=!!(previous&&(previous.kind||previous.quizPrompt||Array.isArray(previous.choices)));
+    if(!previous||(!previousAuthored&&authored))chosen.set(key,q);
+  });
+  return [...chosen.values()].filter(q=>{
     if(!Array.isArray(q.choices))return true;
     const choices=[];const seenChoices=new Set();
     q.choices.forEach(choice=>{const text=String(choice||"").trim();const ck=normalizeQuizText(text);if(text&&ck&&!seenChoices.has(ck)){seenChoices.add(ck);choices.push(text);}});
@@ -3329,7 +3457,7 @@ function clearMissedQuiz(q){
 function exitMissedQueue(){qMissedOnly=false;repasoLeft=0;resetQuizRound();nQ();}
 function openMissedQueue(){showPage("quiz");qMissedOnly=true;qMode="mixed";qCat="all";qFocus="all";repasoLeft=0;resetQuizRound();syncQuizControls();nQ();}
 function nQ(){
-  an=false;document.getElementById("quiz-next").style.display="none";document.getElementById("quiz-fb").textContent="";document.getElementById("quiz-reveal").innerHTML="";
+  an=false;document.getElementById("quiz-next").style.display="none";const quizFb=document.getElementById("quiz-fb"),quizReveal=document.getElementById("quiz-reveal");quizFb.innerHTML="";if(quizReveal){quizFb.appendChild(quizReveal);quizReveal.innerHTML="";}quizFb.classList.remove("visible");syncMissedQueueLauncher();
   const helpRow=document.getElementById("quiz-help-row"),helpBtn=document.getElementById("quiz-help"),helpText=document.getElementById("quiz-help-text");
   if(helpRow){helpRow.hidden=true;if(helpText){helpText.hidden=true;helpText.textContent="";}if(helpBtn){helpBtn.textContent="💡 Show English help";helpBtn.onclick=null;}}
   const reviewBanner=document.getElementById("quiz-review-banner");
@@ -3385,31 +3513,30 @@ function nQ(){
       an=true;qT++;document.getElementById("q-total").textContent=qT;
       const expected=String(cQ.answer||cQ.es),strict=normalizeDictation(raw,false)===normalizeDictation(expected,false);
       const loose=normalizeDictation(raw,true)===normalizeDictation(expected,true);
-      const correct=strict||loose,fb=document.getElementById("quiz-fb"),mk=cQ.es+"|"+cQ.answer,missKey=missedQuizKey(cQ);
+      const correct=strict||loose,fb=document.getElementById("quiz-fb"),quizReveal=document.getElementById("quiz-reveal"),mk=cQ.es+"|"+cQ.answer,missKey=missedQuizKey(cQ);
       submit.disabled=true;input.classList.add(correct?"correct":"wrong");
       if(correct){
         qC++;qS++;recordSrs(mk,true);clearSpeakingError(cQ.tts||cQ.es);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;
-        fb.innerHTML=(strict?"✅ ¡Correcto!":"✅ Correcto — check the accent marks.")+" <small class='srs-next'>Next review: "+srsNextLabel(srsStore[mk])+"</small>";fb.style.color="var(--teal)";speak(cQ.tts,0.75);
+         fb.innerHTML=(strict?"✅ ¡Correcto!":"✅ Correcto — check the accent marks.")+" <small class='srs-next'>Next review: "+srsNextLabel(srsStore[mk])+"</small>";fb.style.color="var(--teal)";fb.classList.add("visible");speak(cQ.tts,0.75);
         clearMissedQuiz(cQ);
       }else{
         qS=0;recordSrs(mk,false);recordSpeakingError(cQ.tts||cQ.es,"dictation");document.getElementById("q-streak").textContent="🔥 0";
-        fb.innerHTML="❌ Not quite <small class='srs-next'>Review again tomorrow.</small>";fb.style.color="var(--pink)";
+         fb.innerHTML="❌ Not quite <small class='srs-next'>Review again tomorrow.</small>";fb.style.color="var(--pink)";fb.classList.add("visible");
         input.value=expected;
         qStore.missed[missKey]=(qStore.missed[missKey]||0)+2;
       }
-      document.getElementById("quiz-reveal").innerHTML="<div>🇨🇴 <strong>"+spanishAnswer(cQ)+"</strong></div><div>🇺🇸 "+englishAnswer(cQ)+"</div>";
-      attachMic(document.getElementById("quiz-reveal"),spanishAnswer(cQ));
-      qStore.c=qC;qStore.t=qT;qStore.s=qS;saveQ();
+      if(quizReveal){quizReveal.innerHTML="<div>🇨🇴 <strong>"+spanishAnswer(cQ)+"</strong></div><div>🇺🇸 "+englishAnswer(cQ)+"</div>";attachMic(quizReveal,spanishAnswer(cQ));fb.appendChild(quizReveal);}
+      qStore.c=qC;qStore.t=qT;qStore.s=qS;saveQ();syncMissedQueueLauncher();
       document.getElementById("quiz-next").style.display="block";
     };
     submit.onclick=finish;input.onkeydown=e=>{if(e.key==="Enter")finish();};
-    box.append(input,submit);ow.appendChild(box);setTimeout(()=>{input.focus();speak(cQ.tts,0.7);},350);
+    box.append(input,submit);ow.appendChild(box);if(document.getElementById("page-quiz")?.classList.contains("active")){setTimeout(()=>input.focus(),50);speak(cQ.tts,0.7);}
     return;
   }
   /* Listening questions must not show the Spanish text — hide it and auto-play */
   document.getElementById("qc-word").textContent=qMode==="listening"||cQ.kind==="listening"?"🎧":cQ.prompt;
   document.querySelector(".qc-label").textContent=qMode==="en-es"?"Translate to Spanish":qMode==="listening"?"Listen and recognize":qMode==="blank"?"Complete the sentence":qMode==="conversation"?(cQ.kind==="reply"?"Choose the natural reply":cQ.kind==="meaning"?"Choose the English meaning":cQ.kind==="listening"?"Listen and recognize":cQ.kind==="tense"?"Choose the matching tense":"Choose the best answer"):qMode==="es-en"?"Translate to English":cQ.kind==="reply"?"Choose the correct reply":cQ.kind==="listening"?"Listen and recognize":cQ.kind==="tense"?"Which tense is it?":cQ.kind==="blank"?"Complete the sentence":"Choose the correct answer";
-  if(qMode==="listening"||cQ.kind==="listening")setTimeout(()=>speak(cQ.tts,0.7),350);
+  if((qMode==="listening"||cQ.kind==="listening")&&document.getElementById("page-quiz")?.classList.contains("active"))speak(cQ.tts,0.7);
   const seen=new Set(quizAcceptedAnswers(cQ).map(normalizeQuizText));const wrong=[];
   /* Mixed mode contains several question families.  Do not use a Spanish
      blank answer as a distractor for an English meaning question (or vice
@@ -3423,15 +3550,14 @@ function nQ(){
   const ow=document.getElementById("quiz-opts");ow.innerHTML="";
   opts.forEach(opt=>{const b=document.createElement("button");b.className="qopt";b.textContent=opt.answer;
     b.onclick=()=>{if(an)return;an=true;qT++;document.getElementById("q-total").textContent=qT;
-      const fb=document.getElementById("quiz-fb");
+      const fb=document.getElementById("quiz-fb"),quizReveal=document.getElementById("quiz-reveal");
       const mk=cQ.es+"|"+cQ.answer,missKey=missedQuizKey(cQ);
-       if(quizAnswerMatches(cQ,opt.answer)){b.classList.add("correct");qC++;qS++;recordSrs(mk,true);clearSpeakingError(cQ.tts||cQ.es);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.innerHTML=`✅ ¡Correcto! <small class="srs-next">Next review: ${srsNextLabel(srsStore[mk])}</small>`;fb.style.color="var(--teal)";speak(cQ.tts,0.75);
+        if(quizAnswerMatches(cQ,opt.answer)){b.classList.add("correct");qC++;qS++;recordSrs(mk,true);clearSpeakingError(cQ.tts||cQ.es);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.innerHTML=`✅ ¡Correcto! <small class="srs-next">Next review: ${srsNextLabel(srsStore[mk])}</small>`;fb.style.color="var(--teal)";fb.classList.add("visible");speak(cQ.tts,0.75);
         clearMissedQuiz(cQ);}
-       else{b.classList.add("wrong");qS=0;recordSrs(mk,false);recordSpeakingError(cQ.tts||cQ.es,"quiz");document.getElementById("q-streak").textContent="🔥 0";fb.innerHTML="❌ Incorrecto <small class='srs-next'>Review again tomorrow.</small>";fb.style.color="var(--pink)";document.querySelectorAll(".qopt").forEach(x=>{if(normalizeQuizText(x.textContent)===normalizeQuizText(cQ.answer))x.classList.add("reveal");});
+        else{b.classList.add("wrong");qS=0;recordSrs(mk,false);recordSpeakingError(cQ.tts||cQ.es,"quiz");document.getElementById("q-streak").textContent="🔥 0";fb.innerHTML="❌ Incorrecto <small class='srs-next'>Review again tomorrow.</small>";fb.style.color="var(--pink)";fb.classList.add("visible");document.querySelectorAll(".qopt").forEach(x=>{if(normalizeQuizText(x.textContent)===normalizeQuizText(cQ.answer))x.classList.add("reveal");});
         qStore.missed[missKey]=(qStore.missed[missKey]||0)+2;}
-      document.getElementById("quiz-reveal").innerHTML=`<div>🇨🇴 <strong>${spanishAnswer(cQ)}</strong></div><div>🇺🇸 ${englishAnswer(cQ)}</div>`;
-      attachMic(document.getElementById("quiz-reveal"),spanishAnswer(cQ));
-      qStore.c=qC;qStore.t=qT;qStore.s=qS;saveQ();
+      if(quizReveal){quizReveal.innerHTML=`<div>🇨🇴 <strong>${spanishAnswer(cQ)}</strong></div><div>🇺🇸 ${englishAnswer(cQ)}</div>`;attachMic(quizReveal,spanishAnswer(cQ));fb.appendChild(quizReveal);}
+      qStore.c=qC;qStore.t=qT;qStore.s=qS;saveQ();syncMissedQueueLauncher();
       document.getElementById("quiz-next").style.display="block";};ow.appendChild(b);});
 }
 function quizHear(){
@@ -3451,12 +3577,14 @@ function showPhonetic(id){
 }
 const PG=["fonetica","lecciones","vocab","frases","gram","quiz"];
 function showPage(id){
+  if(id!=="lecciones"&&typeof setLeccionesFocusMode==="function")setLeccionesFocusMode(false);
   PG.forEach(p=>{document.getElementById("page-"+p).classList.toggle("active",p===id);document.getElementById("tb-"+p).classList.toggle("active",p===id);});
   document.querySelector(".scroll").scrollTop=0;
   if(id!=="vocab")hideVerbDetail();
   if(id==="vocab")showVocabHome();
   if(id==="lecciones"&&typeof renderLessons==="function"){lpLesson=null;renderLessons();}
   if(id==="vocab"||id==="gram")routineDockHide();
+  if(id==="quiz"&&!an&&cQ&&(qMode==="listening"||cQ.kind==="listening"||qMode==="dictation"))speak(cQ.tts,0.7);
 }
 
 /* v64: iPhone-style horizontal tab swipes without hijacking vertical scroll. */
@@ -3540,3 +3668,4 @@ function runDataValidator(){
   return issues;
 }
 runDataValidator();
+
