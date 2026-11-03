@@ -72,7 +72,7 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v90.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v91.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);
   bar.append(label,select,reset,ver);utilityBody.appendChild(bar);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -911,7 +911,12 @@ const PHRASE_EN={
   "⚽ Ver el partido":"Watching the soccer game",
   "🧑‍💼 Oficina — conversación real":"Office — real conversation",
   "🙏 Cortesía colombiana — polite requests":"Colombian politeness — ¿Me regala…? & ¿Será que…?",
-  "☕ Diminutivos y muletillas — sound local":"Diminutives & time-buyers — tintico, ahorita, pues…"
+  "☕ Diminutivos y muletillas — sound local":"Diminutives & time-buyers — tintico, ahorita, pues…",
+  "🛬 Aeropuerto y migración":"Airport, immigration, and baggage claim",
+  "💳 Nequi, datáfono y pagos":"Card payments, one installment, and Nequi",
+  "💈 Peluquería y barbería":"Haircuts, fades, and beard trims",
+  "🩺 Cita médica y urgencias":"Medical appointments, symptoms, and prescriptions",
+  "🏢 Portería, Rappi y apartamento":"Building front desk, Rappi deliveries, and utilities"
 };
 const DIALOGUE_EN={
   "Saludos formales":"Formal greetings and introductions",
@@ -938,7 +943,12 @@ const DIALOGUE_EN={
   "Ver el partido":"Watching the soccer match",
   "Oficina: proyecto y retraso":"Office: project progress and delays",
   "Cortesía en una tienda":"Polite ordering at a neighborhood shop",
-  "Ganar tiempo al hablar":"Buying time with muletillas and diminutives"
+  "Ganar tiempo al hablar":"Buying time with muletillas and diminutives",
+  "Aeropuerto y migración":"Passport control, length of stay, and baggage claim",
+  "Pagos con datáfono y Nequi":"Paying by card in one installment and Nequi",
+  "En la barbería":"Asking for a fade, scissor trim, and beard line-up",
+  "Consulta médica y droguería":"Explaining symptoms, allergies, and prescriptions",
+  "Portería y domicilio Rappi":"Talking to the building doorman and receiving Rappi"
 };
 function phraseEnglishTitle(title){return PHRASE_EN[title]||"Useful phrases";}
 function dialogueEnglishTitle(title){return DIALOGUE_EN[title]||"Practice conversation";}
@@ -1271,7 +1281,12 @@ const LESSONS=[
   {id:"social-salida",icon:"🤝",title:"Salir con amigos",sub:"Propón planes, acepta y cambia la hora",vocab:"gustos",dialogue:"Salir con amigos",quizCat:"social",quizMode:"conversation"},
   {id:"fiesta-gathering",icon:"🎉",title:"En una fiesta",sub:"Saluda, conversa y despídete con naturalidad",vocab:"colombianismos",dialogue:"En una fiesta",quizCat:"fiesta",quizMode:"conversation"},
   {id:"deportes-partido",icon:"⚽",title:"Ver el partido",sub:"Habla del marcador, el equipo y la emoción",vocab:"tv",dialogue:"Ver el partido",quizCat:"deportes",quizMode:"conversation"},
-  {id:"oficina-real",icon:"🧑‍💼",title:"Una conversación en la oficina",sub:"Explica avances, retrasos y próximos pasos",vocab:"oficina",dialogue:"Oficina: proyecto y retraso",quizCat:"oficina-real",quizMode:"conversation"}
+  {id:"oficina-real",icon:"🧑‍💼",title:"Una conversación en la oficina",sub:"Explica avances, retrasos y próximos pasos",vocab:"oficina",dialogue:"Oficina: proyecto y retraso",quizCat:"oficina-real",quizMode:"conversation"},
+  {id:"aeropuerto-migracion",icon:"🛬",title:"Aeropuerto y migración",sub:"Pasaporte, motivo del viaje, estadía y maletas",vocab:"lugares",dialogue:"Aeropuerto y migración",quizCat:"aeropuerto",quizMode:"conversation"},
+  {id:"bancos-pagos",icon:"💳",title:"Nequi, datáfono y pagos",sub:"Paga a una cuota, cuenta de ahorros y propina",vocab:"numeros",dialogue:"Pagos con datáfono y Nequi",quizCat:"bancos-pagos",quizMode:"conversation"},
+  {id:"barberia",icon:"💈",title:"Peluquería y barbería",sub:"Pide un desvanecido, corte con tijera y barba",vocab:"cuerpo",dialogue:"En la barbería",quizCat:"barberia",quizMode:"conversation"},
+  {id:"medico-urgencias",icon:"🩺",title:"Cita médica y síntomas",sub:"Explica qué te duele, alergias y fórmulas médicas",vocab:"cuerpo",dialogue:"Consulta médica y droguería",quizCat:"medico",quizMode:"conversation"},
+  {id:"porteria-domicilios",icon:"🏢",title:"Portería, Rappi y edificio",sub:"Habla con el portero, recibe pedidos y reporta daños",vocab:"casa",dialogue:"Portería y domicilio Rappi",quizCat:"porteria",quizMode:"conversation"}
 ];
 LESSONS.forEach(lesson=>{
   if(typeof LESSON_META!=="undefined"&&LESSON_META[lesson.id])Object.assign(lesson,LESSON_META[lesson.id]);
@@ -1938,7 +1953,16 @@ const RR_SERVICE_REFLEXES=[
   {q:"¿Me confirma la dirección?",qEs:"¿Me confirma la dirección?",qEn:"Can you confirm the address?",aEs:"Sí, es la de la calle diez con carrera séptima.",aTts:"Sí, es la de la calle diez con carrera séptima.",aEn:"Yes, it is the one at Calle 10 and Carrera 7.",level:"moderate",service:true},
   {q:"¿Para llevar o para comer aquí?",qEs:"¿Para llevar o para comer aquí?",qEn:"To go or to eat here?",aEs:"Para llevar, por favor.",aTts:"Para llevar, por favor.",aEn:"To go, please.",level:"easy",service:true},
   {q:"¿Tiene sencillo?",qEs:"¿Tiene sencillo?",qEn:"Do you have smaller change?",aEs:"Sí, tengo un billete de diez mil.",aTts:"Sí, tengo un billete de diez mil.",aEn:"Yes, I have a ten-thousand-peso bill.",level:"moderate",service:true},
-  {q:"¿Le ayudo con algo más?",qEs:"¿Le ayudo con algo más?",qEn:"Can I help you with anything else?",aEs:"No, gracias. Eso es todo.",aTts:"No, gracias. Eso es todo.",aEn:"No, thank you. That is all.",level:"easy",service:true}
+  {q:"¿Le ayudo con algo más?",qEs:"¿Le ayudo con algo más?",qEn:"Can I help you with anything else?",aEs:"No, gracias. Eso es todo.",aTts:"No, gracias. Eso es todo.",aEn:"No, thank you. That is all.",level:"easy",service:true},
+  {q:"¿Necesita factura electrónica o consumidor final?",qEs:"¿Necesita factura electrónica o consumidor final?",qEn:"Do you need an electronic tax invoice or final consumer?",aEs:"Consumidor final, por favor.",aTts:"Consumidor final, por favor.",aEn:"Final consumer, please.",level:"easy",service:true},
+  {q:"¿Cuál es el motivo de su viaje a Colombia?",qEs:"¿Cuál es el motivo de su viaje a Colombia?",qEn:"What is the purpose of your trip to Colombia?",aEs:"Vengo por turismo durante dos semanas.",aTts:"Vengo por turismo durante dos semanas.",aEn:"I am coming for tourism for two weeks.",level:"moderate",service:true},
+  {q:"¿Para qué apartamento va?",qEs:"¿Para qué apartamento va?",qEn:"Which apartment are you going to?",aEs:"Buenas, voy para el apartamento quinientos dos.",aTts:"Buenas, voy para el apartamento quinientos dos.",aEn:"Hi, I am going to apartment 502.",level:"easy",service:true},
+  {q:"¿Autoriza la subida del domiciliario?",qEs:"¿Autoriza la subida del domiciliario?",qEn:"Do you authorize the delivery driver to come up?",aEs:"Sí, vecino, déjelo subir por favor.",aTts:"Sí, vecino, déjelo subir por favor.",aEn:"Yes, doorman, please let him come up.",level:"moderate",service:true},
+  {q:"¿Cómo se lo vamos a cortar hoy?",qEs:"¿Cómo se lo vamos a cortar hoy?",qEn:"How are we going to cut your hair today?",aEs:"Bajito a los lados con la dos y arriba con tijera.",aTts:"Bajito a los lados con la dos y arriba con tijera.",aEn:"Low on the sides with a #2 and scissors on top.",level:"moderate",service:true},
+  {q:"¿En efectivo, tarjeta o transferencia por Nequi?",qEs:"¿En efectivo, tarjeta o transferencia por Nequi?",qEn:"In cash, card, or Nequi transfer?",aEs:"Con tarjeta en el datáfono, por favor.",aTts:"Con tarjeta en el datáfono, por favor.",aEn:"By card on the terminal, please.",level:"easy",service:true},
+  {q:"¿Es alérgico a algún medicamento?",qEs:"¿Es alérgico a algún medicamento?",qEn:"Are you allergic to any medication?",aEs:"No, no soy alérgico a ningún medicamento.",aTts:"No, no soy alérgico a ningún medicamento.",aEn:"No, I am not allergic to any medication.",level:"moderate",service:true},
+  {q:"¿Lo quiere con azúcar o sin azúcar?",qEs:"¿Lo quiere con azúcar o sin azúcar?",qEn:"Do you want it with sugar or without sugar?",aEs:"Sin azúcar, por favor.",aTts:"Sin azúcar, por favor.",aEn:"Without sugar, please.",level:"easy",service:true},
+  {q:"¿Con copia del recibo?",qEs:"¿Con copia del recibo?",qEn:"Would you like a copy of the card receipt?",aEs:"No, gracias, sin copia está bien.",aTts:"No, gracias, sin copia está bien.",aEn:"No, thank you, without a copy is fine.",level:"easy",service:true}
 ];
 RR_BANK.push(...RR_SERVICE_REFLEXES);
 let rrTimer=null,rrCurrent=null,rrSession=0,rrPromptToken=0;
@@ -2673,26 +2697,18 @@ function renderLessons(){
   heroCta.onclick=()=>{if(isResuming)openLessonAt(resLesson,resume.step,resume.qi,resume.score);else openLesson(primaryLesson);};
   hero.appendChild(heroCta);
 
-  const sessionBox=document.createElement("div");sessionBox.className="session-picker";
-  sessionBox.innerHTML="<div class='session-picker-copy'><strong>Or jump straight into a timed session:</strong></div><div class='session-lengths'></div>";
-  const sessionLengths=sessionBox.querySelector(".session-lengths");
-  [["5","⚡ 5 min","Sentence builder"],["10","🎯 10 min","Daily routine"],["20","🎓 20 min","Full lesson"]].forEach(([minutes,label,sub])=>{
-    const b=document.createElement("button");b.type="button";b.className="session-length-btn";b.dataset.minutes=minutes;
-    b.innerHTML=`<strong>${label}</strong><small>${sub}</small>`;
-    b.onclick=()=>{setSessionLength(minutes);startSelectedSession();};
-    sessionLengths.appendChild(b);
-  });
-  hero.appendChild(sessionBox);
   root.appendChild(hero);
-  setSessionLength(sessionLength);
 
-  /* 2. Clean 2x2 Quick Practice Grid */
+  /* 2. Guided 10-Min Daily Speaking Routine directly below Hero */
+  renderRoutineCard(root);
+
+  /* 3. Clean 2x2 Quick Speaking Grid */
   const dueHome=srsDueCount();
   const missedHome=storedMissedQuestionCount();
   const quickGrid=document.createElement("section");quickGrid.className="today-quick-grid";quickGrid.dataset.lessonView="today";
   [
-    ["🎰","Slot-Swapper","Mix & speak sentences",()=>renderFramePractice(false)],
-    ["⚡","Reacción Rápida","Timed audio prompts",()=>{rrSession=0;renderRapida(false);}],
+    ["🎰","Slot-Swapper","7 sentence builders",()=>renderFramePractice(false)],
+    ["⚡","Reacción Rápida",`${RR_BANK.length} audio reflexes`,()=>{rrSession=0;renderRapida(false);}],
     ["🔁","Review Cards",dueHome?`${dueHome} due today`:"Spaced repetition",openReviewSession],
     ["🧠","Missed Queue",missedHome?`${missedHome} waiting`:"All clear ✓",()=>{if(missedHome)openMissedQueue();else openReviewSession();}]
   ].forEach(([icon,title,sub,fn])=>{
@@ -2703,8 +2719,7 @@ function renderLessons(){
   });
   root.appendChild(quickGrid);
 
-  /* 3. Guided 10-Min Routine + Compact Stats + Collapsible Practice List */
-  renderRoutineCard(root);
+  /* 4. Compact Stats + Collapsible Practice List */
   renderProgressDashboard(root,done);
   renderSpeakingErrorJournal(root);
   /* Daily practice — one compact row (v22) */
@@ -2736,25 +2751,39 @@ function renderLessons(){
   /* Lessons grouped into a speaking-first progression */
   const LESSON_STAGES=[
     {name:"🌱 Stage 1 · Start Here",sub:"Greetings, Colombian politeness, numbers, and repairing misunderstandings.",ids:["presentate","cortesia-colombiana","plata","survival-communication","casa","gustos"]},
-    {name:"🧭 Stage 2 · Travel and Survival",sub:"Uber, buildings, directions, hotels, food, shopping, Colombian counter reflexes, repair, and the pharmacy.",ids:["uber-ride","uber-completo","hotel-checkin","calle","direcciones","cocina","restaurante-real","mercado-negociar","commands-repair","farmacia"]},
-    {name:"🏠 Stage 3 · Daily Life",sub:"Work, office, phone calls, feelings, activities, and everyday routines.",ids:["trabajo","oficina-real","daily-repair","planes","gerundios-actividades","sentirse"]},
+    {name:"🧭 Stage 2 · Travel and Survival",sub:"Airport, Uber, buildings, directions, hotels, payments/Nequi, food, shopping, pharmacy, and medical care.",ids:["aeropuerto-migracion","uber-ride","uber-completo","hotel-checkin","calle","direcciones","bancos-pagos","cocina","restaurante-real","mercado-negociar","commands-repair","farmacia","medico-urgencias"]},
+    {name:"🏠 Stage 3 · Daily Life",sub:"Work, office, apartment/portería, barbershop, phone calls, feelings, and everyday routines.",ids:["trabajo","oficina-real","porteria-domicilios","barberia","daily-repair","planes","gerundios-actividades","sentirse"]},
     {name:"🧱 Stage 4 · Build Sentences",sub:"Present, future, past, contrast, perfect tenses, conditional, action chunks, connectors, and pronouns.",ids:["sentence-structure","action-chunks","connectors-v36","function-words","gram-presente","gram-futuro","gram-pasado","gram-pasado-historia","gram-pasado-contraste","gram-perfecto","gram-condicional","gram-pasado-perfecto","gram-futuro-perfecto","gram-subjuntivo","gram-necesidades","gram-conectores","gram-pronombres"]},
     {name:"🇨🇴 Stage 5 · Speak More Naturally",sub:"Colombian everyday expressions, diminutives, muletillas, social plans, parties, sports, and register.",ids:["colombia","muletillas-diminutivos","social-colombia-v36","social-salida","fiesta-gathering","deportes-partido","gram-groserias"]},
     {name:"🎯 Stage 6 · Conversation Challenge",sub:"Read aloud, react quickly, and complete real speaking missions.",ids:["conversation-challenge"]}
   ];
-  const tenseRoadmap=document.createElement("section");tenseRoadmap.className="tense-roadmap";tenseRoadmap.dataset.lessonView="path";
-  tenseRoadmap.innerHTML="<div class='tense-roadmap-kicker'>🧭 SPEAKING TENSE ROADMAP</div><div class='tense-roadmap-title'>Build time in layers</div><p>Learn the high-frequency patterns first, then add detail to your stories. The advanced forms are for recognition before production.</p><div class='tense-roadmap-grid'></div>";
+  const roadmap=lpEl("lesson-roadmap");
+  roadmap.dataset.lessonView="path";
+  const pathSearch=document.createElement("input");pathSearch.type="search";pathSearch.className="content-search lesson-path-search";pathSearch.placeholder=`🔎 Search ${LESSONS.length} lessons (e.g. Uber, Nequi, pasado, barbería…)`;pathSearch.setAttribute("aria-label","Search lessons");
+  roadmap.appendChild(pathSearch);
+  const roadmapRow=lpEl("lesson-roadmap-row");
+  LESSON_STAGES.forEach((stage,i)=>{const b=document.createElement("button");b.type="button";b.className="lesson-roadmap-btn";b.textContent=stage.name.replace(/^.*?Stage /,"Stage ");b.onclick=()=>{const target=document.getElementById("lesson-stage-"+i);if(target){target.open=true;target.scrollIntoView({behavior:"smooth",block:"start"});}};roadmapRow.appendChild(b);});
+  roadmap.appendChild(roadmapRow);root.appendChild(roadmap);
+  pathSearch.oninput=()=>{
+    const q=pathSearch.value.trim().toLowerCase();
+    root.querySelectorAll(".lesson-stage").forEach(st=>{
+      let matchesInStage=0;
+      st.querySelectorAll(".lesson-card").forEach(card=>{
+        const hit=!q||card.textContent.toLowerCase().includes(q);
+        card.style.display=hit?"":"none";
+        if(hit)matchesInStage++;
+      });
+      st.style.display=(!q||matchesInStage>0)?"":"none";
+      if(q&&matchesInStage>0)st.open=true;
+    });
+  };
+  const tenseRoadmap=document.createElement("details");tenseRoadmap.className="tense-roadmap tense-roadmap-fold";tenseRoadmap.dataset.lessonView="path";
+  tenseRoadmap.innerHTML="<summary class='tense-roadmap-summary'><span>🧭 <strong>Speaking Tense Roadmap</strong> <small>8 layers from Presente to Future Perfect</small></span><span class='tense-roadmap-chev'>⌄</span></summary><div class='tense-roadmap-body'><p>Learn the high-frequency patterns first, then add detail to your stories. The advanced forms are for recognition before production.</p><div class='tense-roadmap-grid'></div></div>";
   const tenseTargets=[
     ["Presente","Hablo / tengo","gram-presente","Core now"],["Near future","Voy a hacer","gram-futuro","Easy next step"],["Completed past","Fui / hice","gram-pasado","Tell what happened"],["Past contrast","Fui vs. iba","gram-pasado-contraste","Story detail"],["Present perfect","He hecho","gram-perfecto","Connected to now"],["Conditional","Me gustaría","gram-condicional","Polite and possible"],["Past perfect","Había hecho","gram-pasado-perfecto","Earlier past"],["Future perfect","Habré hecho","gram-futuro-perfecto","Advanced recognition"]
   ];
   const tenseGrid=tenseRoadmap.querySelector(".tense-roadmap-grid");tenseTargets.forEach(([label,pattern,id,sub],i)=>{const b=document.createElement("button");b.type="button";b.className="tense-roadmap-item";b.innerHTML=`<span class='tense-roadmap-number'>${i+1}</span><span><strong>${label}</strong><small>${pattern} · ${sub}</small></span><span>›</span>`;b.onclick=()=>{const lesson=LESSONS.find(l=>l.id===id);if(lesson)openLesson(lesson);else{showPage("gram");showGram(id);}};tenseGrid.appendChild(b);});
   root.appendChild(tenseRoadmap);
-  const roadmap=lpEl("lesson-roadmap");
-  roadmap.dataset.lessonView="path";
-  roadmap.appendChild(lpEl("lesson-roadmap-title","🧭 Recommended path · browse any stage anytime"));
-  const roadmapRow=lpEl("lesson-roadmap-row");
-  LESSON_STAGES.forEach((stage,i)=>{const b=document.createElement("button");b.type="button";b.className="lesson-roadmap-btn";b.textContent=stage.name.replace(/^.*?Stage /,"Stage ");b.onclick=()=>{const target=document.getElementById("lesson-stage-"+i);if(target){target.open=true;target.scrollIntoView({behavior:"smooth",block:"start"});}};roadmapRow.appendChild(b);});
-  roadmap.appendChild(roadmapRow);root.appendChild(roadmap);
   let lessonNum=0;
   LESSON_STAGES.forEach((stage,stageIndex)=>{
     const stageLessons=stage.ids.map(id=>LESSONS.find(l=>l.id===id)).filter(Boolean);
@@ -3252,7 +3281,7 @@ FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
 /* Vocabulary examples remain in Vocab as full context. Only the authored
    prompts above enter Fill blank; generic example sentences stay out. */
 
-const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"cortesia",label:"🙏 Courtesy"},{id:"muletillas",label:"☕ Diminutives & Fillers"},{id:"reparar",label:"🧰 Repair"},{id:"conectores",label:"🔗 Connectors"},{id:"direcciones",label:"🧭 Directions"},{id:"uber",label:"🚕 Uber"},{id:"uber-real",label:"🚕 Uber · full trip"},{id:"hotel",label:"🏨 Hotel"},{id:"restaurante",label:"🍽️ Restaurant"},{id:"restaurante-real",label:"🍽️ Restaurant · real"},{id:"compras",label:"🛒 Shopping"},{id:"mercado",label:"🛍️ Market"},{id:"farmacia",label:"💊 Pharmacy"},{id:"expresiones",label:"🇨🇴 Expressions"},{id:"social",label:"🤝 Social"},{id:"fiesta",label:"🎉 Party"},{id:"deportes",label:"⚽ Sports"},{id:"oficina-real",label:"🧑‍💼 Office"},{id:"gerundios",label:"🔄 Actions in progress"},{id:"mandatos",label:"🗣️ Commands"},{id:"estructura",label:"🧱 Structure"},{id:"subjuntivo",label:"🌱 Subjuntivo"},{id:"pronunciacion",label:"🔊 Sounds"},{id:"groserias",label:"⚠️ Groserías"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
+const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"cortesia",label:"🙏 Courtesy"},{id:"muletillas",label:"☕ Diminutives & Fillers"},{id:"reparar",label:"🧰 Repair"},{id:"conectores",label:"🔗 Connectors"},{id:"direcciones",label:"🧭 Directions"},{id:"aeropuerto",label:"🛬 Airport"},{id:"uber",label:"🚕 Uber"},{id:"uber-real",label:"🚕 Uber · full trip"},{id:"hotel",label:"🏨 Hotel"},{id:"bancos-pagos",label:"💳 Nequi & Pay"},{id:"restaurante",label:"🍽️ Restaurant"},{id:"restaurante-real",label:"🍽️ Restaurant · real"},{id:"compras",label:"🛒 Shopping"},{id:"mercado",label:"🛍️ Market"},{id:"farmacia",label:"💊 Pharmacy"},{id:"medico",label:"🩺 Medical"},{id:"barberia",label:"💈 Barbershop"},{id:"porteria",label:"🏢 Portería & Rappi"},{id:"expresiones",label:"🇨🇴 Expressions"},{id:"social",label:"🤝 Social"},{id:"fiesta",label:"🎉 Party"},{id:"deportes",label:"⚽ Sports"},{id:"oficina-real",label:"🧑‍💼 Office"},{id:"gerundios",label:"🔄 Actions in progress"},{id:"mandatos",label:"🗣️ Commands"},{id:"estructura",label:"🧱 Structure"},{id:"subjuntivo",label:"🌱 Subjuntivo"},{id:"pronunciacion",label:"🔊 Sounds"},{id:"groserias",label:"⚠️ Groserías"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animals"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
 const QUIZ_MODES=[
   {id:"mixed",label:"Mixed"},{id:"es-en",label:"ES → EN"},{id:"en-es",label:"EN → ES"},
   {id:"listening",label:"🎧 Listening"},{id:"dictation",label:"⌨️ Dictation"},{id:"blank",label:"✏️ Fill blank"},{id:"conversation",label:"💬 Conversation"}
