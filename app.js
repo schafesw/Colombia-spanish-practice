@@ -72,7 +72,7 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v91.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v92.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);
   bar.append(label,select,reset,ver);utilityBody.appendChild(bar);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -733,20 +733,50 @@ function registerTone(item){
 function registerBadge(item){
   return item&&item.register?'<span class="f-register register-'+registerTone(item)+'">'+escapeVocabHtml(item.register)+'</span>':"";
 }
+let colRegionFilter="all";
+const COL_REGIONS=[
+  ["all","🇨🇴 All Colombia"],
+  ["bogota","🏔️ Bogotá & Rolos"],
+  ["medellin","🌸 Medellín & Paisas"],
+  ["cali-costa","🌴 Cali & La Costa"]
+];
+const COL_REGION_LABELS={
+  all:"🇨🇴 National",
+  bogota:"🏔️ Bogotá / Altiplano",
+  medellin:"🌸 Medellín / Eje Cafetero",
+  "cali-costa":"🌴 Cali & Costa"
+};
 function rCol(list){
   const note=document.createElement("div");note.className="intro-note";
-  note.innerHTML=`<div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:800">🇨🇴 Colombianismos</div>
-    <div style="font-size:0.82rem;color:var(--muted);line-height:1.6">Expressions used every day in Colombia that you won't learn in a textbook. Tap to hear.</div>`;
+  note.innerHTML=`<div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:800">🇨🇴 Colombianismos & Regional Flavors</div>
+    <div style="font-size:0.82rem;color:var(--muted);line-height:1.55">Filter by region to learn how people speak in Bogotá, Medellín, Cali, and across Colombia. Tap any card to hear it, or tap ⭐ to pin it to your practice list.</div>`;
   list.appendChild(note);
-  COLOMBIANISMOS.forEach(item=>{
+  const filterBar=document.createElement("div");filterBar.className="col-region-tabs";
+  COL_REGIONS.forEach(([regId,regLabel])=>{
+    const count=COLOMBIANISMOS.filter(x=>regId==="all"||x.region===regId||x.region==="all").length;
+    const b=document.createElement("button");b.type="button";
+    b.className="lp-mode-btn col-region-btn"+(colRegionFilter===regId?" active":"");
+    b.textContent=`${regLabel} (${count})`;
+    b.onclick=()=>{colRegionFilter=regId;rV();};
+    filterBar.appendChild(b);
+  });
+  list.appendChild(filterBar);
+  const filtered=COLOMBIANISMOS.filter(item=>colRegionFilter==="all"||item.region===colRegionFilter||item.region==="all");
+  filtered.forEach(item=>{
     const card=document.createElement("div");card.className="col-card";
+    const regKey=item.region||"all";
+    const regBadge=`<span class="col-region-pill reg-${regKey}">${COL_REGION_LABELS[regKey]||"🇨🇴 Colombia"}</span>`;
     card.innerHTML=`<div class="col-card-top">
-      <span class="col-flag">🇨🇴</span>
+      <span class="col-flag">${regKey==="bogota"?"🏔️":regKey==="medellin"?"🌸":regKey==="cali-costa"?"🌴":"🇨🇴"}</span>
       <div class="col-word-wrap"><div class="col-word">${item.word}</div><div class="col-en">${item.en}</div></div>
-      <span class="col-spk">🔊</span></div>
-      <div class="col-usage">${item.usage}<div class="col-example">💬 ${item.example}</div></div>`;
-    if(item.register){const badge=document.createElement("span");badge.className="f-register register-"+registerTone(item);badge.textContent=item.register;const usage=card.querySelector(".col-usage");if(usage){usage.prepend(badge);if(item.registerNote){const note=document.createElement("div");note.className="col-register-note";note.textContent="ⓘ "+item.registerNote;usage.appendChild(note);}}}
-    card.onclick=()=>{markPractice("vocab",item.tts||item.word);speak(item.tts||item.word,0.75);};list.appendChild(card);});
+      <div class="col-top-actions"><span class="col-spk">🔊</span></div></div>
+      <div class="col-usage">${regBadge}${item.usage}<div class="col-example">💬 ${item.example}</div></div>`;
+    if(item.register){const badge=document.createElement("span");badge.className="f-register register-"+registerTone(item);badge.textContent=item.register;const usage=card.querySelector(".col-usage");if(usage){usage.prepend(badge);if(item.registerNote){const rNote=document.createElement("div");rNote.className="col-register-note";rNote.textContent="ⓘ "+item.registerNote;usage.appendChild(rNote);}}}
+    const topAct=card.querySelector(".col-top-actions");
+    if(topAct&&typeof attachStarBtn==="function")attachStarBtn(topAct,item.example||item.word,"Colombianismos");
+    card.onclick=e=>{if(e.target.closest(".star-pin-btn"))return;markPractice("vocab",item.tts||item.word);speak(item.tts||item.word,0.75);};
+    list.appendChild(card);
+  });
 }
 
 function rN(list){
@@ -980,10 +1010,17 @@ function fraseSectionMeta(sec){
 function phraseCollectionGroup(sec){
   const n=String(sec.section||"").toLowerCase();
   if(/groser|bad word|strong language/.test(n))return {id:"strong",label:"⚠️ Strong language / Entender primero"};
-  if(/direcciones|ubicación|uber|transporte|compras|restaurante|emergencias|ayuda|aclarar|plata|pagos/.test(n))return {id:"survival",label:"🧭 Survival & getting around / Para desenvolverse"};
-  if(/conectores|patrones|marcos|construir|contar historias|pronombres/.test(n))return {id:"build",label:"🧱 Build sentences / Construir frases"};
-  if(/saludo|gusto|conversación diaria|social|planes|teléfono|sientes|familia/.test(n))return {id:"social",label:"🤝 Daily conversation / Conversación diaria"};
+  if(/aeropuerto|migración|nequi|datáfono|portería|rappi|direcciones|ubicación|uber|transporte|compras|mercado|restaurante|comer fuera|emergencias|ayuda|aclarar|repetir|plata|pagos|médica|urgencias|sientes|barbería|peluquería|cortesía/.test(n))return {id:"survival",label:"🧭 Survival, Travel & Services / Para desenvolverse"};
+  if(/conectores|patrones|marcos|construir|contar historias|pronombres|acciones|progreso|muletillas|diminutivos/.test(n))return {id:"build",label:"🧱 Sentence Builders & Local Flow / Construir frases"};
+  if(/saludo|gusto|conversación diaria|social|amigos|fiesta|partido|oficina|planes|teléfono|familia/.test(n))return {id:"social",label:"🤝 Social, Work & Daily Life / Conversación diaria"};
   return {id:"other",label:"📚 More useful phrases / Más frases"};
+}
+function dialogueSituationGroup(d){
+  const t=String(d.title||"").toLowerCase();
+  if(/uber|aeropuerto|carro|direcciones|hotel|transporte/.test(t))return {id:"travel",label:"🛬 Travel, Uber & Getting Around",sub:"Airport, Uber rides, directions, hotels, and car trouble"};
+  if(/restaurante|mercado|tienda|cortesía|pagos|datáfono|nequi|cocina/.test(t))return {id:"food",label:"🍽️ Food, Shopping & Payments",sub:"Ordering meals, neighborhood shops, markets, Nequi, and cooking"};
+  if(/oficina|trabajo|profesión|portería|rappi|barbería|farmacia|médica|casa|habitación|baño|teléfono|comunicación|apartamento/.test(t))return {id:"daily",label:"🏠 Daily Life, Work & Services",sub:"Apartment front desk, office, barbershop, pharmacy, doctor, and phone"};
+  return {id:"social",label:"🇨🇴 Social, Friends & Culture",sub:"Greetings, going out, parties, fútbol matches, stories, and expressions"};
 }
 function resetFraseScroll(){const sc=document.querySelector(".scroll");if(sc)sc.scrollTop=0;}
 function renderFraseMenu(){
@@ -1028,15 +1065,29 @@ function renderFraseMenu(){
   fl.appendChild(viewSwitch);
   const search=document.createElement("input");search.type="search";search.className="content-search";search.placeholder="🔎 Search phrases or conversation lines…";search.setAttribute("aria-label","Search phrases");search.value=fraseSearchTerm;
   const results=document.createElement("div");results.className="search-results";fl.appendChild(search);fl.appendChild(results);
-  const h1=document.createElement("div");h1.className="fr-home-label";h1.textContent="💬 Conversations · practice both sides";
-  const g1=document.createElement("div");g1.className="fr-home-grid";
+  const h1=document.createElement("div");h1.className="fr-home-label";h1.textContent=`💬 Conversations (${PHRASE_DIALOGUES.length}) · grouped by situation`;
+  const g1=document.createElement("div");g1.className="fr-dialogue-groups";
+  const dlgOrder=["travel","food","daily","social"];
+  const dlgMap=new Map();
   PHRASE_DIALOGUES.forEach(d=>{
-    const c=document.createElement("button");c.type="button";c.className="fr-home-card";
-    const lines=[...(d.versions||[]).flatMap(v=>v.lines||[])];
-    c.innerHTML=`<div class="fr-card-title">${d.title}</div><div class="fr-card-sub">${d.en||""}</div><div class="fr-card-meta">${(d.versions||[]).length} tenses · ${phraseProgress(lines)} practiced ›</div>`;
-    const dialogueSub=c.querySelector(".fr-card-sub");if(dialogueSub)dialogueSub.textContent=dialogueEnglishTitle(d.title);
-    c.onclick=()=>renderFraseDialogue(d);
-    g1.appendChild(c);
+    const grp=dialogueSituationGroup(d);
+    if(!dlgMap.has(grp.id))dlgMap.set(grp.id,{meta:grp,items:[]});
+    dlgMap.get(grp.id).items.push(d);
+  });
+  dlgOrder.forEach((gid,gIdx)=>{
+    const entry=dlgMap.get(gid);if(!entry)return;
+    const fold=document.createElement("details");fold.className="lesson-stage fr-dialogue-fold";
+    if(gIdx===0)fold.open=true;
+    fold.innerHTML=`<summary><div class="stage-label"><div class="stage-title">${entry.meta.label} · ${entry.items.length}</div><div class="stage-sub">${entry.meta.sub}</div></div></summary><div class="fr-home-grid fr-fold-grid"></div>`;
+    const grid=fold.querySelector(".fr-fold-grid");
+    entry.items.forEach(d=>{
+      const c=document.createElement("button");c.type="button";c.className="fr-home-card";
+      const lines=[...(d.versions||[]).flatMap(v=>v.lines||[])];
+      c.innerHTML=`<div class="fr-card-title">${d.title}</div><div class="fr-card-sub">${dialogueEnglishTitle(d.title)}</div><div class="fr-card-meta">${(d.versions||[]).length} tenses · ${phraseProgress(lines)} practiced ›</div>`;
+      c.onclick=()=>renderFraseDialogue(d);
+      grid.appendChild(c);
+    });
+    g1.appendChild(fold);
   });
   const conversationGroup=document.createElement("section");conversationGroup.className="fr-conversation-group";conversationGroup.append(h1,g1);
   const h2=document.createElement("div");h2.className="fr-home-label";h2.textContent="📋 Phrase collections · tap to open";
@@ -1123,7 +1174,8 @@ function renderFraseSection(idx){
     const card=document.createElement("div");card.className="frase-card";
     const register=item.register?`<span class="f-register">${escapeVocabHtml(item.register)}</span>`:"";
     card.innerHTML=`<div class="frase-txt"><div class="f-es">${item.es}</div><div class="f-en">${item.en}</div>${register}</div><span class="f-spk">🔊</span>`;
-    card.onclick=()=>{markPractice("phrases",item.es);speak(item.es,0.75);};
+    card.onclick=e=>{if(e.target.closest(".star-pin-btn"))return;markPractice("phrases",item.es);speak(item.es,0.75);};
+    if(typeof attachStarBtn==="function")attachStarBtn(card,item.es,sec.section||"Frases");
     attachMic(card,item.es);
     wrap.appendChild(card);
   });
@@ -1171,47 +1223,90 @@ function renderFraseDialogue(dialogue,tense){
   }
   /* Speaking practice: hide one side, say the line out loud, tap to reveal */
   const bubbles=[];
+  let activeRole=null,stepIdx=-1,waitingReveal=false;
   const pbar=document.createElement("div");pbar.className="practice-bar";
   const pInfo=document.createElement("div");pInfo.className="practice-info";
-  pInfo.innerHTML="<strong>🗣️ Speaking ladder</strong><small>Listen → hide one side → say it → shadow the model</small>";
+  pInfo.innerHTML="<strong>🗣️ Roleplay & Shadowing</strong><small>Hide a role to speak from memory, or step through turn by turn</small>";
   const pBtns=document.createElement("div");pBtns.className="practice-btns";
+  const applyRole=(who)=>{
+    activeRole=who;
+    pBtns.querySelectorAll(".role-btn").forEach(x=>x.classList.toggle("active",x.dataset.who===String(who)));
+    bubbles.forEach(bb=>bb.el.classList.toggle("dlg-hidden",who!==null&&bb.who===who));
+  };
   const mkPB=(label,who)=>{
-    const b=document.createElement("button");b.type="button";b.className="practice-btn"+(who===null?" active":"");b.textContent=label;
-    b.onclick=()=>{
-      pBtns.querySelectorAll(".practice-btn").forEach(x=>x.classList.remove("active"));
-      b.classList.add("active");
-      bubbles.forEach(bb=>bb.el.classList.toggle("dlg-hidden",who!==null&&bb.who===who));
-    };
+    const b=document.createElement("button");b.type="button";b.className="practice-btn role-btn"+(who===null?" active":"");b.dataset.who=String(who);b.textContent=label;
+    b.onclick=()=>applyRole(who);
     return b;
   };
   pBtns.appendChild(mkPB("👀 Show all",null));
-  pBtns.appendChild(mkPB("Practice A","A"));
-  pBtns.appendChild(mkPB("Practice B","B"));
+  pBtns.appendChild(mkPB("🎭 You are A","A"));
+  pBtns.appendChild(mkPB("🎭 You are B","B"));
+  const swapBtn=document.createElement("button");swapBtn.type="button";swapBtn.className="practice-btn";swapBtn.textContent="🔄 Swap A↔B";
+  swapBtn.onclick=()=>applyRole(activeRole==="A"?"B":"A");
+  pBtns.appendChild(swapBtn);
   pbar.appendChild(pInfo);pbar.appendChild(pBtns);
   fl.appendChild(pbar);
   const box=document.createElement("div");
   box.className="dialogue phrase-dialogue";
-  box.innerHTML=`<div class="dlg-title">Tap any line to hear it</div>`;
+  const stepper=document.createElement("div");stepper.className="dlg-stepper-bar";
+  const stepStatus=document.createElement("span");stepStatus.className="dlg-stepper-status";stepStatus.textContent="Tap ▶️ Next Turn to step through the conversation out loud";
+  const stepBtn=document.createElement("button");stepBtn.type="button";stepBtn.className="lp-nav-btn primary dlg-stepper-btn";stepBtn.textContent="▶️ Start Turn 1";
+  stepper.append(stepStatus,stepBtn);
+  box.appendChild(stepper);
   const langBtn=document.createElement("button");langBtn.type="button";langBtn.className="practice-btn language-toggle";langBtn.textContent="🇺🇸 Hide English";langBtn.onclick=()=>{const hidden=box.classList.toggle("dlg-no-english");langBtn.textContent=hidden?"🇺🇸 Show English":"🇺🇸 Hide English";};pBtns.appendChild(langBtn);
   const version=versions.find(v=>v.tense===active)||versions[0];
   if(version){
-    version.lines.forEach(line=>{
+    version.lines.forEach((line,lIdx)=>{
       const row=document.createElement("div");
       row.className="dlg-line"+(line.who==="B"?" right":"");
       row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${line.who}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
       const bub=row.querySelector(".dlg-bubble");
-      bubbles.push({who:line.who,el:bub});
+      bubbles.push({who:line.who,el:bub,row,line,idx:lIdx});
       const shadow=document.createElement("button");shadow.type="button";shadow.className="dlg-shadow";shadow.textContent="🗣️ Shadow";shadow.title="Listen, then record yourself";
       shadow.onclick=e=>{e.stopPropagation();speak(line.tts,0.72,()=>setTimeout(()=>openMicPanel(line.tts),180));};
       bub.appendChild(shadow);
-       bub.onclick=()=>{
-         if(bub.classList.contains("dlg-hidden"))bub.classList.remove("dlg-hidden");
-         markPractice("phrases",line.es);
-         speak(line.tts,0.75);
+      bub.onclick=e=>{
+        if(e.target.closest(".star-pin-btn"))return;
+        if(bub.classList.contains("dlg-hidden"))bub.classList.remove("dlg-hidden");
+        markPractice("phrases",line.es);
+        speak(line.tts,0.75);
       };
+      if(typeof attachStarBtn==="function")attachStarBtn(row,line.es,dialogue.title);
       attachMic(row,line.tts);
       box.appendChild(row);
     });
+    stepBtn.onclick=()=>{
+      if(!bubbles.length)return;
+      if(waitingReveal&&stepIdx>=0&&stepIdx<bubbles.length){
+        const cur=bubbles[stepIdx];
+        cur.el.classList.remove("dlg-hidden");
+        markPractice("phrases",cur.line.es);
+        /* Synchronous speak inside click handler for iPhone Safari */
+        speak(cur.line.tts,0.75);
+        waitingReveal=false;
+        const isLast=stepIdx>=bubbles.length-1;
+        stepStatus.textContent=`Turn ${stepIdx+1}/${bubbles.length} (${cur.who}) · Repeat out loud!`;
+        stepBtn.textContent=isLast?"↻ Restart Turns":`▶️ Next Turn (${stepIdx+2}/${bubbles.length})`;
+        return;
+      }
+      stepIdx=(stepIdx+1)%bubbles.length;
+      if(stepIdx===0&&activeRole)applyRole(activeRole);
+      bubbles.forEach((b,i)=>b.row.classList.toggle("active-turn",i===stepIdx));
+      const cur=bubbles[stepIdx];
+      cur.row.scrollIntoView({behavior:"smooth",block:"nearest"});
+      if(cur.el.classList.contains("dlg-hidden")){
+        waitingReveal=true;
+        stepStatus.textContent=`🗣️ Turn ${stepIdx+1}/${bubbles.length}: Your turn (${cur.who})! Say it out loud first.`;
+        stepBtn.textContent="👀 Reveal & Hear My Line";
+      }else{
+        markPractice("phrases",cur.line.es);
+        /* Synchronous speak inside click handler for iPhone Safari */
+        speak(cur.line.tts,0.75);
+        const isLast=stepIdx>=bubbles.length-1;
+        stepStatus.textContent=`🔊 Turn ${stepIdx+1}/${bubbles.length} (Speaker ${cur.who})`;
+        stepBtn.textContent=isLast?"↻ Restart Turns":`▶️ Next Turn (${stepIdx+2}/${bubbles.length})`;
+      }
+    };
   }
   let alt=null;
   if(version&&Array.isArray(version.alternates)&&version.alternates.length){
@@ -2206,16 +2301,56 @@ function recordSpeakingError(target,source){
   saveSpeakingErrors();
 }
 function clearSpeakingError(target){const id=speakingErrorId(target);if(!id)return;delete speakingErrors[id];saveSpeakingErrors();}
+function isStarredPhrase(target){const id=speakingErrorId(target);return !!(id&&speakingErrors[id]&&speakingErrors[id].starred);}
+function toggleStarPhrase(target,source,btn){
+  const text=String(target||"").trim(),id=speakingErrorId(text);if(!id)return false;
+  if(speakingErrors[id]&&speakingErrors[id].starred){
+    delete speakingErrors[id];saveSpeakingErrors();
+    if(btn){btn.textContent="☆";btn.classList.remove("starred");btn.title="Pin to speaking practice list";}
+    return false;
+  }
+  const old=speakingErrors[id]||{};
+  speakingErrors[id]={text:old.text||text,source:source||old.source||"starred",count:old.count||1,last:Date.now(),starred:true};
+  saveSpeakingErrors();
+  if(btn){btn.textContent="⭐";btn.classList.add("starred");btn.title="Pinned in your speaking practice list";}
+  return true;
+}
+function attachStarBtn(container,target,source){
+  if(!container||!target)return;
+  const b=document.createElement("button");b.type="button";
+  const on=isStarredPhrase(target);
+  b.className="star-pin-btn"+(on?" starred":"");
+  b.textContent=on?"⭐":"☆";
+  b.title=on?"Pinned in your speaking practice list":"Pin to speaking practice list";
+  b.setAttribute("aria-label","Pin phrase to speaking list");
+  b.onclick=e=>{e.stopPropagation();toggleStarPhrase(target,source,b);};
+  container.appendChild(b);
+}
 function renderSpeakingErrorJournal(root){
-  const entries=Object.values(speakingErrors||{}).sort((a,b)=>(b.last||0)-(a.last||0));
+  const entries=Object.values(speakingErrors||{}).sort((a,b)=>((b.starred?1:0)-(a.starred?1:0))||((b.last||0)-(a.last||0)));
   const card=document.createElement("details");card.className="error-journal-fold";card.dataset.lessonView="today";
   if(entries.length>0)card.open=true;
-  card.innerHTML=`<summary class="error-journal-summary"><span>🧠 <strong>Your speaking practice list</strong> <small>${entries.length?`${entries.length} sentence${entries.length===1?"":"s"} to review`:"Empty — tricky phrases appear here"}</small></span><span class="error-journal-count">${entries.length}</span></summary>`;
+  card.innerHTML=`<summary class="error-journal-summary"><span>⭐ <strong>Saved & tricky phrases</strong> <small>${entries.length?`${entries.length} phrase${entries.length===1?"":"s"} pinned or queued`:"Tap ☆ on any phrase to pin it here"}</small></span><span class="error-journal-count">${entries.length}</span></summary>`;
   const list=document.createElement("div");list.className="error-journal-list";
-  if(!entries.length){const empty=document.createElement("div");empty.className="error-journal-empty";empty.textContent="Your list is empty. Use “Need more practice” after a quiz or speaking frame.";list.appendChild(empty);}
-  entries.slice(0,8).forEach(item=>{
+  if(!entries.length){const empty=document.createElement("div");empty.className="error-journal-empty";empty.textContent="Your list is empty. Tap ☆ on any phrase, Colombianismo, or dialogue line (or miss a quiz question) to save it here.";list.appendChild(empty);}
+  else{
+    let drillIdx=0;
+    const drillBar=document.createElement("div");drillBar.className="error-journal-drill-bar";
+    const drillBtn=document.createElement("button");drillBtn.type="button";drillBtn.className="lp-nav-btn primary error-journal-drill-btn";
+    drillBtn.textContent=`🔊 Speak through my list (1/${Math.min(entries.length,12)})`;
+    drillBtn.onclick=()=>{
+      const pool=entries.slice(0,12);
+      const cur=pool[drillIdx%pool.length];
+      speak(cur.text,0.75);
+      drillIdx=(drillIdx+1)%pool.length;
+      drillBtn.textContent=`🔊 Speak next (${drillIdx+1}/${pool.length}): "${cur.text.slice(0,26)}${cur.text.length>26?"…":""}"`;
+    };
+    drillBar.appendChild(drillBtn);
+    list.appendChild(drillBar);
+  }
+  entries.slice(0,12).forEach(item=>{
     const row=document.createElement("div");row.className="error-journal-row";
-    const copy=document.createElement("div");copy.className="error-journal-copy";copy.innerHTML=`<strong>${escapeVocabHtml(item.text)}</strong><small>${escapeVocabHtml(item.source||"practice")} · ${item.count||1} attempt${(item.count||1)===1?"":"s"}</small>`;
+    const copy=document.createElement("div");copy.className="error-journal-copy";copy.innerHTML=`<strong>${item.starred?"⭐ ":""}${escapeVocabHtml(item.text)}</strong><small>${escapeVocabHtml(item.source||"practice")}${item.starred?" · pinned":` · ${item.count||1} attempt${(item.count||1)===1?"":"s"}`}</small>`;
     copy.style.cursor="pointer";copy.onclick=()=>speak(item.text,0.75);
     const actions=document.createElement("div");actions.className="error-journal-actions";
     const hear=document.createElement("button");hear.type="button";hear.className="error-journal-btn";hear.textContent="🔊";hear.title="Hear sentence";hear.setAttribute("aria-label","Hear sentence");hear.onclick=()=>speak(item.text,0.75);
@@ -2934,9 +3069,59 @@ function buildReflexivos(sec){
     exDiv.onclick=()=>speak(verb.example.es,0.75);card.appendChild(exDiv);
     sec.appendChild(card);});
 }
+let bridgeDrillIdx=0;
 function buildSpeakingGuide(){
   const sec=document.getElementById("gs-estructura");if(!sec)return;sec.innerHTML="";
-  const intro=document.createElement("div");intro.className="gram-intro";intro.innerHTML="<div class='gram-intro-title'>🧱 Build sentences you can say</div><div class='gram-intro-text'>Learn one small pattern, hear a natural example, then say your own version out loud.</div>";sec.appendChild(intro);
+  const intro=document.createElement("div");intro.className="gram-intro";intro.innerHTML="<div class='gram-intro-title'>🧱 Build sentences & link ideas naturally</div><div class='gram-intro-text'>Practice snapping two short thoughts together with Colombian connectors and time-buyers, then review the core patterns below.</div>";sec.appendChild(intro);
+  if(typeof CONNECTOR_BRIDGE_DRILLS!=="undefined"&&CONNECTOR_BRIDGE_DRILLS.length){
+    const trainer=document.createElement("section");trainer.className="bridge-trainer-card";
+    const renderBridge=()=>{
+      const d=CONNECTOR_BRIDGE_DRILLS[bridgeDrillIdx%CONNECTOR_BRIDGE_DRILLS.length];
+      const fullEs=(d.thoughtA+d.correct+d.thoughtB).replace(/\s+/g," ").trim();
+      trainer.innerHTML=`<div class="bridge-kicker">🔗 INTERACTIVE BRIDGE TRAINER · ${bridgeDrillIdx+1} OF ${CONNECTOR_BRIDGE_DRILLS.length}</div>
+        <div class="bridge-context">${escapeVocabHtml(d.context)}</div>
+        <div class="bridge-sentence-box">
+          <span class="bridge-part">${escapeVocabHtml(d.thoughtA)}</span>
+          <span class="bridge-slot" id="bridge-slot-label"> [ choose bridge ] </span>
+          <span class="bridge-part">${escapeVocabHtml(d.thoughtB)}</span>
+        </div>
+        <div class="bridge-en">${escapeVocabHtml(d.en)}</div>
+        <div class="bridge-choices"></div>
+        <div class="bridge-feedback" aria-live="polite">Tap the Colombian connector that links these two ideas:</div>
+        <div class="bridge-actions"></div>`;
+      const choicesWrap=trainer.querySelector(".bridge-choices");
+      const fb=trainer.querySelector(".bridge-feedback");
+      const slotEl=trainer.querySelector("#bridge-slot-label");
+      d.choices.forEach(ch=>{
+        const b=document.createElement("button");b.type="button";b.className="bridge-choice-btn";b.textContent=ch.trim();
+        b.onclick=()=>{
+          if(ch===d.correct){
+            choicesWrap.querySelectorAll("button").forEach(x=>x.classList.remove("wrong"));
+            b.classList.add("correct");
+            slotEl.textContent=" "+ch.trim()+" ";
+            slotEl.classList.add("filled");
+            fb.innerHTML=`✅ <strong>${escapeVocabHtml(fullEs)}</strong><br><small>💡 ${escapeVocabHtml(d.tip)}</small>`;
+            markPractice("phrases",fullEs);
+            /* Synchronous speak inside tap handler for iPhone Safari */
+            speak(fullEs,0.75);
+          }else{
+            b.classList.add("wrong");
+            fb.textContent="Try another connector — listen for what fits the meaning in brackets.";
+          }
+        };
+        choicesWrap.appendChild(b);
+      });
+      const acts=trainer.querySelector(".bridge-actions");
+      const hearFull=document.createElement("button");hearFull.type="button";hearFull.className="lp-nav-btn";hearFull.textContent="🔊 Hear full sentence";
+      hearFull.onclick=()=>speak(fullEs,0.75);
+      const nextDrill=document.createElement("button");nextDrill.type="button";nextDrill.className="lp-nav-btn primary";nextDrill.textContent="Next bridge drill →";
+      nextDrill.onclick=()=>{bridgeDrillIdx=(bridgeDrillIdx+1)%CONNECTOR_BRIDGE_DRILLS.length;renderBridge();};
+      acts.append(hearFull,nextDrill);
+      attachMic(acts,fullEs,"phrases");
+    };
+    renderBridge();
+    sec.appendChild(trainer);
+  }
   SPEAKING_GUIDE.forEach((g,i)=>{
     const card=document.createElement("article");card.className="speaking-guide-card";
     card.innerHTML=`<div class='speaking-guide-number'>${i+1}</div><div class='speaking-guide-copy'><h3>${escapeVocabHtml(g.title)}</h3><div class='speaking-guide-formula'>${escapeVocabHtml(g.formula)}</div><p>${escapeVocabHtml(g.explain)}</p><div class='speaking-guide-mistake'>⚠️ ${escapeVocabHtml(g.mistake)}</div></div>`;
@@ -3329,16 +3514,40 @@ document.getElementById("q-streak").textContent="🔥 "+qS;
   bar.appendChild(btn);
 })();
 
+const SITUATION_BLITZ_PACKS=[
+  {id:"uber-blitz",label:"🚕 In an Uber",cats:["uber","uber-real","direcciones","carropartes"]},
+  {id:"food-blitz",label:"🍽️ Order & Pay",cats:["restaurante","restaurante-real","bancos-pagos","cortesia","comida","mercado"]},
+  {id:"travel-blitz",label:"🛬 Airport & Hotel",cats:["aeropuerto","hotel","lugares","compras"]},
+  {id:"social-blitz",label:"🤝 Social & Parche",cats:["social","fiesta","deportes","muletillas","expresiones","colombianismos"]},
+  {id:"living-blitz",label:"🏢 Apt, Barber & Med",cats:["porteria","barberia","farmacia","medico","reparar","casa"]}
+];
+let qBlitzPack=null;
 const qmw=document.getElementById("qmode-wrap");
-QUIZ_MODES.forEach(m=>{const b=document.createElement("button");b.type="button";b.className="qmode"+(m.id===qMode?" active":"");b.textContent=m.label;b.onclick=()=>{qMissedOnly=false;qMode=m.id;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};qmw.appendChild(b);});
+if(qmw&&qmw.parentElement){
+  const blitzWrap=document.createElement("div");blitzWrap.className="quiz-blitz-wrap";
+  blitzWrap.innerHTML=`<div class="quiz-control-label">⚡ Real-Life Situation Blitz (1-tap scenario warmup)</div><div class="quiz-blitz-row" id="qblitz-wrap"></div>`;
+  qmw.parentElement.parentElement.insertBefore(blitzWrap,qmw.parentElement);
+  const qbw=blitzWrap.querySelector("#qblitz-wrap");
+  SITUATION_BLITZ_PACKS.forEach(pack=>{
+    const b=document.createElement("button");b.type="button";b.className="qblitz-btn";b.dataset.blitz=pack.id;b.textContent=pack.label;
+    b.onclick=()=>{
+      if(qBlitzPack&&qBlitzPack.id===pack.id){qBlitzPack=null;repasoLeft=0;}
+      else{qBlitzPack=pack;qMissedOnly=false;qMode="mixed";qCat="all";qFocus="all";repasoLeft=10;}
+      resetQuizRound();syncQuizControls();nQ();
+    };
+    qbw.appendChild(b);
+  });
+}
+QUIZ_MODES.forEach(m=>{const b=document.createElement("button");b.type="button";b.className="qmode"+(m.id===qMode?" active":"");b.textContent=m.label;b.onclick=()=>{qBlitzPack=null;qMissedOnly=false;qMode=m.id;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};qmw.appendChild(b);});
 const qcw=document.getElementById("qcat-wrap");
 QC.forEach(c=>{const b=document.createElement("button");b.className="qcat"+(c.id==="all"?" active":"");b.textContent=c.label;
-  b.onclick=()=>{qMissedOnly=false;qCat=c.id;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};qcw.appendChild(b);});
+  b.onclick=()=>{qBlitzPack=null;qMissedOnly=false;qCat=c.id;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};qcw.appendChild(b);});
 const qfs=document.getElementById("qfocus-select");
 if(qfs)qfs.onchange=()=>{qMissedOnly=false;qFocus=qfs.value;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};
 function syncQuizControls(){
-  document.querySelectorAll(".qcat").forEach((x,i)=>x.classList.toggle("active",QC[i].id===qCat));
+  document.querySelectorAll(".qcat").forEach((x,i)=>x.classList.toggle("active",!qBlitzPack&&QC[i].id===qCat));
   document.querySelectorAll(".qmode").forEach((x,i)=>x.classList.toggle("active",QUIZ_MODES[i].id===qMode));
+  document.querySelectorAll(".qblitz-btn").forEach(x=>x.classList.toggle("active",!!(qBlitzPack&&x.dataset.blitz===qBlitzPack.id)));
   const focusSupported=FOCUS_MODES.has(qMode);
   if(!focusSupported)qFocus="all";
   if(qfs){qfs.value=qFocus;qfs.disabled=!focusSupported;}
@@ -3360,7 +3569,9 @@ function quizPool(){
   else if(qMode==="listening")pool=aQ.filter(q=>!q.kind).map(q=>({...q,answer:q.es,prompt:"🎧"}));
   else if(qMode==="es-en")pool=aQ.filter(q=>!q.kind||q.kind==="meaning").map(q=>({...q,answer:q.en,prompt:q.quizPrompt||q.es}));
   else pool=aQ.map(q=>({...q,answer:q.en,prompt:q.kind==="listening"?"🎧":(q.quizPrompt||q.es)}));
-  if(qMode==="blank"){
+  if(qBlitzPack&&Array.isArray(qBlitzPack.cats)){
+    pool=pool.filter(q=>qBlitzPack.cats.includes(q.cat));
+  }else if(qMode==="blank"){
     if(qCat==="pronombres")pool=pool.filter(q=>q.cat==="pronombres");
     else if(qCat!=="all")pool=pool.filter(q=>q.cat===qCat);
   }else if(qMode==="conversation"){

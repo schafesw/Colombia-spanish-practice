@@ -2830,3 +2830,134 @@ V60_FILL_BLANK_QUIZ.push(
   {kind:"blank",focus:"present",cat:"porteria",es:"Estoy esperando un ___ de Rappi; ¿me avisa cuando llegue?",en:"domicilio",tts:"Estoy esperando un domicilio de Rappi; ¿me avisa cuando llegue?",trans:"I am waiting for a Rappi delivery; can you let me know when it arrives?",choices:["domicilio","datáfono","desayuno","documento"]},
   {kind:"blank",focus:"past",cat:"porteria",es:"Parece que se ___ el agua en todo el edificio.",en:"fue",tts:"Parece que se fue el agua en todo el edificio.",trans:"It seems the water went out in the whole building.",choices:["fue","va","iré","ido"]}
 );
+
+// ── V92.0 CONVERSATIONAL MASTERY EXPANSION ──────────────────────────────────
+/* 1. Regional tags for existing COLOMBIANISMOS + 24 new regional expressions */
+(function(){
+  const regionMap={
+    "¿Qué más?":"all","¡Venga!":"all","Listo":"all","Bacano/a":"all","Chévere":"all",
+    "Parcero / Parce":"medellin","Tinto":"all","Plata":"all","Vaina":"all","¡Uy!":"all",
+    "Dale":"all","Chimba":"medellin","Hacer una vuelta":"all","¿Me regala...?":"bogota",
+    "Chino/a":"bogota","Berraco/a":"all","Juepucha / hijuepucha":"all","Hijueputa":"all",
+    "Gonorrea":"all","Pirobo":"bogota","Malparido/a":"all","Carechimba":"medellin",
+    "Marica":"all","Güevón / huevón":"all","Puta":"all","No joda / No jodas":"cali-costa",
+    "Qué jartera":"bogota","Me importa un culo":"all"
+  };
+  COLOMBIANISMOS.forEach(item=>{if(!item.region)item.region=regionMap[item.word]||"all";});
+})();
+
+COLOMBIANISMOS.push(
+  /* 🏔️ Bogotá & Altiplano (Rolos) */
+  {word:"Sumercé",en:"You (warm, respectful address)",region:"bogota",register:"Bogotá · warm polite",registerGroup:"everyday",usage:"A beloved Bogotá and Boyacá pronoun meaning 'you' (from 'su merced'). Shows warmth and respect with family, shopkeepers, or elders.",example:"Sumercé, ¿me regala un tintico por favor?",tts:"Sumercé, ¿me regala un tintico por favor?"},
+  {word:"Veci / Vecino/a",en:"Neighbor (used for shopkeepers & doormen)",region:"bogota",register:"Bogotá · everyday polite",registerGroup:"everyday",usage:"In Bogotá, people call store clerks, bakers, and building staff 'veci' or 'vecino/a' even if they don't know them.",example:"Buenas, veci, ¿a cómo tiene el aguacate hoy?",tts:"Buenas, veci, ¿a cómo tiene el aguacate hoy?"},
+  {word:"Qué pena con usted",en:"Excuse me / Sorry to bother you",region:"bogota",register:"Colombian · essential polite",registerGroup:"everyday",usage:"The gold-standard Bogotá softener before asking a question, squeezing past someone, or apologizing.",example:"Qué pena con usted, ¿me dice dónde queda el baño?",tts:"Qué pena con usted, ¿me dice dónde queda el baño?"},
+  {word:"Pola",en:"Beer (cold lager)",region:"bogota",register:"Colombian · everyday",registerGroup:"everyday",usage:"Named after independence heroine Policarpa Salavarrieta ('La Pola'). 'Vamos por unas polas' = Let's grab some beers.",example:"¿Nos tomamos una pola después del trabajo?",tts:"¿Nos tomamos una pola después del trabajo?"},
+  {word:"Mecato",en:"Snacks / junk food / treats",region:"all",register:"Colombian · everyday",registerGroup:"everyday",usage:"Small snacks between meals (chips, chocolates, pastries). 'Mecatear' = to snack.",example:"Voy a la tienda a comprar mecato para la tarde.",tts:"Voy a la tienda a comprar mecato para la tarde."},
+  {word:"Hacer frío / El Pacheco",en:"Bitterness of Bogotá's cold wind",region:"bogota",register:"Bogotá · local",registerGroup:"everyday",usage:"In Bogotá, intense cold weather is affectionately called 'el Pacheco'. Always carry an umbrella and jacket!",example:"¡Uy, hoy está haciendo un frío tenaz en Bogotá!",tts:"¡Uy, hoy está haciendo un frío tenaz en Bogotá!"},
+  {word:"Chusco/a",en:"Cute / good-looking / nice",region:"bogota",register:"Bogotá · friendly",registerGroup:"everyday",usage:"Classic Bogotá compliment for a person, outfit, or place.",example:"¡Qué apartamento tan chusco tienes!",tts:"¡Qué apartamento tan chusco tienes!"},
+  {word:"Juicioso/a",en:"Well-behaved / diligent / responsible",region:"all",register:"Colombian · everyday",registerGroup:"everyday",usage:"One of the most Colombian words of all. Means hardworking, focused, or staying out of trouble.",example:"Estoy estudiando español muy juicioso todos los días.",tts:"Estoy estudiando español muy juicioso todos los días."},
+
+  /* 🌸 Medellín & Eje Cafetero (Paisas) */
+  {word:"¿Qué más pues?",en:"How's it going then? (Paisa greeting)",region:"medellin",register:"Medellín · everyday",registerGroup:"everyday",usage:"Adding 'pues' at the end of phrases is the signature rhythm of Medellín and the coffee region.",example:"¡Hola, parce! ¿Qué más pues? ¿Todo bien?",tts:"¡Hola, parce! ¿Qué más pues? ¿Todo bien?"},
+  {word:"Hágale pues",en:"Go right ahead / Sounds good / Let's do it",region:"medellin",register:"Medellín · everyday",registerGroup:"everyday",usage:"Warm green-light response in Medellín for 'go ahead', 'sure thing', or 'let's do it'.",example:"¿Nos vemos a las siete? — ¡Hágale pues!",tts:"¿Nos vemos a las siete? ¡Hágale pues!"},
+  {word:"Amañado/a",en:"Feeling at home / loving a place",region:"medellin",register:"Medellín · warm local",registerGroup:"everyday",usage:"In Medellín, people will constantly ask '¿Está amañado en Colombia?' meaning 'Are you settling in and enjoying it here?'",example:"Estoy muy amañado viviendo aquí en Medellín.",tts:"Estoy muy amañado viviendo aquí en Medellín."},
+  {word:"Charro/a",en:"Funny / awkward / uncool (Paisa)",region:"medellin",register:"Medellín · watch context",registerGroup:"informal",usage:"In Medellín, 'qué charro' means something is either hilariously silly OR a bit lame/awkward depending on tone.",example:"¡Qué cuento tan charro el que me contaste!",tts:"¡Qué cuento tan charro el que me contaste!"},
+  {word:"El parche",en:"The friend group / hangout plan",region:"medellin",register:"Colombian · casual",registerGroup:"everyday",usage:"'Armar parche' or 'un buen parche' means a great hangout plan or group of friends.",example:"Hoy tenemos un parche muy bacano con los amigos.",tts:"Hoy tenemos un parche muy bacano con los amigos."},
+  {word:"Taco",en:"Traffic jam (Medellín!)",region:"medellin",register:"Medellín · everyday",registerGroup:"everyday",usage:"While Bogotá says 'trancón', Medellín says 'taco' for heavy traffic! ('Hay mucho taco en El Poblado').",example:"Llegué tarde porque había un taco horrible en la avenida.",tts:"Llegué tarde porque había un taco horrible en la avenida."},
+  {word:"¡Eh, ave María!",en:"Oh my goodness! / Well I never!",region:"medellin",register:"Medellín · classic paisa",registerGroup:"everyday",usage:"Classic Paisa exclamation of surprise, admiration, or emphasis.",example:"¡Eh, ave María, qué almuerzo tan rico!",tts:"¡Eh, ave María, qué almuerzo tan rico!"},
+  {word:"Vos ( ¿Cómo estás vos? )",en:"You (informal Paisa & Cali pronoun)",region:"medellin",register:"Medellín & Cali · everyday",registerGroup:"everyday",usage:"In Medellín and Cali, 'vos' often replaces 'tú' among friends ('¿Vos de dónde sos?', '¿Qué querés comer?').",example:"¿Y vos a qué hora salís de trabajar hoy?",tts:"¿Y vos a qué hora salís de trabajar hoy?"},
+
+  /* 🌴 Cali, Valle & La Costa */
+  {word:"¡Mirá ve!",en:"Look here! / Hey listen! (Cali signature)",region:"cali-costa",register:"Cali · everyday",registerGroup:"everyday",usage:"The unmistakable signature phrase of Cali (Valle del Cauca) to get someone's attention warmly.",example:"¡Mirá ve, vamos a comer un cholado en el parque!",tts:"¡Mirá ve, vamos a comer un cholado en el parque!"},
+  {word:"¿Oís? / ¿Oíste?",en:"You hear? / Got it? (Cali & Costa)",region:"cali-costa",register:"Cali & Costa · everyday",registerGroup:"everyday",usage:"Placed at the end of a sentence in Cali and the Caribbean coast to check agreement, like 'okay?' or 'you know?'",example:"Te aviso apenas llegue a la casa, ¿oíste?",tts:"Te aviso apenas llegue a la casa, ¿oíste?"},
+  {word:"Camellar",en:"To work hard / hustle",region:"all",register:"Colombian · casual",registerGroup:"everyday",usage:"'El camello' = work/job; 'camellar' = to work. Heard across Cali, the Coast, Bogotá, and Medellín.",example:"Mañana me toca camellar desde temprano.",tts:"Mañana me toca camellar desde temprano."},
+  {word:"Un chicharrón",en:"A messy problem / hassle (or crispy pork!)",region:"all",register:"Colombian · everyday",registerGroup:"everyday",usage:"Besides delicious crispy pork belly, 'tener un chicharrón' in Colombia means dealing with a complicated work or life problem.",example:"Me salió un chicharrón en la oficina a última hora.",tts:"Me salió un chicharrón en la oficina a última hora."},
+  {word:"Guayabo",en:"Hangover (or homesickness)",region:"all",register:"Colombian · everyday",registerGroup:"everyday",usage:"In Colombia, 'tener guayabo' means having a hangover after a party (unlike Mexico's 'cruda' or Spain's 'resaca').",example:"Amanecí con guayabo después de la fiesta de anoche.",tts:"Amanecí con guayabo después de la fiesta de anoche."},
+  {word:"La ñapa",en:"Free extra bit / bonus on top",region:"cali-costa",register:"Colombian · market & shops",registerGroup:"everyday",usage:"When buying fruit, juice, or street food, asking '¿Y la ñapa?' politely asks for a little extra on the house.",example:"Veci, deme dos jugos de mango, ¿y me da la ñapa?",tts:"Veci, deme dos jugos de mango, ¿y me da la ñapa?"},
+  {word:"Rumbear / La rumba",en:"To party / go out dancing",region:"cali-costa",register:"Colombian · social",registerGroup:"everyday",usage:"In Colombia (especially Cali, the salsa capital), 'ir de rumba' or 'rumbear' means going out dancing and partying.",example:"El viernes vamos a rumbear y a bailar salsa en Cali.",tts:"El viernes vamos a rumbear y a bailar salsa en Cali."},
+  {word:"¡Eche!",en:"Hey! / Come on! (Caribbean Coast)",region:"cali-costa",register:"Costa · informal",registerGroup:"informal",usage:"Signature expression in Barranquilla, Cartagena, and Santa Marta expressing surprise or 'come on!'",example:"¡Eche, pero por qué llegaste tan tarde hoy!",tts:"¡Eche, pero por qué llegaste tan tarde hoy!"}
+);
+
+/* 2. Interactive Connector & Time-Buyer Bridge Drills for Gramática → Hablar */
+const CONNECTOR_BRIDGE_DRILLS=[
+  {
+    id:"bridge-1",
+    context:"🤝 Softening an excuse when you can't make it on time",
+    thoughtA:"Quiero ir a cenar con ustedes",
+    thoughtB:"todavía tengo que terminar un informe en la oficina.",
+    en:"I want to go to dinner with you all, [the thing is that] I still have to finish a report at the office.",
+    correct:", lo que pasa es que ",
+    choices:[", lo que pasa es que "," por culpa de "," sin embargo ayer "," para que nunca "],
+    tip:"'Lo que pasa es que…' ('The thing is that…') is the #1 Colombian softener for explaining a delay or problem."
+  },
+  {
+    id:"bridge-2",
+    context:"☕ Buying time while thinking of an address or answer",
+    thoughtA:"¿La dirección del restaurante?",
+    thoughtB:"queda en la calle setenta, al lado del parque.",
+    en:"The restaurant address? [Well, let's see…] it's on 70th Street, next to the park.",
+    correct:" Pues, a ver… ",
+    choices:[" Pues, a ver… "," A pesar de "," Sin embargo "," Mientras tanto "],
+    tip:"Start your answer with 'Pues, a ver…' ('Well, let's see…') to buy 2 seconds of natural thinking time instead of saying 'ummm'."
+  },
+  {
+    id:"bridge-3",
+    context:"📲 Promising to text a friend the moment you arrive",
+    thoughtA:"Ya voy saliendo en el Uber;",
+    thoughtB:"llegue a la entrada, te mando un mensaje.",
+    en:"I'm heading out in the Uber now; [as soon as] I arrive at the entrance, I'll send you a message.",
+    correct:" apenas ",
+    choices:[" apenas "," aunque ayer "," porque nunca "," durante "],
+    tip:"'Apenas + subjunctive' ('apenas llegue' / 'apenas salga') is the most natural Colombian way to say 'as soon as'."
+  },
+  {
+    id:"bridge-4",
+    context:"🌧️ Explaining why you're bringing an umbrella or cash",
+    thoughtA:"Voy a llevar veinte mil pesos en efectivo",
+    thoughtB:"no funcione el datáfono en la tienda.",
+    en:"I'm going to bring 20,000 pesos in cash [just in case] the card terminal doesn't work at the shop.",
+    correct:" por si acaso ",
+    choices:[" por si acaso "," por eso ayer "," desde que "," tampoco "],
+    tip:"'Por si acaso' ('just in case') connects any precaution to what might happen."
+  },
+  {
+    id:"bridge-5",
+    context:"🚕 Explaining the cause of a delay naturally at the start",
+    thoughtA:"Qué pena llegar tarde;",
+    thoughtB:"había mucho trancón en la avenida, nos demoramos media hora.",
+    en:"Sorry for arriving late; [since / because] there was a lot of traffic on the avenue, we were delayed half an hour.",
+    correct:" como ",
+    choices:[" como "," pero si "," para que "," ni siquiera "],
+    tip:"When the reason comes FIRST, Spanish uses 'Como…' ('Como había trancón…') rather than starting with 'Porque'."
+  },
+  {
+    id:"bridge-6",
+    context:"🎉 Accepting an invitation warmly with a small condition",
+    thoughtA:"¡Hágale, de una!",
+    thoughtB:"me toca salir temprano porque mañana madrugo.",
+    en:"Let's do it, I'm in! [Except / only thing is] I have to head out early because I get up early tomorrow.",
+    correct:" Eso sí, ",
+    choices:[" Eso sí, "," Por lo tanto "," Ni siquiera "," Cuando ayer "],
+    tip:"'Eso sí…' ('Mind you / That said…') lets you enthusiastically agree first and add one condition right after."
+  },
+  {
+    id:"bridge-7",
+    context:"🛒 Expressing a 'maybe' plan in Colombian Spanish",
+    thoughtA:"Todavía no sé qué voy a hacer el domingo;",
+    thoughtB:"vamos a almorzar a un pueblo cerca de la ciudad.",
+    en:"I don't know yet what I'm doing on Sunday; [maybe / perhaps] we'll go have lunch in a town near the city.",
+    correct:" de pronto ",
+    choices:[" de pronto "," hace rato "," en cambio "," jamás "],
+    tip:"In Colombia, 'de pronto' means 'maybe / perhaps' (not 'suddenly'!) in 90% of everyday conversations."
+  },
+  {
+    id:"bridge-8",
+    context:"🏢 Asking someone to do something so you both benefit",
+    thoughtA:"Pásame la ubicación exacta por WhatsApp",
+    thoughtB:"el conductor pueda dejarme justo al frente de la portería.",
+    en:"Send me the exact location on WhatsApp [so that] the driver can drop me right in front of the front desk.",
+    correct:" para que ",
+    choices:[" para que "," porque ya "," sin que ayer "," entonces fui "],
+    tip:"Use 'para que + subjunctive' whenever you do something so that someone else can do something."
+  }
+];
