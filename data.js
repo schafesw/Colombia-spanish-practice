@@ -3481,3 +3481,571 @@ V60_FILL_BLANK_QUIZ.push(
   {kind:"blank",focus:"present",cat:"viajes-finca",es:"Maestro, ¿nos deja en la entrada de la vereda después del ___?",en:"peaje",tts:"Maestro, ¿nos deja en la entrada de la vereda después del peaje?",trans:"Driver, can you drop us at the rural road entrance after the toll booth?",choices:["peaje","equipaje","almuerzo","desvanecido"]},
   {kind:"blank",focus:"past",cat:"empatia",es:"¡Uy, qué ___ que se fue la luz justo en tu reunión!",en:"embarrada",tts:"¡Uy, qué embarrada que se fue la luz justo en tu reunión!",trans:"Oh, what a bummer that the power went out right during your meeting!",choices:["embarrada","almojábana","plataforma","cuadra"]}
 );
+// ── V94.0 COLOMBIAN SPEAKING MASTERY & PRO COACHING EXPANSION ───────────────
+/* 1. 4 New Real-World Colombian Scenarios (Lessons 57–60, Dialogues 47–50):
+      - Verbos comodín en acción (dar, hacer, poner, echar, tocar, quedar, coger)
+      - WhatsApp, notas de voz y citas ("Te mando un audio", "¿Me colaboras?", "Quedo atento")
+      - Arriendo, Airbnb, aseo y lavadora (administración, calentador, hacer aseo, servicios)
+      - Gimnasio, ciclovía, senderos y soroche (turnarse en la máquina, ciclovía, altura) */
+
+const VERBOS_COMODIN = [
+  {
+    "verb": "Dar",
+    "tag": "Feelings, trouble & walks",
+    "chunks": [
+      {
+        "chunk": "dar papaya",
+        "en": "to make oneself an easy target",
+        "es": "No deje el celular sobre la mesa porque da papaya.",
+        "esEn": "Don't leave your cellphone on the table because you're making yourself an easy target."
+      },
+      {
+        "chunk": "dar una mano",
+        "en": "to lend a hand",
+        "es": "¿Me da una mano con estas cajas, por favor?",
+        "esEn": "Could you give me a hand with these boxes, please?"
+      },
+      {
+        "chunk": "dar lidia",
+        "en": "to be a hassle or cause trouble",
+        "es": "Ese trámite me ha dado mucha lidia toda la semana.",
+        "esEn": "That process has been a real hassle all week."
+      },
+      {
+        "chunk": "dar hambre",
+        "en": "to make someone hungry",
+        "es": "Ver esas empanadas me dio hambre.",
+        "esEn": "Seeing those empanadas made me hungry."
+      }
+    ]
+  },
+  {
+    "verb": "Hacer",
+    "tag": "Plans, favors & routines",
+    "chunks": [
+      {
+        "chunk": "hacer una vuelta",
+        "en": "to run an errand",
+        "es": "Voy a hacer una vuelta al banco y regreso.",
+        "esEn": "I'm going to run an errand at the bank and come back."
+      },
+      {
+        "chunk": "hacer caso",
+        "en": "to pay attention or heed advice",
+        "es": "Hágale caso a su mamá y lleve una chaqueta.",
+        "esEn": "Listen to your mom and take a jacket."
+      },
+      {
+        "chunk": "hacer cola",
+        "en": "to stand in line",
+        "es": "Nos tocó hacer cola casi una hora para entrar.",
+        "esEn": "We had to stand in line for almost an hour to get in."
+      },
+      {
+        "chunk": "hacerle el quite a algo",
+        "en": "to avoid something",
+        "es": "Yo siempre le hago el quite a las reuniones muy temprano.",
+        "esEn": "I always avoid meetings that are very early."
+      }
+    ]
+  },
+  {
+    "verb": "Poner",
+    "tag": "Attention, effort & problems",
+    "chunks": [
+      {
+        "chunk": "poner cuidado",
+        "en": "to pay attention",
+        "es": "Ponga cuidado al cruzar esa avenida.",
+        "esEn": "Pay attention when crossing that avenue."
+      },
+      {
+        "chunk": "ponerse las pilas",
+        "en": "to get moving or shape up",
+        "es": "Tenemos que ponernos las pilas si queremos terminar hoy.",
+        "esEn": "We have to get moving if we want to finish today."
+      },
+      {
+        "chunk": "poner problema",
+        "en": "to object or make an issue of something",
+        "es": "No me ponga problema por llegar cinco minutos tarde.",
+        "esEn": "Don't make an issue of me being five minutes late."
+      },
+      {
+        "chunk": "ponerle ganas",
+        "en": "to put effort into something",
+        "es": "Si le pone ganas, aprende a manejar rapidísimo.",
+        "esEn": "If you put in the effort, you'll learn to drive really quickly."
+      }
+    ]
+  },
+  {
+    "verb": "Echar",
+    "tag": "Stories, looks & breaks",
+    "chunks": [
+      {
+        "chunk": "echar cuento",
+        "en": "to chat or tell stories",
+        "es": "Nos quedamos echando cuento después de la cena.",
+        "esEn": "We stayed chatting after dinner."
+      },
+      {
+        "chunk": "echarle un ojo",
+        "en": "to take a look or keep an eye on something",
+        "es": "¿Me echa un ojo a la olla mientras contesto esta llamada?",
+        "esEn": "Could you keep an eye on the pot while I answer this call?"
+      },
+      {
+        "chunk": "echarse una siesta",
+        "en": "to take a nap",
+        "es": "Después del almuerzo me voy a echar una siestica.",
+        "esEn": "After lunch I'm going to take a little nap."
+      },
+      {
+        "chunk": "echar raíces",
+        "en": "to put down roots",
+        "es": "Después de tantos años aquí, por fin echó raíces en Medellín.",
+        "esEn": "After so many years here, he finally put down roots in Medellín."
+      }
+    ]
+  },
+  {
+    "verb": "Tocar",
+    "tag": "Turns, duties & luck",
+    "chunks": [
+      {
+        "chunk": "tocarle a alguien",
+        "en": "to be someone's turn or responsibility",
+        "es": "Hoy me toca cocinar porque usted lavó los platos ayer.",
+        "esEn": "It's my turn to cook today because you washed the dishes yesterday."
+      },
+      {
+        "chunk": "tocar fondo",
+        "en": "to hit rock bottom",
+        "es": "Después de tocar fondo, buscó ayuda y empezó de nuevo.",
+        "esEn": "After hitting rock bottom, he sought help and started over."
+      },
+      {
+        "chunk": "tocar la puerta",
+        "en": "to knock on the door",
+        "es": "Si llega temprano, tóqueme la puerta y le abro.",
+        "esEn": "If you arrive early, knock on my door and I'll let you in."
+      },
+      {
+        "chunk": "tocar madera",
+        "en": "to knock on wood",
+        "es": "Todo ha salido bien hasta ahora, toco madera.",
+        "esEn": "Everything has gone well so far, knock on wood."
+      }
+    ]
+  },
+  {
+    "verb": "Quedar",
+    "tag": "Plans, places & impressions",
+    "chunks": [
+      {
+        "chunk": "quedar de verse",
+        "en": "to arrange to meet",
+        "es": "Quedamos de vernos el sábado en el parque.",
+        "esEn": "We arranged to meet on Saturday at the park."
+      },
+      {
+        "chunk": "quedar debiendo",
+        "en": "to still owe someone",
+        "es": "Con lo que pagué hoy todavía quedo debiéndole diez mil pesos.",
+        "esEn": "Even after what I paid today, I still owe you ten thousand pesos."
+      },
+      {
+        "chunk": "quedar mal",
+        "en": "to let someone down or look bad",
+        "es": "No quiero quedar mal, así que voy a cumplir lo que prometí.",
+        "esEn": "I don't want to let anyone down, so I'm going to do what I promised."
+      },
+      {
+        "chunk": "quedar en algo",
+        "en": "to agree on something",
+        "es": "Quedamos en que usted reserva la mesa y yo llevo el postre.",
+        "esEn": "We agreed that you would reserve the table and I would bring dessert."
+      }
+    ]
+  },
+  {
+    "verb": "Coger",
+    "tag": "Transport, habits & connection",
+    "chunks": [
+      {
+        "chunk": "coger el bus",
+        "en": "to take the bus",
+        "es": "Para llegar al centro, coja el bus que pasa por la Séptima.",
+        "esEn": "To get downtown, take the bus that goes along Seventh Avenue."
+      },
+      {
+        "chunk": "cogerle el tiro a algo",
+        "en": "to get the hang of something",
+        "es": "Al principio fue difícil, pero ya le cogí el tiro al programa.",
+        "esEn": "It was difficult at first, but I've got the hang of the program now."
+      },
+      {
+        "chunk": "cogerle cariño a alguien",
+        "en": "to grow fond of someone",
+        "es": "Uno les coge cariño a los vecinos después de vivir tantos años ahí.",
+        "esEn": "You grow fond of your neighbors after living there for so many years."
+      },
+      {
+        "chunk": "coger oficio",
+        "en": "to learn a trade or become responsible",
+        "es": "Desde que consiguió trabajo, el muchacho cogió oficio.",
+        "esEn": "Since he got a job, the young man has become more responsible."
+      }
+    ]
+  }
+];
+
+const TEXTBOOK_VS_COLOMBIAN = [
+  {
+    "id": "tvc1",
+    "context": "☕ Ordering coffee at a bakery",
+    "textbook": "Quiero un café negro, por favor.",
+    "colombian": "Veci, ¿me regala un tintico, por favor?",
+    "en": "Can I have a black coffee, please?",
+    "why": "Colombians often avoid a blunt 'yo quiero' at counters; '¿me regala...?' is a warm request, and 'tintico' is a familiar diminutive for black coffee."
+  },
+  {
+    "id": "tvc2",
+    "context": "🚌 Asking where to catch public transportation",
+    "textbook": "¿Dónde puedo tomar el autobús?",
+    "colombian": "¿Por dónde pasa el bus para el centro?",
+    "en": "Where can I catch the bus downtown?",
+    "why": "In Colombia, 'bus' is more common than 'autobús', and asking '¿por dónde pasa?' sounds more natural when looking for a route."
+  },
+  {
+    "id": "tvc3",
+    "context": "🛒 Asking a shopkeeper for help",
+    "textbook": "¿Puede ayudarme a encontrar este producto?",
+    "colombian": "¿Me hace el favor y me ayuda a buscar esto?",
+    "en": "Could you help me find this item?",
+    "why": "'Hacer el favor' is a very common Colombian politeness formula, often followed by 'y' plus the requested action."
+  },
+  {
+    "id": "tvc4",
+    "context": "🏠 Inviting a friend inside",
+    "textbook": "Por favor, entra.",
+    "colombian": "Siga, siga; ¿quiere un cafecito?",
+    "en": "Come on in; would you like a little coffee?",
+    "why": "'Siga' is a friendly Colombian way to invite someone in, and offering a 'cafecito' adds warmth and hospitality."
+  },
+  {
+    "id": "tvc5",
+    "context": "📅 Making plans with a friend",
+    "textbook": "Nos vemos el sábado a las tres.",
+    "colombian": "¿Nos vemos el sábado a las tres o qué?",
+    "en": "Shall we meet on Saturday at three, or what?",
+    "why": "The tag '¿o qué?' is a casual Colombian way to confirm plans and make the invitation sound relaxed."
+  },
+  {
+    "id": "tvc6",
+    "context": "💸 Saying that something is expensive",
+    "textbook": "Este restaurante es muy caro.",
+    "colombian": "Está carísimo este restaurante, ¿no?",
+    "en": "This restaurant is really expensive, isn't it?",
+    "why": "Colombians commonly use 'estar' for a current price or situation, and 'carísimo' plus '¿no?' makes the comment conversational."
+  },
+  {
+    "id": "tvc7",
+    "context": "🚕 Asking a taxi driver to stop",
+    "textbook": "Pare aquí, por favor.",
+    "colombian": "Por aquí está bien, jefe.",
+    "en": "Here is fine, thanks.",
+    "why": "'Por aquí está bien' is a natural, less abrupt way to tell a taxi driver where to stop; 'jefe' is a common friendly form of address."
+  },
+  {
+    "id": "tvc8",
+    "context": "🍲 Saying you are full after lunch",
+    "textbook": "Estoy lleno porque almorcé mucho.",
+    "colombian": "Quedé llenísimo con ese almuerzo.",
+    "en": "I'm absolutely stuffed after that lunch.",
+    "why": "'Quedar' describes the resulting state after eating, and 'llenísimo' is more idiomatic and expressive in casual Colombian speech."
+  },
+  {
+    "id": "tvc9",
+    "context": "📱 Asking someone to wait briefly",
+    "textbook": "Espera un momento, por favor.",
+    "colombian": "Regáleme un segundito, ya voy.",
+    "en": "Give me just a second; I'll be right there.",
+    "why": "'Regáleme un segundito' is a common polite Colombian request, with a diminutive that softens the interruption."
+  },
+  {
+    "id": "tvc10",
+    "context": "🌧️ Commenting on sudden rain",
+    "textbook": "Está lloviendo mucho.",
+    "colombian": "Se soltó el aguacero, ¡qué berraco!",
+    "en": "The downpour started all of a sudden; what a crazy one!",
+    "why": "'Se soltó el aguacero' vividly describes heavy rain beginning, while 'berraco' can express surprise or intensity depending on context."
+  }
+];
+
+FRASES.push(
+  {section:"🔑 Verbos comodín (dar, hacer, poner, echar, quedar)",quizCat:"comodin",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[
+    {es:"Ese trámite en el banco me ha dado mucha lidia esta semana.",en:"That bank errand has given me a lot of trouble/hassle this week.",register:"Colombian · dar lidia"},
+    {es:"Voy a hacer una vuelta rápida en el centro y ya regreso.",en:"I'm going to run a quick errand downtown and be right back.",register:"Colombian · hacer una vuelta"},
+    {es:"Póngale cuidado a lo que le voy a explicar para que no se pierda.",en:"Pay close attention to what I'm going to explain so you don't get lost.",register:"Colombian · poner cuidado"},
+    {es:"Nos quedamos echando cuento toda la tarde con un tintico.",en:"We stayed chatting/telling stories all afternoon over a black coffee.",register:"Colombian · echar cuento"},
+    {es:"¿Me echa un ojo a la maleta mientras entro al baño?",en:"Can you keep an eye on my suitcase while I go to the bathroom?",register:"Colombian · echar un ojo"},
+    {es:"Quedamos de vernos el sábado a las tres; no te vayas a quedar mal.",en:"We agreed to meet Saturday at three; don't flake/let me down.",register:"Colombian · quedar"}
+  ]},
+  {section:"📱 WhatsApp, audios y citas",quizCat:"whatsapp",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[
+    {es:"Hola, ¿cómo vas? Te mando un audio rapidito porque voy caminando.",en:"Hi, how's it going? I'm sending you a quick voice note because I'm walking.",register:"Colombian · WhatsApp"},
+    {es:"Qué pena responder apenas ahora, estaba en una reunión toda la mañana.",en:"Sorry for only replying just now, I was in a meeting all morning.",register:"Colombian · polite WhatsApp"},
+    {es:"¿Será que me colaboras enviándome la ubicación exacta por acá?",en:"Could you help me out by sending me the exact location right here?",register:"Colombian · colaborarme"},
+    {es:"¿Te queda bien si agendamos la cita para mañana a las diez?",en:"Does it work for you if we schedule the appointment for tomorrow at ten?",register:"Colombian · scheduling"},
+    {es:"Listo, dale, así quedamos. Me confirmas cualquier cambio, porfa.",en:"Got it, sounds good, it's a plan. Let me know if anything changes, please.",register:"Colombian · WhatsApp"},
+    {es:"Muchas gracias por la información; quedo muy atento a tu respuesta.",en:"Thank you very much for the information; I'll look forward to your reply.",register:"Colombian · polite/work"}
+  ]},
+  {section:"🔑 Arriendo, Airbnb y servicios del hogar",quizCat:"arriendo",cls:"color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)",items:[
+    {es:"¿En el precio del arriendo ya están incluidos la administración y los servicios?",en:"Are the building HOA fee and utilities already included in the rent price?",register:"Living in Colombia"},
+    {es:"Disculpe, ¿cómo se prende el calentador de agua para la ducha?",en:"Excuse me, how do you turn on the water heater for the shower?",register:"Airbnb & apartment"},
+    {es:"¿Me puede recomendar a alguien de confianza que venga a hacer aseo?",en:"Can you recommend someone trustworthy to come clean the apartment?",register:"Living in Colombia"},
+    {es:"Se dañó la lavadora y está botando agua por debajo.",en:"The washing machine broke and is leaking water underneath.",register:"Home repair"},
+    {es:"¿En qué días pasa el camión de la basura y cómo se separa el reciclaje?",en:"Which days does the garbage truck come by and how do you separate recycling?",register:"Apartment life"},
+    {es:"¿Cuál es la clave del wifi? Es que no me conecta en el computador.",en:"What is the Wi-Fi password? It's not connecting on my computer.",register:"Everyday"}
+  ]},
+  {section:"🚴 Gimnasio, ciclovía y senderos",quizCat:"gym-ciclovia",cls:"color:var(--green);background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2)",items:[
+    {es:"Hola, parce, ¿cuántas series te faltan? ¿Nos turnamos en la máquina?",en:"Hey buddy, how many sets do you have left? Shall we take turns on the machine?",register:"Gym · everyday"},
+    {es:"El domingo por la mañana vamos a salir a montar en bici por la ciclovía.",en:"On Sunday morning we're going out to ride bikes on the Ciclovía.",register:"Bogotá & Medellín"},
+    {es:"¿Qué tan pesada es la subida por ese sendero hasta la quebrada?",en:"How tough/steep is the climb up that trail to the mountain stream?",register:"Hiking · Colombia"},
+    {es:"Vamos un poquito más despacio que me está faltando el aire por la altura.",en:"Let's go a little slower because I'm short of breath from the altitude.",register:"Bogotá & mountains"},
+    {es:"Creo que me dio un poquito de soroche; descansemos cinco minuticos.",en:"I think I got a bit of altitude sickness; let's rest five minutes.",register:"Andean Colombia"},
+    {es:"Después de entrenar vamos por un jugo natural o una ensalada de frutas.",en:"After working out let's go get a fresh juice or a fruit salad.",register:"Everyday"}
+  ]}
+);
+
+CONVERSATIONS.push(
+  v60Dialogue("Verbos comodín en acción","Using dar, hacer, poner, echar, tocar, and quedar like a native Colombian",[
+    ["A","¡Hola! ¿Cómo vas? Te vi corriendo esta mañana por la Séptima.","Hi! How's it going? I saw you rushing down 7th Avenue this morning."],
+    ["B","¡Uy, sí! Es que me tocó ir a hacer una vuelta en el banco y ese trámite me dio mucha lidia.","Oh, yes! I had to go run an errand at the bank and that paperwork gave me so much trouble."],
+    ["A","¡No me digas! Esos trámites siempre ponen problema. ¿Pero ya lograste salir de eso?","You don't say! Those errands always cause a hassle. But did you manage to get it done?"],
+    ["B","Sí, por suerte le puse ganas y ya quedó listo. Ahora solo quiero echarme un descansito.","Yes, luckily I put effort into it and now it's all set. Now I just want to take a little rest."],
+    ["A","De una. Póngale cuidado: ¿nos vemos más tarde para echar cuento y tomarnos un café?","For sure. Listen: shall we meet up later to chat and grab a coffee?"],
+    ["B","¡Claro! Quedamos de vernos a las cinco en la panadería; no me vayas a quedar mal.","Of course! Let's plan to meet at five at the bakery; don't flake on me."]
+  ],[{es:"¿Me echa una mano con este paquete, por favor?",en:"Can you lend me a hand with this package, please?",tts:"¿Me echa una mano con este paquete, por favor?"},{es:"Ya le estoy cogiendo el tiro al español colombiano.",en:"I'm already getting the hang of Colombian Spanish.",tts:"Ya le estoy cogiendo el tiro al español colombiano."}]),
+  v60Dialogue("WhatsApp, notas de voz y citas","Sending voice notes, asking for favors with 'colaborar', and confirming appointments",[
+    ["A","Hola, Laura, ¿cómo vas? Qué pena responderte apenas ahora, te mando este audio rapidito porque iba manejando.","Hi Laura, how's it going? Sorry for only replying just now, I'm sending you this quick voice note because I was driving."],
+    ["B","¡Hola! Tranquilo, no pasa nada. Te escribía para saber si te queda bien que revisemos el contrato mañana.","Hi! No worries at all. I was messaging you to see if tomorrow works for you to review the contract."],
+    ["A","Sí, claro, mañana por la mañana me queda perfecto. ¿Será que me colaboras enviándome el documento por acá antes?", "Yes, of course, tomorrow morning works perfectly for me. Could you help me out by sending me the document here beforehand?"],
+    ["B","¡De una! Ya mismo te lo mando en PDF por WhatsApp para que le eches un ojo.","Right away! I'll send it to you in PDF on WhatsApp right now so you can take a look at it."],
+    ["A","Excelente, mil gracias. ¿Nos vemos entonces a las diez en el café de la esquina?","Excellent, thanks a million. Shall we meet at ten at the corner café then?"],
+    ["B","Listo, así quedamos. Cualquier novedad me confirmas por un mensajito; quedo súper atenta.","All set, it's a plan. Let me know by text if anything comes up; I'll keep an eye out."]
+  ],[{es:"Te mando un audio porque es más fácil explicarte todo el cuento.",en:"I'm sending you a voice note because it's easier to explain the whole story.",tts:"Te mando un audio porque es más fácil explicarte todo el cuento."},{es:"Quedo muy atento a tu confirmación, muchas gracias.",en:"I'll look forward to your confirmation, thank you very much.",tts:"Quedo muy atento a tu confirmación, muchas gracias."}]),
+  v60Dialogue("Arriendo, Airbnb, aseo y lavadora","Checking into an apartment, learning how appliances work, and scheduling cleaning",[
+    ["A","Bienvenido al apartamento. Aquí tiene las llaves de la entrada y el control del garaje.","Welcome to the apartment. Here are the front door keys and the garage remote."],
+    ["B","Muchas gracias. Quería preguntarle: ¿en el valor del arriendo ya están incluidos la administración y el internet?","Thank you very much. I wanted to ask: are the HOA fee and internet already included in the rent?"],
+    ["A","Sí, señor, todo está incluido. La clave del wifi está pegada detrás del módem en la sala.","Yes, sir, everything is included. The Wi-Fi password is stuck behind the router in the living room."],
+    ["B","Perfecto. ¿Y cómo funciona el calentador de agua para la ducha y la lavadora?","Perfect. And how does the water heater for the shower and the washing machine work?"],
+    ["A","El calentador es automático a gas; apenas abre la llave caliente se prende solo. Y la lavadora usa este botón.","The heater is automatic gas; as soon as you turn on the hot tap it lights by itself. And the washer uses this button."],
+    ["B","Excelente. Por último, ¿me podría recomendar a una persona de confianza para hacer aseo una vez por semana?","Excellent. Finally, could you recommend someone trustworthy to clean once a week?"]
+  ],[{es:"Se dañó la llave del lavamanos y está goteando.",en:"The bathroom sink faucet broke and is dripping.",tts:"Se dañó la llave del lavamanos y está goteando."},{es:"¿A qué hora pasa la señora del aseo mañana?",en:"What time does the cleaning lady come by tomorrow?",tts:"¿A qué hora pasa la señora del aseo mañana?"}]),
+  v60Dialogue("Gimnasio, ciclovía, senderos y soroche","Sharing gym equipment, riding the Sunday Ciclovía, and pacing yourself at altitude",[
+    ["A","Buenas, parce. Qué pena, ¿cuántas series te faltan en esta polea? ¿Nos podemos turnar?","Hey, buddy. Excuse me, how many sets do you have left on this cable machine? Can we take turns?"],
+    ["B","¡Claro, de una! Solo me quedan dos series; dale tranquilo mientras yo descanso un minuto.","Of course, go for it! I only have two sets left; go ahead while I rest a minute."],
+    ["A","¡Gracias! Oye, ¿vas a salir este domingo a montar en bici por la ciclovía o a caminar a los cerros?","Thanks! Hey, are you going out this Sunday to bike on the Ciclovía or hike in the hills?"],
+    ["B","Vamos a subir temprano por el sendero de la quebrada, pero toca ir suave por la altura.","We're going up the mountain stream trail early, but we have to take it easy because of the altitude."],
+    ["A","Totalmente. La semana pasada subí muy rápido y me dio un poquito de soroche; me faltaba el aire.","Totally. Last week I climbed too fast and got a bit of altitude sickness; I was short of breath."],
+    ["B","Sí, allá arriba toca caminar despacio, tomar buena agua y parar a descansar en el mirador.","Yes, up there you have to walk slowly, drink plenty of water, and stop to rest at the lookout."]
+  ],[{es:"¿Me cuida las pesas un segundito mientras lleno el termo de agua?",en:"Can you watch the weights for a second while I fill my water bottle?",tts:"¿Me cuida las pesas un segundito mientras lleno el termo de agua?"},{es:"El domingo cierran toda la avenida séptima para la ciclovía.",en:"On Sunday they close all of 7th Avenue for the Ciclovía.",tts:"El domingo cierran toda la avenida séptima para la ciclovía."}])
+);
+
+READINGS.push(
+  {id:"lectura-comodin",level:"B1",title:"Los siete verbos comodín de Colombia",lesson:"verbos-comodin",intro:"Master how Colombians use dar, hacer, poner, echar, tocar, and quedar in everyday speech.",lines:[
+    {es:"En Colombia, aprender vocabulario avanzado ayuda, pero la verdadera fluidez está en los verbos comodín.",en:"In Colombia, learning advanced vocabulary helps, but true fluency lies in the wildcard verbs.",tts:"En Colombia, aprender vocabulario avanzado ayuda, pero la verdadera fluidez está en los verbos comodín."},
+    {es:"En vez de decir realizar una diligencia, todo el mundo dice hacer una vuelta.",en:"Instead of saying 'carry out an errand', everyone says 'hacer una vuelta'.",tts:"En vez de decir realizar una diligencia, todo el mundo dice hacer una vuelta."},
+    {es:"Cuando algo es difícil decimos que da mucha lidia, y para conversar con amigos decimos echar cuento.",en:"When something is difficult we say it 'da mucha lidia', and to chat with friends we say 'echar cuento'.",tts:"Cuando algo es difícil decimos que da mucha lidia, y para conversar con amigos decimos echar cuento."},
+    {es:"Si le pones cuidado a estos verbos cortos, ya le vas a coger el tiro al español colombiano muy rápido.",en:"If you pay attention to these short verbs, you'll get the hang of Colombian Spanish very quickly.",tts:"Si le pones cuidado a estos verbos cortos, ya le vas a coger el tiro al español colombiano muy rápido."}
+  ],questions:[{q:"¿Qué significa 'echar cuento' en Colombia?",choices:["Conversar o charlar con amigos","Pagar la cuenta en efectivo","Subir por una montaña"],answer:"Conversar o charlar con amigos"}]},
+  {id:"lectura-whatsapp",level:"A2",title:"Todo se cuadra por WhatsApp",lesson:"whatsapp-audios",intro:"In Colombia, WhatsApp voice notes and polite phrases run both social life and business.",lines:[
+    {es:"En Colombia casi nadie deja mensajes en el buzón de voz; todo se coordina por WhatsApp.",en:"In Colombia almost nobody leaves voicemail messages; everything is coordinated on WhatsApp.",tts:"En Colombia casi nadie deja mensajes en el buzón de voz; todo se coordina por WhatsApp."},
+    {es:"Es muy común empezar diciendo: Hola, ¿cómo vas? Te mando un audio rapidito para explicarte mejor.",en:"It is very common to start by saying: 'Hi, how's it going? I'm sending you a quick voice note to explain better.'",tts:"Es muy común empezar diciendo: Hola, ¿cómo vas? Te mando un audio rapidito para explicarte mejor."},
+    {es:"Para pedir ayuda en el trabajo o en un servicio, la palabra mágica es colaborar: ¿Me colaboras con este dato?",en:"To ask for help at work or a service, the magic word is 'colaborar': 'Can you help me out with this info?'",tts:"Para pedir ayuda en el trabajo o en un servicio, la palabra mágica es colaborar: ¿Me colaboras con este dato?"},
+    {es:"Y al cerrar una cita siempre decimos: Listo, así quedamos, quedo muy atento a tu confirmación.",en:"And when closing an appointment we always say: 'Got it, it's a plan, I'll look forward to your confirmation.'",tts:"Y al cerrar una cita siempre decimos: Listo, así quedamos, quedo muy atento a tu confirmación."}
+  ],questions:[{q:"¿Cuál es el verbo favorito en Colombia para pedir ayuda amablemente por WhatsApp o en oficinas?",choices:["Colaborar (¿Me colaboras con…?)","Gritar","Olvidar"],answer:"Colaborar (¿Me colaboras con…?)"}]},
+  {id:"lectura-arriendo",level:"B1",title:"Vivir en un apartamento en Colombia",lesson:"arriendo-airbnb",intro:"Learn how apartment administration fees, gas heaters, and home cleaning work in Colombia.",lines:[
+    {es:"Al tomar un apartamento o un Airbnb en Colombia, es importante preguntar si el precio incluye la administración y los servicios.",en:"When renting an apartment or Airbnb in Colombia, it's important to ask if the price includes the HOA fee and utilities.",tts:"Al tomar un apartamento o un Airbnb en Colombia, es importante preguntar si el precio incluye la administración y los servicios."},
+    {es:"Muchos apartamentos tienen calentador de agua a gas que se enciende automáticamente al abrir la ducha.",en:"Many apartments have a gas water heater that turns on automatically when you turn on the shower.",tts:"Muchos apartamentos tienen calentador de agua a gas que se enciende automáticamente al abrir la ducha."},
+    {es:"También es muy común contratar a una señora de confianza para hacer aseo una vez por semana.",en:"It is also very common to hire a trustworthy lady to do house cleaning once a week.",tts:"También es muy común contratar a una señora de confianza para hacer aseo una vez por semana."},
+    {es:"Si se daña la lavadora o el internet, le escribes al anfitrión o a la administración para pedir un técnico.",en:"If the washing machine or internet breaks, you message the host or building office to request a technician.",tts:"Si se daña la lavadora o el internet, le escribes al anfitrión o a la administración para pedir un técnico."}
+  ],questions:[{q:"¿Cómo se dice comúnmente 'limpiar la casa' en Colombia?",choices:["Hacer aseo","Hacer trancón","Dar papaya"],answer:"Hacer aseo"}]},
+  {id:"lectura-ciclovia",level:"A2",title:"Domingo de ciclovía y senderos",lesson:"gym-ciclovia",intro:"Experience Bogotá and Medellín's famous Sunday Ciclovía and mountain hiking trails.",lines:[
+    {es:"Todos los domingos y festivos por la mañana, Bogotá y Medellín cierran grandes avenidas para la ciclovía.",en:"Every Sunday and holiday morning, Bogotá and Medellín close major avenues for the Ciclovía.",tts:"Todos los domingos y festivos por la mañana, Bogotá y Medellín cierran grandes avenidas para la ciclovía."},
+    {es:"Miles de personas salen a montar en bicicleta, trotar o caminar con sus amigos y mascotas.",en:"Thousands of people go out to ride bikes, jog, or walk with their friends and pets.",tts:"Miles de personas salen a montar en bicicleta, trotar o caminar con sus amigos y mascotas."},
+    {es:"Si subes a caminar por un sendero en los cerros de Bogotá, recuerda que estás a más de dos mil seiscientos metros de altura.",en:"If you go up to hike a trail in Bogotá's hills, remember you are at over 2,600 meters of altitude.",tts:"Si subes a caminar por un sendero en los cerros de Bogotá, recuerda que estás a más de dos mil seiscientos metros de altura."},
+    {es:"Por eso es mejor subir despacio, tomar agua y descansar si sientes que te falta el aire.",en:"That's why it's better to climb slowly, drink water, and rest if you feel short of breath.",tts:"Por eso es mejor subir despacio, tomar agua y descansar si sientes que te falta el aire."}
+  ],questions:[{q:"¿Qué pasa los domingos por la mañana en las avenidas principales de Bogotá y Medellín?",choices:["Se abren para la ciclovía sin carros","Cierran todos los parques","No hay buses en el país"],answer:"Se abren para la ciclovía sin carros"}]}
+);
+
+CONVERSATION_MISSIONS.push(
+  {id:"mision-comodin",title:"Usa verbos comodín como un local",scenario:"A friend asks why you were busy this morning and if you want to hang out later.",prompt:"Cuéntale que hiciste una vuelta que dio lidia y cuadra para verse más tarde:",lesson:"verbos-comodin",models:[
+    {es:"Esta mañana me tocó hacer una vuelta en el banco y me dio mucha lidia, pero más tarde quedamos para echar cuento.",en:"This morning I had to run an errand at the bank and it gave me a lot of trouble, but later let's meet up to chat.",tts:"Esta mañana me tocó hacer una vuelta en el banco y me dio mucha lidia, pero más tarde quedamos para echar cuento."},
+    {es:"Póngale cuidado: ya le cogí el tiro al trámite, así que a las cinco nos vemos sin falta.",en:"Listen up: I already got the hang of the process, so at five we'll meet up without fail.",tts:"Póngale cuidado: ya le cogí el tiro al trámite, así que a las cinco nos vemos sin falta."}
+  ]},
+  {id:"mision-whatsapp",title:"Manda un audio de WhatsApp y cuadra una cita",scenario:"You missed a message because you were in a meeting. Send a voice note apologizing, asking for a document, and proposing a time tomorrow.",prompt:"Graba tu nota de voz:",lesson:"whatsapp-audios",models:[
+    {es:"Hola, ¿cómo vas? Qué pena responder apenas ahora, te mando este audio rapidito. ¿Te queda bien si nos vemos mañana a las diez?",en:"Hi, how's it going? Sorry for only replying now, I'm sending you this quick audio. Does tomorrow at ten work for you?",tts:"Hola, ¿cómo vas? Qué pena responder apenas ahora, te mando este audio rapidito. ¿Te queda bien si nos vemos mañana a las diez?"},
+    {es:"¿Será que me colaboras enviándome la ubicación por acá? Quedo muy atento a tu confirmación.",en:"Could you help me out by sending me the location here? I'll look forward to your confirmation.",tts:"¿Será que me colaboras enviándome la ubicación por acá? Quedo muy atento a tu confirmación."}
+  ]},
+  {id:"mision-arriendo",title:"Pregunta por los servicios y el aseo del apartamento",scenario:"You are checking into a monthly apartment rental. Ask about utilities, the water heater, and someone to clean.",prompt:"Habla con el anfitrión o propietario:",lesson:"arriendo-airbnb",models:[
+    {es:"Disculpe, ¿en el arriendo ya están incluidos la administración y los servicios? ¿Y cómo se prende el calentador?",en:"Excuse me, are the HOA fee and utilities included in the rent? And how do you turn on the water heater?",tts:"Disculpe, ¿en el arriendo ya están incluidos la administración y los servicios? ¿Y cómo se prende el calentador?"},
+    {es:"¿Me podría recomendar a alguien de confianza que venga a hacer aseo una vez por semana?",en:"Could you recommend someone trustworthy to come clean once a week?",tts:"¿Me podría recomendar a alguien de confianza que venga a hacer aseo una vez por semana?"}
+  ]},
+  {id:"mision-ciclovia",title:"Comparte máquina en el gym e invita a la ciclovía",scenario:"You are at the gym and want to work in on a machine, then invite your friend to the Sunday Ciclovía.",prompt:"Habla con tu compañero en el gimnasio:",lesson:"gym-ciclovia",models:[
+    {es:"Buenas, parce, ¿cuántas series te faltan? ¿Nos turnamos en la máquina mientras descansas?",en:"Hey buddy, how many sets do you have left? Shall we take turns on the machine while you rest?",tts:"Buenas, parce, ¿cuántas series te faltan? ¿Nos turnamos en la máquina mientras descansas?"},
+    {es:"El domingo vamos a salir a la ciclovía por la mañana; vamos suave para que no nos dé soroche.",en:"On Sunday we're going out to the Ciclovía in the morning; let's take it easy so we don't get altitude sickness.",tts:"El domingo vamos a salir a la ciclovía por la mañana; vamos suave para que no nos dé soroche."}
+  ]}
+);
+
+Object.assign(LESSON_CONTENT,{
+  "verbos-comodin":{
+    goal:{es:"Me tocó hacer una vuelta que me dio lidia, pero más tarde quedamos para echar cuento.",en:"I had to run an errand that gave me trouble, but later we're meeting up to chat."},
+    words:[{es:"hacer una vuelta",en:"to run an errand"},{es:"dar lidia",en:"to give trouble / be a hassle"},{es:"poner cuidado",en:"to pay attention"},{es:"echar cuento",en:"to chat / tell stories"},{es:"quedar de verse",en:"to agree to meet up"},{es:"cogerle el tiro",en:"to get the hang of it"}],
+    phrases:[{en:"I have to run an errand downtown.",es:"Me toca hacer una vuelta en el centro."},{en:"That paperwork gave me a lot of trouble.",es:"Ese trámite me dio mucha lidia."},{en:"Pay attention to what I'm going to tell you.",es:"Póngale cuidado a lo que le voy a decir."},{en:"We agreed to meet on Saturday.",es:"Quedamos de vernos el sábado."}]
+  },
+  "whatsapp-audios":{
+    goal:{es:"Te mando un audio rapidito. ¿Me colaboras con la ubicación y me confirmas si te queda bien mañana?",en:"I'm sending you a quick voice note. Can you help me with the location and confirm if tomorrow works for you?"},
+    words:[{es:"mandar un audio",en:"to send a voice note"},{es:"¿me colaboras con…?",en:"can you help me out with…?"},{es:"¿te queda bien?",en:"does it work for you?"},{es:"así quedamos",en:"it's a plan / agreed"},{es:"me confirmas",en:"let me know / confirm for me"},{es:"quedo atento/a",en:"I'll look forward to your reply"}],
+    phrases:[{en:"I'm sending you a quick voice note.",es:"Te mando un audio rapidito."},{en:"Could you help me out with this info?",es:"¿Será que me colaboras con este dato?"},{en:"Does tomorrow at ten work for you?",es:"¿Te queda bien mañana a las diez?"},{en:"I look forward to your reply.",es:"Quedo muy atento a tu respuesta."}]
+  },
+  "arriendo-airbnb":{
+    goal:{es:"¿La administración está incluida? ¿Y me recomienda a alguien de confianza para hacer aseo?",en:"Is the HOA fee included? And can you recommend someone trustworthy to clean?"},
+    words:[{es:"la administración",en:"HOA / building fee"},{es:"los servicios",en:"utilities (water/power/gas)"},{es:"el calentador",en:"water heater"},{es:"la lavadora",en:"washing machine"},{es:"hacer aseo",en:"to clean the house"},{es:"se dañó",en:"it broke / stopped working"}],
+    phrases:[{en:"Is the building fee included in the rent?",es:"¿La administración está incluida en el arriendo?"},{en:"How do you turn on the water heater?",es:"¿Cómo se prende el calentador de agua?"},{en:"The washing machine broke yesterday.",es:"Se dañó la lavadora ayer."},{en:"Can you recommend someone to clean?",es:"¿Me recomienda a alguien para hacer aseo?"}]
+  },
+  "gym-ciclovia":{
+    goal:{es:"¿Cuántas series te faltan? ¿Nos turnamos en la máquina? Y el domingo vamos a la ciclovía.",en:"How many sets do you have left? Shall we take turns on the machine? And Sunday let's go to the Ciclovía."},
+    words:[{es:"¿nos turnamos?",en:"shall we take turns / work in?"},{es:"cuántas series",en:"how many sets"},{es:"la ciclovía",en:"Sunday car-free bike avenues"},{es:"el sendero / la quebrada",en:"hiking trail / mountain stream"},{es:"me falta el aire",en:"I'm short of breath"},{es:"el soroche",en:"altitude sickness"}],
+    phrases:[{en:"Shall we take turns on the machine?",es:"¿Nos turnamos en la máquina?"},{en:"How many sets do you have left?",es:"¿Cuántas series te faltan?"},{en:"On Sunday we're going out to the Ciclovía.",es:"El domingo salimos a la ciclovía."},{en:"Let's go slowly; I'm short of breath from the altitude.",es:"Vamos despacio que me falta el aire por la altura."}]
+  }
+});
+
+Object.assign(LESSON_META,{
+  "verbos-comodin":{stage:"Speak More Naturally",difficulty:"Moderate",prereq:"Colombianismos",dialogue:"Verbos comodín en acción",vocab:"verbos",quizCat:"comodin",quizMode:"conversation",guideIds:["se-me","por-para"],readingId:"lectura-comodin",missionId:"mision-comodin"},
+  "whatsapp-audios":{stage:"Daily Life",difficulty:"Easy",prereq:"Planes y teléfono",dialogue:"WhatsApp, notas de voz y citas",vocab:"tecnologia",quizCat:"whatsapp",quizMode:"conversation",guideIds:["cortesia-colombiana","usted-tu-vos"],readingId:"lectura-whatsapp",missionId:"mision-whatsapp"},
+  "arriendo-airbnb":{stage:"Daily Life",difficulty:"Easy",prereq:"Portería, Rappi y edificio",dialogue:"Arriendo, Airbnb, aseo y lavadora",vocab:"casa",quizCat:"arriendo",quizMode:"conversation",guideIds:["ser-estar","se-me"],readingId:"lectura-arriendo",missionId:"mision-arriendo"},
+  "gym-ciclovia":{stage:"Speak More Naturally",difficulty:"Easy",prereq:"Salir con amigos",dialogue:"Gimnasio, ciclovía, senderos y soroche",vocab:"cuerpo",quizCat:"gym-ciclovia",quizMode:"conversation",guideIds:["gustar","futuro"],readingId:"lectura-ciclovia",missionId:"mision-ciclovia"}
+});
+
+Object.assign(SENTENCE_LADDERS,{
+  "verbos-comodin":{
+    title:"Combine Colombian wildcard verbs (dar, hacer, poner, echar, quedar)",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Me toca hacer una vuelta.",en:"I have to run an errand."},
+      {tag:"2. + Dar lidia",es:"Me tocó hacer una vuelta y me dio mucha lidia.",en:"I had to run an errand and it gave me a lot of trouble."},
+      {tag:"3. + Coger el tiro",es:"Al principio me dio lidia, pero ya le cogí el tiro.",en:"At first it gave me trouble, but I already got the hang of it."},
+      {tag:"4. + Quedar & echar cuento",es:"Hoy me tocó hacer una vuelta temprano, pero a las cinco quedamos de vernos para echar cuento con un tintico.",en:"Today I had to run an errand early, but at five we agreed to meet up to chat over a coffee."}
+    ],
+    swaps:[
+      {label:"Poner cuidado",es:"Póngale cuidado a esta dirección para que no nos perdamos.",en:"Pay close attention to this address so we don't get lost."},
+      {label:"Echar un ojo",es:"¿Me echa un ojo al computador mientras pido otro café?",en:"Can you keep an eye on my laptop while I order another coffee?"},
+      {label:"Ponerse las pilas",es:"Nos toca ponernos las pilas para terminar el trabajo hoy.",en:"We have to get moving/focused to finish the work today."}
+    ]
+  },
+  "whatsapp-audios":{
+    title:"Send polite Colombian WhatsApp messages and voice notes",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Te mando un audio…",en:"I'm sending you a voice note…"},
+      {tag:"2. + Apology & reason",es:"Qué pena la demora; te mando un audio rapidito.",en:"Sorry for the delay; I'm sending you a quick voice note."},
+      {tag:"3. + Colaborar request",es:"Te mando un audio: ¿será que me colaboras con la dirección?",en:"I'm sending you a voice note: could you help me out with the address?"},
+      {tag:"4. + Schedule & close",es:"Hola, te mando un audio rapidito: ¿te queda bien si nos vemos mañana a las diez? Me confirmas, quedo muy atento.",en:"Hi, I'm sending you a quick voice note: does tomorrow at ten work for you? Let me know, I'll look forward to your reply."}
+    ],
+    swaps:[
+      {label:"Send pin",es:"¿Me mandas la ubicación actual por WhatsApp cuando llegues?",en:"Can you send me your live location on WhatsApp when you arrive?"},
+      {label:"Confirm plan",es:"Listo, dale, así quedamos para el viernes sin falta.",en:"Got it, sounds good, we're set for Friday without fail."},
+      {label:"Send screenshot",es:"Ya te pasé el comprobante de Nequi por mensaje.",en:"I already sent you the Nequi receipt screenshot by message."}
+    ]
+  },
+  "arriendo-airbnb":{
+    title:"Ask about rent, utilities, appliances, and apartment cleaning",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Está incluida la administración?",en:"Is the HOA fee included?"},
+      {tag:"2. + Utilities & wifi",es:"¿En el arriendo están incluidos la administración y los servicios?",en:"Are the HOA fee and utilities included in the rent?"},
+      {tag:"3. + Appliances",es:"Todo está incluido, pero ¿cómo se prende el calentador de agua?",en:"Everything is included, but how do you turn on the water heater?"},
+      {tag:"4. + Cleaning recommendation",es:"Disculpe, ¿me enseña cómo funciona la lavadora y me recomienda a alguien de confianza para hacer aseo?",en:"Excuse me, can you show me how the washer works and recommend someone trustworthy to clean?"}
+    ],
+    swaps:[
+      {label:"Report leak",es:"Qué pena, se dañó un tubo en el baño y está goteando.",en:"Excuse me, a pipe broke in the bathroom and is dripping."},
+      {label:"Wi-Fi password",es:"¿Me regala la clave del wifi para conectar el portátil?",en:"Can you give me the Wi-Fi password to connect my laptop?"},
+      {label:"Trash & recycling",es:"¿En qué cuarto del edificio se deja la basura y el reciclaje?",en:"In which room of the building do we leave the trash and recycling?"}
+    ]
+  },
+  "gym-ciclovia":{
+    title:"Work in at the gym, plan Sunday Ciclovía, and pace for altitude",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Nos turnamos?",en:"Shall we take turns?"},
+      {tag:"2. + Gym machine",es:"Parce, ¿cuántas series te faltan? ¿Nos turnamos en la máquina?",en:"Buddy, how many sets do you have left? Shall we take turns on the machine?"},
+      {tag:"3. + Sunday Ciclovía",es:"¿Nos turnamos aquí? Y oye, ¿salimos el domingo a la ciclovía?",en:"Shall we take turns here? And hey, shall we go out to the Ciclovía on Sunday?"},
+      {tag:"4. + Trail & altitude",es:"El domingo vamos a caminar por el sendero de los cerros, pero subamos despacio para que no nos dé soroche.",en:"On Sunday let's hike the mountain trail, but let's climb slowly so we don't get altitude sickness."}
+    ],
+    swaps:[
+      {label:"Short of breath",es:"Esperemos cinco minuticos aquí que me está faltando el aire.",en:"Let's wait five minutes here because I'm short of breath."},
+      {label:"Spotter / weights",es:"¿Usas estas mancuernas o las puedo coger un momento?",en:"Are you using these dumbbells or can I grab them for a moment?"},
+      {label:"Post-workout juice",es:"Después de entrenar vamos por un jugo de mandarina en la esquina.",en:"After working out let's grab a fresh tangerine juice on the corner."}
+    ]
+  }
+});
+
+/* 2. 6 More High-Frequency Colombianismos (66 total) */
+COLOMBIANISMOS.push(
+  {word:"¿Me colaboras?",en:"Could you help me out? (Colombian magic word)",region:"all",register:"Colombian · polite everyday",registerGroup:"everyday",usage:"In Colombia, people say 'colaborar' instead of 'ayudar' in shops, offices, Uber, and WhatsApp ('¿Me colaboras con la cuenta?').",example:"Qué pena, ¿me colaboras abriendo la puerta un segundito?",tts:"Qué pena, ¿me colaboras abriendo la puerta un segundito?"},
+  {word:"Dar lidia",en:"To give trouble / be a hassle",region:"all",register:"Colombian · everyday",registerGroup:"everyday",usage:"Used for an appliance, paperwork, traffic, or a kid/pet that is being difficult ('Eso sí da lidia').",example:"Esa cerradura vieja me ha dado mucha lidia hoy.",tts:"Esa cerradura vieja me ha dado mucha lidia hoy."},
+  {word:"Echar cuento",en:"To chat / catch up / tell stories",region:"all",register:"Colombian · friendly",registerGroup:"everyday",usage:"Sitting down with friends to talk and catch up (also used for flirting: 'le está echando los perros / echando cuento').",example:"Vamos por un café y echamos cuento un rato.",tts:"Vamos por un café y echamos cuento un rato."},
+  {word:"Cogerle el tiro",en:"To get the hang of something",region:"all",register:"Colombian · everyday",registerGroup:"everyday",usage:"Means mastering the rhythm or trick of a skill, job, or language.",example:"Ya le estoy cogiendo el tiro a las direcciones en Bogotá.",tts:"Ya le estoy cogiendo el tiro a las direcciones en Bogotá."},
+  {word:"Hacer aseo",en:"To clean the house / tidy up",region:"all",register:"Colombian · home life",registerGroup:"everyday",usage:"In Colombia, nobody says 'limpiar el apartamento'—everyone says 'hacer aseo' (and the cleaner is 'la señora del aseo').",example:"El sábado por la mañana me toca hacer aseo en la casa.",tts:"El sábado por la mañana me toca hacer aseo en la casa."},
+  {word:"Soroche",en:"Altitude sickness (Bogotá & Andes)",region:"bogota",register:"Andean · health & outdoors",registerGroup:"everyday",usage:"Feeling winded, dizzy, or tired when arriving in Bogotá (2,640m) or hiking in the mountains.",example:"Camina despacio el primer día en Bogotá para que no te dé soroche.",tts:"Camina despacio el primer día en Bogotá para que no te dé soroche."}
+);
+
+/* 3. 10th 3-Column Slot-Swapper Matrix: WhatsApp, Audios & Scheduling */
+SLOT_SWAP_MATRICES.push(
+  {
+    id:"whatsapp-citas-matrix",
+    title:"📱 WhatsApp, Audios & Citas",
+    sub:"Send natural Colombian voice notes, ask for favors with 'colaborar', and schedule plans",
+    col1Title:"1. WhatsApp Opener",
+    col2Title:"2. Request / Plan",
+    col3Title:"3. Polite Close",
+    col1:[
+      {es:"Hola, ¿cómo vas? Te mando un audio porque",en:"Hi, how's it going? I'm sending you a voice note because"},
+      {es:"Qué pena responder apenas ahora, quería saber si",en:"Sorry for only replying just now, I wanted to see if"},
+      {es:"Buenas tardes, ¿será que usted me colabora y",en:"Good afternoon, could you possibly help me out and"},
+      {es:"Oye, te escribo rapidito para preguntar si",en:"Hey, I'm texting you quickly to ask if"}
+    ],
+    col2:[
+      {es:"te queda bien que nos veamos mañana a las diez",en:"it works for you for us to meet tomorrow at ten"},
+      {es:"me compartes la ubicación exacta por acá",en:"you can share the exact location with me here"},
+      {es:"podemos cuadrar la visita del técnico el jueves",en:"we can schedule the technician visit on Thursday"},
+      {es:"le puedes echar un ojo al documento que te envié",en:"you can take a look at the document I sent you"}
+    ],
+    col3:[
+      {es:"y me confirmas cualquier cosa, porfa.",en:"and let me know if anything comes up, please."},
+      {es:"quedo súper atento a tu respuesta.",en:"I'll look forward to your reply."},
+      {es:"para que así quedemos listos.",en:"so that we're all set."},
+      {es:"cuando tengas un tiempito libre.",en:"when you have a little free time."}
+    ]
+  }
+);
+
+/* 4. New Quiz Items for v94 Scenarios (Comodín, WhatsApp, Arriendo, Gym/Ciclovía) */
+V60_CONVERSATION_QUIZ.push(
+  {kind:"reply",focus:"past",cat:"comodin",es:"¿Cómo te fue con el trámite en el banco esta mañana?",en:"Me dio mucha lidia al principio, pero ya quedó listo.",tts:"¿Cómo te fue con el trámite en el banco esta mañana?",choices:["Me dio mucha lidia al principio, pero ya quedó listo.","En leche y bajito de azúcar, por favor.","A una sola cuota sin factura.","Suba dos cuadras hacia los cerros."]},
+  {kind:"meaning",focus:"present",cat:"comodin",es:"Vamos por un tintico y echamos cuento un rato.",en:"Let's go get a black coffee and chat/catch up for a while.",tts:"Vamos por un tintico y echamos cuento un rato.",choices:["Let's go get a black coffee and chat/catch up for a while.","Turn right after the traffic light.","The washing machine is leaking water.","Take one pill every eight hours."]},
+  {kind:"reply",focus:"present",cat:"whatsapp",es:"Hola, ¿te queda bien si nos vemos mañana a las diez en el café?",en:"¡De una! Así quedamos; cualquier cambio me confirmas por acá.",tts:"Hola, ¿te queda bien si nos vemos mañana a las diez en el café?",choices:["¡De una! Así quedamos; cualquier cambio me confirmas por acá.","Vengo por turismo durante dos semanas.","No soy alérgico a ningún medicamento.","Quiero un desvanecido con la máquina dos."]},
+  {kind:"meaning",focus:"present",cat:"whatsapp",es:"¿Será que me colaboras enviándome la ubicación por WhatsApp?",en:"Could you help me out by sending me the location on WhatsApp?",tts:"¿Será que me colaboras enviándome la ubicación por WhatsApp?",choices:["Could you help me out by sending me the location on WhatsApp?","Did the pandebonos come out warm from the oven?","From which platform does the bus leave?","Is the HOA fee included in the rent?"]},
+  {kind:"reply",focus:"present",cat:"arriendo",es:"¿En el valor del arriendo ya están incluidos la administración y los servicios?",en:"Sí, señor, todo está incluido y la clave del wifi está en la sala.",tts:"¿En el valor del arriendo ya están incluidos la administración y los servicios?",choices:["Sí, señor, todo está incluido y la clave del wifi está en la sala.","Por la plataforma cuatro después del peaje.","En agua sin azúcar para llevar.","Arriba solo las puntas con tijera."]},
+  {kind:"meaning",focus:"present",cat:"arriendo",es:"¿Me puede recomendar a alguien de confianza que venga a hacer aseo?",en:"Can you recommend someone trustworthy to come clean the apartment?",tts:"¿Me puede recomendar a alguien de confianza que venga a hacer aseo?",choices:["Can you recommend someone trustworthy to come clean the apartment?","Can you authorize the delivery driver at the front gate?","Where is the baggage claim belt at the airport?","Shall we take turns on the gym machine?"]},
+  {kind:"reply",focus:"present",cat:"gym-ciclovia",es:"Buenas, parce, ¿cuántas series te faltan? ¿Nos turnamos en la máquina?",en:"¡Claro, hágale! Solo me faltan dos series.",tts:"Buenas, parce, ¿cuántas series te faltan? ¿Nos turnamos en la máquina?",choices:["¡Claro, hágale! Solo me faltan dos series.","Consumidor final a una sola cuota.","Se cayó el internet desde esta mañana.","Me da dos almojábanas calienticas."]},
+  {kind:"meaning",focus:"present",cat:"gym-ciclovia",es:"Vamos más despacio en la subida que me dio un poquito de soroche.",en:"Let's go slower on the climb because I got a bit of altitude sickness.",tts:"Vamos más despacio en la subida que me dio un poquito de soroche.",choices:["Let's go slower on the climb because I got a bit of altitude sickness.","It's better not to flash your phone on the street at night.","I'm sending you a quick voice note because I'm walking.","The water heater turns on automatically when you open the shower."]}
+);
+
+V60_FILL_BLANK_QUIZ.push(
+  {kind:"blank",focus:"past",cat:"comodin",es:"Ese trámite en la oficina me dio mucha ___ toda la mañana.",en:"lidia",tts:"Ese trámite en la oficina me dio mucha lidia toda la mañana.",trans:"That paperwork at the office gave me a lot of trouble/hassle all morning.",choices:["lidia","cuota","maleta","almojábana"]},
+  {kind:"blank",focus:"present",cat:"comodin",es:"Al principio fue difícil, pero ya le cogí el ___ al español colombiano.",en:"tiro",tts:"Al principio fue difícil, pero ya le cogí el tiro al español colombiano.",trans:"At first it was hard, but I already got the hang of Colombian Spanish.",choices:["tiro","peaje","datáfono","semáforo"]},
+  {kind:"blank",focus:"present",cat:"whatsapp",es:"¿Será que me ___ enviándome el documento por WhatsApp?",en:"colaboras",tts:"¿Será que me colaboras enviándome el documento por WhatsApp?",trans:"Could you help me out by sending me the document on WhatsApp?",choices:["colaboras","almuerzas","escampas","aterrizas"]},
+  {kind:"blank",focus:"present",cat:"arriendo",es:"El sábado por la mañana nos toca hacer ___ en el apartamento.",en:"aseo",tts:"El sábado por la mañana nos toca hacer aseo en el apartamento.",trans:"On Saturday morning we have to clean the apartment.",choices:["aseo","trancón","soroche","pasaje"]},
+  {kind:"blank",focus:"present",cat:"gym-ciclovia",es:"Parce, ¿nos ___ en la máquina mientras descansas un minuto?",en:"turnamos",tts:"Parce, ¿nos turnamos en la máquina mientras descansas un minuto?",trans:"Buddy, shall we take turns on the machine while you rest a minute?",choices:["turnamos","empacamos","cobramos","aterrizamos"]},
+  {kind:"blank",focus:"present",cat:"gym-ciclovia",es:"El domingo por la mañana salimos a montar en bici por la ___.",en:"ciclovía",tts:"El domingo por la mañana salimos a montar en bici por la ciclovía.",trans:"On Sunday morning we go out to ride bikes on the Ciclovía.",choices:["ciclovía","portería","droguería","peluquería"]}
+);
