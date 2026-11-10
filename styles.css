@@ -1136,6 +1136,63 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
   .phonetic-jump-row label{font-size:.58rem;}
 }
 
+/* v78: focused lesson player and tactile mobile polish. The curriculum stays
+   intact; the player simply gives the learner one obvious action at a time. */
+body.lesson-focus-active .tab-bar{display:none;}
+body.lesson-focus-active .scroll{padding-bottom:calc(var(--safe-bottom) + 118px);}
+#page-lecciones.lesson-focus-mode{padding-top:0;}
+.lp-focus-top{display:flex;align-items:center;gap:10px;margin:0 0 12px;}
+.lp-exit{display:flex;align-items:center;gap:6px;flex:0 0 auto;min-height:38px;padding:6px 9px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.045);color:var(--muted);font:800 .66rem 'Nunito',sans-serif;}
+.lp-exit:active{transform:translateY(2px);}
+.lp-exit-icon{font-size:1.25rem;line-height:1;color:var(--pink);}
+.lp-focus-progress{height:7px;flex:1;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.1);}
+.lp-focus-progress span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .25s ease;}
+#page-lecciones.lesson-focus-mode .lp-nav{position:fixed;left:50%;bottom:calc(var(--safe-bottom) + 12px);z-index:1001;width:min(calc(100% - 24px),var(--content-max));margin:0;padding:10px;border:1px solid rgba(232,180,74,.38);border-radius:17px;background:rgba(15,22,29,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 -8px 30px rgba(0,0,0,.42);transform:translateX(-50%);}
+#page-lecciones.lesson-focus-mode .lp-nav .lp-nav-btn{min-height:52px;border-radius:12px;box-shadow:0 3px 0 rgba(0,0,0,.25);}
+#page-lecciones.lesson-focus-mode .lp-nav .lp-nav-btn:active{transform:translateY(2px);box-shadow:none;}
+.lp-completion-hero{display:flex;flex-direction:column;align-items:center;gap:3px;margin:-2px 0 16px;padding:16px 12px;border:1px solid rgba(232,180,74,.42);border-radius:16px;background:linear-gradient(145deg,rgba(232,180,74,.16),rgba(74,168,160,.1));text-align:center;}
+.lp-completion-emoji{font-size:2.35rem;line-height:1;margin-bottom:3px;animation:pop .3s ease;}
+.lp-completion-hero>strong{font-size:1.2rem;color:var(--gold);}
+.lp-completion-hero>span{font-size:.7rem;color:var(--muted);}
+.lp-completion-stats{display:grid;grid-template-columns:repeat(3,1fr);width:100%;gap:7px;margin-top:10px;}
+.lp-completion-stats span{display:flex;flex-direction:column;gap:2px;padding:8px 4px;border-radius:10px;background:rgba(0,0,0,.15);}
+.lp-completion-stats b{font-size:.9rem;color:#fff;}
+.lp-completion-stats small{font-size:.56rem;color:var(--muted);}
+
+/* Stepping-stone visual treatment for the learning path. */
+#page-lecciones:not(.lesson-focus-mode) .lesson-card{position:relative;margin-left:8px;border-radius:15px;transition:transform .14s ease,border-color .14s ease,box-shadow .14s ease;}
+#page-lecciones:not(.lesson-focus-mode) .lesson-card:before{content:"";position:absolute;left:-9px;top:50%;width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.24);box-shadow:0 0 0 3px rgba(255,255,255,.04);}
+#page-lecciones:not(.lesson-focus-mode) .lesson-card.complete:before{background:var(--teal);box-shadow:0 0 0 3px rgba(74,168,160,.14);}
+#page-lecciones:not(.lesson-focus-mode) .lesson-card.recommended:before{background:var(--gold);box-shadow:0 0 0 4px rgba(232,180,74,.16);}
+#page-lecciones:not(.lesson-focus-mode) .lesson-card.recommended{box-shadow:0 7px 22px rgba(232,180,74,.11);}
+#page-lecciones:not(.lesson-focus-mode) .lesson-card:active{transform:translateX(2px) scale(.995);}
+.stage-label{margin-top:20px;padding:10px 11px;border-left:3px solid var(--gold);border-radius:0 11px 11px 0;background:rgba(232,180,74,.06);}
+
+/* Role-play becomes a conversation thread without changing the underlying
+   turn-by-turn controls or the learner's English reveal. */
+.lp-sim-history{display:flex;flex-direction:column;gap:9px;}
+.lp-chat-message{display:flex;align-items:flex-end;gap:7px;max-width:94%;}
+.lp-chat-message.partner{align-self:flex-start;}
+.lp-chat-message.me{align-self:flex-end;flex-direction:row-reverse;}
+.lp-chat-message.current{max-width:100%;}
+.lp-chat-avatar{display:grid;place-items:center;flex:0 0 29px;width:29px;height:29px;border-radius:50%;background:rgba(74,168,160,.18);font-size:.9rem;}
+.lp-chat-message.me .lp-chat-avatar{background:rgba(167,139,250,.2);}
+.lp-chat-bubble{min-width:0;padding:10px 11px;border:1px solid rgba(255,255,255,.11);border-radius:15px 15px 15px 4px;background:rgba(255,255,255,.055);cursor:pointer;}
+.lp-chat-message.me .lp-chat-bubble{border-color:rgba(167,139,250,.3);border-radius:15px 15px 4px 15px;background:rgba(167,139,250,.1);}
+.lp-chat-message.current .lp-chat-bubble{width:100%;border-color:rgba(232,180,74,.38);background:rgba(232,180,74,.09);cursor:default;}
+.lp-chat-bubble>strong{display:block;margin-bottom:4px;color:var(--teal);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;}
+.lp-chat-message.me .lp-chat-bubble>strong{color:var(--purple);}
+.lp-chat-bubble .lp-line-es{display:block;color:#fff;font-size:.86rem;font-weight:800;line-height:1.4;}
+.lp-chat-bubble .lp-line-en{display:block;margin-top:4px;}
+.lp-chat-bubble .lp-sim-prompt-tag{margin-bottom:5px;}
+.lp-chat-bubble .lp-sim-intent{font-size:.76rem;}
+.lp-chat-bubble .lp-sim-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.lp-chat-bubble .lp-sim-actions button{flex:1 1 130px;}
+
+/* Small raised edge and pressed state on primary actions. */
+.today-hero-cta,.session-length-btn.selected,.lp-nav-btn.primary,.lesson-start,.warmup-continue,.routine-next-large{box-shadow:0 3px 0 rgba(0,0,0,.28);}
+.today-hero-cta:active,.session-length-btn:active,.lp-nav-btn:active,.lesson-start:active,.warmup-continue:active,.routine-next-large:active{transform:translateY(2px);box-shadow:none;}
+
 /* v59: Rapid speaking pace is visible, selectable, and thumb-friendly. */
 .rr-difficulty-row{margin:12px 0 14px;padding:10px;border:1px solid rgba(232,180,74,.22);border-radius:13px;background:rgba(232,180,74,.06);text-align:left;}
 .rr-difficulty-label{display:block;margin-bottom:7px;color:var(--gold);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;font-weight:950;}
@@ -1635,4 +1692,1157 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
   border-top:1px solid rgba(255,255,255,.06);
 }
 
+/* v79: compact focus header — one row instead of four stacked controls. */
+#page-lecciones.lesson-focus-mode .lp-progress-head,
+#page-lecciones.lesson-focus-mode .lp-dots{display:none;}
+#page-lecciones.lesson-focus-mode .lp-focus-top{gap:7px;margin-bottom:10px;}
+.lp-focus-step{flex:0 0 auto;color:var(--gold);font-size:.7rem;font-weight:950;white-space:nowrap;}
+#page-lecciones.lesson-focus-mode .lp-focus-progress{min-width:42px;}
+#page-lecciones.lesson-focus-mode .lp-mode-switch{display:flex;flex:0 0 96px;gap:4px;margin:0;}
+#page-lecciones.lesson-focus-mode .lp-mode-btn{min-width:0;min-height:32px;padding:5px 7px;font-size:.58rem;white-space:nowrap;}
 
+/* v79: stage accordions keep the learning path readable without removing content. */
+.lesson-stage{margin:0 0 9px;}
+.lesson-stage>summary{list-style:none;cursor:pointer;}
+.lesson-stage>summary::-webkit-details-marker{display:none;}
+.lesson-stage .stage-label{position:relative;margin-top:15px;padding:11px 34px 11px 12px;}
+.lesson-stage .stage-label:after{content:"⌄";position:absolute;right:12px;top:50%;color:var(--gold);font-size:1rem;line-height:1;transform:translateY(-50%);transition:transform .18s ease;}
+.lesson-stage:not([open]) .stage-label:after{transform:translateY(-50%) rotate(-90deg);}
+.stage-progress{height:4px;margin-top:9px;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.1);}
+.stage-progress span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--teal),var(--gold));}
+
+/* v79: active ladder choices turn sentence expansion into a quick production decision. */
+.ladder-choice{margin-top:12px;padding:12px;border:1px solid rgba(232,180,74,.28);border-radius:14px;background:rgba(232,180,74,.07);}
+.ladder-choice-title{color:var(--gold);font-size:.82rem;font-weight:950;}
+.ladder-choice-help{margin-top:4px;color:var(--muted);font-size:.7rem;line-height:1.4;}
+.ladder-choice-help span{color:#fff;font-weight:850;}
+.ladder-choice-options{display:grid;gap:7px;margin-top:10px;}
+.ladder-choice-btn{min-height:44px;padding:9px 10px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.055);color:#fff;font:inherit;font-size:.72rem;font-weight:800;text-align:left;}
+.ladder-choice-btn.correct{border-color:var(--teal);background:rgba(74,168,160,.18);color:var(--teal);}
+.ladder-choice-btn.wrong{border-color:var(--pink);background:rgba(232,93,117,.13);color:var(--pink);}
+.ladder-choice-feedback{min-height:18px;margin-top:8px;color:var(--gold);font-size:.68rem;font-weight:800;line-height:1.35;}
+.ladder-choice-skip{margin-top:7px;border:0;background:none;color:var(--muted);font:inherit;font-size:.64rem;text-decoration:underline;cursor:pointer;}
+
+/* v79: feedback stays in a stable tray instead of pushing the answer layout. */
+.feedback-tray{display:none;}
+#page-lecciones.lesson-focus-mode .feedback-tray.visible,
+#page-quiz .feedback-tray.visible{display:block;position:fixed;left:12px;right:12px;z-index:1002;padding:10px 12px;border:1px solid rgba(74,168,160,.45);border-radius:13px;background:rgba(16,25,31,.97);box-shadow:0 -6px 24px rgba(0,0,0,.35);text-align:left;}
+#page-lecciones.lesson-focus-mode .feedback-tray.visible{bottom:calc(var(--safe-bottom) + 84px);}
+#page-quiz .feedback-tray.visible{bottom:calc(var(--tab-h) + var(--safe-bottom) + 76px);}
+.feedback-tray .lp-reveal{margin-top:5px;}
+#page-quiz .feedback-tray .quiz-reveal{display:block;margin:8px 0 0;padding:8px 10px;background:rgba(74,168,160,.08);border-color:rgba(74,168,160,.25);}
+
+/* A direct entry point appears only when the normal quiz has misses waiting. */
+.quiz-review-launch{display:flex;align-items:center;justify-content:space-between;gap:9px;margin:0 0 10px;padding:9px 11px;border:1px solid rgba(232,93,117,.3);border-radius:12px;background:rgba(232,93,117,.07);color:var(--muted);font-size:.68rem;line-height:1.3;}
+.quiz-review-launch strong{display:block;color:var(--pink);}
+.quiz-review-launch-btn{flex:0 0 auto;min-height:34px;padding:7px 9px;border:1px solid rgba(232,93,117,.55);border-radius:9px;background:rgba(232,93,117,.16);color:#fff;font:inherit;font-size:.63rem;font-weight:900;}
+.quiz-review-launch-btn:active{transform:translateY(1px);}
+
+/* v79: rapid prompt packs. */
+.rr-pack-row{margin:0 0 13px;padding:10px;border:1px solid rgba(74,168,160,.22);border-radius:13px;background:rgba(74,168,160,.06);text-align:left;}
+.rr-pack-label{display:block;margin-bottom:7px;color:var(--teal);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;font-weight:950;}
+.rr-pack-buttons{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.rr-pack-btn{min-height:42px;padding:7px 6px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,.045);color:var(--muted);font:inherit;font-size:.63rem;font-weight:850;line-height:1.2;}
+.rr-pack-btn.selected{border-color:rgba(74,168,160,.75);background:rgba(74,168,160,.16);color:var(--teal);}
+.rr-pack-btn:active{transform:scale(.98);}
+@media(max-width:360px){
+  #page-lecciones.lesson-focus-mode .lp-exit span:last-child{display:none;}
+  #page-lecciones.lesson-focus-mode .lp-mode-btn{padding-left:5px;padding-right:5px;font-size:.54rem;}
+  .rr-pack-buttons{grid-template-columns:1fr;}
+}
+
+/* ── v91.0 Aesthetic & Layout Polish ───────────────────────────────────────── */
+/* 1. Compact Header & Utility Chrome Above the Fold */
+.ph {
+  position: relative;
+  text-align: left;
+  margin: 4px 0 10px;
+  padding: 6px 12px 6px 14px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.ph::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 7px;
+  bottom: 7px;
+  width: 4px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #FCD116 0%, #FCD116 48%, #003893 48%, #003893 75%, #CE1126 75%, #CE1126 100%);
+}
+.ph-label {
+  font-size: 0.56rem;
+  letter-spacing: 0.16em;
+  margin-bottom: 1px;
+  opacity: 0.8;
+}
+.ph-title {
+  font-size: 1.38rem;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+}
+.ph-sub {
+  font-size: 0.71rem;
+  margin-top: 2px;
+  line-height: 1.28;
+}
+.voice-bar {
+  margin: 0 0 8px;
+  padding: 6px 10px;
+  border-radius: 11px;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.top-utility-drawer {
+  margin: 0 0 8px;
+}
+.top-utility-summary {
+  padding: 6px 11px;
+  font-size: 0.72rem;
+}
+.lesson-view-switch {
+  margin: 0 0 10px;
+}
+
+/* 2. Streamlined Today Hub & Hero Hierarchy */
+.today-hero-card {
+  padding: 15px 15px 14px;
+  margin: 0 0 10px;
+  border-radius: 16px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.26);
+}
+.today-hero-title {
+  font-size: 1.18rem;
+  letter-spacing: -0.01em;
+}
+.routine-card {
+  margin: 0 0 10px;
+  border-radius: 15px;
+  border-color: rgba(74, 168, 160, 0.34);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+}
+.today-quick-grid {
+  gap: 8px;
+  margin: 0 0 10px;
+}
+.today-quick-tile {
+  padding: 11px 12px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.065), rgba(255,255,255,0.03));
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: transform 0.12s ease, border-color 0.15s ease;
+}
+.today-quick-tile:active {
+  transform: scale(0.98);
+}
+
+/* 3. Learning Path / Ruta Live Search & Collapsible Tense Roadmap */
+.lesson-path-search {
+  margin: 0 0 9px;
+  height: 38px;
+  font-size: 0.76rem;
+  border-radius: 11px;
+}
+.tense-roadmap-fold {
+  padding: 0;
+  overflow: hidden;
+  margin: 8px 0 12px;
+}
+.tense-roadmap-summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 13px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 0.78rem;
+}
+.tense-roadmap-summary::-webkit-details-marker {
+  display: none;
+}
+.tense-roadmap-summary small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.65rem;
+  font-weight: 700;
+  margin-top: 2px;
+}
+.tense-roadmap-chev {
+  color: var(--gold);
+  font-size: 1rem;
+  transition: transform 0.18s ease;
+}
+.tense-roadmap-fold:not([open]) .tense-roadmap-chev {
+  transform: rotate(-90deg);
+}
+.tense-roadmap-body {
+  padding: 0 13px 13px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.tense-roadmap-body > p {
+  margin: 8px 0 10px;
+}
+
+/* 4. Sticky Assembled Sentence Preview & Swipeable Pills in Slot-Swapper */
+.slot-matrix-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 7px;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.slot-matrix-tabs::-webkit-scrollbar {
+  display: none;
+}
+.slot-matrix-tab,
+.slot-matrix-tabs .lp-mode-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.slot-assembled-box {
+  position: sticky;
+  top: 0;
+  z-index: 18;
+  background: rgba(14, 24, 33, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.42);
+  border: 1px solid rgba(232, 180, 74, 0.42);
+}
+
+/* 5. Refined 6-Tab Bottom Bar */
+.tab-bar {
+  background: rgba(12, 20, 28, 0.95);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-top: 1px solid rgba(255, 255, 255, 0.11);
+  padding: 0 4px var(--safe-bottom);
+}
+.tab-item {
+  position: relative;
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 0.64rem;
+  font-weight: 800;
+  gap: 3px;
+  padding: 7px 2px 5px;
+  transition: color 0.15s ease, transform 0.12s ease;
+}
+.tab-item .ti {
+  font-size: 1.32rem;
+  line-height: 1.05;
+}
+.tab-item.active::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 24%;
+  right: 24%;
+  height: 3px;
+  border-radius: 0 0 4px 4px;
+  background: currentColor;
+  box-shadow: 0 2px 8px currentColor;
+}
+
+/* ── v92.0 Conversational Mastery & Navigation Styles ────────────────────── */
+/* 1. Frases Dialogue Situation Accordions & Turn-by-Turn Stepper */
+.fr-dialogue-groups {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.fr-dialogue-fold .stage-label {
+  margin-top: 4px;
+}
+.fr-fold-grid {
+  padding-top: 8px;
+}
+.dlg-stepper-bar {
+  position: sticky;
+  top: 0;
+  z-index: 16;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: rgba(15, 25, 34, 0.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(232, 180, 74, 0.38);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+}
+.dlg-stepper-status {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1.3;
+}
+.dlg-stepper-btn {
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 7px 12px;
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+.dlg-line.active-turn .dlg-bubble {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(232, 180, 74, 0.28), 0 8px 20px rgba(0, 0, 0, 0.3);
+  background: rgba(232, 180, 74, 0.11);
+}
+
+/* 2. Regional Colombianismos Filter Strip & Badges */
+.col-region-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 7px;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.col-region-tabs::-webkit-scrollbar {
+  display: none;
+}
+.col-region-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.col-region-pill {
+  display: inline-block;
+  margin-right: 6px;
+  margin-bottom: 5px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 0.62rem;
+  font-weight: 850;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+.col-region-pill.reg-bogota {
+  color: #93c5fd;
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.32);
+}
+.col-region-pill.reg-medellin {
+  color: #f9a8d4;
+  background: rgba(236, 72, 153, 0.15);
+  border-color: rgba(236, 72, 153, 0.32);
+}
+.col-region-pill.reg-cali-costa {
+  color: #6ee7b7;
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.32);
+}
+.col-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 3. Smart 1-Tap Star / Pin Button & Speaking List Drill Bar */
+.star-pin-btn {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.9rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.star-pin-btn.starred {
+  border-color: rgba(232, 180, 74, 0.6);
+  background: rgba(232, 180, 74, 0.16);
+  color: var(--gold);
+}
+.star-pin-btn:active {
+  transform: scale(0.92);
+}
+.error-journal-drill-bar {
+  padding: 10px 0 6px;
+}
+.error-journal-drill-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* 4. Interactive Connector & Time-Buyer Bridge Trainer in Gramática → Hablar */
+.bridge-trainer-card {
+  margin: 0 0 14px;
+  padding: 14px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(74, 168, 160, 0.12), rgba(232, 180, 74, 0.07));
+  border: 1px solid rgba(74, 168, 160, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+.bridge-kicker {
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 900;
+  color: var(--teal);
+  margin-bottom: 4px;
+}
+.bridge-context {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin-bottom: 9px;
+}
+.bridge-sentence-box {
+  padding: 11px 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.26);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.92rem;
+  font-weight: 850;
+  color: #fff;
+  line-height: 1.45;
+}
+.bridge-slot {
+  color: var(--gold);
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: rgba(232, 180, 74, 0.14);
+  border: 1px dashed rgba(232, 180, 74, 0.5);
+}
+.bridge-slot.filled {
+  color: var(--teal);
+  background: rgba(74, 168, 160, 0.2);
+  border: 1px solid var(--teal);
+}
+.bridge-en {
+  margin-top: 6px;
+  font-size: 0.74rem;
+  color: var(--muted);
+  font-style: italic;
+}
+.bridge-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-top: 10px;
+}
+.bridge-choice-btn {
+  min-height: 40px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.055);
+  color: #fff;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+.bridge-choice-btn.correct {
+  border-color: var(--teal);
+  background: rgba(74, 168, 160, 0.22);
+  color: var(--teal);
+}
+.bridge-choice-btn.wrong {
+  border-color: var(--pink);
+  background: rgba(232, 93, 117, 0.15);
+  color: var(--pink);
+}
+.bridge-feedback {
+  margin-top: 9px;
+  font-size: 0.75rem;
+  color: #fff;
+  line-height: 1.4;
+}
+.bridge-feedback small {
+  color: var(--gold);
+  display: block;
+  margin-top: 3px;
+}
+.bridge-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* 5. Real-Life Situation Blitz Bar in Quiz */
+.quiz-blitz-wrap {
+  margin: 0 0 10px;
+}
+.quiz-blitz-row {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 7px;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.quiz-blitz-row::-webkit-scrollbar {
+  display: none;
+}
+.qblitz-btn {
+  flex: 0 0 auto;
+  padding: 7px 11px;
+  border-radius: 99px;
+  border: 1px solid rgba(232, 180, 74, 0.32);
+  background: rgba(232, 180, 74, 0.08);
+  color: #fff;
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 850;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.qblitz-btn.active {
+  background: var(--gold);
+  color: #111827;
+  border-color: var(--gold);
+  box-shadow: 0 4px 14px rgba(232, 180, 74, 0.35);
+}
+/* ── v93.0 Pro Coaching & Colombian Speaking Mastery Styles ─────────────── */
+/* 1. Smart Coach Focus Strip ("Enfoque de Hoy · 60s Warm-Up") */
+.coach-focus-strip {
+  margin: 0 0 12px;
+  padding: 12px 13px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(232, 180, 74, 0.12), rgba(74, 168, 160, 0.09));
+  border: 1px solid rgba(232, 180, 74, 0.34);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+}
+.coach-focus-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+.coach-focus-kicker {
+  display: block;
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 900;
+  color: var(--gold);
+}
+.coach-focus-head strong {
+  font-size: 0.82rem;
+  color: #fff;
+}
+.coach-focus-playall {
+  flex: 0 0 auto;
+  padding: 6px 11px;
+  border-radius: 99px;
+  border: 1px solid rgba(232, 180, 74, 0.5);
+  background: rgba(232, 180, 74, 0.18);
+  color: var(--gold);
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+.coach-focus-chips {
+  display: grid;
+  gap: 6px;
+}
+.coach-focus-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 32, 0.62);
+  color: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+.coach-focus-chip:active {
+  transform: scale(0.99);
+}
+.coach-chip-tag {
+  flex: 0 0 auto;
+  padding: 2px 7px;
+  border-radius: 99px;
+  font-size: 0.58rem;
+  font-weight: 850;
+  background: rgba(74, 168, 160, 0.18);
+  color: var(--teal);
+  border: 1px solid rgba(74, 168, 160, 0.35);
+}
+.coach-focus-chip strong {
+  flex: 1;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.3;
+}
+.coach-chip-spk {
+  flex: 0 0 auto;
+  font-size: 0.82rem;
+}
+
+/* 2. Cross-Tab Deep-Link Pills inside Lesson Cards */
+.lesson-deeplinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+}
+.lesson-deeplink-pill {
+  padding: 3px 9px;
+  border-radius: 99px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.82);
+  font: inherit;
+  font-size: 0.62rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.lesson-deeplink-pill:hover,
+.lesson-deeplink-pill:active {
+  background: rgba(74, 168, 160, 0.2);
+  border-color: var(--teal);
+  color: #fff;
+}
+
+/* 3. Curveball & Repair Mode (⚡ Imprevisto) in Frases */
+.curveball-trigger-btn {
+  border-color: rgba(232, 180, 74, 0.45) !important;
+  color: var(--gold) !important;
+  background: rgba(232, 180, 74, 0.1) !important;
+}
+.curveball-trigger-btn.active {
+  background: var(--gold) !important;
+  color: #111827 !important;
+}
+.curveball-panel {
+  margin: 0 0 12px;
+  padding: 13px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(232, 180, 74, 0.13), rgba(232, 93, 117, 0.08));
+  border: 1px solid rgba(232, 180, 74, 0.45);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+}
+.curveball-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+.curveball-kicker {
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.curveball-close {
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+.curveball-title {
+  font-size: 0.86rem;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.curveball-prompt-box {
+  padding: 10px 12px;
+  border-radius: 11px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(232, 93, 117, 0.35);
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.curveball-prompt-label {
+  font-size: 0.62rem;
+  font-weight: 850;
+  color: var(--pink);
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.curveball-prompt-es {
+  font-size: 0.88rem;
+  font-weight: 850;
+  color: #fff;
+  line-height: 1.35;
+}
+.curveball-prompt-en {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 3px;
+}
+.curveball-repairs-label {
+  font-size: 0.68rem;
+  font-weight: 850;
+  color: var(--teal);
+  margin-bottom: 7px;
+}
+.curveball-repairs {
+  display: grid;
+  gap: 8px;
+}
+.curveball-option {
+  padding: 9px 11px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(74, 168, 160, 0.32);
+}
+.curveball-opt-tag {
+  display: inline-block;
+  font-size: 0.58rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 3px;
+}
+.curveball-opt-es {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.35;
+}
+.curveball-opt-en {
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.curveball-opt-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 7px;
+}
+.curveball-tip {
+  margin-top: 9px;
+  font-size: 0.7rem;
+  color: var(--gold);
+  line-height: 1.35;
+}
+.curveball-footer {
+  margin-top: 9px;
+}
+
+/* 4. Interactive Colombian Register Switcher & Street Grid Decoder */
+.reg-tabs-row,
+.street-formula-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 9px 0;
+}
+.reg-tab-btn,
+.street-seg-chip {
+  padding: 6px 11px;
+  border-radius: 99px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font: inherit;
+  font-size: 0.71rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+.reg-tab-btn.active,
+.street-seg-chip.active {
+  background: var(--gold);
+  color: #111827;
+  border-color: var(--gold);
+}
+.reg-active-box,
+.street-detail-box {
+  padding: 11px 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(232, 180, 74, 0.35);
+  cursor: pointer;
+  margin-bottom: 9px;
+}
+.reg-active-region,
+.street-detail-label {
+  font-size: 0.65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.reg-active-es {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.35;
+}
+.reg-active-note,
+.street-detail-explain {
+  font-size: 0.73rem;
+  color: var(--muted);
+  margin-top: 5px;
+  line-height: 1.4;
+}
+.reg-compare-grid {
+  display: grid;
+  gap: 5px;
+}
+.reg-compare-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: #fff;
+  font: inherit;
+  font-size: 0.74rem;
+  text-align: left;
+  cursor: pointer;
+}
+.reg-compare-row.current {
+  border-color: var(--teal);
+  background: rgba(74, 168, 160, 0.14);
+}
+.reg-cmp-badge {
+  flex: 0 0 88px;
+  font-weight: 850;
+  color: var(--gold);
+  font-size: 0.68rem;
+}
+.reg-cmp-es {
+  flex: 1;
+  font-weight: 700;
+}
+.street-example-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(74, 168, 160, 0.38);
+  background: rgba(74, 168, 160, 0.13);
+  color: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.street-example-btn strong {
+  display: block;
+  font-size: 0.8rem;
+}
+.street-example-btn small {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+/* ── v94.0 Verbos Comodín, Textbook vs. Colombian & Shadow All Styles ───── */
+/* 1. Verbos Comodín Wildcard Hub in Vocab → Verbos */
+.comodin-sub {
+  font-size: 0.76rem;
+  font-weight: 850;
+  color: var(--gold);
+  margin: 4px 0 8px;
+}
+.comodin-chunks-grid {
+  display: grid;
+  gap: 7px;
+}
+.comodin-chunk-card {
+  padding: 9px 11px;
+  border-radius: 11px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+.comodin-chunk-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.comodin-chunk-pill {
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 0.68rem;
+  font-weight: 900;
+  background: rgba(232, 180, 74, 0.18);
+  color: var(--gold);
+  border: 1px solid rgba(232, 180, 74, 0.4);
+}
+.comodin-chunk-en {
+  flex: 1;
+  font-size: 0.7rem;
+  color: var(--teal);
+  font-weight: 800;
+}
+.comodin-chunk-acts {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.comodin-chunk-es {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.35;
+}
+.comodin-chunk-esen {
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 2px;
+}
+
+/* 2. Textbook Spanish vs. Natural Colombian Upgrade Switcher */
+.tvc-compare-pair {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0;
+}
+.tvc-box {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.tvc-textbook {
+  background: rgba(232, 93, 117, 0.08);
+  border: 1px solid rgba(232, 93, 117, 0.32);
+  color: rgba(255, 255, 255, 0.85);
+}
+.tvc-colombian {
+  background: rgba(74, 168, 160, 0.16);
+  border: 1px solid rgba(74, 168, 160, 0.5);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+.tvc-tag {
+  display: block;
+  font-size: 0.58rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 3px;
+}
+.tvc-textbook .tvc-tag {
+  color: var(--pink);
+}
+.tvc-colombian .tvc-tag {
+  color: var(--teal);
+}
+.tvc-box strong {
+  font-size: 0.88rem;
+  font-weight: 850;
+  line-height: 1.35;
+}
+.tvc-why {
+  font-size: 0.73rem;
+  color: var(--muted);
+  line-height: 1.42;
+  margin-bottom: 8px;
+}
+.tvc-why strong {
+  color: var(--gold);
+}
+
+/* 3. Shadow All Button in Frases */
+.shadow-all-btn {
+  border-color: rgba(74, 168, 160, 0.45) !important;
+  color: var(--teal) !important;
+  background: rgba(74, 168, 160, 0.12) !important;
+}
+
+/* ── v95.0: Regional Atlas & Solo Oído Blind-Listening ────────────────────── */
+.regional-atlas-card {
+  border-color: rgba(167,139,250,0.34);
+  background: linear-gradient(155deg, rgba(167,139,250,0.09), rgba(24,22,40,0.94));
+}
+.blind-listen-btn {
+  border-color: rgba(167,139,250,0.4) !important;
+  color: var(--purple) !important;
+  background: rgba(167,139,250,0.12) !important;
+}
+.blind-listen-btn.active {
+  background: rgba(167,139,250,0.28) !important;
+  box-shadow: 0 0 0 2px rgba(167,139,250,0.25);
+}
+.dialogue.dlg-blind-listen .dlg-bubble:not(.blind-revealed) .dlg-es,
+.dialogue.dlg-blind-listen .dlg-bubble:not(.blind-revealed) .dlg-en {
+  filter: blur(6px);
+  user-select: none;
+  transition: filter 0.18s ease;
+}
+.dialogue.dlg-blind-listen .dlg-bubble:not(.blind-revealed)::after {
+  content: "👂 1st tap: Hear audio · 2nd tap: Reveal text";
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.67rem;
+  font-weight: 800;
+  color: var(--gold);
+  background: rgba(232,180,74,0.14);
+  border: 1px solid rgba(232,180,74,0.3);
+  border-radius: 999px;
+  padding: 2px 9px;
+}
+.dialogue.dlg-blind-listen .dlg-bubble.blind-heard:not(.blind-revealed)::after {
+  content: "👀 Heard! Tap again to reveal text & replay 🔊";
+  color: var(--teal);
+  background: rgba(74,168,160,0.16);
+  border-color: rgba(74,168,160,0.36);
+}
+
+/* ── v96.0: Branching Roleplay Simulator, Street Ear Linker & Trampas Decoder ─ */
+.branching-roleplay-card {
+  border-color: rgba(232,180,74,0.38);
+  background: linear-gradient(155deg, rgba(232,180,74,0.10), rgba(18,24,34,0.95));
+  margin-bottom: 14px;
+}
+.rp-npc-box {
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-left: 3px solid var(--teal);
+  border-radius: 12px;
+  padding: 11px 13px;
+  margin: 8px 0 10px;
+  cursor: pointer;
+}
+.rp-npc-label {
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 3px;
+}
+.rp-npc-es {
+  font-size: 0.96rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.rp-npc-en {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.rp-options-label {
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin: 8px 0 6px;
+}
+.rp-options-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+.rp-option-btn {
+  text-align: left;
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+}
+.rp-option-btn:hover {
+  border-color: rgba(232,180,74,0.45);
+  background: rgba(232,180,74,0.08);
+}
+.rp-option-btn.selected {
+  border-color: var(--gold);
+  background: rgba(232,180,74,0.14);
+  box-shadow: 0 0 0 2px rgba(232,180,74,0.2);
+}
+.rp-opt-style {
+  font-size: 0.66rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gold);
+}
+.rp-opt-es {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text);
+}
+.rp-opt-en {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.rp-outcome-box {
+  margin-top: 10px;
+  padding: 11px 13px;
+  border-radius: 12px;
+  background: rgba(52,211,153,0.08);
+  border: 1px solid rgba(52,211,153,0.28);
+}
+.rp-reply-box {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+.rp-reply-tag {
+  font-size: 0.67rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--green);
+}
+.street-ear-card {
+  border-color: rgba(74,168,160,0.36);
+  background: linear-gradient(155deg, rgba(74,168,160,0.09), rgba(18,26,34,0.94));
+}
+.ear-phonetic {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.73rem;
+  color: var(--gold);
+  font-weight: 700;
+}
+.trampas-decoder-card {
+  border-color: rgba(232,93,117,0.34);
+  background: linear-gradient(155deg, rgba(232,93,117,0.08), rgba(24,20,32,0.94));
+}

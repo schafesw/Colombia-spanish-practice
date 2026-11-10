@@ -72,7 +72,7 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v90.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v96.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);
   bar.append(label,select,reset,ver);utilityBody.appendChild(bar);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -704,11 +704,48 @@ function rVocales(list){
     sec.appendChild(exs);list.appendChild(sec);});
 }
 
+let activeComodinIdx=0;
 function rVerbos(list){
   const note=document.createElement("div");note.className="intro-note";
-  note.innerHTML=`<div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--purple);margin-bottom:6px;font-weight:800">🏃 Verbos — Tap any verb for full conjugation</div>
-    <div style="font-size:0.82rem;color:var(--muted);line-height:1.6">Tap a verb to see all tenses (present/past/future), word family (beber→bebida), imperatives, and examples.</div>`;
+  note.innerHTML=`<div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--purple);margin-bottom:6px;font-weight:800">🏃 Verbos & Wildcard Chunks — Tap any verb for full conjugation</div>
+    <div style="font-size:0.82rem;color:var(--muted);line-height:1.6">Master the 7 Colombian wildcard verbs ("verbos comodín") below, or tap any of the 25 verbs for full conjugations, word families, and imperatives.</div>`;
   list.appendChild(note);
+  if(typeof VERBOS_COMODIN!=="undefined"&&VERBOS_COMODIN.length){
+    const hub=document.createElement("section");hub.className="bridge-trainer-card comodin-hub-card";
+    const renderComodin=()=>{
+      const vObj=VERBOS_COMODIN[activeComodinIdx%VERBOS_COMODIN.length];
+      hub.innerHTML=`<div class="bridge-kicker">🔑 VERBOS COMODÍN · THE 7 WILDCARD VERBS OF COLOMBIA</div>
+        <div class="bridge-context">Tap a wildcard verb to drill the idiomatic chunks Colombians use all day:</div>
+        <div class="reg-tabs-row comodin-tabs"></div>
+        <div class="comodin-sub">${escapeVocabHtml(vObj.verb)} — ${escapeVocabHtml(vObj.tag)}</div>
+        <div class="comodin-chunks-grid"></div>`;
+      const tRow=hub.querySelector(".comodin-tabs");
+      VERBOS_COMODIN.forEach((item,idx)=>{
+        const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(idx===activeComodinIdx?" active":"");
+        b.textContent=item.verb;
+        b.onclick=()=>{
+          activeComodinIdx=idx;
+          renderComodin();
+          if(item.chunks&&item.chunks[0])speak(item.chunks[0].es,0.75);
+        };
+        tRow.appendChild(b);
+      });
+      const grid=hub.querySelector(".comodin-chunks-grid");
+      (vObj.chunks||[]).forEach(ch=>{
+        const row=document.createElement("div");row.className="comodin-chunk-card";
+        row.innerHTML=`<div class="comodin-chunk-head"><span class="comodin-chunk-pill">${escapeVocabHtml(ch.chunk)}</span><span class="comodin-chunk-en">${escapeVocabHtml(ch.en)}</span><div class="comodin-chunk-acts"></div></div>
+          <div class="comodin-chunk-es">🗣️ ${escapeVocabHtml(ch.es)} 🔊</div>
+          <div class="comodin-chunk-esen">${escapeVocabHtml(ch.esEn)}</div>`;
+        row.onclick=e=>{if(e.target.closest("button"))return;markPractice("vocab",ch.es);speak(ch.es,0.75);};
+        const acts=row.querySelector(".comodin-chunk-acts");
+        if(typeof attachStarBtn==="function")attachStarBtn(acts,ch.es,"Verbos comodín");
+        attachMic(acts,ch.es,"vocab");
+        grid.appendChild(row);
+      });
+    };
+    renderComodin();
+    list.appendChild(hub);
+  }
   Object.entries(VERBS).forEach(([key,verb])=>{
     const card=document.createElement("div");card.className="vc";
     card.style.borderColor=`${verb.color}44`;
@@ -733,20 +770,50 @@ function registerTone(item){
 function registerBadge(item){
   return item&&item.register?'<span class="f-register register-'+registerTone(item)+'">'+escapeVocabHtml(item.register)+'</span>':"";
 }
+let colRegionFilter="all";
+const COL_REGIONS=[
+  ["all","🇨🇴 All Colombia"],
+  ["bogota","🏔️ Bogotá & Rolos"],
+  ["medellin","🌸 Medellín & Paisas"],
+  ["cali-costa","🌴 Cali & La Costa"]
+];
+const COL_REGION_LABELS={
+  all:"🇨🇴 National",
+  bogota:"🏔️ Bogotá / Altiplano",
+  medellin:"🌸 Medellín / Eje Cafetero",
+  "cali-costa":"🌴 Cali & Costa"
+};
 function rCol(list){
   const note=document.createElement("div");note.className="intro-note";
-  note.innerHTML=`<div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:800">🇨🇴 Colombianismos</div>
-    <div style="font-size:0.82rem;color:var(--muted);line-height:1.6">Expressions used every day in Colombia that you won't learn in a textbook. Tap to hear.</div>`;
+  note.innerHTML=`<div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:800">🇨🇴 Colombianismos & Regional Flavors</div>
+    <div style="font-size:0.82rem;color:var(--muted);line-height:1.55">Filter by region to learn how people speak in Bogotá, Medellín, Cali, and across Colombia. Tap any card to hear it, or tap ⭐ to pin it to your practice list.</div>`;
   list.appendChild(note);
-  COLOMBIANISMOS.forEach(item=>{
+  const filterBar=document.createElement("div");filterBar.className="col-region-tabs";
+  COL_REGIONS.forEach(([regId,regLabel])=>{
+    const count=COLOMBIANISMOS.filter(x=>regId==="all"||x.region===regId||x.region==="all").length;
+    const b=document.createElement("button");b.type="button";
+    b.className="lp-mode-btn col-region-btn"+(colRegionFilter===regId?" active":"");
+    b.textContent=`${regLabel} (${count})`;
+    b.onclick=()=>{colRegionFilter=regId;rV();};
+    filterBar.appendChild(b);
+  });
+  list.appendChild(filterBar);
+  const filtered=COLOMBIANISMOS.filter(item=>colRegionFilter==="all"||item.region===colRegionFilter||item.region==="all");
+  filtered.forEach(item=>{
     const card=document.createElement("div");card.className="col-card";
+    const regKey=item.region||"all";
+    const regBadge=`<span class="col-region-pill reg-${regKey}">${COL_REGION_LABELS[regKey]||"🇨🇴 Colombia"}</span>`;
     card.innerHTML=`<div class="col-card-top">
-      <span class="col-flag">🇨🇴</span>
+      <span class="col-flag">${regKey==="bogota"?"🏔️":regKey==="medellin"?"🌸":regKey==="cali-costa"?"🌴":"🇨🇴"}</span>
       <div class="col-word-wrap"><div class="col-word">${item.word}</div><div class="col-en">${item.en}</div></div>
-      <span class="col-spk">🔊</span></div>
-      <div class="col-usage">${item.usage}<div class="col-example">💬 ${item.example}</div></div>`;
-    if(item.register){const badge=document.createElement("span");badge.className="f-register register-"+registerTone(item);badge.textContent=item.register;const usage=card.querySelector(".col-usage");if(usage){usage.prepend(badge);if(item.registerNote){const note=document.createElement("div");note.className="col-register-note";note.textContent="ⓘ "+item.registerNote;usage.appendChild(note);}}}
-    card.onclick=()=>{markPractice("vocab",item.tts||item.word);speak(item.tts||item.word,0.75);};list.appendChild(card);});
+      <div class="col-top-actions"><span class="col-spk">🔊</span></div></div>
+      <div class="col-usage">${regBadge}${item.usage}<div class="col-example">💬 ${item.example}</div></div>`;
+    if(item.register){const badge=document.createElement("span");badge.className="f-register register-"+registerTone(item);badge.textContent=item.register;const usage=card.querySelector(".col-usage");if(usage){usage.prepend(badge);if(item.registerNote){const rNote=document.createElement("div");rNote.className="col-register-note";rNote.textContent="ⓘ "+item.registerNote;usage.appendChild(rNote);}}}
+    const topAct=card.querySelector(".col-top-actions");
+    if(topAct&&typeof attachStarBtn==="function")attachStarBtn(topAct,item.example||item.word,"Colombianismos");
+    card.onclick=e=>{if(e.target.closest(".star-pin-btn"))return;markPractice("vocab",item.tts||item.word);speak(item.tts||item.word,0.75);};
+    list.appendChild(card);
+  });
 }
 
 function rN(list){
@@ -911,7 +978,28 @@ const PHRASE_EN={
   "⚽ Ver el partido":"Watching the soccer game",
   "🧑‍💼 Oficina — conversación real":"Office — real conversation",
   "🙏 Cortesía colombiana — polite requests":"Colombian politeness — ¿Me regala…? & ¿Será que…?",
-  "☕ Diminutivos y muletillas — sound local":"Diminutives & time-buyers — tintico, ahorita, pues…"
+  "☕ Diminutivos y muletillas — sound local":"Diminutives & time-buyers — tintico, ahorita, pues…",
+  "🛬 Aeropuerto y migración":"Airport, immigration, and baggage claim",
+  "💳 Nequi, datáfono y pagos":"Card payments, one installment, and Nequi",
+  "💈 Peluquería y barbería":"Haircuts, fades, and beard trims",
+  "🩺 Cita médica y urgencias":"Medical appointments, symptoms, and prescriptions",
+  "🏢 Portería, Rappi y apartamento":"Building front desk, Rappi deliveries, and utilities",
+  "🧭 Cuadras, carreras y seguridad":"Colombian street grid, blocks, and neighborhood safety",
+  "🥐 Panadería, café y jugos":"Neighborhood bakery, coffee, and fresh fruit juices",
+  "🌄 Buses, pueblos y paseo de finca":"Bus terminal, highway tolls, and weekend finca trips",
+  "💛 Empatía, reacciones y amistad":"Authentic Colombian empathy, reactions, and friendship",
+  "🔑 Verbos comodín (dar, hacer, poner, echar, quedar)":"High-frequency Colombian wildcard verb chunks",
+  "📱 WhatsApp, audios y citas":"Voice notes, polite requests with colaborar, and appointments",
+  "🔑 Arriendo, Airbnb y servicios del hogar":"Renting, utilities, water heater, washer, and house cleaning",
+  "🚴 Gimnasio, ciclovía y senderos":"Gym sets, Sunday Ciclovía, mountain trails, and altitude",
+  "❤️ Citas, cumplidos y la familia":"Dating, natural compliments, and meeting Colombian parents",
+  "🫓 Almuerzo ejecutivo (corrientazo) y onces":"Weekday lunch specials (sopa, principio, sobremesa) & afternoon coffee",
+  "🏦 Cajero, SIM card y trámites":"ATMs, savings vs. checking, prepaid SIM top-ups, and passport ID",
+  "🎉 Puentes festivos, salsa y rumba":"Long holiday weekends, salsa clubs, aguardiente toasts, and guayabo",
+  "🪤 Trampas y falsos amigos (cancelar, provocar, regalar)":"Colombian false friends: cancelar = pay, provocar = crave, regalar = buy",
+  "🏘️ Estratos, conjuntos cerrados y barrios":"Socioeconomic utility tiers (1–6), gated complexes, and walkable barrios",
+  "🦷 Odontología, óptica y EPS / prepagada":"Dental cleanings, fillings, eyeglasses, and Colombian health plans",
+  "🛂 Migración Colombia, visa y cuenta bancaria":"Tourist extensions, Cédula de Extranjería, notary offices, and bank accounts"
 };
 const DIALOGUE_EN={
   "Saludos formales":"Formal greetings and introductions",
@@ -938,7 +1026,28 @@ const DIALOGUE_EN={
   "Ver el partido":"Watching the soccer match",
   "Oficina: proyecto y retraso":"Office: project progress and delays",
   "Cortesía en una tienda":"Polite ordering at a neighborhood shop",
-  "Ganar tiempo al hablar":"Buying time with muletillas and diminutives"
+  "Ganar tiempo al hablar":"Buying time with muletillas and diminutives",
+  "Aeropuerto y migración":"Passport control, length of stay, and baggage claim",
+  "Pagos con datáfono y Nequi":"Paying by card in one installment and Nequi",
+  "En la barbería":"Asking for a fade, scissor trim, and beard line-up",
+  "Consulta médica y droguería":"Explaining symptoms, allergies, and prescriptions",
+  "Portería y domicilio Rappi":"Talking to the building doorman and receiving Rappi",
+  "Direcciones, cuadras y seguridad":"Colombian street grid, landmarks, and street safety",
+  "Panadería, tinto y jugos naturales":"Ordering warm pandebonos, coffee, and juices in water or milk",
+  "Terminal, peajes y paseo de finca":"Bus tickets, holiday traffic, and rural drop-offs",
+  "Reacciones, empatía y amistad":"Reacting with empathy, celebrating news, and friendship",
+  "Verbos comodín en acción":"Using dar, hacer, poner, echar, tocar, and quedar naturally",
+  "WhatsApp, notas de voz y citas":"Voice notes, asking with colaborar, and confirming plans",
+  "Arriendo, Airbnb, aseo y lavadora":"Apartment check-in, appliances, HOA fee, and cleaning",
+  "Gimnasio, ciclovía, senderos y soroche":"Sharing gym machines, Sunday Ciclovía, and altitude pacing",
+  "Citas, cumplidos y conocer a la familia":"Warm compliments, inviting someone out, and greeting Colombian parents",
+  "Almuerzo ejecutivo, corrientazo y onces":"Ordering sopa, principio, proteína, sobremesa, and afternoon onces",
+  "Cajero automático, SIM card y trámites":"Activating a prepaid SIM, using your passport, and finding safe ATMs",
+  "Puentes festivos, salsa y rumba":"Holiday weekend plans, dancing salsa, and toasting with friends",
+  "Trampas colombianas: cancelar, provocar y qué pena":"Using cancelar (pay), provocar (crave), regalar, and rising ¿Señor? naturally",
+  "Estratos, conjuntos cerrados y barrios":"Evaluating apartment estratos (1–6), gated complexes, and utility costs",
+  "Odontología, óptica y medicina prepagada":"Booking a self-pay dental cleaning, fixing a filling, and optical shops",
+  "Migración Colombia, cédula de extranjería y bancos":"Registering a visa, getting your Cédula de Extranjería, and opening a bank account"
 };
 function phraseEnglishTitle(title){return PHRASE_EN[title]||"Useful phrases";}
 function dialogueEnglishTitle(title){return DIALOGUE_EN[title]||"Practice conversation";}
@@ -970,10 +1079,17 @@ function fraseSectionMeta(sec){
 function phraseCollectionGroup(sec){
   const n=String(sec.section||"").toLowerCase();
   if(/groser|bad word|strong language/.test(n))return {id:"strong",label:"⚠️ Strong language / Entender primero"};
-  if(/direcciones|ubicación|uber|transporte|compras|restaurante|emergencias|ayuda|aclarar|plata|pagos/.test(n))return {id:"survival",label:"🧭 Survival & getting around / Para desenvolverse"};
-  if(/conectores|patrones|marcos|construir|contar historias|pronombres/.test(n))return {id:"build",label:"🧱 Build sentences / Construir frases"};
-  if(/saludo|gusto|conversación diaria|social|planes|teléfono|sientes|familia/.test(n))return {id:"social",label:"🤝 Daily conversation / Conversación diaria"};
+  if(/aeropuerto|migración|visa|bancaria|nequi|datáfono|cajero|sim|trámites|portería|rappi|arriendo|airbnb|hogar|estratos|conjuntos|barrios|direcciones|cuadras|seguridad|panadería|jugos|corrientazo|ejecutivo|onces|buses|finca|peaje|ubicación|uber|transporte|compras|mercado|restaurante|comer fuera|emergencias|ayuda|aclarar|repetir|plata|pagos|médica|urgencias|odontología|óptica|prepagada|sientes|barbería|peluquería|cortesía/.test(n))return {id:"survival",label:"🧭 Survival, Travel & Services / Para desenvolverse"};
+  if(/conectores|patrones|marcos|construir|contar historias|pronombres|acciones|progreso|muletillas|diminutivos|comodín|trampas|falsos amigos/.test(n))return {id:"build",label:"🧱 Sentence Builders & Local Flow / Construir frases"};
+  if(/saludo|gusto|conversación diaria|social|amigos|fiesta|puentes|salsa|rumba|partido|oficina|planes|teléfono|whatsapp|audios|citas|cumplidos|gimnasio|ciclovía|senderos|familia|empatía|reacciones|amistad/.test(n))return {id:"social",label:"🤝 Social, Work & Daily Life / Conversación diaria"};
   return {id:"other",label:"📚 More useful phrases / Más frases"};
+}
+function dialogueSituationGroup(d){
+  const t=String(d.title||"").toLowerCase();
+  if(/uber|aeropuerto|carro|direcciones|cuadras|hotel|transporte|terminal|peajes|finca/.test(t))return {id:"travel",label:"🛬 Travel, Uber & Getting Around",sub:"Airport, Uber rides, Colombian street grids, buses/fincas, and hotels"};
+  if(/restaurante|almuerzo|corrientazo|onces|panadería|jugos|trampas|cancelar|provocar|mercado|tienda|cortesía|pagos|datáfono|nequi|cocina/.test(t))return {id:"food",label:"🍽️ Food, Corrientazo, Trampas & Payments",sub:"Corrientazo lunches, panaderías, false friends (cancelar/provocar), and Nequi"};
+  if(/oficina|trabajo|profesión|cajero|sim|trámites|migración|extranjería|bancos|estratos|conjuntos|odontología|óptica|prepagada|portería|rappi|arriendo|airbnb|lavadora|whatsapp|notas de voz|barbería|farmacia|médica|casa|habitación|baño|teléfono|comunicación|apartamento/.test(t))return {id:"daily",label:"🏠 Daily Life, Estratos, Health & Services",sub:"Migración/banks, estratos/conjuntos, dental/optical, Airbnb, and WhatsApp"};
+  return {id:"social",label:"🇨🇴 Social, Dating, Rumba & Culture",sub:"Dating & family, puentes & salsa, wildcard verbs, gym/ciclovía, and empathy"};
 }
 function resetFraseScroll(){const sc=document.querySelector(".scroll");if(sc)sc.scrollTop=0;}
 function renderFraseMenu(){
@@ -1018,17 +1134,110 @@ function renderFraseMenu(){
   fl.appendChild(viewSwitch);
   const search=document.createElement("input");search.type="search";search.className="content-search";search.placeholder="🔎 Search phrases or conversation lines…";search.setAttribute("aria-label","Search phrases");search.value=fraseSearchTerm;
   const results=document.createElement("div");results.className="search-results";fl.appendChild(search);fl.appendChild(results);
-  const h1=document.createElement("div");h1.className="fr-home-label";h1.textContent="💬 Conversations · practice both sides";
-  const g1=document.createElement("div");g1.className="fr-home-grid";
+  const h1=document.createElement("div");h1.className="fr-home-label";h1.textContent=`💬 Conversations (${PHRASE_DIALOGUES.length}) · grouped by situation`;
+  const g1=document.createElement("div");g1.className="fr-dialogue-groups";
+  const dlgOrder=["travel","food","daily","social"];
+  const dlgMap=new Map();
   PHRASE_DIALOGUES.forEach(d=>{
-    const c=document.createElement("button");c.type="button";c.className="fr-home-card";
-    const lines=[...(d.versions||[]).flatMap(v=>v.lines||[])];
-    c.innerHTML=`<div class="fr-card-title">${d.title}</div><div class="fr-card-sub">${d.en||""}</div><div class="fr-card-meta">${(d.versions||[]).length} tenses · ${phraseProgress(lines)} practiced ›</div>`;
-    const dialogueSub=c.querySelector(".fr-card-sub");if(dialogueSub)dialogueSub.textContent=dialogueEnglishTitle(d.title);
-    c.onclick=()=>renderFraseDialogue(d);
-    g1.appendChild(c);
+    const grp=dialogueSituationGroup(d);
+    if(!dlgMap.has(grp.id))dlgMap.set(grp.id,{meta:grp,items:[]});
+    dlgMap.get(grp.id).items.push(d);
   });
-  const conversationGroup=document.createElement("section");conversationGroup.className="fr-conversation-group";conversationGroup.append(h1,g1);
+  dlgOrder.forEach((gid,gIdx)=>{
+    const entry=dlgMap.get(gid);if(!entry)return;
+    const fold=document.createElement("details");fold.className="lesson-stage fr-dialogue-fold";
+    if(gIdx===0)fold.open=true;
+    fold.innerHTML=`<summary><div class="stage-label"><div class="stage-title">${entry.meta.label} · ${entry.items.length}</div><div class="stage-sub">${entry.meta.sub}</div></div></summary><div class="fr-home-grid fr-fold-grid"></div>`;
+    const grid=fold.querySelector(".fr-fold-grid");
+    entry.items.forEach(d=>{
+      const c=document.createElement("button");c.type="button";c.className="fr-home-card";
+      const lines=[...(d.versions||[]).flatMap(v=>v.lines||[])];
+      c.innerHTML=`<div class="fr-card-title">${d.title}</div><div class="fr-card-sub">${dialogueEnglishTitle(d.title)}</div><div class="fr-card-meta">${(d.versions||[]).length} tenses · ${phraseProgress(lines)} practiced ›</div>`;
+      c.onclick=()=>renderFraseDialogue(d);
+      grid.appendChild(c);
+    });
+    g1.appendChild(fold);
+  });
+  const conversationGroup=document.createElement("section");conversationGroup.className="fr-conversation-group";
+  if(typeof BRANCHING_ROLEPLAYS!=="undefined"&&BRANCHING_ROLEPLAYS.length){
+    let rpScenarioIdx=0,rpTurnIdx=0,rpPickedOpt=null;
+    const rpCard=document.createElement("section");rpCard.className="bridge-trainer-card branching-roleplay-card";
+    const renderRp=()=>{
+      const scen=BRANCHING_ROLEPLAYS[rpScenarioIdx%BRANCHING_ROLEPLAYS.length];
+      const turns=scen.turns||[];
+      const turn=turns[rpTurnIdx%turns.length]||{};
+      rpCard.innerHTML=`<div class="bridge-kicker">🎭 SIMULADOR DE CONVERSACIÓN · INTERACTIVE BRANCHING ROLEPLAY (NT HEAVY)</div>
+        <div class="bridge-context">Choose a real-life Colombian scenario, listen to the speaker, and pick how you want to reply:</div>
+        <div class="reg-tabs-row rp-scenario-tabs"></div>
+        <div class="comodin-sub">${escapeVocabHtml(scen.title)} — ${escapeVocabHtml(scen.sub||"")} · <strong>Turn ${rpTurnIdx+1} of ${turns.length}</strong></div>
+        <div class="rp-npc-box" title="Tap to hear speaker">
+          <div class="rp-npc-label">🗣️ Colombian speaker says to you:</div>
+          <div class="rp-npc-es">${escapeVocabHtml(turn.npcEs||"")} 🔊</div>
+          <div class="rp-npc-en">${escapeVocabHtml(turn.npcEn||"")}</div>
+        </div>
+        <div class="rp-options-label">👇 Choose your reply style (tap to speak & see how they respond):</div>
+        <div class="rp-options-grid"></div>
+        <div class="rp-outcome-slot"></div>`;
+      rpCard.querySelector(".rp-npc-box").onclick=()=>speak(turn.npcEs||"",0.75);
+      const tRow=rpCard.querySelector(".rp-scenario-tabs");
+      BRANCHING_ROLEPLAYS.forEach((sc,idx)=>{
+        const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(idx===rpScenarioIdx?" active":"");
+        b.textContent=sc.title;
+        b.onclick=()=>{
+          rpScenarioIdx=idx;rpTurnIdx=0;rpPickedOpt=null;
+          renderRp();
+          if(sc.turns&&sc.turns[0])speak(sc.turns[0].npcEs,0.75);
+        };
+        tRow.appendChild(b);
+      });
+      const optGrid=rpCard.querySelector(".rp-options-grid");
+      (turn.options||[]).forEach((opt,oIdx)=>{
+        const ob=document.createElement("button");ob.type="button";ob.className="rp-option-btn"+(rpPickedOpt===oIdx?" selected":"");
+        ob.innerHTML=`<span class="rp-opt-style">${escapeVocabHtml(opt.style)}</span>
+          <strong class="rp-opt-es">🗣️ ${escapeVocabHtml(opt.es)} 🔊</strong>
+          <small class="rp-opt-en">${escapeVocabHtml(opt.en)}</small>`;
+        ob.onclick=()=>{
+          rpPickedOpt=oIdx;
+          markPractice("phrases",opt.es);
+          /* Synchronous speak inside tap handler for iPhone Safari */
+          speak(opt.es,0.75);
+          renderRp();
+        };
+        optGrid.appendChild(ob);
+      });
+      if(rpPickedOpt!==null&&turn.options&&turn.options[rpPickedOpt]){
+        const chosen=turn.options[rpPickedOpt];
+        const outSlot=rpCard.querySelector(".rp-outcome-slot");
+        outSlot.innerHTML=`<div class="rp-outcome-box">
+          <div class="rp-reply-box" title="Tap to hear their response">
+            <span class="rp-reply-tag">💬 They respond to your choice:</span>
+            <strong>${escapeVocabHtml(chosen.replyEs)} 🔊</strong>
+            <small>${escapeVocabHtml(chosen.replyEn)}</small>
+          </div>
+          <div class="tvc-why">💡 <strong>Why this works in Colombia:</strong> ${escapeVocabHtml(chosen.coach)}</div>
+          <div class="bridge-actions rp-nav-actions"></div>
+        </div>`;
+        outSlot.querySelector(".rp-reply-box").onclick=()=>speak(chosen.replyEs,0.75);
+        const navActs=outSlot.querySelector(".rp-nav-actions");
+        const hearReplyBtn=document.createElement("button");hearReplyBtn.type="button";hearReplyBtn.className="lp-nav-btn";hearReplyBtn.textContent="🔊 Hear Their Reply";
+        hearReplyBtn.onclick=()=>speak(chosen.replyEs,0.75);
+        const nextBtn=document.createElement("button");nextBtn.type="button";nextBtn.className="lp-nav-btn primary";
+        if(rpTurnIdx+1<turns.length){
+          nextBtn.textContent=`Next Turn (${rpTurnIdx+2}/${turns.length}) →`;
+          nextBtn.onclick=()=>{rpTurnIdx++;rpPickedOpt=null;renderRp();if(turns[rpTurnIdx])speak(turns[rpTurnIdx].npcEs,0.75);};
+        }else{
+          nextBtn.textContent="Next Scenario →";
+          nextBtn.onclick=()=>{rpScenarioIdx=(rpScenarioIdx+1)%BRANCHING_ROLEPLAYS.length;rpTurnIdx=0;rpPickedOpt=null;renderRp();const nx=BRANCHING_ROLEPLAYS[rpScenarioIdx];if(nx&&nx.turns&&nx.turns[0])speak(nx.turns[0].npcEs,0.75);};
+        }
+        navActs.append(hearReplyBtn,nextBtn);
+        if(typeof attachStarBtn==="function")attachStarBtn(navActs,chosen.es,scen.title);
+        attachMic(navActs,chosen.es,"phrases");
+      }
+    };
+    renderRp();
+    conversationGroup.appendChild(rpCard);
+  }
+  conversationGroup.append(h1,g1);
   const h2=document.createElement("div");h2.className="fr-home-label";h2.textContent="📋 Phrase collections · tap to open";
   const g2=document.createElement("div");g2.className="fr-collections-groups";
   const groupOrder=["survival","social","build","strong","other"];
@@ -1113,7 +1322,8 @@ function renderFraseSection(idx){
     const card=document.createElement("div");card.className="frase-card";
     const register=item.register?`<span class="f-register">${escapeVocabHtml(item.register)}</span>`:"";
     card.innerHTML=`<div class="frase-txt"><div class="f-es">${item.es}</div><div class="f-en">${item.en}</div>${register}</div><span class="f-spk">🔊</span>`;
-    card.onclick=()=>{markPractice("phrases",item.es);speak(item.es,0.75);};
+    card.onclick=e=>{if(e.target.closest(".star-pin-btn"))return;markPractice("phrases",item.es);speak(item.es,0.75);};
+    if(typeof attachStarBtn==="function")attachStarBtn(card,item.es,sec.section||"Frases");
     attachMic(card,item.es);
     wrap.appendChild(card);
   });
@@ -1161,47 +1371,171 @@ function renderFraseDialogue(dialogue,tense){
   }
   /* Speaking practice: hide one side, say the line out loud, tap to reveal */
   const bubbles=[];
+  let activeRole=null,stepIdx=-1,waitingReveal=false;
   const pbar=document.createElement("div");pbar.className="practice-bar";
   const pInfo=document.createElement("div");pInfo.className="practice-info";
-  pInfo.innerHTML="<strong>🗣️ Speaking ladder</strong><small>Listen → hide one side → say it → shadow the model</small>";
+  pInfo.innerHTML="<strong>🗣️ Roleplay & Shadowing</strong><small>Hide a role to speak from memory, or step through turn by turn</small>";
   const pBtns=document.createElement("div");pBtns.className="practice-btns";
+  const applyRole=(who)=>{
+    activeRole=who;
+    pBtns.querySelectorAll(".role-btn").forEach(x=>x.classList.toggle("active",x.dataset.who===String(who)));
+    bubbles.forEach(bb=>bb.el.classList.toggle("dlg-hidden",who!==null&&bb.who===who));
+  };
   const mkPB=(label,who)=>{
-    const b=document.createElement("button");b.type="button";b.className="practice-btn"+(who===null?" active":"");b.textContent=label;
-    b.onclick=()=>{
-      pBtns.querySelectorAll(".practice-btn").forEach(x=>x.classList.remove("active"));
-      b.classList.add("active");
-      bubbles.forEach(bb=>bb.el.classList.toggle("dlg-hidden",who!==null&&bb.who===who));
-    };
+    const b=document.createElement("button");b.type="button";b.className="practice-btn role-btn"+(who===null?" active":"");b.dataset.who=String(who);b.textContent=label;
+    b.onclick=()=>applyRole(who);
     return b;
   };
   pBtns.appendChild(mkPB("👀 Show all",null));
-  pBtns.appendChild(mkPB("Practice A","A"));
-  pBtns.appendChild(mkPB("Practice B","B"));
+  pBtns.appendChild(mkPB("🎭 You are A","A"));
+  pBtns.appendChild(mkPB("🎭 You are B","B"));
+  const swapBtn=document.createElement("button");swapBtn.type="button";swapBtn.className="practice-btn";swapBtn.textContent="🔄 Swap A↔B";
+  swapBtn.onclick=()=>applyRole(activeRole==="A"?"B":"A");
+  pBtns.appendChild(swapBtn);
+  const shadowAllBtn=document.createElement("button");shadowAllBtn.type="button";shadowAllBtn.className="practice-btn shadow-all-btn";shadowAllBtn.textContent="🗣️ Shadow All";shadowAllBtn.title="Listen to every line spoken twice with a pause to repeat out loud";
+  shadowAllBtn.onclick=()=>{
+    const verNow=versions.find(v=>v.tense===active)||versions[0];
+    if(!verNow||!verNow.lines||!verNow.lines.length)return;
+    const script=verNow.lines.map(l=>`${l.tts} ... ... ${l.tts}`).join(" ... ");
+    verNow.lines.forEach(l=>markPractice("phrases",l.es));
+    /* Synchronous speak inside tap handler for iPhone Safari */
+    speak(script,0.72);
+  };
+  pBtns.appendChild(shadowAllBtn);
   pbar.appendChild(pInfo);pbar.appendChild(pBtns);
   fl.appendChild(pbar);
   const box=document.createElement("div");
   box.className="dialogue phrase-dialogue";
-  box.innerHTML=`<div class="dlg-title">Tap any line to hear it</div>`;
+  const stepper=document.createElement("div");stepper.className="dlg-stepper-bar";
+  const stepStatus=document.createElement("span");stepStatus.className="dlg-stepper-status";stepStatus.textContent="Tap ▶️ Next Turn to step through the conversation out loud";
+  const stepBtn=document.createElement("button");stepBtn.type="button";stepBtn.className="lp-nav-btn primary dlg-stepper-btn";stepBtn.textContent="▶️ Start Turn 1";
+  stepper.append(stepStatus,stepBtn);
+  box.appendChild(stepper);
   const langBtn=document.createElement("button");langBtn.type="button";langBtn.className="practice-btn language-toggle";langBtn.textContent="🇺🇸 Hide English";langBtn.onclick=()=>{const hidden=box.classList.toggle("dlg-no-english");langBtn.textContent=hidden?"🇺🇸 Show English":"🇺🇸 Hide English";};pBtns.appendChild(langBtn);
+  const blindBtn=document.createElement("button");blindBtn.type="button";blindBtn.className="practice-btn blind-listen-btn";blindBtn.textContent="🙈 Solo Oído";blindBtn.title="Blur text so you train your ear first: 1st tap plays audio, 2nd tap reveals text";
+  blindBtn.onclick=()=>{
+    const on=box.classList.toggle("dlg-blind-listen");
+    blindBtn.classList.toggle("active",on);
+    blindBtn.textContent=on?"👂 Solo Oído: ON":"🙈 Solo Oído";
+    bubbles.forEach(b=>{b.el.classList.remove("blind-heard","blind-revealed");});
+  };
+  pBtns.appendChild(blindBtn);
+  if(typeof CONVERSATION_CURVEBALLS!=="undefined"&&CONVERSATION_CURVEBALLS.length){
+    const sitCat=dialogueSituationGroup(dialogue).id;
+    const catPool=CONVERSATION_CURVEBALLS.filter(x=>x.cat===sitCat);
+    const cbPool=catPool.length?catPool:CONVERSATION_CURVEBALLS;
+    let cbIdx=0;
+    const cbPanel=document.createElement("section");cbPanel.className="curveball-panel";cbPanel.hidden=true;
+    const renderCb=(autoSpeak)=>{
+      const cb=cbPool[cbIdx%cbPool.length];
+      cbPanel.innerHTML=`<div class="curveball-head"><span class="curveball-kicker">⚡ IMPREVISTO · REAL-WORLD CURVEBALL</span><button type="button" class="curveball-close" aria-label="Close curveball">✕</button></div>
+        <div class="curveball-title">${escapeVocabHtml(cb.title)}</div>
+        <div class="curveball-prompt-box" title="Tap to hear curveball">
+          <div class="curveball-prompt-label">🗣️ They unexpectedly say:</div>
+          <div class="curveball-prompt-es">${escapeVocabHtml(cb.curveballEs)} 🔊</div>
+          <div class="curveball-prompt-en">${escapeVocabHtml(cb.curveballEn)}</div>
+        </div>
+        <div class="curveball-repairs-label">🛠️ Choose how you pivot & respond out loud:</div>
+        <div class="curveball-repairs">
+          <div class="curveball-option">
+            <span class="curveball-opt-tag">Option 1 · Direct Repair</span>
+            <div class="curveball-opt-es">${escapeVocabHtml(cb.repairEs)}</div>
+            <div class="curveball-opt-en">${escapeVocabHtml(cb.repairEn)}</div>
+            <div class="curveball-opt-actions" data-opt="1"></div>
+          </div>
+          <div class="curveball-option">
+            <span class="curveball-opt-tag">Option 2 · Backup Pivot</span>
+            <div class="curveball-opt-es">${escapeVocabHtml(cb.backupEs)}</div>
+            <div class="curveball-opt-en">${escapeVocabHtml(cb.backupEn)}</div>
+            <div class="curveball-opt-actions" data-opt="2"></div>
+          </div>
+        </div>
+        <div class="curveball-tip">💡 ${escapeVocabHtml(cb.tip)}</div>
+        <div class="curveball-footer"></div>`;
+      cbPanel.querySelector(".curveball-close").onclick=()=>{cbPanel.hidden=true;cbBtn.classList.remove("active");};
+      const pBox=cbPanel.querySelector(".curveball-prompt-box");
+      pBox.onclick=()=>speak(cb.curveballEs,0.75);
+      [[1,cb.repairEs],[2,cb.backupEs]].forEach(([num,txt])=>{
+        const act=cbPanel.querySelector(`.curveball-opt-actions[data-opt="${num}"]`);
+        const hBtn=document.createElement("button");hBtn.type="button";hBtn.className="warmup-btn";hBtn.textContent="🔊 Speak";
+        hBtn.onclick=e=>{e.stopPropagation();markPractice("phrases",txt);speak(txt,0.75);};
+        act.appendChild(hBtn);
+        if(typeof attachStarBtn==="function")attachStarBtn(act,txt,"Imprevisto");
+        attachMic(act,txt,"phrases");
+      });
+      const foot=cbPanel.querySelector(".curveball-footer");
+      const nextCb=document.createElement("button");nextCb.type="button";nextCb.className="lp-nav-btn primary";nextCb.textContent="🎲 Otro imprevisto (Next curveball) →";
+      nextCb.onclick=()=>{cbIdx=(cbIdx+1)%cbPool.length;renderCb(true);};
+      foot.appendChild(nextCb);
+      if(autoSpeak)speak(cb.curveballEs,0.75);
+    };
+    const cbBtn=document.createElement("button");cbBtn.type="button";cbBtn.className="practice-btn curveball-trigger-btn";cbBtn.textContent="⚡ Imprevisto";cbBtn.title="Throw a realistic Colombian curveball to practice unscripted recovery";
+    cbBtn.onclick=()=>{
+      const willOpen=cbPanel.hidden;
+      cbPanel.hidden=!willOpen;
+      cbBtn.classList.toggle("active",willOpen);
+      if(willOpen)renderCb(true);
+    };
+    pBtns.appendChild(cbBtn);
+    box.insertBefore(cbPanel,stepper);
+  }
   const version=versions.find(v=>v.tense===active)||versions[0];
   if(version){
-    version.lines.forEach(line=>{
+    version.lines.forEach((line,lIdx)=>{
       const row=document.createElement("div");
       row.className="dlg-line"+(line.who==="B"?" right":"");
       row.innerHTML=`<div class="dlg-avatar" style="background:${line.who==="A"?"rgba(74,168,160,0.2)":"rgba(167,139,250,0.2)"}">${line.who}</div><div class="dlg-bubble"><div class="dlg-es">${line.es}</div><div class="dlg-en">${line.en}</div></div>`;
       const bub=row.querySelector(".dlg-bubble");
-      bubbles.push({who:line.who,el:bub});
+      bubbles.push({who:line.who,el:bub,row,line,idx:lIdx});
       const shadow=document.createElement("button");shadow.type="button";shadow.className="dlg-shadow";shadow.textContent="🗣️ Shadow";shadow.title="Listen, then record yourself";
       shadow.onclick=e=>{e.stopPropagation();speak(line.tts,0.72,()=>setTimeout(()=>openMicPanel(line.tts),180));};
       bub.appendChild(shadow);
-       bub.onclick=()=>{
-         if(bub.classList.contains("dlg-hidden"))bub.classList.remove("dlg-hidden");
-         markPractice("phrases",line.es);
-         speak(line.tts,0.75);
+      bub.onclick=e=>{
+        if(e.target.closest(".star-pin-btn"))return;
+        if(bub.classList.contains("dlg-hidden"))bub.classList.remove("dlg-hidden");
+        if(box.classList.contains("dlg-blind-listen")){
+          if(!bub.classList.contains("blind-heard"))bub.classList.add("blind-heard");
+          else bub.classList.add("blind-revealed");
+        }
+        markPractice("phrases",line.es);
+        speak(line.tts,0.75);
       };
+      if(typeof attachStarBtn==="function")attachStarBtn(row,line.es,dialogue.title);
       attachMic(row,line.tts);
       box.appendChild(row);
     });
+    stepBtn.onclick=()=>{
+      if(!bubbles.length)return;
+      if(waitingReveal&&stepIdx>=0&&stepIdx<bubbles.length){
+        const cur=bubbles[stepIdx];
+        cur.el.classList.remove("dlg-hidden");
+        markPractice("phrases",cur.line.es);
+        /* Synchronous speak inside click handler for iPhone Safari */
+        speak(cur.line.tts,0.75);
+        waitingReveal=false;
+        const isLast=stepIdx>=bubbles.length-1;
+        stepStatus.textContent=`Turn ${stepIdx+1}/${bubbles.length} (${cur.who}) · Repeat out loud!`;
+        stepBtn.textContent=isLast?"↻ Restart Turns":`▶️ Next Turn (${stepIdx+2}/${bubbles.length})`;
+        return;
+      }
+      stepIdx=(stepIdx+1)%bubbles.length;
+      if(stepIdx===0&&activeRole)applyRole(activeRole);
+      bubbles.forEach((b,i)=>b.row.classList.toggle("active-turn",i===stepIdx));
+      const cur=bubbles[stepIdx];
+      cur.row.scrollIntoView({behavior:"smooth",block:"nearest"});
+      if(cur.el.classList.contains("dlg-hidden")){
+        waitingReveal=true;
+        stepStatus.textContent=`🗣️ Turn ${stepIdx+1}/${bubbles.length}: Your turn (${cur.who})! Say it out loud first.`;
+        stepBtn.textContent="👀 Reveal & Hear My Line";
+      }else{
+        markPractice("phrases",cur.line.es);
+        /* Synchronous speak inside click handler for iPhone Safari */
+        speak(cur.line.tts,0.75);
+        const isLast=stepIdx>=bubbles.length-1;
+        stepStatus.textContent=`🔊 Turn ${stepIdx+1}/${bubbles.length} (Speaker ${cur.who})`;
+        stepBtn.textContent=isLast?"↻ Restart Turns":`▶️ Next Turn (${stepIdx+2}/${bubbles.length})`;
+      }
+    };
   }
   let alt=null;
   if(version&&Array.isArray(version.alternates)&&version.alternates.length){
@@ -1271,7 +1605,28 @@ const LESSONS=[
   {id:"social-salida",icon:"🤝",title:"Salir con amigos",sub:"Propón planes, acepta y cambia la hora",vocab:"gustos",dialogue:"Salir con amigos",quizCat:"social",quizMode:"conversation"},
   {id:"fiesta-gathering",icon:"🎉",title:"En una fiesta",sub:"Saluda, conversa y despídete con naturalidad",vocab:"colombianismos",dialogue:"En una fiesta",quizCat:"fiesta",quizMode:"conversation"},
   {id:"deportes-partido",icon:"⚽",title:"Ver el partido",sub:"Habla del marcador, el equipo y la emoción",vocab:"tv",dialogue:"Ver el partido",quizCat:"deportes",quizMode:"conversation"},
-  {id:"oficina-real",icon:"🧑‍💼",title:"Una conversación en la oficina",sub:"Explica avances, retrasos y próximos pasos",vocab:"oficina",dialogue:"Oficina: proyecto y retraso",quizCat:"oficina-real",quizMode:"conversation"}
+  {id:"oficina-real",icon:"🧑‍💼",title:"Una conversación en la oficina",sub:"Explica avances, retrasos y próximos pasos",vocab:"oficina",dialogue:"Oficina: proyecto y retraso",quizCat:"oficina-real",quizMode:"conversation"},
+  {id:"aeropuerto-migracion",icon:"🛬",title:"Aeropuerto y migración",sub:"Pasaporte, motivo del viaje, estadía y maletas",vocab:"lugares",dialogue:"Aeropuerto y migración",quizCat:"aeropuerto",quizMode:"conversation"},
+  {id:"bancos-pagos",icon:"💳",title:"Nequi, datáfono y pagos",sub:"Paga a una cuota, cuenta de ahorros y propina",vocab:"numeros",dialogue:"Pagos con datáfono y Nequi",quizCat:"bancos-pagos",quizMode:"conversation"},
+  {id:"barberia",icon:"💈",title:"Peluquería y barbería",sub:"Pide un desvanecido, corte con tijera y barba",vocab:"cuerpo",dialogue:"En la barbería",quizCat:"barberia",quizMode:"conversation"},
+  {id:"medico-urgencias",icon:"🩺",title:"Cita médica y síntomas",sub:"Explica qué te duele, alergias y fórmulas médicas",vocab:"cuerpo",dialogue:"Consulta médica y droguería",quizCat:"medico",quizMode:"conversation"},
+  {id:"porteria-domicilios",icon:"🏢",title:"Portería, Rappi y edificio",sub:"Habla con el portero, recibe pedidos y reporta daños",vocab:"casa",dialogue:"Portería y domicilio Rappi",quizCat:"porteria",quizMode:"conversation"},
+  {id:"direcciones-cuadras",icon:"🧭",title:"Cuadras, carreras y seguridad",sub:"Lee direcciones colombianas y camina seguro sin dar papaya",vocab:"direcciones",dialogue:"Direcciones, cuadras y seguridad",quizCat:"direcciones",quizMode:"conversation"},
+  {id:"panaderia-jugos",icon:"🥐",title:"Panadería, café y jugos",sub:"Pide pandebono calientico, perico y jugos en agua o en leche",vocab:"comida",dialogue:"Panadería, tinto y jugos naturales",quizCat:"panaderia",quizMode:"conversation"},
+  {id:"viajes-finca",icon:"🌄",title:"Buses, peajes y finca",sub:"Compra pasajes en la terminal y viaja en puente festivo",vocab:"lugares",dialogue:"Terminal, peajes y paseo de finca",quizCat:"viajes-finca",quizMode:"conversation"},
+  {id:"empatia-reacciones",icon:"💛",title:"Empatía, reacciones y amistad",sub:"Usa ¡Qué embarrada!, ¡Qué pecado! y ¡Qué nota! al conversar",vocab:"colombianismos",dialogue:"Reacciones, empatía y amistad",quizCat:"empatia",quizMode:"conversation"},
+  {id:"verbos-comodin",icon:"🔑",title:"Verbos comodín de Colombia",sub:"Usa dar, hacer, poner, echar, tocar y quedar como un local",vocab:"verbos",dialogue:"Verbos comodín en acción",quizCat:"comodin",quizMode:"conversation"},
+  {id:"whatsapp-audios",icon:"📱",title:"WhatsApp, audios y citas",sub:"Manda notas de voz, usa ¿me colaboras? y confirma citas",vocab:"tecnologia",dialogue:"WhatsApp, notas de voz y citas",quizCat:"whatsapp",quizMode:"conversation"},
+  {id:"arriendo-airbnb",icon:"🔑",title:"Arriendo, Airbnb y aseo",sub:"Pregunta por administración, calentador, lavadora y aseo",vocab:"casa",dialogue:"Arriendo, Airbnb, aseo y lavadora",quizCat:"arriendo",quizMode:"conversation"},
+  {id:"gym-ciclovia",icon:"🚴",title:"Gimnasio, ciclovía y senderos",sub:"Túrnate en el gym, sal a la ciclovía y cuídate del soroche",vocab:"cuerpo",dialogue:"Gimnasio, ciclovía, senderos y soroche",quizCat:"gym-ciclovia",quizMode:"conversation"},
+  {id:"citas-familia",icon:"❤️",title:"Citas, cumplidos y la familia",sub:"Invita a salir, haz cumplidos naturales y saluda a los papás",vocab:"familia",dialogue:"Citas, cumplidos y conocer a la familia",quizCat:"citas-familia",quizMode:"conversation"},
+  {id:"almuerzo-corrientazo",icon:"🫓",title:"El corrientazo y las onces",sub:"Pide sopa, principio, proteína, sobremesa y las onces",vocab:"comida",dialogue:"Almuerzo ejecutivo, corrientazo y onces",quizCat:"corrientazo",quizMode:"conversation"},
+  {id:"cajero-sim-tramites",icon:"🏦",title:"Cajero, SIM card y trámites",sub:"Saca efectivo seguro, activa tu SIM prepago y usa tu pasaporte",vocab:"numeros",dialogue:"Cajero automático, SIM card y trámites",quizCat:"cajero-sim",quizMode:"conversation"},
+  {id:"puentes-rumba-cultura",icon:"🎉",title:"Puentes festivos, salsa y rumba",sub:"Arma plan de puente festivo, baila salsa y brinda con amigos",vocab:"colombianismos",dialogue:"Puentes festivos, salsa y rumba",quizCat:"puentes-rumba",quizMode:"conversation"},
+  {id:"trampas-colombianas",icon:"🪤",title:"Trampas: cancelar, provocar y regalar",sub:"Domina los falsos amigos colombianos sin confundirte",vocab:"comida",dialogue:"Trampas colombianas: cancelar, provocar y qué pena",quizCat:"trampas",quizMode:"conversation"},
+  {id:"estratos-barrios",icon:"🏘️",title:"Estratos, conjuntos y barrios",sub:"Entiende los estratos 1–6, los conjuntos cerrados y los recibos",vocab:"casa",dialogue:"Estratos, conjuntos cerrados y barrios",quizCat:"estratos",quizMode:"conversation"},
+  {id:"odontologia-optica",icon:"🦷",title:"Odontología, óptica y EPS",sub:"Agenda limpieza dental, revisa una calza y pide gafas",vocab:"cuerpo",dialogue:"Odontología, óptica y medicina prepagada",quizCat:"odontologia",quizMode:"conversation"},
+  {id:"migracion-bancos-ce",icon:"🛂",title:"Migración, cédula y bancos",sub:"Registra tu visa, saca tu cédula de extranjería y abre cuenta",vocab:"numeros",dialogue:"Migración Colombia, cédula de extranjería y bancos",quizCat:"migracion-ce",quizMode:"conversation"}
 ];
 LESSONS.forEach(lesson=>{
   if(typeof LESSON_META!=="undefined"&&LESSON_META[lesson.id])Object.assign(lesson,LESSON_META[lesson.id]);
@@ -1289,15 +1644,21 @@ function saveLessons(){try{localStorage.setItem(LESSON_KEY,JSON.stringify(lesson
 const DAY_KEY="esco-days-v1";
 let dayInfo={last:"",streak:0};
 try{dayInfo=Object.assign(dayInfo,JSON.parse(localStorage.getItem(DAY_KEY)||"{}"));}catch(e){}
-(function(){
-  const today=new Date().toISOString().slice(0,10);
-  if(dayInfo.last!==today){
-    const y=new Date(Date.now()-86400000).toISOString().slice(0,10);
-    dayInfo.streak=(dayInfo.last===y)?(dayInfo.streak||0)+1:1;
-    dayInfo.last=today;
-    try{localStorage.setItem(DAY_KEY,JSON.stringify(dayInfo));}catch(e){}
-  }
-})();
+function localDayKey(date=new Date()){
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+}
+function practiceStreak(){
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  return dayInfo.last===localDayKey()||dayInfo.last===localDayKey(yesterday)?Math.max(0,Number(dayInfo.streak)||0):0;
+}
+function recordPracticeDay(){
+  const today=localDayKey();
+  if(dayInfo.last===today)return;
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  dayInfo.streak=dayInfo.last===localDayKey(yesterday)?Math.max(0,Number(dayInfo.streak)||0)+1:1;
+  dayInfo.last=today;
+  try{localStorage.setItem(DAY_KEY,JSON.stringify(dayInfo));}catch(e){}
+}
 
 /* Lesson player state */
 let lpLesson=null,lpSteps=[],lpStep=0,lpScore=0,lpQs=[],lpQi=0,lpAnswered=false,lpPracticed=new Set();
@@ -1938,7 +2299,32 @@ const RR_SERVICE_REFLEXES=[
   {q:"¿Me confirma la dirección?",qEs:"¿Me confirma la dirección?",qEn:"Can you confirm the address?",aEs:"Sí, es la de la calle diez con carrera séptima.",aTts:"Sí, es la de la calle diez con carrera séptima.",aEn:"Yes, it is the one at Calle 10 and Carrera 7.",level:"moderate",service:true},
   {q:"¿Para llevar o para comer aquí?",qEs:"¿Para llevar o para comer aquí?",qEn:"To go or to eat here?",aEs:"Para llevar, por favor.",aTts:"Para llevar, por favor.",aEn:"To go, please.",level:"easy",service:true},
   {q:"¿Tiene sencillo?",qEs:"¿Tiene sencillo?",qEn:"Do you have smaller change?",aEs:"Sí, tengo un billete de diez mil.",aTts:"Sí, tengo un billete de diez mil.",aEn:"Yes, I have a ten-thousand-peso bill.",level:"moderate",service:true},
-  {q:"¿Le ayudo con algo más?",qEs:"¿Le ayudo con algo más?",qEn:"Can I help you with anything else?",aEs:"No, gracias. Eso es todo.",aTts:"No, gracias. Eso es todo.",aEn:"No, thank you. That is all.",level:"easy",service:true}
+  {q:"¿Le ayudo con algo más?",qEs:"¿Le ayudo con algo más?",qEn:"Can I help you with anything else?",aEs:"No, gracias. Eso es todo.",aTts:"No, gracias. Eso es todo.",aEn:"No, thank you. That is all.",level:"easy",service:true},
+  {q:"¿Necesita factura electrónica o consumidor final?",qEs:"¿Necesita factura electrónica o consumidor final?",qEn:"Do you need an electronic tax invoice or final consumer?",aEs:"Consumidor final, por favor.",aTts:"Consumidor final, por favor.",aEn:"Final consumer, please.",level:"easy",service:true},
+  {q:"¿Cuál es el motivo de su viaje a Colombia?",qEs:"¿Cuál es el motivo de su viaje a Colombia?",qEn:"What is the purpose of your trip to Colombia?",aEs:"Vengo por turismo durante dos semanas.",aTts:"Vengo por turismo durante dos semanas.",aEn:"I am coming for tourism for two weeks.",level:"moderate",service:true},
+  {q:"¿Para qué apartamento va?",qEs:"¿Para qué apartamento va?",qEn:"Which apartment are you going to?",aEs:"Buenas, voy para el apartamento quinientos dos.",aTts:"Buenas, voy para el apartamento quinientos dos.",aEn:"Hi, I am going to apartment 502.",level:"easy",service:true},
+  {q:"¿Autoriza la subida del domiciliario?",qEs:"¿Autoriza la subida del domiciliario?",qEn:"Do you authorize the delivery driver to come up?",aEs:"Sí, vecino, déjelo subir por favor.",aTts:"Sí, vecino, déjelo subir por favor.",aEn:"Yes, doorman, please let him come up.",level:"moderate",service:true},
+  {q:"¿Cómo se lo vamos a cortar hoy?",qEs:"¿Cómo se lo vamos a cortar hoy?",qEn:"How are we going to cut your hair today?",aEs:"Bajito a los lados con la dos y arriba con tijera.",aTts:"Bajito a los lados con la dos y arriba con tijera.",aEn:"Low on the sides with a #2 and scissors on top.",level:"moderate",service:true},
+  {q:"¿En efectivo, tarjeta o transferencia por Nequi?",qEs:"¿En efectivo, tarjeta o transferencia por Nequi?",qEn:"In cash, card, or Nequi transfer?",aEs:"Con tarjeta en el datáfono, por favor.",aTts:"Con tarjeta en el datáfono, por favor.",aEn:"By card on the terminal, please.",level:"easy",service:true},
+  {q:"¿Es alérgico a algún medicamento?",qEs:"¿Es alérgico a algún medicamento?",qEn:"Are you allergic to any medication?",aEs:"No, no soy alérgico a ningún medicamento.",aTts:"No, no soy alérgico a ningún medicamento.",aEn:"No, I am not allergic to any medication.",level:"moderate",service:true},
+  {q:"¿Lo quiere con azúcar o sin azúcar?",qEs:"¿Lo quiere con azúcar o sin azúcar?",qEn:"Do you want it with sugar or without sugar?",aEs:"Sin azúcar, por favor.",aTts:"Sin azúcar, por favor.",aEn:"Without sugar, please.",level:"easy",service:true},
+  {q:"¿Con copia del recibo?",qEs:"¿Con copia del recibo?",qEn:"Would you like a copy of the card receipt?",aEs:"No, gracias, sin copia está bien.",aTts:"No, gracias, sin copia está bien.",aEn:"No, thank you, without a copy is fine.",level:"easy",service:true},
+  {q:"¿El jugo lo quiere en agua o en leche?",qEs:"¿El jugo lo quiere en agua o en leche?",qEn:"Do you want the juice in water or in milk?",aEs:"En agua y bajito de azúcar, por favor.",aTts:"En agua y bajito de azúcar, por favor.",aEn:"In water and low on sugar, please.",level:"easy",service:true},
+  {q:"¿Los pandebonos son para comer acá o para llevar?",qEs:"¿Los pandebonos son para comer acá o para llevar?",qEn:"Are the pandebonos to eat here or to go?",aEs:"Para comer acá, calienticos por favor.",aTts:"Para comer acá, calienticos por favor.",aEn:"To eat here, warm please.",level:"easy",service:true},
+  {q:"¿Por cuál plataforma sale el bus?",qEs:"¿Por cuál plataforma sale el bus?",qEn:"From which platform does the bus leave?",aEs:"Sale en diez minutos por la plataforma cuatro.",aTts:"Sale en diez minutos por la plataforma cuatro.",aEn:"It leaves in ten minutes from platform four.",level:"moderate",service:true},
+  {q:"¿Este sector es tranquilo para caminar de noche?",qEs:"¿Este sector es tranquilo para caminar de noche?",qEn:"Is this area safe to walk at night?",aEs:"Sí, por la avenida es tranquilo, pero sin dar papaya.",aTts:"Sí, por la avenida es tranquilo, pero sin dar papaya.",aEn:"Yes, on the avenue it's calm, just don't flash valuables.",level:"moderate",service:true},
+  {q:"¿Te queda bien si nos vemos mañana a las diez?",qEs:"¿Te queda bien si nos vemos mañana a las diez?",qEn:"Does it work for you if we meet tomorrow at ten?",aEs:"¡De una! Así quedamos; me confirmas por WhatsApp.",aTts:"¡De una! Así quedamos; me confirmas por WhatsApp.",aEn:"For sure! It's a plan; confirm with me on WhatsApp.",level:"easy",service:true},
+  {q:"¿Cuántas series te faltan? ¿Nos turnamos en la máquina?",qEs:"¿Cuántas series te faltan? ¿Nos turnamos en la máquina?",qEn:"How many sets do you have left? Shall we take turns on the machine?",aEs:"Claro, hágale, solo me quedan dos series.",aTts:"Claro, hágale, solo me quedan dos series.",aEn:"Sure, go ahead, I only have two sets left.",level:"easy",service:true},
+  {q:"¿En el arriendo están incluidos la administración y los servicios?",qEs:"¿En el arriendo están incluidos la administración y los servicios?",qEn:"Are the HOA fee and utilities included in the rent?",aEs:"Sí, todo está incluido y el calentador es a gas.",aTts:"Sí, todo está incluido y el calentador es a gas.",aEn:"Yes, everything is included and the water heater is gas.",level:"moderate",service:true},
+  {q:"¿Será que me colaboras enviándome la ubicación por acá?",qEs:"¿Será que me colaboras enviándome la ubicación por acá?",qEn:"Could you help me out by sending me the location here?",aEs:"Claro que sí, ya mismo te la mando por WhatsApp.",aTts:"Claro que sí, ya mismo te la mando por WhatsApp.",aEn:"Of course, I'll send it to you on WhatsApp right now.",level:"easy",service:true},
+  {q:"Buenas tardes, ¿con sopa o fruta? ¿Y qué principio le pongo?",qEs:"Buenas tardes, ¿con sopa o fruta? ¿Y qué principio le pongo?",qEn:"Good afternoon, with soup or fruit? And what side shall I put?",aEs:"Con sopa, por favor, y de principio frijoles con tajadas.",aTts:"Con sopa, por favor, y de principio frijoles con tajadas.",aEn:"With soup, please, and beans with plantains for the side.",level:"easy",service:true},
+  {q:"Para registrar la SIM card necesito su número de cédula, por favor.",qEs:"Para registrar la SIM card necesito su número de cédula, por favor.",qEn:"To register the SIM card I need your Colombian ID number, please.",aEs:"Todavía no tengo cédula; ¿le sirve el número de mi pasaporte?",aTts:"Todavía no tengo cédula; ¿le sirve el número de mi pasaporte?",aEn:"I don't have a Colombian ID yet; does my passport number work?",level:"moderate",service:true},
+  {q:"Bienvenido a la casa; te presento a mis papás, don Hernán y doña Clara.",qEs:"Bienvenido a la casa; te presento a mis papás, don Hernán y doña Clara.",qEn:"Welcome to the house; let me introduce my parents, Mr. Hernán and Mrs. Clara.",aEs:"Mucho gusto; me han hablado muchísimo de ustedes. ¡Qué casa tan acogedora!",aTts:"Mucho gusto; me han hablado muchísimo de ustedes. ¡Qué casa tan acogedora!",aEn:"Nice to meet you; I've heard so much about you. What a welcoming home!",level:"easy",service:true},
+  {q:"¡Por fin viernes! ¿Qué planes tienes para este puente festivo?",qEs:"¡Por fin viernes! ¿Qué planes tienes para este puente festivo?",qEn:"Finally Friday! What plans do you have for this holiday weekend?",aEs:"Hoy vamos a una salsoteca y mañana salimos temprano para un pueblito.",aTts:"Hoy vamos a una salsoteca y mañana salimos temprano para un pueblito.",aEn:"Tonight we're going to a salsa club and tomorrow we leave early for a small town.",level:"easy",service:true},
+  {q:"Señorita, ¿en dónde cancelo la cuenta del almuerzo?",qEs:"Señorita, ¿en dónde cancelo la cuenta del almuerzo?",qEn:"Miss, where do I pay the lunch bill?",aEs:"Puede cancelar allá en la caja con tarjeta, efectivo o Nequi.",aTts:"Puede cancelar allá en la caja con tarjeta, efectivo o Nequi.",aEn:"You can pay over at the register by card, cash, or Nequi.",level:"easy",service:true},
+  {q:"¿En qué estrato está ubicado este conjunto cerrado?",qEs:"¿En qué estrato está ubicado este conjunto cerrado?",qEn:"What socioeconomic tier is this gated complex in?",aEs:"Está en estrato cuatro, así que los servicios llegan a buen precio.",aTts:"Está en estrato cuatro, así que los servicios llegan a buen precio.",aEn:"It's in tier 4, so the utilities come at a good price.",level:"moderate",service:true},
+  {q:"Buenos días, ¿viene por medicina prepagada o consulta particular?",qEs:"Buenos días, ¿viene por medicina prepagada o consulta particular?",qEn:"Good morning, are you coming through private insurance or self-pay?",aEs:"Vengo por consulta particular para una limpieza dental.",aTts:"Vengo por consulta particular para una limpieza dental.",aEn:"I'm coming as self-pay for a dental cleaning.",level:"easy",service:true},
+  {q:"Bienvenido a Migración Colombia. ¿Qué trámite viene a realizar hoy?",qEs:"Bienvenido a Migración Colombia. ¿Qué trámite viene a realizar hoy?",qEn:"Welcome to Migración Colombia. What process are you here for today?",aEs:"Vengo a registrar mi visa para sacar la cédula de extranjería.",aTts:"Vengo a registrar mi visa para sacar la cédula de extranjería.",aEn:"I'm here to register my visa to get my foreigner ID card.",level:"moderate",service:true}
 ];
 RR_BANK.push(...RR_SERVICE_REFLEXES);
 let rrTimer=null,rrCurrent=null,rrSession=0,rrPromptToken=0;
@@ -2164,7 +2550,24 @@ const SRS_INTERVALS=[1,3,7,14,30];
 function saveSrs(){try{localStorage.setItem(SRS_KEY,JSON.stringify(srsStore));}catch(e){}}
 function srsDue(key){const card=srsStore[key];return !!card&&(!card.due||card.due<=Date.now());}
 function srsDueCount(){return Object.keys(srsStore).filter(srsDue).length;}
-function recordSrs(key,correct){const card=srsStore[key]||{reps:0,interval:0,lapses:0,due:0};if(correct){card.reps=(card.reps||0)+1;card.interval=Math.min((card.interval||0)+1,SRS_INTERVALS.length);card.due=Date.now()+SRS_INTERVALS[card.interval-1]*86400000;}else{card.lapses=(card.lapses||0)+1;card.reps=0;card.interval=0;card.due=Date.now()+86400000;}srsStore[key]=card;saveSrs();}
+function recordSrs(key,correct){
+  recordPracticeDay();
+  const now=Date.now(),today=localDayKey();
+  const card=srsStore[key]||{reps:0,interval:0,lapses:0,due:0};
+  if(correct){
+    if(card.lastReviewDay!==today&&(!card.due||card.due<=now)){
+      card.reps=(card.reps||0)+1;
+      card.spacedReviews=(card.spacedReviews||0)+1;
+      card.interval=Math.min((card.interval||0)+1,SRS_INTERVALS.length);
+      card.due=now+SRS_INTERVALS[card.interval-1]*86400000;
+      card.lastReviewDay=today;
+    }
+  }else{
+    card.lapses=(card.lapses||0)+1;card.reps=0;card.spacedReviews=0;card.interval=0;
+    card.due=now+86400000;card.lastReviewDay=today;
+  }
+  srsStore[key]=card;saveSrs();
+}
 function srsNextLabel(card){if(!card||!card.interval)return "tomorrow";const days=SRS_INTERVALS[Math.max(0,Math.min(SRS_INTERVALS.length-1,card.interval-1))];return days===1?"tomorrow":`in ${days} days`;}
 
 /* v61: a small, profile-scoped error journal. Quiz misses and speaking
@@ -2182,16 +2585,56 @@ function recordSpeakingError(target,source){
   saveSpeakingErrors();
 }
 function clearSpeakingError(target){const id=speakingErrorId(target);if(!id)return;delete speakingErrors[id];saveSpeakingErrors();}
+function isStarredPhrase(target){const id=speakingErrorId(target);return !!(id&&speakingErrors[id]&&speakingErrors[id].starred);}
+function toggleStarPhrase(target,source,btn){
+  const text=String(target||"").trim(),id=speakingErrorId(text);if(!id)return false;
+  if(speakingErrors[id]&&speakingErrors[id].starred){
+    delete speakingErrors[id];saveSpeakingErrors();
+    if(btn){btn.textContent="☆";btn.classList.remove("starred");btn.title="Pin to speaking practice list";}
+    return false;
+  }
+  const old=speakingErrors[id]||{};
+  speakingErrors[id]={text:old.text||text,source:source||old.source||"starred",count:old.count||1,last:Date.now(),starred:true};
+  saveSpeakingErrors();
+  if(btn){btn.textContent="⭐";btn.classList.add("starred");btn.title="Pinned in your speaking practice list";}
+  return true;
+}
+function attachStarBtn(container,target,source){
+  if(!container||!target)return;
+  const b=document.createElement("button");b.type="button";
+  const on=isStarredPhrase(target);
+  b.className="star-pin-btn"+(on?" starred":"");
+  b.textContent=on?"⭐":"☆";
+  b.title=on?"Pinned in your speaking practice list":"Pin to speaking practice list";
+  b.setAttribute("aria-label","Pin phrase to speaking list");
+  b.onclick=e=>{e.stopPropagation();toggleStarPhrase(target,source,b);};
+  container.appendChild(b);
+}
 function renderSpeakingErrorJournal(root){
-  const entries=Object.values(speakingErrors||{}).sort((a,b)=>(b.last||0)-(a.last||0));
+  const entries=Object.values(speakingErrors||{}).sort((a,b)=>((b.starred?1:0)-(a.starred?1:0))||((b.last||0)-(a.last||0)));
   const card=document.createElement("details");card.className="error-journal-fold";card.dataset.lessonView="today";
   if(entries.length>0)card.open=true;
-  card.innerHTML=`<summary class="error-journal-summary"><span>🧠 <strong>Your speaking practice list</strong> <small>${entries.length?`${entries.length} sentence${entries.length===1?"":"s"} to review`:"Empty — tricky phrases appear here"}</small></span><span class="error-journal-count">${entries.length}</span></summary>`;
+  card.innerHTML=`<summary class="error-journal-summary"><span>⭐ <strong>Saved & tricky phrases</strong> <small>${entries.length?`${entries.length} phrase${entries.length===1?"":"s"} pinned or queued`:"Tap ☆ on any phrase to pin it here"}</small></span><span class="error-journal-count">${entries.length}</span></summary>`;
   const list=document.createElement("div");list.className="error-journal-list";
-  if(!entries.length){const empty=document.createElement("div");empty.className="error-journal-empty";empty.textContent="Your list is empty. Use “Need more practice” after a quiz or speaking frame.";list.appendChild(empty);}
-  entries.slice(0,8).forEach(item=>{
+  if(!entries.length){const empty=document.createElement("div");empty.className="error-journal-empty";empty.textContent="Your list is empty. Tap ☆ on any phrase, Colombianismo, or dialogue line (or miss a quiz question) to save it here.";list.appendChild(empty);}
+  else{
+    let drillIdx=0;
+    const drillBar=document.createElement("div");drillBar.className="error-journal-drill-bar";
+    const drillBtn=document.createElement("button");drillBtn.type="button";drillBtn.className="lp-nav-btn primary error-journal-drill-btn";
+    drillBtn.textContent=`🔊 Speak through my list (1/${Math.min(entries.length,12)})`;
+    drillBtn.onclick=()=>{
+      const pool=entries.slice(0,12);
+      const cur=pool[drillIdx%pool.length];
+      speak(cur.text,0.75);
+      drillIdx=(drillIdx+1)%pool.length;
+      drillBtn.textContent=`🔊 Speak next (${drillIdx+1}/${pool.length}): "${cur.text.slice(0,26)}${cur.text.length>26?"…":""}"`;
+    };
+    drillBar.appendChild(drillBtn);
+    list.appendChild(drillBar);
+  }
+  entries.slice(0,12).forEach(item=>{
     const row=document.createElement("div");row.className="error-journal-row";
-    const copy=document.createElement("div");copy.className="error-journal-copy";copy.innerHTML=`<strong>${escapeVocabHtml(item.text)}</strong><small>${escapeVocabHtml(item.source||"practice")} · ${item.count||1} attempt${(item.count||1)===1?"":"s"}</small>`;
+    const copy=document.createElement("div");copy.className="error-journal-copy";copy.innerHTML=`<strong>${item.starred?"⭐ ":""}${escapeVocabHtml(item.text)}</strong><small>${escapeVocabHtml(item.source||"practice")}${item.starred?" · pinned":` · ${item.count||1} attempt${(item.count||1)===1?"":"s"}`}</small>`;
     copy.style.cursor="pointer";copy.onclick=()=>speak(item.text,0.75);
     const actions=document.createElement("div");actions.className="error-journal-actions";
     const hear=document.createElement("button");hear.type="button";hear.className="error-journal-btn";hear.textContent="🔊";hear.title="Hear sentence";hear.setAttribute("aria-label","Hear sentence");hear.onclick=()=>speak(item.text,0.75);
@@ -2573,6 +3016,10 @@ function quizAcceptedAnswers(q){
   const values=[];const add=value=>{if(value!==undefined&&value!==null&&String(value).trim())values.push(String(value));};
   if(q&&q.answer!==undefined)add(q.answer);else add(q&&q.en);
   (q&&Array.isArray(q.acceptedAnswers)?q.acceptedAnswers:[]).forEach(add);
+  if(q&&!q.kind&&(!q.answer||q.answer===q.en)&&typeof aQ!=="undefined"){
+    const prompt=normalizeQuizPrompt(q.quizPrompt||q.es);
+    aQ.filter(other=>!other.kind&&normalizeQuizPrompt(other.quizPrompt||other.es)===prompt).forEach(other=>add(other.en));
+  }
   return [...new Map(values.map(value=>[normalizeQuizText(value),value])).values()];
 }
 function quizAnswerMatches(q,value){
@@ -2647,7 +3094,7 @@ function syncMissedQueueLauncher(){
   host.innerHTML=`<span>🧠 <strong>${count} missed question${count===1?"":"s"}</strong> waiting for review</span><button type="button" class="quiz-review-launch-btn">Review missed →</button>`;
   const btn=host.querySelector("button");if(btn)btn.onclick=openMissedQueue;
 }
-function openReviewSession(){qMissedOnly=false;showPage("quiz");qMode="mixed";qCat="all";qFocus="all";syncQuizControls();repasoLeft=10;resetQuizRound();nQ();}
+function openReviewSession(){qBlitzPack=null;qMissedOnly=false;showPage("quiz");qMode="mixed";qCat="all";qFocus="all";syncQuizControls();repasoLeft=10;resetQuizRound();nQ();}
 
 function renderLessons(){
   const root=document.getElementById("lesson-list");if(!root)return;
@@ -2673,26 +3120,18 @@ function renderLessons(){
   heroCta.onclick=()=>{if(isResuming)openLessonAt(resLesson,resume.step,resume.qi,resume.score);else openLesson(primaryLesson);};
   hero.appendChild(heroCta);
 
-  const sessionBox=document.createElement("div");sessionBox.className="session-picker";
-  sessionBox.innerHTML="<div class='session-picker-copy'><strong>Or jump straight into a timed session:</strong></div><div class='session-lengths'></div>";
-  const sessionLengths=sessionBox.querySelector(".session-lengths");
-  [["5","⚡ 5 min","Sentence builder"],["10","🎯 10 min","Daily routine"],["20","🎓 20 min","Full lesson"]].forEach(([minutes,label,sub])=>{
-    const b=document.createElement("button");b.type="button";b.className="session-length-btn";b.dataset.minutes=minutes;
-    b.innerHTML=`<strong>${label}</strong><small>${sub}</small>`;
-    b.onclick=()=>{setSessionLength(minutes);startSelectedSession();};
-    sessionLengths.appendChild(b);
-  });
-  hero.appendChild(sessionBox);
   root.appendChild(hero);
-  setSessionLength(sessionLength);
 
-  /* 2. Clean 2x2 Quick Practice Grid */
+  /* 2. Guided 10-Min Daily Speaking Routine directly below Hero */
+  renderRoutineCard(root);
+
+  /* 3. Clean 2x2 Quick Speaking Grid */
   const dueHome=srsDueCount();
   const missedHome=storedMissedQuestionCount();
   const quickGrid=document.createElement("section");quickGrid.className="today-quick-grid";quickGrid.dataset.lessonView="today";
   [
-    ["🎰","Slot-Swapper","Mix & speak sentences",()=>renderFramePractice(false)],
-    ["⚡","Reacción Rápida","Timed audio prompts",()=>{rrSession=0;renderRapida(false);}],
+    ["🎰","Slot-Swapper",`${typeof SLOT_SWAP_MATRICES!=="undefined"?SLOT_SWAP_MATRICES.length:9} sentence builders`,()=>renderFramePractice(false)],
+    ["⚡","Reacción Rápida",`${RR_BANK.length} audio reflexes`,()=>{rrSession=0;renderRapida(false);}],
     ["🔁","Review Cards",dueHome?`${dueHome} due today`:"Spaced repetition",openReviewSession],
     ["🧠","Missed Queue",missedHome?`${missedHome} waiting`:"All clear ✓",()=>{if(missedHome)openMissedQueue();else openReviewSession();}]
   ].forEach(([icon,title,sub,fn])=>{
@@ -2703,8 +3142,41 @@ function renderLessons(){
   });
   root.appendChild(quickGrid);
 
-  /* 3. Guided 10-Min Routine + Compact Stats + Collapsible Practice List */
-  renderRoutineCard(root);
+  /* 3b. Smart Coach Focus Strip ("Enfoque de Hoy · 60s Warm-Up") */
+  const focusStrip=document.createElement("section");focusStrip.className="coach-focus-strip";focusStrip.dataset.lessonView="today";
+  const savedEntries=Object.values(speakingErrors||{}).sort((a,b)=>((b.starred?1:0)-(a.starred?1:0))||((b.last||0)-(a.last||0)));
+  const fallbackCoach=[
+    {text:"Veci, ¿me regala un pandebono calientico y un perico?",source:"🥐 Panadería"},
+    {text:"Queda en la carrera séptima con calle setenta y dos.",source:"🧭 Direcciones"},
+    {text:"¡No me digas! ¡Uy, qué embarrada contigo!",source:"💛 Empatía"},
+    {text:"Con tarjeta de crédito, a una sola cuota, por favor.",source:"💳 Pagos"},
+    {text:"¿El jugo de lulo me lo da en agua y bajito de azúcar?",source:"🍹 Jugos"}
+  ];
+  const dayOff=frameDayNumber()%fallbackCoach.length;
+  const focusPicks=savedEntries.slice(0,3);
+  for(let i=0;focusPicks.length<3&&i<fallbackCoach.length;i++){
+    const cand=fallbackCoach[(dayOff+i)%fallbackCoach.length];
+    if(!focusPicks.some(x=>x.text===cand.text))focusPicks.push(cand);
+  }
+  let coachPlayIdx=0;
+  focusStrip.innerHTML=`<div class="coach-focus-head"><div><span class="coach-focus-kicker">🎯 ENFOQUE DE HOY · 60s WARM-UP</span><strong>Say these 3 expressions out loud right now</strong></div><button type="button" class="coach-focus-playall">🔊 Play 1/3</button></div><div class="coach-focus-chips"></div>`;
+  const playAllBtn=focusStrip.querySelector(".coach-focus-playall");
+  playAllBtn.onclick=()=>{
+    const cur=focusPicks[coachPlayIdx%focusPicks.length];
+    speak(cur.text,0.75);
+    coachPlayIdx=(coachPlayIdx+1)%focusPicks.length;
+    playAllBtn.textContent=`🔊 Next (${coachPlayIdx+1}/${focusPicks.length})`;
+  };
+  const chipsWrap=focusStrip.querySelector(".coach-focus-chips");
+  focusPicks.forEach(item=>{
+    const chip=document.createElement("button");chip.type="button";chip.className="coach-focus-chip";
+    chip.innerHTML=`<span class="coach-chip-tag">${item.starred?"⭐ Pinned":escapeVocabHtml(item.source||"Coach pick")}</span><strong>${escapeVocabHtml(item.text)}</strong><span class="coach-chip-spk">🔊</span>`;
+    chip.onclick=()=>{markPractice("phrases",item.text);speak(item.text,0.75);};
+    chipsWrap.appendChild(chip);
+  });
+  root.appendChild(focusStrip);
+
+  /* 4. Compact Stats + Collapsible Practice List */
   renderProgressDashboard(root,done);
   renderSpeakingErrorJournal(root);
   /* Daily practice — one compact row (v22) */
@@ -2735,26 +3207,40 @@ function renderLessons(){
 
   /* Lessons grouped into a speaking-first progression */
   const LESSON_STAGES=[
-    {name:"🌱 Stage 1 · Start Here",sub:"Greetings, Colombian politeness, numbers, and repairing misunderstandings.",ids:["presentate","cortesia-colombiana","plata","survival-communication","casa","gustos"]},
-    {name:"🧭 Stage 2 · Travel and Survival",sub:"Uber, buildings, directions, hotels, food, shopping, Colombian counter reflexes, repair, and the pharmacy.",ids:["uber-ride","uber-completo","hotel-checkin","calle","direcciones","cocina","restaurante-real","mercado-negociar","commands-repair","farmacia"]},
-    {name:"🏠 Stage 3 · Daily Life",sub:"Work, office, phone calls, feelings, activities, and everyday routines.",ids:["trabajo","oficina-real","daily-repair","planes","gerundios-actividades","sentirse"]},
+    {name:"🌱 Stage 1 · Start Here",sub:"Greetings, Colombian politeness, false-friend traps (cancelar/provocar), numbers, and repairing misunderstandings.",ids:["presentate","cortesia-colombiana","trampas-colombianas","plata","survival-communication","casa","gustos"]},
+    {name:"🧭 Stage 2 · Travel and Survival",sub:"Airport, Uber, Colombian street grid & safety, corrientazo lunches, panaderías & jugos, hotels, Nequi, restaurants, markets, dental/optical, and medical care.",ids:["aeropuerto-migracion","uber-ride","uber-completo","hotel-checkin","calle","direcciones","direcciones-cuadras","bancos-pagos","panaderia-jugos","almuerzo-corrientazo","cocina","restaurante-real","mercado-negociar","commands-repair","farmacia","medico-urgencias","odontologia-optica"]},
+    {name:"🏠 Stage 3 · Daily Life",sub:"Migración & Cédula de Extranjería, ATMs & SIM cards, estratos & conjuntos, Airbnb, WhatsApp, portería, office, barbershop, and finca trips.",ids:["trabajo","oficina-real","cajero-sim-tramites","migracion-bancos-ce","porteria-domicilios","arriendo-airbnb","estratos-barrios","whatsapp-audios","barberia","viajes-finca","daily-repair","planes","gerundios-actividades","sentirse"]},
     {name:"🧱 Stage 4 · Build Sentences",sub:"Present, future, past, contrast, perfect tenses, conditional, action chunks, connectors, and pronouns.",ids:["sentence-structure","action-chunks","connectors-v36","function-words","gram-presente","gram-futuro","gram-pasado","gram-pasado-historia","gram-pasado-contraste","gram-perfecto","gram-condicional","gram-pasado-perfecto","gram-futuro-perfecto","gram-subjuntivo","gram-necesidades","gram-conectores","gram-pronombres"]},
-    {name:"🇨🇴 Stage 5 · Speak More Naturally",sub:"Colombian everyday expressions, diminutives, muletillas, social plans, parties, sports, and register.",ids:["colombia","muletillas-diminutivos","social-colombia-v36","social-salida","fiesta-gathering","deportes-partido","gram-groserias"]},
+    {name:"🇨🇴 Stage 5 · Speak More Naturally",sub:"Colombian wildcard verbs, dating & meeting family, puentes & salsa, empathy & reactions, diminutives, gym & ciclovía.",ids:["colombia","verbos-comodin","citas-familia","puentes-rumba-cultura","empatia-reacciones","muletillas-diminutivos","social-colombia-v36","gym-ciclovia","social-salida","fiesta-gathering","deportes-partido","gram-groserias"]},
     {name:"🎯 Stage 6 · Conversation Challenge",sub:"Read aloud, react quickly, and complete real speaking missions.",ids:["conversation-challenge"]}
   ];
-  const tenseRoadmap=document.createElement("section");tenseRoadmap.className="tense-roadmap";tenseRoadmap.dataset.lessonView="path";
-  tenseRoadmap.innerHTML="<div class='tense-roadmap-kicker'>🧭 SPEAKING TENSE ROADMAP</div><div class='tense-roadmap-title'>Build time in layers</div><p>Learn the high-frequency patterns first, then add detail to your stories. The advanced forms are for recognition before production.</p><div class='tense-roadmap-grid'></div>";
+  const roadmap=lpEl("lesson-roadmap");
+  roadmap.dataset.lessonView="path";
+  const pathSearch=document.createElement("input");pathSearch.type="search";pathSearch.className="content-search lesson-path-search";pathSearch.placeholder=`🔎 Search ${LESSONS.length} lessons (e.g. Uber, Nequi, pasado, barbería…)`;pathSearch.setAttribute("aria-label","Search lessons");
+  roadmap.appendChild(pathSearch);
+  const roadmapRow=lpEl("lesson-roadmap-row");
+  LESSON_STAGES.forEach((stage,i)=>{const b=document.createElement("button");b.type="button";b.className="lesson-roadmap-btn";b.textContent=stage.name.replace(/^.*?Stage /,"Stage ");b.onclick=()=>{const target=document.getElementById("lesson-stage-"+i);if(target){target.open=true;target.scrollIntoView({behavior:"smooth",block:"start"});}};roadmapRow.appendChild(b);});
+  roadmap.appendChild(roadmapRow);root.appendChild(roadmap);
+  pathSearch.oninput=()=>{
+    const q=pathSearch.value.trim().toLowerCase();
+    root.querySelectorAll(".lesson-stage").forEach(st=>{
+      let matchesInStage=0;
+      st.querySelectorAll(".lesson-card").forEach(card=>{
+        const hit=!q||card.textContent.toLowerCase().includes(q);
+        card.style.display=hit?"":"none";
+        if(hit)matchesInStage++;
+      });
+      st.style.display=(!q||matchesInStage>0)?"":"none";
+      if(q&&matchesInStage>0)st.open=true;
+    });
+  };
+  const tenseRoadmap=document.createElement("details");tenseRoadmap.className="tense-roadmap tense-roadmap-fold";tenseRoadmap.dataset.lessonView="path";
+  tenseRoadmap.innerHTML="<summary class='tense-roadmap-summary'><span>🧭 <strong>Speaking Tense Roadmap</strong> <small>8 layers from Presente to Future Perfect</small></span><span class='tense-roadmap-chev'>⌄</span></summary><div class='tense-roadmap-body'><p>Learn the high-frequency patterns first, then add detail to your stories. The advanced forms are for recognition before production.</p><div class='tense-roadmap-grid'></div></div>";
   const tenseTargets=[
     ["Presente","Hablo / tengo","gram-presente","Core now"],["Near future","Voy a hacer","gram-futuro","Easy next step"],["Completed past","Fui / hice","gram-pasado","Tell what happened"],["Past contrast","Fui vs. iba","gram-pasado-contraste","Story detail"],["Present perfect","He hecho","gram-perfecto","Connected to now"],["Conditional","Me gustaría","gram-condicional","Polite and possible"],["Past perfect","Había hecho","gram-pasado-perfecto","Earlier past"],["Future perfect","Habré hecho","gram-futuro-perfecto","Advanced recognition"]
   ];
   const tenseGrid=tenseRoadmap.querySelector(".tense-roadmap-grid");tenseTargets.forEach(([label,pattern,id,sub],i)=>{const b=document.createElement("button");b.type="button";b.className="tense-roadmap-item";b.innerHTML=`<span class='tense-roadmap-number'>${i+1}</span><span><strong>${label}</strong><small>${pattern} · ${sub}</small></span><span>›</span>`;b.onclick=()=>{const lesson=LESSONS.find(l=>l.id===id);if(lesson)openLesson(lesson);else{showPage("gram");showGram(id);}};tenseGrid.appendChild(b);});
   root.appendChild(tenseRoadmap);
-  const roadmap=lpEl("lesson-roadmap");
-  roadmap.dataset.lessonView="path";
-  roadmap.appendChild(lpEl("lesson-roadmap-title","🧭 Recommended path · browse any stage anytime"));
-  const roadmapRow=lpEl("lesson-roadmap-row");
-  LESSON_STAGES.forEach((stage,i)=>{const b=document.createElement("button");b.type="button";b.className="lesson-roadmap-btn";b.textContent=stage.name.replace(/^.*?Stage /,"Stage ");b.onclick=()=>{const target=document.getElementById("lesson-stage-"+i);if(target){target.open=true;target.scrollIntoView({behavior:"smooth",block:"start"});}};roadmapRow.appendChild(b);});
-  roadmap.appendChild(roadmapRow);root.appendChild(roadmap);
   let lessonNum=0;
   LESSON_STAGES.forEach((stage,stageIndex)=>{
     const stageLessons=stage.ids.map(id=>LESSONS.find(l=>l.id===id)).filter(Boolean);
@@ -2770,7 +3256,17 @@ function renderLessons(){
       lessonNum++;
       const recommended=nextLesson&&nextLesson.id===lesson.id;
       const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"")+(recommended?" recommended":"");card.dataset.lessonView="path";
-      card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div><div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
+      card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div><div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div><div class="lesson-deeplinks"></div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
+      const dlRow=card.querySelector(".lesson-deeplinks");
+      [
+        ["💬 Diálogo",()=>{showPage("frases");const d=lessonDialogue(lesson);if(d){fraseReturnToLessons=true;renderFraseDialogue(d);}}],
+        ["📚 Vocab",()=>{showPage("vocab");if(typeof sCat==="function")sCat(lesson.vocab);}],
+        ["⚡ Quiz",()=>{showPage("quiz");qBlitzPack=null;qMissedOnly=false;qCat=lesson.quizCat||"all";qMode=lesson.quizMode||"mixed";qFocus=lesson.quizFocus||"all";repasoLeft=0;resetQuizRound();syncQuizControls();nQ();}]
+      ].forEach(([lbl,fn])=>{
+        const b=document.createElement("button");b.type="button";b.className="lesson-deeplink-pill";b.textContent=lbl;
+        b.onclick=e=>{e.stopPropagation();fn();};
+        dlRow.appendChild(b);
+      });
       card.onclick=()=>openLesson(lesson);
       card.querySelector(".lesson-check").onclick=(e)=>{e.stopPropagation();if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();renderLessons();};
       stageWrap.appendChild(card);
@@ -2905,9 +3401,284 @@ function buildReflexivos(sec){
     exDiv.onclick=()=>speak(verb.example.es,0.75);card.appendChild(exDiv);
     sec.appendChild(card);});
 }
+let bridgeDrillIdx=0;
 function buildSpeakingGuide(){
   const sec=document.getElementById("gs-estructura");if(!sec)return;sec.innerHTML="";
-  const intro=document.createElement("div");intro.className="gram-intro";intro.innerHTML="<div class='gram-intro-title'>🧱 Build sentences you can say</div><div class='gram-intro-text'>Learn one small pattern, hear a natural example, then say your own version out loud.</div>";sec.appendChild(intro);
+  const intro=document.createElement("div");intro.className="gram-intro";intro.innerHTML="<div class='gram-intro-title'>🧱 Build sentences & link ideas naturally</div><div class='gram-intro-text'>Practice snapping two short thoughts together with Colombian connectors and time-buyers, then review the core patterns below.</div>";sec.appendChild(intro);
+  if(typeof CONNECTOR_BRIDGE_DRILLS!=="undefined"&&CONNECTOR_BRIDGE_DRILLS.length){
+    const trainer=document.createElement("section");trainer.className="bridge-trainer-card";
+    const renderBridge=()=>{
+      const d=CONNECTOR_BRIDGE_DRILLS[bridgeDrillIdx%CONNECTOR_BRIDGE_DRILLS.length];
+      const fullEs=(d.thoughtA+d.correct+d.thoughtB).replace(/\s+/g," ").trim();
+      trainer.innerHTML=`<div class="bridge-kicker">🔗 INTERACTIVE BRIDGE TRAINER · ${bridgeDrillIdx+1} OF ${CONNECTOR_BRIDGE_DRILLS.length}</div>
+        <div class="bridge-context">${escapeVocabHtml(d.context)}</div>
+        <div class="bridge-sentence-box">
+          <span class="bridge-part">${escapeVocabHtml(d.thoughtA)}</span>
+          <span class="bridge-slot" id="bridge-slot-label"> [ choose bridge ] </span>
+          <span class="bridge-part">${escapeVocabHtml(d.thoughtB)}</span>
+        </div>
+        <div class="bridge-en">${escapeVocabHtml(d.en)}</div>
+        <div class="bridge-choices"></div>
+        <div class="bridge-feedback" aria-live="polite">Tap the Colombian connector that links these two ideas:</div>
+        <div class="bridge-actions"></div>`;
+      const choicesWrap=trainer.querySelector(".bridge-choices");
+      const fb=trainer.querySelector(".bridge-feedback");
+      const slotEl=trainer.querySelector("#bridge-slot-label");
+      d.choices.forEach(ch=>{
+        const b=document.createElement("button");b.type="button";b.className="bridge-choice-btn";b.textContent=ch.trim();
+        b.onclick=()=>{
+          if(ch===d.correct){
+            choicesWrap.querySelectorAll("button").forEach(x=>x.classList.remove("wrong"));
+            b.classList.add("correct");
+            slotEl.textContent=" "+ch.trim()+" ";
+            slotEl.classList.add("filled");
+            fb.innerHTML=`✅ <strong>${escapeVocabHtml(fullEs)}</strong><br><small>💡 ${escapeVocabHtml(d.tip)}</small>`;
+            markPractice("phrases",fullEs);
+            /* Synchronous speak inside tap handler for iPhone Safari */
+            speak(fullEs,0.75);
+          }else{
+            b.classList.add("wrong");
+            fb.textContent="Try another connector — listen for what fits the meaning in brackets.";
+          }
+        };
+        choicesWrap.appendChild(b);
+      });
+      const acts=trainer.querySelector(".bridge-actions");
+      const hearFull=document.createElement("button");hearFull.type="button";hearFull.className="lp-nav-btn";hearFull.textContent="🔊 Hear full sentence";
+      hearFull.onclick=()=>speak(fullEs,0.75);
+      const nextDrill=document.createElement("button");nextDrill.type="button";nextDrill.className="lp-nav-btn primary";nextDrill.textContent="Next bridge drill →";
+      nextDrill.onclick=()=>{bridgeDrillIdx=(bridgeDrillIdx+1)%CONNECTOR_BRIDGE_DRILLS.length;renderBridge();};
+      acts.append(hearFull,nextDrill);
+      attachMic(acts,fullEs,"phrases");
+    };
+    renderBridge();
+    sec.appendChild(trainer);
+  }
+  if(typeof REGISTER_SWITCHER!=="undefined"&&REGISTER_SWITCHER.length){
+    let regIdx=0,activeReg="ust";
+    const regCard=document.createElement("section");regCard.className="bridge-trainer-card register-switcher-card";
+    const regMeta={
+      ust:{badge:"🎩 Usted",region:"Bogotá · Formal & Affectionate"},
+      tu:{badge:"👋 Tú",region:"Bogotá Peers · Caribbean Coast"},
+      vos:{badge:"🌸 Vos",region:"Medellín (Paisa) · Cali (Valluno)"},
+      sumerce:{badge:"🏔️ Sumercé",region:"Bogotá · Boyacá Warm Polite"}
+    };
+    const renderReg=()=>{
+      const item=REGISTER_SWITCHER[regIdx%REGISTER_SWITCHER.length];
+      const cur=item[activeReg]||item.ust;
+      regCard.innerHTML=`<div class="bridge-kicker">🗣️ COLOMBIAN REGISTER SWITCHER · ${regIdx+1} OF ${REGISTER_SWITCHER.length}</div>
+        <div class="bridge-context">${escapeVocabHtml(item.intent)}</div>
+        <div class="bridge-en">${escapeVocabHtml(item.when)}</div>
+        <div class="reg-tabs-row"></div>
+        <div class="reg-active-box" title="Tap to hear">
+          <div class="reg-active-region">${escapeVocabHtml(regMeta[activeReg].badge)} · ${escapeVocabHtml(regMeta[activeReg].region)}</div>
+          <div class="reg-active-es">${escapeVocabHtml(cur.es)} 🔊</div>
+          <div class="reg-active-note">💡 ${escapeVocabHtml(cur.note)}</div>
+        </div>
+        <div class="reg-compare-grid"></div>
+        <div class="bridge-actions"></div>`;
+      const tabsRow=regCard.querySelector(".reg-tabs-row");
+      Object.entries(regMeta).forEach(([k,m])=>{
+        const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(k===activeReg?" active":"");
+        b.textContent=m.badge;
+        b.onclick=()=>{
+          activeReg=k;
+          const picked=item[k]||item.ust;
+          renderReg();
+          /* Synchronous speak inside tap handler for iPhone Safari */
+          speak(picked.es,0.75);
+        };
+        tabsRow.appendChild(b);
+      });
+      const activeBox=regCard.querySelector(".reg-active-box");
+      activeBox.onclick=()=>speak(cur.es,0.75);
+      const cmpGrid=regCard.querySelector(".reg-compare-grid");
+      Object.entries(regMeta).forEach(([k,m])=>{
+        const v=item[k];if(!v)return;
+        const row=document.createElement("button");row.type="button";row.className="reg-compare-row"+(k===activeReg?" current":"");
+        row.innerHTML=`<span class="reg-cmp-badge">${escapeVocabHtml(m.badge)}</span><span class="reg-cmp-es">${escapeVocabHtml(v.es)}</span><span>🔊</span>`;
+        row.onclick=()=>{activeReg=k;renderReg();speak(v.es,0.75);};
+        cmpGrid.appendChild(row);
+      });
+      const acts=regCard.querySelector(".bridge-actions");
+      const hearBtn=document.createElement("button");hearBtn.type="button";hearBtn.className="lp-nav-btn";hearBtn.textContent="🔊 Hear selected";
+      hearBtn.onclick=()=>speak(cur.es,0.75);
+      const nextBtn=document.createElement("button");nextBtn.type="button";nextBtn.className="lp-nav-btn primary";nextBtn.textContent="Next situation →";
+      nextBtn.onclick=()=>{regIdx=(regIdx+1)%REGISTER_SWITCHER.length;renderReg();};
+      acts.append(hearBtn,nextBtn);
+      attachMic(acts,cur.es,"phrases");
+    };
+    renderReg();
+    sec.appendChild(regCard);
+  }
+  if(typeof STREET_GRID_DECODER!=="undefined"&&STREET_GRID_DECODER.length){
+    let gridIdx=0;
+    const gridCard=document.createElement("section");gridCard.className="bridge-trainer-card street-grid-card";
+    const renderGrid=()=>{
+      const g=STREET_GRID_DECODER[gridIdx%STREET_GRID_DECODER.length];
+      gridCard.innerHTML=`<div class="bridge-kicker">🧭 COLOMBIAN STREET GRID & SAFETY DECODER</div>
+        <div class="bridge-context">Tap any piece of a Colombian address to decode how it works:</div>
+        <div class="street-formula-bar"></div>
+        <div class="street-detail-box">
+          <div class="street-detail-label">${escapeVocabHtml(g.label)} — ${escapeVocabHtml(g.title)}</div>
+          <p class="street-detail-explain">${escapeVocabHtml(g.explain)}</p>
+          <button type="button" class="street-example-btn"><strong>🗣️ ${escapeVocabHtml(g.exampleEs)}</strong><small>${escapeVocabHtml(g.exampleEn)}</small><span>🔊</span></button>
+        </div>`;
+      const fBar=gridCard.querySelector(".street-formula-bar");
+      STREET_GRID_DECODER.forEach((seg,idx)=>{
+        const b=document.createElement("button");b.type="button";b.className="street-seg-chip"+(idx===gridIdx?" active":"");
+        b.textContent=seg.part;
+        b.onclick=()=>{gridIdx=idx;renderGrid();speak(seg.exampleEs,0.75);};
+        fBar.appendChild(b);
+      });
+      const exBtn=gridCard.querySelector(".street-example-btn");
+      exBtn.onclick=()=>speak(g.exampleEs,0.75);
+    };
+    renderGrid();
+    sec.appendChild(gridCard);
+  }
+  if(typeof TEXTBOOK_VS_COLOMBIAN!=="undefined"&&TEXTBOOK_VS_COLOMBIAN.length){
+    let tvcIdx=0;
+    const tvcCard=document.createElement("section");tvcCard.className="bridge-trainer-card tvc-switcher-card";
+    const renderTvc=()=>{
+      const item=TEXTBOOK_VS_COLOMBIAN[tvcIdx%TEXTBOOK_VS_COLOMBIAN.length];
+      tvcCard.innerHTML=`<div class="bridge-kicker">🆚 TEXTBOOK SPANISH VS. NATURAL COLOMBIAN · ${tvcIdx+1} OF ${TEXTBOOK_VS_COLOMBIAN.length}</div>
+        <div class="bridge-context">${escapeVocabHtml(item.context)}</div>
+        <div class="bridge-en">${escapeVocabHtml(item.en)}</div>
+        <div class="tvc-compare-pair">
+          <button type="button" class="tvc-box tvc-textbook" title="Tap to hear textbook phrasing">
+            <span class="tvc-tag">❌ Too Textbook / Stiff</span>
+            <strong>${escapeVocabHtml(item.textbook)}</strong>
+          </button>
+          <button type="button" class="tvc-box tvc-colombian" title="Tap to hear natural Colombian phrasing">
+            <span class="tvc-tag">✅ Natural Colombian Upgrade 🔊</span>
+            <strong>${escapeVocabHtml(item.colombian)}</strong>
+          </button>
+        </div>
+        <div class="tvc-why">💡 <strong>Why this works in Colombia:</strong> ${escapeVocabHtml(item.why)}</div>
+        <div class="bridge-actions"></div>`;
+      tvcCard.querySelector(".tvc-textbook").onclick=()=>speak(item.textbook,0.75);
+      tvcCard.querySelector(".tvc-colombian").onclick=()=>{markPractice("phrases",item.colombian);speak(item.colombian,0.75);};
+      const acts=tvcCard.querySelector(".bridge-actions");
+      const hearCol=document.createElement("button");hearCol.type="button";hearCol.className="lp-nav-btn";hearCol.textContent="🔊 Hear Colombian";
+      hearCol.onclick=()=>{markPractice("phrases",item.colombian);speak(item.colombian,0.75);};
+      const nextTvc=document.createElement("button");nextTvc.type="button";nextTvc.className="lp-nav-btn primary";nextTvc.textContent="Next upgrade →";
+      nextTvc.onclick=()=>{tvcIdx=(tvcIdx+1)%TEXTBOOK_VS_COLOMBIAN.length;renderTvc();};
+      acts.append(hearCol,nextTvc);
+      if(typeof attachStarBtn==="function")attachStarBtn(acts,item.colombian,"Colombian Upgrade");
+      attachMic(acts,item.colombian,"phrases");
+    };
+    renderTvc();
+    sec.appendChild(tvcCard);
+  }
+  if(typeof REGIONAL_ATLAS!=="undefined"&&REGIONAL_ATLAS.length){
+    let regAtlasIdx=0;
+    const atlasCard=document.createElement("section");atlasCard.className="bridge-trainer-card regional-atlas-card";
+    const renderAtlas=()=>{
+      const reg=REGIONAL_ATLAS[regAtlasIdx%REGIONAL_ATLAS.length];
+      atlasCard.innerHTML=`<div class="bridge-kicker">🗺️ COLOMBIAN REGIONAL ACCENT & SLANG ATLAS · 4 REGIONS</div>
+        <div class="bridge-context">Tap a region to hear how greetings, slang, food, and rhythm change across Colombia:</div>
+        <div class="reg-tabs-row atlas-tabs"></div>
+        <div class="comodin-sub">${escapeVocabHtml(reg.title)} — ${escapeVocabHtml(reg.vibe)}</div>
+        <div class="comodin-chunks-grid atlas-items-grid"></div>`;
+      const tRow=atlasCard.querySelector(".atlas-tabs");
+      REGIONAL_ATLAS.forEach((r,idx)=>{
+        const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(idx===regAtlasIdx?" active":"");
+        b.textContent=r.tab;
+        b.onclick=()=>{
+          regAtlasIdx=idx;
+          renderAtlas();
+          if(r.items&&r.items[0])speak(r.items[0].es,0.75);
+        };
+        tRow.appendChild(b);
+      });
+      const grid=atlasCard.querySelector(".atlas-items-grid");
+      (reg.items||[]).forEach(it=>{
+        const row=document.createElement("div");row.className="comodin-chunk-card atlas-item-card";
+        row.innerHTML=`<div class="comodin-chunk-head"><span class="comodin-chunk-pill">${escapeVocabHtml(it.category)}</span><span class="comodin-chunk-en">${escapeVocabHtml(it.tip)}</span><div class="comodin-chunk-acts"></div></div>
+          <div class="comodin-chunk-es">🗣️ ${escapeVocabHtml(it.es)} 🔊</div>
+          <div class="comodin-chunk-esen">${escapeVocabHtml(it.en)}</div>`;
+        row.onclick=e=>{if(e.target.closest("button"))return;markPractice("phrases",it.es);speak(it.es,0.75);};
+        const acts=row.querySelector(".comodin-chunk-acts");
+        if(typeof attachStarBtn==="function")attachStarBtn(acts,it.es,reg.tab);
+        attachMic(acts,it.es,"phrases");
+        grid.appendChild(row);
+      });
+    };
+    renderAtlas();
+    sec.appendChild(atlasCard);
+  }
+  if(typeof STREET_EAR_LINKER!=="undefined"&&STREET_EAR_LINKER.length){
+    let earIdx=0;
+    const earCard=document.createElement("section");earCard.className="bridge-trainer-card street-ear-card";
+    const renderEar=()=>{
+      const item=STREET_EAR_LINKER[earIdx%STREET_EAR_LINKER.length];
+      earCard.innerHTML=`<div class="bridge-kicker">🎧 CÓMO SUENA EN LA CALLE · STREET-SPEED CONTRACTIONS (${earIdx+1}/${STREET_EAR_LINKER.length})</div>
+        <div class="bridge-context">${escapeVocabHtml(item.context)} — ${escapeVocabHtml(item.en)}</div>
+        <div class="tvc-compare-pair">
+          <button type="button" class="tvc-box ear-careful" title="Tap to hear careful speed">
+            <span class="tvc-tag">🐢 Careful / Written Spanish (0.65x)</span>
+            <strong>${escapeVocabHtml(item.carefulEs)}</strong>
+          </button>
+          <button type="button" class="tvc-box tvc-colombian ear-street" title="Tap to hear natural street speed">
+            <span class="tvc-tag">⚡ How It Sounds on the Street (0.85x) 🔊</span>
+            <strong>${escapeVocabHtml(item.streetEs)}</strong>
+            <small class="ear-phonetic">🎵 Rhythm: ${escapeVocabHtml(item.phoneticHint||"")}</small>
+          </button>
+        </div>
+        <div class="tvc-why">💡 <strong>Ear Linker Tip:</strong> ${escapeVocabHtml(item.tip)}</div>
+        <div class="bridge-actions"></div>`;
+      earCard.querySelector(".ear-careful").onclick=()=>speak(item.carefulEs,0.65);
+      earCard.querySelector(".ear-street").onclick=()=>{markPractice("phrases",item.streetEs);speak(item.streetEs,0.85);};
+      const acts=earCard.querySelector(".bridge-actions");
+      const slowBtn=document.createElement("button");slowBtn.type="button";slowBtn.className="lp-nav-btn";slowBtn.textContent="🐢 Careful (0.65x)";
+      slowBtn.onclick=()=>speak(item.carefulEs,0.65);
+      const fastBtn=document.createElement("button");fastBtn.type="button";fastBtn.className="lp-nav-btn";fastBtn.textContent="⚡ Street (0.85x)";
+      fastBtn.onclick=()=>{markPractice("phrases",item.streetEs);speak(item.streetEs,0.85);};
+      const nextEar=document.createElement("button");nextEar.type="button";nextEar.className="lp-nav-btn primary";nextEar.textContent="Next contraction →";
+      nextEar.onclick=()=>{earIdx=(earIdx+1)%STREET_EAR_LINKER.length;renderEar();};
+      acts.append(slowBtn,fastBtn,nextEar);
+      if(typeof attachStarBtn==="function")attachStarBtn(acts,item.streetEs,"Street Ear");
+    };
+    renderEar();
+    sec.appendChild(earCard);
+  }
+  if(typeof TRAMPAS_COLOMBIANAS!=="undefined"&&TRAMPAS_COLOMBIANAS.length){
+    let trIdx=0;
+    const trCard=document.createElement("section");trCard.className="bridge-trainer-card trampas-decoder-card";
+    const renderTrap=()=>{
+      const t=TRAMPAS_COLOMBIANAS[trIdx%TRAMPAS_COLOMBIANAS.length];
+      trCard.innerHTML=`<div class="bridge-kicker">🪤 TRAMPAS COLOMBIANAS · FALSE FRIENDS DECODER (${trIdx+1}/${TRAMPAS_COLOMBIANAS.length})</div>
+        <div class="bridge-context">Colombian phrase: <strong>"${escapeVocabHtml(t.trap)}"</strong></div>
+        <div class="tvc-compare-pair">
+          <div class="tvc-box tvc-textbook">
+            <span class="tvc-tag">❌ Literal Trap / What Gringos Guess</span>
+            <strong>${escapeVocabHtml(t.wrongGuess)}</strong>
+          </div>
+          <div class="tvc-box tvc-colombian">
+            <span class="tvc-tag">✅ Real Meaning in Colombia</span>
+            <strong>${escapeVocabHtml(t.realMeaning)}</strong>
+          </div>
+        </div>
+        <div class="street-grid-example" title="Tap to hear example">
+          <div class="street-grid-es">🗣️ ${escapeVocabHtml(t.es)} 🔊</div>
+          <div class="street-grid-en">${escapeVocabHtml(t.en)}</div>
+        </div>
+        <div class="tvc-why">💡 <strong>Cultural Note:</strong> ${escapeVocabHtml(t.tip)}</div>
+        <div class="bridge-actions"></div>`;
+      trCard.querySelector(".street-grid-example").onclick=()=>{markPractice("phrases",t.es);speak(t.es,0.75);};
+      const acts=trCard.querySelector(".bridge-actions");
+      const hearTrap=document.createElement("button");hearTrap.type="button";hearTrap.className="lp-nav-btn";hearTrap.textContent="🔊 Hear Example";
+      hearTrap.onclick=()=>{markPractice("phrases",t.es);speak(t.es,0.75);};
+      const nextTrap=document.createElement("button");nextTrap.type="button";nextTrap.className="lp-nav-btn primary";nextTrap.textContent="Next trap →";
+      nextTrap.onclick=()=>{trIdx=(trIdx+1)%TRAMPAS_COLOMBIANAS.length;renderTrap();};
+      acts.append(hearTrap,nextTrap);
+      if(typeof attachStarBtn==="function")attachStarBtn(acts,t.es,"Trampas Colombianas");
+      attachMic(acts,t.es,"phrases");
+    };
+    renderTrap();
+    sec.appendChild(trCard);
+  }
   SPEAKING_GUIDE.forEach((g,i)=>{
     const card=document.createElement("article");card.className="speaking-guide-card";
     card.innerHTML=`<div class='speaking-guide-number'>${i+1}</div><div class='speaking-guide-copy'><h3>${escapeVocabHtml(g.title)}</h3><div class='speaking-guide-formula'>${escapeVocabHtml(g.formula)}</div><p>${escapeVocabHtml(g.explain)}</p><div class='speaking-guide-mistake'>⚠️ ${escapeVocabHtml(g.mistake)}</div></div>`;
@@ -3252,7 +4023,7 @@ FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
 /* Vocabulary examples remain in Vocab as full context. Only the authored
    prompts above enter Fill blank; generic example sentences stay out. */
 
-const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"cortesia",label:"🙏 Courtesy"},{id:"muletillas",label:"☕ Diminutives & Fillers"},{id:"reparar",label:"🧰 Repair"},{id:"conectores",label:"🔗 Connectors"},{id:"direcciones",label:"🧭 Directions"},{id:"uber",label:"🚕 Uber"},{id:"uber-real",label:"🚕 Uber · full trip"},{id:"hotel",label:"🏨 Hotel"},{id:"restaurante",label:"🍽️ Restaurant"},{id:"restaurante-real",label:"🍽️ Restaurant · real"},{id:"compras",label:"🛒 Shopping"},{id:"mercado",label:"🛍️ Market"},{id:"farmacia",label:"💊 Pharmacy"},{id:"expresiones",label:"🇨🇴 Expressions"},{id:"social",label:"🤝 Social"},{id:"fiesta",label:"🎉 Party"},{id:"deportes",label:"⚽ Sports"},{id:"oficina-real",label:"🧑‍💼 Office"},{id:"gerundios",label:"🔄 Actions in progress"},{id:"mandatos",label:"🗣️ Commands"},{id:"estructura",label:"🧱 Structure"},{id:"subjuntivo",label:"🌱 Subjuntivo"},{id:"pronunciacion",label:"🔊 Sounds"},{id:"groserias",label:"⚠️ Groserías"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animales"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
+const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"cortesia",label:"🙏 Courtesy"},{id:"muletillas",label:"☕ Diminutives & Fillers"},{id:"reparar",label:"🧰 Repair"},{id:"conectores",label:"🔗 Connectors"},{id:"direcciones",label:"🧭 Directions"},{id:"aeropuerto",label:"🛬 Airport"},{id:"uber",label:"🚕 Uber"},{id:"uber-real",label:"🚕 Uber · full trip"},{id:"hotel",label:"🏨 Hotel"},{id:"bancos-pagos",label:"💳 Nequi & Pay"},{id:"restaurante",label:"🍽️ Restaurant"},{id:"restaurante-real",label:"🍽️ Restaurant · real"},{id:"compras",label:"🛒 Shopping"},{id:"mercado",label:"🛍️ Market"},{id:"farmacia",label:"💊 Pharmacy"},{id:"medico",label:"🩺 Medical"},{id:"barberia",label:"💈 Barbershop"},{id:"porteria",label:"🏢 Portería & Rappi"},{id:"panaderia",label:"🥐 Panadería & Jugos"},{id:"viajes-finca",label:"🌄 Buses & Finca"},{id:"empatia",label:"💛 Empathy & Reactions"},{id:"comodin",label:"🔑 Verbos Comodín"},{id:"whatsapp",label:"📱 WhatsApp & Citas"},{id:"arriendo",label:"🔑 Arriendo & Airbnb"},{id:"gym-ciclovia",label:"🚴 Gym & Ciclovía"},{id:"citas-familia",label:"❤️ Citas & Familia"},{id:"corrientazo",label:"🫓 Corrientazo & Onces"},{id:"cajero-sim",label:"🏦 Cajero & SIM Card"},{id:"puentes-rumba",label:"🎉 Puentes & Rumba"},{id:"trampas",label:"🪤 Trampas Colombianas"},{id:"estratos",label:"🏘️ Estratos & Conjuntos"},{id:"odontologia",label:"🦷 Odontología & Óptica"},{id:"migracion-ce",label:"🛂 Migración & Cédula"},{id:"expresiones",label:"🇨🇴 Expressions"},{id:"social",label:"🤝 Social"},{id:"fiesta",label:"🎉 Party"},{id:"deportes",label:"⚽ Sports"},{id:"oficina-real",label:"🧑‍💼 Office"},{id:"gerundios",label:"🔄 Actions in progress"},{id:"mandatos",label:"🗣️ Commands"},{id:"estructura",label:"🧱 Structure"},{id:"subjuntivo",label:"🌱 Subjuntivo"},{id:"pronunciacion",label:"🔊 Sounds"},{id:"groserias",label:"⚠️ Groserías"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animals"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
 const QUIZ_MODES=[
   {id:"mixed",label:"Mixed"},{id:"es-en",label:"ES → EN"},{id:"en-es",label:"EN → ES"},
   {id:"listening",label:"🎧 Listening"},{id:"dictation",label:"⌨️ Dictation"},{id:"blank",label:"✏️ Fill blank"},{id:"conversation",label:"💬 Conversation"}
@@ -3300,16 +4071,41 @@ document.getElementById("q-streak").textContent="🔥 "+qS;
   bar.appendChild(btn);
 })();
 
+const SITUATION_BLITZ_PACKS=[
+  {id:"uber-blitz",label:"🚕 In an Uber",cats:["uber","uber-real","direcciones","carropartes"]},
+  {id:"food-blitz",label:"🍽️ Order & Pay",cats:["restaurante","restaurante-real","bancos-pagos","cortesia","comida","mercado"]},
+  {id:"travel-blitz",label:"🛬 Airport & Hotel",cats:["aeropuerto","hotel","lugares","compras"]},
+  {id:"social-blitz",label:"🤝 Social & Parche",cats:["social","fiesta","deportes","muletillas","expresiones","colombianismos"]},
+  {id:"living-blitz",label:"🏢 Apt, Estratos, Migración & Salud",cats:["estratos","migracion-ce","odontologia","cajero-sim","porteria","arriendo","whatsapp","barberia","farmacia","medico","reparar","casa"]},
+  {id:"local-blitz",label:"🇨🇴 Trampas, Corrientazo, Citas & Rumba",cats:["trampas","corrientazo","citas-familia","puentes-rumba","panaderia","viajes-finca","empatia","comodin","gym-ciclovia","direcciones","colombianismos"]}
+];
+let qBlitzPack=null;
 const qmw=document.getElementById("qmode-wrap");
-QUIZ_MODES.forEach(m=>{const b=document.createElement("button");b.type="button";b.className="qmode"+(m.id===qMode?" active":"");b.textContent=m.label;b.onclick=()=>{qMissedOnly=false;qMode=m.id;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};qmw.appendChild(b);});
+if(qmw&&qmw.parentElement){
+  const blitzWrap=document.createElement("div");blitzWrap.className="quiz-blitz-wrap";
+  blitzWrap.innerHTML=`<div class="quiz-control-label">⚡ Real-Life Situation Blitz (1-tap scenario warmup)</div><div class="quiz-blitz-row" id="qblitz-wrap"></div>`;
+  qmw.parentElement.parentElement.insertBefore(blitzWrap,qmw.parentElement);
+  const qbw=blitzWrap.querySelector("#qblitz-wrap");
+  SITUATION_BLITZ_PACKS.forEach(pack=>{
+    const b=document.createElement("button");b.type="button";b.className="qblitz-btn";b.dataset.blitz=pack.id;b.textContent=pack.label;
+    b.onclick=()=>{
+      if(qBlitzPack&&qBlitzPack.id===pack.id){qBlitzPack=null;repasoLeft=0;}
+      else{qBlitzPack=pack;qMissedOnly=false;qMode="mixed";qCat="all";qFocus="all";repasoLeft=10;}
+      resetQuizRound();syncQuizControls();nQ();
+    };
+    qbw.appendChild(b);
+  });
+}
+QUIZ_MODES.forEach(m=>{const b=document.createElement("button");b.type="button";b.className="qmode"+(m.id===qMode?" active":"");b.textContent=m.label;b.onclick=()=>{qBlitzPack=null;qMissedOnly=false;qMode=m.id;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};qmw.appendChild(b);});
 const qcw=document.getElementById("qcat-wrap");
 QC.forEach(c=>{const b=document.createElement("button");b.className="qcat"+(c.id==="all"?" active":"");b.textContent=c.label;
-  b.onclick=()=>{qMissedOnly=false;qCat=c.id;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};qcw.appendChild(b);});
+  b.onclick=()=>{qBlitzPack=null;qMissedOnly=false;qCat=c.id;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};qcw.appendChild(b);});
 const qfs=document.getElementById("qfocus-select");
 if(qfs)qfs.onchange=()=>{qMissedOnly=false;qFocus=qfs.value;repasoLeft=0;resetQuizRound();syncQuizControls();nQ();};
 function syncQuizControls(){
-  document.querySelectorAll(".qcat").forEach((x,i)=>x.classList.toggle("active",QC[i].id===qCat));
+  document.querySelectorAll(".qcat").forEach((x,i)=>x.classList.toggle("active",!qBlitzPack&&QC[i].id===qCat));
   document.querySelectorAll(".qmode").forEach((x,i)=>x.classList.toggle("active",QUIZ_MODES[i].id===qMode));
+  document.querySelectorAll(".qblitz-btn").forEach(x=>x.classList.toggle("active",!!(qBlitzPack&&x.dataset.blitz===qBlitzPack.id)));
   const focusSupported=FOCUS_MODES.has(qMode);
   if(!focusSupported)qFocus="all";
   if(qfs){qfs.value=qFocus;qfs.disabled=!focusSupported;}
@@ -3324,14 +4120,16 @@ const BLANK_EN={
 };
 function quizPool(){
   let pool;
-  if(qMode==="blank")pool=FILL_BLANK_QUIZ.map(q=>({...q,answer:q.en,prompt:q.es}));
+  if(qMode==="blank")pool=FILL_BLANK_QUIZ.map(q=>({...q,answer:q.en,prompt:q.quizPrompt||q.es}));
   else if(qMode==="conversation")pool=CONVERSATION_QUIZ.map(q=>({...q,answer:q.en,prompt:q.es}));
   else if(qMode==="dictation")pool=aQ.filter(q=>!q.kind&&q.es&&q.tts).map(q=>({...q,answer:q.es,prompt:"🎧",dictation:true}));
   else if(qMode==="en-es")pool=aQ.filter(q=>!q.kind).map(q=>({...q,answer:q.es,prompt:q.en}));
   else if(qMode==="listening")pool=aQ.filter(q=>!q.kind).map(q=>({...q,answer:q.es,prompt:"🎧"}));
   else if(qMode==="es-en")pool=aQ.filter(q=>!q.kind||q.kind==="meaning").map(q=>({...q,answer:q.en,prompt:q.quizPrompt||q.es}));
   else pool=aQ.map(q=>({...q,answer:q.en,prompt:q.kind==="listening"?"🎧":(q.quizPrompt||q.es)}));
-  if(qMode==="blank"){
+  if(qBlitzPack&&Array.isArray(qBlitzPack.cats)){
+    pool=pool.filter(q=>qBlitzPack.cats.includes(q.cat));
+  }else if(qMode==="blank"){
     if(qCat==="pronombres")pool=pool.filter(q=>q.cat==="pronombres");
     else if(qCat!=="all")pool=pool.filter(q=>q.cat===qCat);
   }else if(qMode==="conversation"){
@@ -3356,9 +4154,9 @@ function englishAnswer(q){
 }
 function normalizeDictation(text,stripAccents){
   let s=String(text||"").toLowerCase().trim().replace(/[¿?¡!.,;:…]+/g,"").replace(/\s+/g," ");
-  return stripAccents?s.normalize("NFD").replace(/[\u0300-\u036f]/g,""):s;
+  return stripAccents?s.normalize("NFD").replace(/n\u0303/g,"ñ").replace(/[\u0300-\u036f]/g,""):s;
 }
-function normalizeQuizText(text){return String(text||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[¿?¡!.,;:…]+/g,"").replace(/\s+/g," ").trim();}
+function normalizeQuizText(text){return String(text||"").toLowerCase().normalize("NFD").replace(/n\u0303/g,"ñ").replace(/[\u0300-\u036f]/g,"").replace(/[’‘]/g,"'").replace(/\bit's\b/g,"it is").replace(/\bi'm\b/g,"i am").replace(/\b(you|we|they)'re\b/g,"$1 are").replace(/[¿?¡!.,;:…]+/g,"").replace(/\s+/g," ").trim();}
 /* Audit prompts keep accents so "si" and "sí" are not treated as the same
    Spanish word. Answer cleanup ignores parenthetical teaching notes when it
    compares duplicate records. */
@@ -3403,7 +4201,7 @@ function clearMissedQuiz(q){
   if(legacy!==canonical&&qStore.missed[legacy])delete qStore.missed[legacy];
 }
 function exitMissedQueue(){qMissedOnly=false;repasoLeft=0;resetQuizRound();nQ();}
-function openMissedQueue(){showPage("quiz");qMissedOnly=true;qMode="mixed";qCat="all";qFocus="all";repasoLeft=0;resetQuizRound();syncQuizControls();nQ();}
+function openMissedQueue(){qBlitzPack=null;showPage("quiz");qMissedOnly=true;qMode="mixed";qCat="all";qFocus="all";repasoLeft=0;resetQuizRound();syncQuizControls();nQ();}
 function nQ(){
   an=false;document.getElementById("quiz-next").style.display="none";const quizFb=document.getElementById("quiz-fb"),quizReveal=document.getElementById("quiz-reveal");quizFb.innerHTML="";if(quizReveal){quizFb.appendChild(quizReveal);quizReveal.innerHTML="";}quizFb.classList.remove("visible");syncMissedQueueLauncher();
   const helpRow=document.getElementById("quiz-help-row"),helpBtn=document.getElementById("quiz-help"),helpText=document.getElementById("quiz-help-text");
