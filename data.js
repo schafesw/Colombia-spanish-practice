@@ -5349,3 +5349,494 @@ V60_FILL_BLANK_QUIZ.push(
   {kind:"blank",focus:"present",cat:"migracion-ce",es:"Para abrir cuenta bancaria como residente necesitas tu cédula de ___.",en:"extranjería",tts:"Para abrir cuenta bancaria como residente necesitas tu cédula de extranjería.",trans:"To open a bank account as a resident you need your foreigner ID card.",choices:["extranjería","panadería","peluquería","ciclovía"]},
   {kind:"blank",focus:"present",cat:"migracion-ce",es:"Vamos a la ___ de la esquina para autenticar la firma del contrato.",en:"notaría",tts:"Vamos a la notaría de la esquina para autenticar la firma del contrato.",trans:"Let's go to the notary office on the corner to notarize the contract signature.",choices:["notaría","salsoteca","lavadora","quebrada"]}
 );
+// ── V97.0 SAN JUAN DEL CESAR, LA GUAJIRA & REGIONAL / PRACTICAL EXPANSION ──
+/* 1. San Juan del Cesar, Sur de La Guajira & Provincia Vallenata in REGIONAL_ATLAS
+   2. Interactive 5-Region Same-Intent Switcher (REGIONAL_SWITCHER)
+   3. New Branching Roleplay #7: Visita a la familia en San Juan del Cesar
+   4. New Guajiro / Costeño items in STREET_EAR_LINKER (13 total) & TRAMPAS_COLOMBIANAS (15 total)
+   5. 4 New Full Scenario Tracks (Lessons 69–72, Dialogues 59–62, Readings, Missions, Ladders, Quiz):
+      - San Juan del Cesar, La Guajira y parranda vallenata (san-juan-guajira)
+      - Seguridad, emergencias (123 / denuncia) y no dar papaya (seguridad-emergencias)
+      - Reparaciones del hogar, servicios y técnico en casa (hogar-reparaciones)
+      - Fútbol, conciertos, boletas y hacer vaca (eventos-futbol-cultura) */
+
+REGIONAL_ATLAS.splice(3, 0, {
+  "id": "sanjuan-guajira",
+  "tab": "🪗 San Juan & Guajira (Vallenato)",
+  "title": "San Juan del Cesar, Sur de La Guajira & Valledupar (Provincia Vallenata)",
+  "vibe": "Warm family hospitality, 'tú' with everyone, 'primo / compadre / manito', front-porch mecedoras by the abanico, friche, and vallenato composer heritage.",
+  "items": [
+    {
+      "category": "👋 Greeting Family & Friends",
+      "es": "¡Ajá, primo! ¿Cómo está la vaina? Pasa adelante y siéntate en la mecedora al lado del abanico.",
+      "en": "Hey there, cousin/friend! How are things going? Come on in and sit in the rocking chair next to the fan.",
+      "tip": "In San Juan del Cesar and southern La Guajira, primo/prima and compadre are affectionate everyday terms for friends and family, and abanico means an electric fan."
+    },
+    {
+      "category": "✨ 'You're kidding! / That's amazing!'",
+      "es": "¡No me digas embuste, compadre! ¡Cipote alegría tenerte de visita por San Juan del Cesar!",
+      "en": "No way / don't kid me, buddy! What a huge joy to have you visiting San Juan del Cesar!",
+      "tip": "Embuste is the signature coastal and Guajiro word for a fib or 'you're kidding,' and cipote intensifies nouns ('huge / tremendous')."
+    },
+    {
+      "category": "🐐 Food & Guajiro Specialties",
+      "es": "Hoy preparamos friche y chivo guisado con arroz de camarón, patacón, queso costeño y suero.",
+      "en": "Today we made friche (fried goat dish) and stewed goat with shrimp rice, fried green plantain, salty coastal cheese, and sour cream dip.",
+      "tip": "Friche and chivo are iconic dishes of La Guajira, and queso costeño con suero accompanies breakfasts and dinners across the Cesar–Guajira valley."
+    },
+    {
+      "category": "🪗 Parranda Vallenata & Compositores",
+      "es": "En diciembre vamos pa'l Festival de Compositores en San Juan a escuchar acordeón, caja y guacharaca.",
+      "en": "In December we're heading to the Composers Festival in San Juan to listen to accordion, caja drum, and guacharaca.",
+      "tip": "San Juan del Cesar is celebrated as the 'Tierra de Compositores' and hosts the Festival Nacional de Compositores de Música Vallenata every December."
+    },
+    {
+      "category": "🪑 Afternoon Terraza Culture",
+      "es": "Cuando baje el sol sacamos las mecedoras a la terraza para coger fresco y conversar con la familia.",
+      "en": "When the sun goes down we bring the rocking chairs out to the front porch to catch the breeze and chat with the family.",
+      "tip": "In San Juan del Cesar, la terraza is the covered front porch at street level (not a rooftop), where family and neighbors gather in the late afternoon breeze."
+    }
+  ]
+});
+
+const REGIONAL_SWITCHER = [
+  {
+    "id": "reg-greet",
+    "intent": "👋 Greeting a close friend or relative warmly",
+    "context": "How you open a friendly conversation when arriving at someone's home:",
+    "variants": [
+      {"region": "🪗 San Juan del Cesar / Guajira", "pronoun": "tú + primo/compae", "es": "¡Ajá, primo! ¿Cómo está la vaina? ¿Cómo está la familia?", "en": "Hey, cousin/friend! How's it going? How is the family?", "note": "Warm, direct 'tú' with 'primo/a' or 'compadre' right on the front terraza."},
+      {"region": "🏔️ Bogotá / Interior", "pronoun": "usted / sumercé", "es": "¡Hola! ¿Cómo me le va, sumercé? ¿Cómo ha estado?", "en": "Hello! How have you been doing, sumercé?", "note": "Polite, melodic 'usted' or affectionate 'sumercé' with indirect object 'me le'."},
+      {"region": "🌸 Medellín / Paisa", "pronoun": "vos + parce", "es": "¡Quiubo pues, parce! ¿Cómo vas o qué?", "en": "What's up, buddy! How are you doing?", "note": "Uses 'parce' and sentence-final 'pues' with familiar 'vos/tú'."},
+      {"region": "💃 Cali / Valle", "pronoun": "vos + mirá ve", "es": "¿Qué más, vos? Mirá ve, qué alegría verte por acá.", "en": "What's up? Look, what a joy to see you around here.", "note": "Caleño voseo paired with 'mirá ve' and warm hospitality."}
+    ]
+  },
+  {
+    "id": "reg-heat-drink",
+    "intent": "🥵 Talking about the heat & offering something cold",
+    "context": "When the afternoon gets warm (or chilly in Bogotá) and you offer a drink:",
+    "variants": [
+      {"region": "🪗 San Juan del Cesar / Guajira", "pronoun": "tú (Guajiro/Costeño)", "es": "¡Erda, está haciendo un fogaje! Prende el abanico y tómate un jugo de corozo bien frío.", "en": "Whew, it's sweltering! Turn on the fan and have an ice-cold corozo berry juice.", "note": "'Fogaje' = intense heat, 'abanico' = electric fan (never 'ventilador'), and cold fruit juices rule."},
+      {"region": "🏔️ Bogotá / Interior", "pronoun": "usted / tú", "es": "¡Uy, qué frío está haciendo hoy! ¿Le provoca un tintico o una aguapanela caliente con queso?", "en": "Ooh, it's chilly today! Would you like a hot black coffee or hot sugarcane water with cheese?", "note": "In high-altitude Bogotá (2,600m), warm 'tintico' and 'aguapanela' replace coastal cold drinks."},
+      {"region": "🌸 Medellín / Paisa", "pronoun": "vos", "es": "¡Qué calor tan berraco, pues! ¿Te tomás una limonada bien fría o un guarapo?", "en": "What intense heat! Will you have an ice-cold lemonade or sugarcane lime drink?", "note": "Uses 'berraco' for intense and voseo 'te tomás'."},
+      {"region": "💃 Cali / Valle", "pronoun": "vos", "es": "A las cuatro empieza la brisa caleña; vamos por una lulada o un champús bien frío, ¿oís?", "en": "At four the Cali breeze starts; let's get an ice-cold lulada or champús, you hear?", "note": "'Lulada' and 'champús' are classic Valle del Cauca afternoon refreshers."}
+    ]
+  },
+  {
+    "id": "reg-disbelief",
+    "intent": "😲 Saying 'No way! / You're kidding me!'",
+    "context": "When someone tells you a surprising story or exaggerates:",
+    "variants": [
+      {"region": "🪗 San Juan del Cesar / Guajira", "pronoun": "tú + compadre", "es": "¡Qué va, primo, no me digas embuste! ¿De verdad pasó esa vaina?", "en": "Come on, cousin, don't tell me fibs! Did that really happen?", "note": "'¡Qué va!' and 'embuste' are signature Sanjuanero and Guajiro expressions for 'you're kidding!'"},
+      {"region": "🏔️ Bogotá / Interior", "pronoun": "usted / tú", "es": "¡No me diga eso! ¿En serio? ¡Qué impresión!", "en": "Don't tell me that! Seriously? How wild!", "note": "More measured and polite surprise using '¿en serio?' and '¡qué impresión!'"},
+      {"region": "🌸 Medellín / Paisa", "pronoun": "vos", "es": "¡Eh, ave María, parce! ¿Me estás hablando en serio pues?", "en": "Whoa, buddy! Are you talking to me seriously?", "note": "'¡Eh, ave María!' is the classic Paisa exclamation of surprise."},
+      {"region": "💃 Cali / Valle", "pronoun": "vos", "es": "¡Andá, mirá ve! ¿Cómo así que pasó eso, vos?", "en": "Get out of here, look! How is it that happened?", "note": "'¡Andá!' and '¿cómo así?' anchor Caleño reactions."}
+    ]
+  },
+  {
+    "id": "reg-hangout",
+    "intent": "🎶 Inviting friends & family to hang out",
+    "context": "How you invite people over for music, conversation, and food:",
+    "variants": [
+      {"region": "🪗 San Juan del Cesar / Guajira", "pronoun": "tú", "es": "Vente esta tarde pa' la terraza de la casa; vamos a armar una parranda vallenata con los primos.", "en": "Come over this afternoon to the front porch; we're putting together a vallenato gathering with the cousins.", "note": "A 'parranda vallenata' is a warm home/patio gathering centered on accordion songs and storytelling."},
+      {"region": "🏔️ Bogotá / Interior", "pronoun": "tú / usted", "es": "¿Qué plan tienes hoy? Pasemos por unas onces y luego vamos a conversar un ratico.", "en": "What's your plan today? Let's stop for afternoon coffee/snacks and chat for a little bit.", "note": "'Hacer un plan' and 'tomar las onces' are quintessential Bogotá social phrases."},
+      {"region": "🌸 Medellín / Paisa", "pronoun": "vos", "es": "Caé esta noche a la casa y parchamos en el balcón con los parceros, pues.", "en": "Drop by the house tonight and we'll hang out on the balcony with our friends.", "note": "'Caer' (to drop by) and 'parchar' (to hang out) are everyday Medellín staples."},
+      {"region": "💃 Cali / Valle", "pronoun": "vos", "es": "Vení esta noche que vamos a azotar baldosa con buena salsa, ¿oís?", "en": "Come over tonight—we're going to hit the dance floor with great salsa, you hear?", "note": "'Azotar baldosa' literally means 'to whip the floor tiles' (dance salsa passionately)."}
+    ]
+  }
+];
+
+BRANCHING_ROLEPLAYS.push(
+  {
+    "id": "rp-sanjuan-familia",
+    "title": "🪗 Visita en San Juan del Cesar (Guajira)",
+    "sub": "Arrive at your wife's family's home in San Juan del Cesar, greet your in-laws on the front porch (terraza), and join the conversation.",
+    "turns": [
+      {
+        "npcEs": "¡Ajá, bienvenido a San Juan del Cesar! Pasa adelante a la terraza y siéntate en la mecedora cerca del abanico. ¿Cómo estuvo ese viaje desde Valledupar?",
+        "npcEn": "Hey there, welcome to San Juan del Cesar! Come on onto the front porch and sit in the rocking chair near the fan. How was the trip from Valledupar?",
+        "options": [
+          {
+            "style": "🪗 Sanjuanero / Cálido (Tú)",
+            "es": "¡Muchas gracias! Qué alegría estar aquí en San Juan con ustedes. El viaje desde Valledupar estuvo tranquilo y esta brisa en la terraza está sabrosa.",
+            "en": "Thank you so much! What a joy to be here in San Juan with you all. The trip from Valledupar was smooth and this breeze on the porch feels great.",
+            "replyEs": "¡Así se habla! Aquí en La Guajira esta es tu casa, primo. Ya te traigo un jugo de corozo bien frío.",
+            "replyEn": "Now you're talking! Here in La Guajira this is your home, cousin. I'll bring you an ice-cold corozo juice right now.",
+            "coach": "Warm, open gratitude and mentioning the breeze on the 'terraza' (front porch) immediately connects with Guajiro hospitality."
+          },
+          {
+            "style": "🙏 Respetuoso con los suegros",
+            "es": "Muchas gracias por recibirme con tanto cariño. El camino desde Valledupar es muy bonito y me alegra mucho conocer su tierra.",
+            "en": "Thank you very much for welcoming me so warmly. The road from Valledupar is very pretty and I'm so happy to visit your hometown.",
+            "replyEs": "¡Tan querido! Siéntate con confianza, que aquí todos somos familia y ya casi está listo el almuerzo.",
+            "replyEn": "How sweet! Sit down and make yourself at home—here we're all family and lunch is almost ready.",
+            "coach": "Polite warmth works wonderfully with parents-in-law ('suegros') while they invite you to relax like family."
+          },
+          {
+            "style": "🔄 Pivot / Calor costeño",
+            "es": "¡Gracias! Está haciendo bastante calorcito hoy; ese abanico me salvó la vida. ¿Me regala un vasito de agua fría, por favor?",
+            "en": "Thanks! It's pretty warm today; that electric fan saved my life. Could I have a glass of cold water, please?",
+            "replyEs": "¡Claro que sí! Con este fogaje toca prender el abanico en tres. Ya te traigo agua bien helada.",
+            "replyEn": "Of course! With this heat we have to turn the fan up to three. I'll bring you ice-cold water right away.",
+            "coach": "Using the local word 'abanico' for the electric fan (instead of 'ventilador') shows you know coastal/Guajiro Spanish."
+          }
+        ]
+      },
+      {
+        "npcEs": "Hoy preparamos friche y arroz de camarón para celebrar que vinieron, y más tarde llegan los primos con un acordeón. ¿Te animas a probar el friche?",
+        "npcEn": "Today we made friche (traditional Guajiro goat dish) and shrimp rice to celebrate your visit, and later the cousins are coming over with an accordion. Are you up for trying the friche?",
+        "options": [
+          {
+            "style": "🪗 Sanjuanero / Entusiasta",
+            "es": "¡Claro que sí, no me digas embuste! Mi esposa me ha hablado muchísimo del friche y de las parrandas vallenatas de San Juan.",
+            "en": "Of course, no kidding! My wife has told me so much about friche and the vallenato gatherings in San Juan.",
+            "replyEs": "¡Jajaja, qué bueno! Vas a ver que el friche con patacón y queso costeño te va a encantar.",
+            "replyEn": "Hahaha, awesome! You'll see that you're going to love friche with fried plantain and coastal cheese.",
+            "coach": "Playfully using '¡no me digas embuste!' and praising your wife's hometown traditions is a guaranteed hit in San Juan del Cesar."
+          },
+          {
+            "style": "🙏 Cortesía familiar",
+            "es": "¡Con mucho gusto! Quiero probar un poquito de todo, y qué emoción escuchar vallenato en vivo aquí en la Tierra de Compositores.",
+            "en": "Gladly! I want to try a little bit of everything, and how exciting to hear live vallenato here in the Land of Composers.",
+            "replyEs": "¡Qué orgullo que sepas eso! San Juan del Cesar es la cuna de grandes compositores del vallenato.",
+            "replyEn": "How proud we are that you know that! San Juan del Cesar is the cradle of great vallenato songwriters.",
+            "coach": "Calling San Juan del Cesar 'la Tierra de Compositores' honors the town's deepest cultural pride."
+          },
+          {
+            "style": "🔄 Pivot / Empezar suave",
+            "es": "Me encantaría probar un poquito del friche y también del arroz de camarón con patacón y queso costeño, muchas gracias.",
+            "en": "I'd love to try a little bit of the friche and also the shrimp rice with fried plantain and coastal cheese, thank you so much.",
+            "replyEs": "¡Listo! Te sirvo una porción suave con bastante patacón, queso costeño y suero.",
+            "replyEn": "Got it! I'll serve you a light portion with plenty of fried plantain, coastal cheese, and sour cream dip.",
+            "coach": "Asking to try 'un poquito' lets you taste traditional dishes graciously while pacing yourself."
+          }
+        ]
+      }
+    ]
+  }
+);
+
+STREET_EAR_LINKER.push(
+  {
+    "id": "ear11",
+    "context": "🪗 Greeting a cousin or friend in San Juan del Cesar / La Guajira",
+    "carefulEs": "¡Ajá, primo! ¿Cómo está la vaina?",
+    "streetEs": "¡Ajá, primo! ¿Cómo etá la vaina?",
+    "phoneticHint": "ah-HAH PREE-moh KOH-moh eh-TAH lah BAI-nah",
+    "en": "Hey, cousin/friend! How are things going?",
+    "tip": "In La Guajira, Cesar, and the Caribbean coast, syllable-final -s in está is softly aspirated or dropped, so ¿cómo está? sounds like ¿cómo etá?"
+  },
+  {
+    "id": "ear12",
+    "context": "🪭 Cooling off on a warm afternoon in San Juan del Cesar",
+    "carefulEs": "Estoy cansado por el calor; prende el abanico.",
+    "streetEs": "Toy cansao por el fogaje; prende el abanico.",
+    "phoneticHint": "toy kahn-SAO por ehl foh-GAH-heh PREHN-deh ehl ah-bah-NEE-koh",
+    "en": "I'm tired from the heat; turn on the electric fan.",
+    "tip": "In coastal and Guajiro speech, estoy often shortens to toy, the -d- in -ado drops (cansao), fogaje means intense heat, and abanico means electric fan."
+  },
+  {
+    "id": "ear13",
+    "context": "🚗 Heading from Valledupar to San Juan del Cesar to visit family",
+    "carefulEs": "Vamos para San Juan a ver a la familia.",
+    "streetEs": "Vamo' pa' San Juan a vé a la familia.",
+    "phoneticHint": "BAH-moh pah sahng hwang ah BEH ah lah fah-MEE-lyah",
+    "en": "We're going to San Juan to see the family.",
+    "tip": "Vamos para contracts to vamo' pa', and infinitive final -r in ver often softens to vé in relaxed Caribbean family conversation."
+  }
+);
+
+TRAMPAS_COLOMBIANAS.push(
+  {
+    "trap": "¡No me digas embuste! (Guajira / Costa)",
+    "wrongGuess": "Don't ambush me or talk about a statue bust",
+    "realMeaning": "Don't lie to me! / You're kidding me! (embuste = a fib, lie, or exaggeration)",
+    "es": "¡Qué va, primo, no me digas embuste! ¿De verdad te comiste todo el friche tú solo?",
+    "en": "Come on, cousin, don't kid me! Did you really eat all the friche by yourself?",
+    "tip": "Across San Juan del Cesar, La Guajira, Cesar, and the Caribbean Coast, embuste (and embustero) is far more common in everyday speech than mentira."
+  },
+  {
+    "trap": "Prender el abanico (Guajira / Costa)",
+    "wrongGuess": "To set fire to a small hand-held paper fan",
+    "realMeaning": "To turn on the electric standing or ceiling fan (called ventilador in Bogotá/Medellín)",
+    "es": "Pasa a la sala y prende el abanico en tres, que hoy está haciendo bastante calor en San Juan.",
+    "en": "Come into the living room and turn the electric fan on level three, because it's quite hot in San Juan today.",
+    "tip": "In La Guajira and on the Coast, every electric fan is called el abanico, and prender means to switch on an appliance."
+  },
+  {
+    "trap": "Un guineo (Guajira / Costa)",
+    "wrongGuess": "Someone from Guinea or a guinea pig",
+    "realMeaning": "A banana (either ripe yellow banana or green cooking banana, depending on context)",
+    "es": "En el desayuno comimos cayeye de guineo verde con queso costeño rallado y suero.",
+    "en": "For breakfast we ate mashed green banana (cayeye) with grated coastal cheese and sour cream dip.",
+    "tip": "While the interior of Colombia says banano, people in La Guajira, Cesar, and Magdalena call bananas guineo."
+  }
+);
+
+FRASES.push(
+  {section:"🪗 San Juan del Cesar, La Guajira y vallenato",quizCat:"sanjuan-guajira",cls:"color:var(--gold);background:rgba(232,180,74,0.12);border:1px solid rgba(232,180,74,0.28)",items:[
+    {es:"¡Ajá, primo! ¿Cómo está la vaina? Pasa y siéntate en la mecedora al lado del abanico.",en:"Hey, cousin/friend! How are things going? Come in and sit in the rocking chair next to the fan.",register:"San Juan del Cesar · warm greeting"},
+    {es:"Por la tardecita sacamos las mecedoras a la terraza para coger fresco y conversar con los suegros.",en:"In the late afternoon we bring the rocking chairs out to the front porch to catch the breeze and chat with the in-laws.",register:"Guajira · terraza culture"},
+    {es:"¡No me digas embuste, compadre! ¿De verdad vienen para el Festival de Compositores en diciembre?",en:"Don't kid me, buddy! Are you really coming for the Composers Festival in December?",register:"San Juan del Cesar · embuste"},
+    {es:"Hoy almorzamos friche y chivo guisado con arroz de camarón, patacón y queso costeño.",en:"Today we're having fried goat (friche) and stewed goat with shrimp rice, patacón, and salty coastal cheese for lunch.",register:"Guajira & Cesar · food"},
+    {es:"El vallenato tradicional se toca con tres instrumentos: acordeón, caja y guacharaca.",en:"Traditional vallenato is played with three instruments: accordion, caja drum, and guacharaca.",register:"Provincia Vallenata · music"},
+    {es:"Salimos temprano de Valledupar y en cuarenta y cinco minutos llegamos a San Juan del Cesar.",en:"We leave Valledupar early and in forty-five minutes we arrive in San Juan del Cesar.",register:"Cesar–Guajira route"}
+  ]},
+  {section:"🚨 Seguridad, emergencias (123) y no dar papaya",quizCat:"seguridad-emergencias",cls:"color:var(--pink);background:rgba(232,93,117,0.1);border:1px solid rgba(232,93,117,0.25)",items:[
+    {es:"En la calle es mejor no dar papaya: guarda el celular y revisa siempre la placa antes de subirte al carro.",en:"On the street it's best not to make yourself an easy target: put your phone away and always check the license plate before getting in the car.",register:"Colombian street smarts"},
+    {es:"Necesito ayuda, por favor; ¿puede llamar a la línea única de emergencias uno, dos, tres?",en:"I need help, please; can you call the single emergency line 1-2-3?",register:"Emergency · 123 Colombia"},
+    {es:"Se me extravió el pasaporte y necesito poner el constancia o denuncia para el seguro y la embajada.",en:"My passport was lost and I need to file an official report for insurance and the embassy.",register:"Lost documents · Policía"},
+    {es:"Disculpe, agente, ¿dónde queda el CAI de la policía o la Policía de Turismo más cercana?",en:"Excuse me, officer, where is the nearest neighborhood police post (CAI) or Tourism Police office?",register:"Police assistance"},
+    {es:"Por seguridad, prefiero pedir el taxi o el carro por aplicación desde adentro del centro comercial.",en:"For safety, I prefer to order a taxi or ride-share via app from inside the shopping mall.",register:"Safe transport"},
+    {es:"Voy a bloquear mis tarjetas inmediatamente desde la aplicación del banco por precaución.",en:"I'm going to lock my cards immediately from the bank app as a precaution.",register:"Banking safety"}
+  ]},
+  {section:"🔧 Reparaciones del hogar, recibos y técnico",quizCat:"hogar-reparaciones",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.25)",items:[
+    {es:"Buenos días, se cayó el internet de fibra óptica desde esta mañana; ¿pueden enviar un técnico a revisar el módem?",en:"Good morning, the fiber-optic internet has been down since this morning; can you send a technician to check the router?",register:"Home internet · técnico"},
+    {es:"Hay una fuga de agua debajo del lavaplatos y necesitamos que venga un plomero hoy.",en:"There is a water leak under the kitchen sink and we need a plumber to come today.",register:"Plumbing · hogar"},
+    {es:"Se saltó el taco de la luz en la cocina; ¿sabe dónde está la caja de tacos del apartamento?",en:"The circuit breaker tripped in the kitchen; do you know where the apartment's breaker box is?",register:"Electricity · los tacos"},
+    {es:"Voy a dejar autorizado en la portería el ingreso del técnico del internet para esta tarde.",en:"I'm going to authorize entry at the front desk for the internet technician this afternoon.",register:"Portería · repairs"},
+    {es:"Revisemos la fecha límite de pago en el recibo del gas para que no nos vayan a cortar el servicio.",en:"Let's check the payment due date on the gas bill so they don't shut off the service.",register:"Utility bills · recibos"},
+    {es:"¿A qué hora aproximada llega el técnico: en la jornada de la mañana o en la tarde?",en:"Around what time will the technician arrive: during the morning window or in the afternoon?",register:"Scheduling repairs"}
+  ]},
+  {section:"⚽ Fútbol, conciertos, boletas y hacer vaca",quizCat:"eventos-futbol",cls:"color:var(--blue);background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.25)",items:[
+    {es:"¿Ya compraste las boletas para el concierto del sábado o todavía quedan en occidental?",en:"Did you already buy the tickets for Saturday's concert or are there still seats left in the west stand?",register:"Concerts & boletas"},
+    {es:"Hoy juega la Selección Colombia; ponte la camiseta que vamos a ver el partido donde mis primos.",en:"Today the Colombian National Team plays; put on your jersey because we're going to watch the match at my cousins' place.",register:"Fútbol · Selección"},
+    {es:"Hagamos vaca entre todos para pedir las picadas y las cervezas antes del partido.",en:"Let's all pitch in ('hacer vaca') to order the shared meat platters and beers before the match.",register:"Colombian · hacer vaca"},
+    {es:"En la entrada del estadio piden la boleta digital en el celular y el documento de identidad.",en:"At the stadium entrance they ask for the digital ticket on your phone and your ID document.",register:"Stadium entry"},
+    {es:"¿Dónde hacemos la previa antes de entrar al concierto para no hacer tanta fila?",en:"Where should we do the pre-game/pre-concert hangout before going into the concert so we don't wait in such a long line?",register:"Nightlife · la previa"},
+    {es:"¡Qué golazo al último minuto! Todo el barrio salió a celebrar.",en:"What an amazing goal at the last minute! The whole neighborhood came out to celebrate.",register:"Fútbol · celebration"}
+  ]}
+);
+
+CONVERSATIONS.push(
+  v60Dialogue("San Juan del Cesar, La Guajira y parranda vallenata","Visiting your wife's family in San Juan del Cesar, enjoying the front-porch breeze, friche, and vallenato music",[
+    ["A","¡Ajá, primo! Bienvenido a San Juan del Cesar. Pasa a la terraza y siéntate en la mecedora que ya prendí el abanico.","Hey, cousin/friend! Welcome to San Juan del Cesar. Come onto the front porch and sit in the rocking chair—I already turned on the fan."],
+    ["B","¡Muchas gracias! Qué alegría estar por fin aquí en La Guajira con toda la familia de mi esposa.","Thank you so much! What a joy to finally be here in La Guajira with my wife's whole family."],
+    ["A","Aquí te queremos como a un hijo más. ¿Qué te provoca tomar para este calor: un jugo de corozo bien frío o agua de panela con limón?","Here we love you like another son. What do you feel like drinking for this heat: an ice-cold corozo juice or panela limeade?"],
+    ["B","Un jugo de corozo bien frío me cae de maravilla. ¡Y huele delicioso en la cocina! ¿Qué están preparando?","An ice-cold corozo juice sounds wonderful. And it smells delicious in the kitchen! What are you cooking?"],
+    ["A","Hoy hicimos friche tradicional y arroz de camarón con patacones, queso costeño y suero. ¡No te digo embuste, quedó espectacular!","Today we made traditional friche (fried goat) and shrimp rice with patacones, coastal cheese, and sour cream dip. No kidding, it turned out spectacular!"],
+    ["B","¡Qué delicia! Y me contaron que esta noche vienen los tíos con el acordeón para armar una parranda vallenata aquí en la casa.","How delicious! And they told me that tonight the uncles are coming over with the accordion to put together a vallenato gathering right here at the house."]
+  ],[{es:"En San Juan del Cesar y La Guajira 'el abanico' es el ventilador eléctrico y 'la terraza' es el porche frente a la calle.",en:"In San Juan del Cesar and La Guajira 'el abanico' is the electric fan and 'la terraza' is the front porch facing the street.",tts:"En San Juan del Cesar y La Guajira el abanico es el ventilador eléctrico y la terraza es el porche frente a la calle."},{es:"'¡No me digas embuste!' significa '¡No me digas mentiras / no me bromees!'",en:"'¡No me digas embuste!' means 'Don't tell me fibs / you're kidding me!'",tts:"No me digas embuste significa No me digas mentiras o no me bromees."}]),
+  v60Dialogue("Seguridad, emergencias (123) y no dar papaya","Practicing smart urban habits, verifying ride-share plates, and reporting a lost document",[
+    ["A","Oye, antes de salir a caminar por el centro, recuerda el consejo número uno en Colombia: no dar papaya con el celular en la mano.","Hey, before we head out to walk downtown, remember rule number one in Colombia: don't make yourself an easy target with your phone in your hand."],
+    ["B","Tienes toda la razón. Si necesito mirar el mapa o contestar un mensaje, mejor entro un momento a un café o centro comercial.","You're totally right. If I need to check the map or answer a message, it's better to step inside a café or mall for a moment."],
+    ["A","Exacto. Y cuando pidamos el carro por la aplicación, verificamos primero que la placa y el nombre del conductor coincidan.","Exactly. And when we order the car on the app, we first verify that the license plate and driver's name match."],
+    ["B","Una pregunta importante: si algún día tenemos una emergencia médica o policial, ¿a qué número se llama en Colombia?","An important question: if we ever have a medical or police emergency, what number do you call in Colombia?"],
+    ["A","En Colombia marcas el uno, dos, tres desde cualquier celular. Y si se te pierde un documento, puedes poner la constancia en la página de la Policía Nacional o ir a un CAI.","In Colombia you dial 1-2-3 from any cell phone. And if you lose a document, you can file a lost-property report on the National Police website or go to a neighborhood CAI post."],
+    ["B","¡Súper claro! Con esas precauciones básicas uno anda tranquilo y disfruta muchísimo la ciudad.","Super clear! With those basic precautions you can walk around calmly and really enjoy the city."]
+  ],[{es:"El 123 es la línea única de emergencias en Colombia para policía, bomberos y ambulancia.",en:"123 is the unified emergency number in Colombia for police, fire, and ambulance.",tts:"El uno dos tres es la línea única de emergencias en Colombia para policía, bomberos y ambulancia."},{es:"'No dar papaya' significa tomar precauciones básicas y no descuidar objetos de valor en la vía pública.",en:"'No dar papaya' means taking basic street-smart precautions and not leaving valuables exposed in public.",tts:"No dar papaya significa tomar precauciones básicas y no descuidar objetos de valor en la vía pública."}]),
+  v60Dialogue("Reparaciones del hogar, recibos y técnico","Scheduling an internet technician, fixing a tripped breaker, and authorizing entry at the portería",[
+    ["A","Veci, buenos días. Es que anoche después del aguacero se saltó un taco de la luz y además el módem del internet quedó sin señal.","Neighbor, good morning. Last night after the downpour a circuit breaker tripped and on top of that the internet router lost its signal."],
+    ["B","Buenos días. La caja de tacos está detrás de la puerta de la cocina; basta con volver a subir el interruptor que quedó en la mitad.","Good morning. The breaker box is behind the kitchen door; just flip the switch that stopped in the middle back up."],
+    ["A","¡Ah, perfecto, ya volvió la luz en la cocina! Pero el internet sigue caído, así que ya agendé visita técnica para hoy en la tarde.","Oh, perfect, the kitchen power is back on! But the internet is still down, so I already scheduled a technician visit for this afternoon."],
+    ["B","Listo, recuerde llamar a la portería para dejar autorizado el ingreso del técnico con su nombre y empresa.","Got it, remember to call the front desk to authorize the technician's entry with their name and company."],
+    ["A","Ya mismo aviso en portería. También quería preguntarle: ¿este recibo del agua que llegó por debajo de la puerta ya está incluido en el arriendo o se paga aparte?","I'll let the front desk know right now. I also wanted to ask: is this water bill that was slipped under the door included in the rent or paid separately?"],
+    ["B","En su contrato los servicios se pagan aparte antes de la fecha límite de pago; puede cancelarlo por PSE o en un corresponsal bancario.","In your lease utilities are paid separately before the due date; you can pay it online via PSE or at a local banking correspondent."]
+  ],[{es:"En Colombia a los interruptores del tablero eléctrico se les dice 'los tacos de la luz'.",en:"In Colombia the switches in the electrical breaker box are called 'los tacos de la luz'.",tts:"En Colombia a los interruptores del tablero eléctrico se les dice los tacos de la luz."},{es:"Siempre avisa en portería antes de que llegue un plomero, electricista o técnico.",en:"Always notify the front desk ('portería') before a plumber, electrician, or technician arrives.",tts:"Siempre avisa en portería antes de que llegue un plomero, electricista o técnico."}]),
+  v60Dialogue("Fútbol, conciertos, boletas y hacer vaca","Getting tickets for a match or concert, wearing the Selección jersey, and splitting expenses ('hacer vaca')",[
+    ["A","¡Oye, este jueves juega la Selección Colombia! ¿Dónde vamos a ver el partido con el combo?","Hey, this Thursday the Colombian National Team is playing! Where are we going to watch the game with the crew?"],
+    ["B","Vamos a verlo en la casa de mis primos. Ponte la camiseta amarilla y hacemos vaca entre todos para pedir unas picadas y cervezas.","Let's watch it at my cousins' house. Put on the yellow jersey and we'll all pitch in ('hacer vaca') to order shared meat platters and beers."],
+    ["A","¡De una! ¿De a cuánto ponemos para la vaca? ¿Te paso mi parte de una vez por Nequi?","I'm in! How much should we each put in for the pool? Should I send you my share right now on Nequi?"],
+    ["B","Sí, pongamos de a cuarenta mil pesos por persona. Oye, ¿y ya compraste las boletas para el concierto del sábado?","Yes, let's put in forty thousand pesos per person. Hey, and did you already buy the tickets for Saturday's concert?"],
+    ["A","Sí, alcancé a comprar dos boletas en tribuna occidental. Nos vemos a las seis para hacer la previa cerca del estadio.","Yes, I managed to buy two tickets in the west stand. Let's meet at six to do the pre-concert hangout near the stadium."],
+    ["B","¡Qué nota! Lleva la boleta digital descargada en el celular y la cédula para entrar rápido sin fila.","Awesome! Bring the digital ticket downloaded on your phone and your ID so we can get in fast without waiting in line."]
+  ],[{es:"'Hacer vaca' significa reunir plata entre varias personas para comprar algo compartido.",en:"'Hacer vaca' means pooling money among several people to buy something shared.",tts:"Hacer vaca significa reunir plata entre varias personas para comprar algo compartido."},{es:"En Colombia a las entradas de un concierto, cine o partido se les dice 'las boletas'.",en:"In Colombia tickets for a concert, movie, or game are called 'las boletas'.",tts:"En Colombia a las entradas de un concierto, cine o partido se les dice las boletas."}])
+);
+
+READINGS.push(
+  {id:"lectura-sanjuan-guajira",level:"B1",title:"San Juan del Cesar, La Guajira y la Tierra de Compositores",lesson:"san-juan-guajira",intro:"Discover the warm family culture, front-porch terraza life, food, and vallenato heritage of San Juan del Cesar in southern La Guajira.",lines:[
+    {es:"San Juan del Cesar está ubicado en el sur de La Guajira, muy cerca de Valledupar, en una región famosa por su hospitalidad familiar y su tradición musical.",en:"San Juan del Cesar is located in southern La Guajira, very close to Valledupar, in a region famous for its family hospitality and musical tradition.",tts:"San Juan del Cesar está ubicado en el sur de La Guajira, muy cerca de Valledupar, en una región famosa por su hospitalidad familiar y su tradición musical."},
+    {es:"Conocido como la Tierra de Compositores, el municipio celebra cada diciembre el Festival Nacional de Compositores de Música Vallenata al son de acordeón, caja y guacharaca.",en:"Known as the Land of Composers, the town celebrates the National Festival of Vallenato Composers every December to the sound of accordion, caja drum, and guacharaca.",tts:"Conocido como la Tierra de Compositores, el municipio celebra cada diciembre el Festival Nacional de Compositores de Música Vallenata al son de acordeón, caja y guacharaca."},
+    {es:"En la vida diaria, la gente se trata con mucha cercanía usando tú, primo, prima y compadre, y al caer la tarde las familias sacan las mecedoras a la terraza frente a la calle para conversar al fresco.",en:"In daily life, people address each other warmly using 'tú', 'primo', 'prima', and 'compadre', and at dusk families bring rocking chairs out to the front porch ('terraza') to chat in the breeze.",tts:"En la vida diaria, la gente se trata con mucha cercanía usando tú, primo, prima y compadre, y al caer la tarde las familias sacan las mecedoras a la terraza frente a la calle para conversar al fresco."},
+    {es:"En la mesa nunca faltan el queso costeño con suero, el patacón, el guineo, el arroz de camarón y platos tradicionales guajiros como el friche y el chivo guisado.",en:"At the table you'll always find salty coastal cheese with sour cream dip, fried green plantain, banana ('guineo'), shrimp rice, and traditional Guajiro dishes like friche and stewed goat.",tts:"En la mesa nunca faltan el queso costeño con suero, el patacón, el guineo, el arroz de camarón y platos tradicionales guajiros como el friche y el chivo guisado."}
+  ],questions:[{q:"En San Juan del Cesar y La Guajira, ¿qué significan 'el abanico' y 'la terraza' en una casa?",choices:["El ventilador eléctrico y el porche delantero donde se ponen las mecedoras","El garaje del edificio y el ascensor","El paraguas para la lluvia y el sótano"],answer:"El ventilador eléctrico y el porche delantero donde se ponen las mecedoras"}]},
+  {id:"lectura-seguridad-emergencias",level:"A2",title:"No dar papaya, transporte seguro y la línea 123",lesson:"seguridad-emergencias",intro:"Practical, calm street smarts for enjoying Colombian cities safely and handling lost documents or emergencies.",lines:[
+    {es:"La expresión colombiana no dar papaya resume una regla práctica de prevención: evitar usar el celular distraído en aceras solas o mostrar objetos de valor sin necesidad.",en:"The Colombian expression 'no dar papaya' sums up a practical prevention rule: avoid using your phone distractedly on quiet sidewalks or flashing valuables unnecessarily.",tts:"La expresión colombiana no dar papaya resume una regla práctica de prevención: evitar usar el celular distraído en aceras solas o mostrar objetos de valor sin necesidad."},
+    {es:"Al pedir transporte por aplicación, es buena costumbre esperar adentro del local o edificio y verificar que la placa y el conductor coincidan antes de subir.",en:"When ordering a ride via app, it is a good habit to wait inside the venue or building and verify that the license plate and driver match before getting in.",tts:"Al pedir transporte por aplicación, es buena costumbre esperar adentro del local o edificio y verificar que la placa y el conductor coincidan antes de subir."},
+    {es:"En caso de emergencia médica, incendio o situación policial, el número único nacional desde cualquier teléfono en Colombia es el uno, dos, tres.",en:"In case of a medical, fire, or police emergency, the unified national emergency number from any phone in Colombia is 1-2-3.",tts:"En caso de emergencia médica, incendio o situación policial, el número único nacional desde cualquier teléfono en Colombia es el uno, dos, tres."},
+    {es:"Si pierdes un documento, puedes registrar la constancia por pérdida en el portal de la Policía Nacional o acudir a un CAI o a la Policía de Turismo para orientación.",en:"If you lose a document, you can file a lost-document report on the National Police portal or visit a neighborhood CAI post or the Tourism Police for guidance.",tts:"Si pierdes un documento, puedes registrar la constancia por pérdida en el portal de la Policía Nacional o acudir a un CAI o a la Policía de Turismo para orientación."}
+  ],questions:[{q:"¿Cuál es el número único de emergencias en Colombia y qué significa 'no dar papaya'?",choices:["123; significa tomar precauciones básicas y no descuidar objetos de valor","999; significa regalar fruta en el mercado","411; significa cancelar la cuenta con tarjeta"],answer:"123; significa tomar precauciones básicas y no descuidar objetos de valor"}]},
+  {id:"lectura-hogar-reparaciones",level:"B1",title:"Recibos, tacos de la luz y reparaciones en el apartamento",lesson:"hogar-reparaciones",intro:"How to handle power breakers ('tacos'), internet technicians, plumbing repairs, and utility payment dates in Colombia.",lines:[
+    {es:"Cuando se va la energía en una parte del apartamento, los colombianos revisan primero si se saltó un taco en la caja de tacos eléctricos.",en:"When the power goes out in part of an apartment, Colombians first check whether a breaker ('taco') tripped in the electrical breaker box.",tts:"Cuando se va la energía en una parte del apartamento, los colombianos revisan primero si se saltó un taco en la caja de tacos eléctricos."},
+    {es:"Si necesitas que venga un plomero, un electricista o el técnico del internet a un conjunto cerrado, debes autorizar su ingreso previamente en la portería.",en:"If you need a plumber, electrician, or internet technician to come to a gated complex, you must authorize their entry beforehand at the front desk ('portería').",tts:"Si necesitas que venga un plomero, un electricista o el técnico del internet a un conjunto cerrado, debes autorizar su ingreso previamente en la portería."},
+    {es:"Los recibos de agua, energía, gas e internet traen una fecha límite de pago; si pasa esa fecha, la empresa puede generar recargo o suspensión del servicio.",en:"Water, electricity, gas, and internet bills show a payment due date; if that date passes, the utility company may charge a late fee or suspend service.",tts:"Los recibos de agua, energía, gas e internet traen una fecha límite de pago; si pasa esa fecha, la empresa puede generar recargo o suspensión del servicio."},
+    {es:"Muchos residentes pagan los recibos en línea por PSE o en efectivo en corresponsales bancarios del barrio.",en:"Many residents pay utility bills online via PSE or in cash at neighborhood banking correspondents.",tts:"Muchos residentes pagan los recibos en línea por PSE o en efectivo en corresponsales bancarios del barrio."}
+  ],questions:[{q:"En un apartamento en Colombia, ¿qué significa 'se saltó el taco de la luz'?",choices:["Que se disparó el interruptor del tablero eléctrico","Que llegaron los mariachis a la fiesta","Que subió el precio de la gasolina"],answer:"Que se disparó el interruptor del tablero eléctrico"}]},
+  {id:"lectura-eventos-futbol",level:"A2",title:"Pasión por la Selección, boletas y 'hacer vaca'",lesson:"eventos-futbol-cultura",intro:"Understand how Colombians buy concert and soccer tickets ('boletas'), celebrate matches, and pool money ('hacer vaca') with friends.",lines:[
+    {es:"Cuando juega la Selección Colombia, es tradición ponerse la camiseta amarilla y reunirse con la familia o los amigos para ver el partido.",en:"When the Colombian National Team plays, it is a tradition to put on the yellow jersey and get together with family or friends to watch the match.",tts:"Cuando juega la Selección Colombia, es tradición ponerse la camiseta amarilla y reunirse con la familia o los amigos para ver el partido."},
+    {es:"Para compartir gastos de comida, picadas o bebidas en grupo, los colombianos dicen vamos a hacer vaca, poniendo cada uno su parte en efectivo o por Nequi.",en:"To split the cost of food, shared platters, or drinks in a group, Colombians say 'vamos a hacer vaca', with each person pitching in their share in cash or via Nequi.",tts:"Para compartir gastos de comida, picadas o bebidas en grupo, los colombianos dicen vamos a hacer vaca, poniendo cada uno su parte en efectivo o por Nequi."},
+    {es:"A las entradas para el estadio, el cine o un concierto se les llama las boletas, y las tribunas del estadio suelen dividirse en occidental, oriental, norte y sur.",en:"Tickets for the stadium, movies, or a concert are called 'las boletas', and stadium stands are usually divided into west ('occidental'), east ('oriental'), north, and south.",tts:"A las entradas para el estadio, el cine o un concierto se les llama las boletas, y las tribunas del estadio suelen dividirse en occidental, oriental, norte y sur."},
+    {es:"Antes de entrar a un concierto o partido nocturno, muchos grupos se reúnen cerca del lugar para hacer la previa y conversar.",en:"Before going into an evening concert or match, many groups meet up near the venue for 'la previa' (pre-event hangout) to chat.",tts:"Antes de entrar a un concierto o partido nocturno, muchos grupos se reúnen cerca del lugar para hacer la previa y conversar."}
+  ],questions:[{q:"¿Qué significa la expresión colombiana 'hacer vaca' entre amigos?",choices:["Reunir dinero entre varios para pagar algo compartido","Ir a ordeñar vacas a una finca","Cancelar una reserva de hotel"],answer:"Reunir dinero entre varios para pagar algo compartido"}]}
+);
+
+CONVERSATION_MISSIONS.push(
+  {id:"mision-sanjuan-guajira",title:"Saluda a tu familia política en San Juan del Cesar (La Guajira)",scenario:"You arrive at your wife's family's house in San Juan del Cesar. Greet your in-laws and cousins on the front porch (terraza), ask them to turn on the fan (abanico), and say you're excited to try friche and hear vallenato.",prompt:"Habla con cariño en la terraza de San Juan del Cesar:",lesson:"san-juan-guajira",models:[
+    {es:"¡Ajá, primo! Qué alegría estar aquí en San Juan del Cesar con toda la familia; pasemos a la terraza a sentarnos en las mecedoras al lado del abanico.",en:"Hey, cousin! What a joy to be here in San Juan del Cesar with the whole family; let's go out to the front porch and sit in the rocking chairs next to the fan.",tts:"¡Ajá, primo! Qué alegría estar aquí en San Juan del Cesar con toda la familia; pasemos a la terraza a sentarnos en las mecedoras al lado del abanico."},
+    {es:"¡No me digas embuste! Me muero de ganas de probar el friche con patacón y queso costeño y escuchar una parranda vallenata.",en:"No kidding! I'm dying to try the friche with fried plantain and coastal cheese and listen to a vallenato gathering.",tts:"¡No me digas embuste! Me muero de ganas de probar el friche con patacón y queso costeño y escuchar una parranda vallenata."}
+  ]},
+  {id:"mision-seguridad-emergencias",title:"Aplica 'no dar papaya' y pide ayuda o reporta un documento perdido",scenario:"Tell a friend how to order a ride safely without giving papaya, and ask an officer how to file a report for a lost passport.",prompt:"Explica las medidas de seguridad y haz la consulta:",lesson:"seguridad-emergencias",models:[
+    {es:"Pidamos el carro desde adentro del centro comercial para no dar papaya en la calle y revisemos bien la placa antes de subir.",en:"Let's order the car from inside the mall so we don't make ourselves a target on the street, and let's check the license plate carefully before getting in.",tts:"Pidamos el carro desde adentro del centro comercial para no dar papaya en la calle y revisemos bien la placa antes de subir."},
+    {es:"Disculpe, agente, se me extravió el pasaporte; ¿puedo poner la constancia en el portal de la Policía Nacional o en el CAI?",en:"Excuse me, officer, my passport was lost; can I file the report on the National Police portal or at the CAI post?",tts:"Disculpe, agente, se me extravió el pasaporte; ¿puedo poner la constancia en el portal de la Policía Nacional o en el CAI?"}
+  ]},
+  {id:"mision-hogar-reparaciones",title:"Coordina un técnico de internet o plomero y autorízalo en portería",scenario:"Your apartment internet dropped or a breaker tripped. Explain the issue and authorize the technician at the building front desk.",prompt:"Habla con el soporte técnico y con la portería:",lesson:"hogar-reparaciones",models:[
+    {es:"Buenos días, se saltó un taco de la luz y además el módem de fibra óptica quedó sin señal; ¿pueden enviar un técnico hoy en la tarde?",en:"Good morning, a circuit breaker tripped and the fiber-optic router also lost signal; can you send a technician this afternoon?",tts:"Buenos días, se saltó un taco de la luz y además el módem de fibra óptica quedó sin señal; ¿pueden enviar un técnico hoy en la tarde?"},
+    {es:"Veci, llamo a la portería para dejar autorizado el ingreso del técnico del internet que viene entre las dos y las cinco.",en:"Neighbor, I'm calling the front desk to authorize entry for the internet technician who is coming between two and five.",tts:"Veci, llamo a la portería para dejar autorizado el ingreso del técnico del internet que viene entre las dos y las cinco."}
+  ]},
+  {id:"mision-eventos-futbol",title:"Compra boletas y propón 'hacer vaca' para el partido de la Selección",scenario:"Invite friends to watch the Colombian National Team match or go to a concert, ask about tickets ('boletas'), and propose pooling money ('hacer vaca').",prompt:"Organiza el plan con tus amigos:",lesson:"eventos-futbol-cultura",models:[
+    {es:"¡Hoy juega la Selección Colombia! Ponte la camiseta amarilla y hacemos vaca entre todos por Nequi para pedir las picadas.",en:"Today the Colombian National Team plays! Put on the yellow jersey and let's all pool money via Nequi to order the shared meat platters.",tts:"¡Hoy juega la Selección Colombia! Ponte la camiseta amarilla y hacemos vaca entre todos por Nequi para pedir las picadas."},
+    {es:"Ya tengo las boletas digitales en el celular para la tribuna occidental; nos vemos a las seis para hacer la previa.",en:"I already have the digital tickets on my phone for the west stand; see you at six for the pre-game hangout.",tts:"Ya tengo las boletas digitales en el celular para la tribuna occidental; nos vemos a las seis para hacer la previa."}
+  ]}
+);
+
+Object.assign(LESSON_CONTENT,{
+  "san-juan-guajira":{
+    goal:{es:"¡Ajá, primo! Pasemos a la terraza a sentarnos en la mecedora al lado del abanico mientras sale el friche.",en:"Hey, cousin! Let's go onto the front porch and sit in the rocking chair next to the fan while the friche finishes cooking."},
+    words:[{es:"¡ajá, primo / compadre!",en:"hey cousin / buddy! (warm Guajiro address)"},{es:"la terraza y la mecedora",en:"front porch & rocking chair"},{es:"el abanico",en:"electric fan (coastal word for ventilador)"},{es:"¡no me digas embuste!",en:"don't kid me / don't tell fibs!"},{es:"el friche y el queso costeño",en:"traditional fried goat dish & salty coastal cheese"},{es:"la parranda vallenata",en:"home/patio vallenato music gathering"}],
+    phrases:[{en:"Hey cousin, how are things going?",es:"¡Ajá, primo! ¿Cómo está la vaina?"},{en:"Turn on the fan because it's hot today.",es:"Prende el abanico que hoy está haciendo calor."},{en:"Don't kid me, buddy!",es:"¡No me digas embuste, compadre!"},{en:"San Juan del Cesar is the Land of Vallenato Composers.",es:"San Juan del Cesar es la Tierra de Compositores del vallenato."}]
+  },
+  "seguridad-emergencias":{
+    goal:{es:"Para no dar papaya, pidamos el carro desde adentro y revisemos la placa antes de subir.",en:"So we don't make ourselves an easy target, let's order the ride from inside and check the license plate before getting in."},
+    words:[{es:"no dar papaya",en:"don't leave yourself vulnerable / use street smarts"},{es:"la línea 123",en:"Colombia's unified emergency number (1-2-3)"},{es:"el CAI / Policía de Turismo",en:"neighborhood police post / Tourism Police"},{es:"la denuncia / constancia",en:"official police or lost-property report"},{es:"verificar la placa",en:"to check the vehicle license plate"},{es:"bloquear la tarjeta",en:"to lock/freeze your bank card"}],
+    phrases:[{en:"Don't take your phone out on a lonely street; don't give papaya.",es:"No saques el celular en una calle sola; no des papaya."},{en:"Can you call the 1-2-3 emergency line, please?",es:"¿Puede llamar a la línea de emergencias uno, dos, tres, por favor?"},{en:"Always check the license plate before getting into the car.",es:"Revisa siempre la placa antes de subirte al carro."},{en:"Where is the nearest neighborhood police post (CAI)?",es:"¿Dónde queda el CAI de la policía más cercano?"}]
+  },
+  "hogar-reparaciones":{
+    goal:{es:"Se saltó un taco de la luz y voy a dejar autorizado en portería el ingreso del técnico.",en:"A circuit breaker tripped and I'm going to authorize the technician's entry at the front desk."},
+    words:[{es:"los tacos de la luz",en:"electrical circuit breakers"},{es:"el plomero / el técnico",en:"plumber / internet or appliance technician"},{es:"hay una fuga / gotera",en:"there is a pipe leak / roof drip"},{es:"se cayó el internet",en:"the internet went down"},{es:"la fecha límite de pago",en:"utility bill payment due date"},{es:"autorizar en portería",en:"to authorize visitor entry at the front desk"}],
+    phrases:[{en:"A circuit breaker tripped in the kitchen.",es:"Se saltó un taco de la luz en la cocina."},{en:"The internet has been down since this morning.",es:"Se cayó el internet desde esta mañana."},{en:"I'll authorize the technician's entry at the front desk.",es:"Voy a dejar autorizado en la portería el ingreso del técnico."},{en:"When is the payment due date on the electricity bill?",es:"¿Cuándo es la fecha límite de pago del recibo de la luz?"}]
+  },
+  "eventos-futbol-cultura":{
+    goal:{es:"Ponte la camiseta de la Selección y hacemos vaca entre todos para las picadas y las boletas.",en:"Put on the National Team jersey and let's all pool money for the shared platters and the tickets."},
+    words:[{es:"hacer vaca",en:"to pitch in / pool money as a group"},{es:"las boletas",en:"tickets (for a concert, match, or movie)"},{es:"la Selección Colombia",en:"the Colombian National Soccer Team"},{es:"la previa",en:"pre-game or pre-concert hangout"},{es:"tribuna occidental / oriental",en:"west / east stadium stand"},{es:"una picada",en:"shared platter of grilled meats, patacón, and arepa"}],
+    phrases:[{en:"Let's all pitch in ('hacer vaca') to order food.",es:"Hagamos vaca entre todos para pedir comida."},{en:"Did you already buy the tickets for the concert?",es:"¿Ya compraste las boletas para el concierto?"},{en:"Today the Colombian National Team is playing!",es:"¡Hoy juega la Selección Colombia!"},{en:"How much do we each put in for the group pool?",es:"¿De a cuánto ponemos para la vaca?"}]
+  }
+});
+
+Object.assign(LESSON_META,{
+  "san-juan-guajira":{stage:"Speak More Naturally",difficulty:"Easy",prereq:"Citas, cumplidos y la familia",dialogue:"San Juan del Cesar, La Guajira y parranda vallenata",vocab:"familia",quizCat:"sanjuan-guajira",quizMode:"conversation",guideIds:["usted-tu-vos","cortesia-colombiana"],readingId:"lectura-sanjuan-guajira",missionId:"mision-sanjuan-guajira"},
+  "seguridad-emergencias":{stage:"Travel and Survival",difficulty:"Easy",prereq:"Direcciones, cuadras y seguridad",dialogue:"Seguridad, emergencias (123) y no dar papaya",vocab:"direcciones",quizCat:"seguridad-emergencias",quizMode:"conversation",guideIds:["cortesia-colombiana","por-para"],readingId:"lectura-seguridad-emergencias",missionId:"mision-seguridad-emergencias"},
+  "hogar-reparaciones":{stage:"Daily Life",difficulty:"Easy",prereq:"Portería, domicilios y paquetes",dialogue:"Reparaciones del hogar, recibos y técnico",vocab:"casa",quizCat:"hogar-reparaciones",quizMode:"conversation",guideIds:["se-me","cortesia-colombiana"],readingId:"lectura-hogar-reparaciones",missionId:"mision-hogar-reparaciones"},
+  "eventos-futbol-cultura":{stage:"Speak More Naturally",difficulty:"Easy",prereq:"Puentes festivos, salsa y rumba",dialogue:"Fútbol, conciertos, boletas y hacer vaca",vocab:"colombianismos",quizCat:"eventos-futbol",quizMode:"conversation",guideIds:["futuro","gustar"],readingId:"lectura-eventos-futbol",missionId:"mision-eventos-futbol"}
+});
+
+Object.assign(SENTENCE_LADDERS,{
+  "san-juan-guajira":{
+    title:"Connect with family in San Juan del Cesar & La Guajira on the terraza and at a parranda vallenata",
+    rungs:[
+      {tag:"1. Anchor greeting",es:"¡Ajá, primo! ¿Cómo está la vaina?",en:"Hey, cousin/friend! How are things going?"},
+      {tag:"2. + Terraza & abanico",es:"¡Ajá, primo! Pasa a la terraza y siéntate en la mecedora al lado del abanico.",en:"Hey, cousin! Come onto the front porch and sit in the rocking chair next to the fan."},
+      {tag:"3. + Friche & queso costeño",es:"Hoy preparamos friche y arroz de camarón con patacón, queso costeño y suero.",en:"Today we made friche and shrimp rice with fried plantain, coastal cheese, and sour cream dip."},
+      {tag:"4. + Parranda vallenata",es:"¡No me digas embuste! Después del almuerzo llegan los tíos con el acordeón para armar la parranda vallenata aquí en San Juan del Cesar.",en:"No kidding! After lunch the uncles are coming over with the accordion to start the vallenato gathering right here in San Juan del Cesar."}
+    ],
+    swaps:[
+      {label:"Festival de Compositores",es:"En diciembre vamos para el Festival de Compositores en San Juan del Cesar.",en:"In December we're going to the Composers Festival in San Juan del Cesar."},
+      {label:"Cold corozo juice",es:"Con este fogaje me provoca un jugo de corozo bien helado.",en:"With this heat I feel like an ice-cold corozo berry juice."},
+      {label:"Valledupar route",es:"De Valledupar a San Juan del Cesar son unos cuarenta y cinco minutos por carretera.",en:"From Valledupar to San Juan del Cesar is about forty-five minutes by road."}
+    ]
+  },
+  "seguridad-emergencias":{
+    title:"Practice calm Colombian street smarts ('no dar papaya') and handle emergencies or lost documents",
+    rungs:[
+      {tag:"1. Anchor rule",es:"Es mejor no dar papaya en la calle.",en:"It's better not to make yourself an easy target on the street."},
+      {tag:"2. + Ride-share check",es:"Para no dar papaya, pidamos el carro desde adentro y revisemos la placa.",en:"To stay street-smart, let's order the car from inside and check the license plate."},
+      {tag:"3. + 123 emergency line",es:"Si pasa alguna emergencia, llamamos de una vez a la línea uno, dos, tres.",en:"If any emergency happens, we call the 1-2-3 emergency line right away."},
+      {tag:"4. + Lost passport report",es:"Disculpe, agente, se me extravió el pasaporte y necesito poner la constancia para la embajada y el seguro.",en:"Excuse me, officer, my passport was lost and I need to file the official report for the embassy and insurance."}
+    ],
+    swaps:[
+      {label:"Find nearest CAI",es:"¿Dónde queda el CAI de la policía o la Policía de Turismo más cercana?",en:"Where is the nearest neighborhood police post or Tourism Police office?"},
+      {label:"Freeze bank card",es:"Voy a congelar mi tarjeta inmediatamente desde la aplicación del banco.",en:"I'm going to freeze my card immediately from the bank app."},
+      {label:"Step inside to check phone",es:"Entremos un momento a esta cafetería para mirar el mapa en el celular.",en:"Let's step into this café for a moment to check the map on my phone."}
+    ]
+  },
+  "hogar-reparaciones":{
+    title:"Coordinate home repairs, electrical breakers ('tacos'), and building front-desk authorization",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Se saltó un taco de la luz.",en:"A circuit breaker tripped."},
+      {tag:"2. + Internet router",es:"Se saltó un taco de la luz y el módem del internet quedó sin señal.",en:"A circuit breaker tripped and the internet router lost signal."},
+      {tag:"3. + Schedule technician",es:"¿Pueden enviar un técnico de internet hoy en la jornada de la tarde?",en:"Can you send an internet technician today during the afternoon window?"},
+      {tag:"4. + Authorize at portería",es:"Voy a llamar a la portería del conjunto para dejar autorizado el ingreso del técnico esta tarde.",en:"I'm going to call the complex front desk to authorize the technician's entry this afternoon."}
+    ],
+    swaps:[
+      {label:"Plumber for water leak",es:"Hay una fuga de agua debajo del lavaplatos; necesitamos un plomero.",en:"There is a water leak under the kitchen sink; we need a plumber."},
+      {label:"Utility due date",es:"Paguemos el recibo del agua antes de la fecha límite para evitar el corte.",en:"Let's pay the water bill before the due date to avoid shutoff."},
+      {label:"Pay via PSE",es:"Ya cancelé los recibos de luz y gas en línea por PSE.",en:"I already paid the electricity and gas bills online via PSE."}
+    ]
+  },
+  "eventos-futbol-cultura":{
+    title:"Buy concert or soccer tickets ('boletas') and pool money ('hacer vaca') with friends",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Ya compraste las boletas?",en:"Did you already buy the tickets?"},
+      {tag:"2. + Stadium section",es:"Ya compré las boletas digitales en tribuna occidental para el partido.",en:"I already bought the digital tickets in the west stand for the match."},
+      {tag:"3. + Hacer vaca",es:"Hagamos vaca entre todos por Nequi para pedir las picadas y las bebidas.",en:"Let's all pitch in via Nequi to order the shared meat platters and drinks."},
+      {tag:"4. + La previa",es:"Ponte la camiseta de la Selección y nos vemos a las cinco para hacer la previa antes de entrar al estadio.",en:"Put on your National Team jersey and let's meet at five for the pre-game hangout before going into the stadium."}
+    ],
+    swaps:[
+      {label:"How much per person?",es:"¿De a cuánto nos toca poner para la vaca de hoy?",en:"How much does each of us need to pitch in for today's group pool?"},
+      {label:"Digital ticket & ID",es:"Ten lista la boleta en el celular y la cédula en la entrada.",en:"Have your ticket ready on your phone and your ID at the entrance."},
+      {label:"Last-minute goal",es:"¡Qué golazo metieron al último minuto del partido!",en:"What an amazing goal they scored in the final minute of the match!"}
+    ]
+  }
+});
+
+/* 6. 8 More High-Frequency Colombianismos & Guajiro/Costeño Gems (86 total) */
+COLOMBIANISMOS.push(
+  {word:"¡Ajá, primo / compadre!",en:"Hey cousin / buddy! (warm Guajiro & Vallenato address)",region:"costa",register:"San Juan del Cesar & Guajira · warm",registerGroup:"everyday",usage:"In San Juan del Cesar, La Guajira, and Cesar, 'primo/prima' and 'compadre/compae' are used affectionately every day with relatives, in-laws, and friends.",example:"¡Ajá, primo! ¿Cómo está la vaina por San Juan del Cesar?",tts:"¡Ajá, primo! ¿Cómo está la vaina por San Juan del Cesar?"},
+  {word:"Embuste / Embustero",en:"A fib, lie, or exaggeration ('You're kidding!')",region:"costa",register:"Guajira & Costa · essential",registerGroup:"informal",usage:"In San Juan del Cesar and across the Coast, people say '¡Eso es embuste!' or '¡No me digas embuste!' instead of 'mentira'.",example:"¡Qué va, compadre, no me digas embuste!",tts:"¡Qué va, compadre, no me digas embuste!"},
+  {word:"El abanico (Costa / Guajira)",en:"Electric standing or ceiling fan (ventilador)",region:"costa",register:"Guajira & Costa · daily life",registerGroup:"everyday",usage:"While Bogotá and Medellín say 'ventilador', in San Juan del Cesar and the Caribbean coast every electric fan is called 'el abanico'.",example:"Prende el abanico en tres que está haciendo mucho fogaje.",tts:"Prende el abanico en tres que está haciendo mucho fogaje."},
+  {word:"La terraza y la mecedora",en:"Street-level front porch & rocking chair",region:"costa",register:"San Juan del Cesar · family culture",registerGroup:"everyday",usage:"In Guajiro and Vallenato towns, 'la terraza' is the shaded front porch where families sit in 'mecedoras' (rocking chairs) in the late afternoon breeze.",example:"Vamos a sentarnos en las mecedoras de la terraza a coger fresco.",tts:"Vamos a sentarnos en las mecedoras de la terraza a coger fresco."},
+  {word:"El friche (La Guajira)",en:"Traditional Guajiro fried & seasoned goat dish",region:"costa",register:"La Guajira · culinary heritage",registerGroup:"everyday",usage:"Emblematic dish of La Guajira (including San Juan del Cesar and Riohacha), typically served with patacón, yuca, or arroz de camarón.",example:"En el almuerzo familiar en San Juan preparamos friche con patacones.",tts:"En el almuerzo familiar en San Juan preparamos friche con patacones."},
+  {word:"Hacer vaca",en:"To pitch in / pool money together as a group",region:"all",register:"Colombian · social",registerGroup:"everyday",usage:"Used nationwide when friends or family chip in money to buy shared food, drinks, or a gift ('¿De a cuánto es la vaca?').",example:"Hagamos vaca entre todos para comprar la picada y las gaseosas.",tts:"Hagamos vaca entre todos para comprar la picada y las gaseosas."},
+  {word:"Los tacos (de la luz)",en:"Electrical circuit breakers in a home",region:"all",register:"Colombian · home repairs",registerGroup:"everyday",usage:"When the power trips in an apartment, Colombians say 'se saltó un taco' or 'se bajaron los tacos de la luz'.",example:"Se saltó el taco de la cocina cuando prendimos el horno.",tts:"Se saltó el taco de la cocina cuando prendimos el horno."},
+  {word:"Las boletas",en:"Tickets for a concert, soccer match, or movie",region:"all",register:"Colombian · events & culture",registerGroup:"everyday",usage:"In Colombia, event and movie tickets are called 'boletas' (while plane or long-distance bus tickets are 'tiquetes').",example:"Ya compré las boletas para el concierto y el partido del domingo.",tts:"Ya compré las boletas para el concierto y el partido del domingo."}
+);
+
+/* 7. 13th 3-Column Slot-Swapper Matrix: San Juan del Cesar, La Guajira & Familia */
+SLOT_SWAP_MATRICES.push(
+  {
+    id:"sanjuan-guajira-matrix",
+    title:"🪗 San Juan del Cesar, Guajira & Parranda",
+    sub:"Speak warm Sanjuanero / Guajiro Spanish on the terraza with your wife's family, in-laws, and cousins",
+    col1Title:"1. Warm Guajiro Opener",
+    col2Title:"2. Terraza, Food or Music",
+    col3Title:"3. Family & Vallenato Close",
+    col1:[
+      {es:"¡Ajá, primo! Qué alegría verte;",en:"Hey, cousin! What a joy to see you;"},
+      {es:"Buenas tardes, suegros queridos,",en:"Good afternoon, dear in-laws,"},
+      {es:"¡No me digas embuste, compadre!",en:"No kidding, buddy!"},
+      {es:"Cuando baje el sol esta tardecita,",en:"When the sun goes down late this afternoon,"}
+    ],
+    col2:[
+      {es:"pasemos a la terraza a sentarnos en las mecedoras",en:"let's head out to the front porch to sit in the rocking chairs"},
+      {es:"prendamos el abanico y tomemos un jugo de corozo frío",en:"let's turn on the fan and drink an ice-cold corozo juice"},
+      {es:"me provoca probar ese friche con patacón y queso costeño",en:"I'd love to try that friche with fried plantain and coastal cheese"},
+      {es:"se arma la parranda vallenata con acordeón y guacharaca",en:"the vallenato gathering gets going with accordion and guacharaca"}
+    ],
+    col3:[
+      {es:"aquí en San Juan del Cesar con toda la familia.",en:"right here in San Juan del Cesar with the whole family."},
+      {es:"mientras corre la brisa fresca de La Guajira.",en:"while the cool Guajira breeze blows."},
+      {es:"para celebrar en la Tierra de Compositores.",en:"to celebrate in the Land of Composers."},
+      {es:"y conversamos sabroso con los tíos y los primos.",en:"and have a wonderful chat with the aunts, uncles, and cousins."}
+    ]
+  }
+);
+
+/* 8. New Quiz Items for v97 Scenarios (San Juan/Guajira, Seguridad/123, Hogar/Reparaciones, Eventos/Fútbol) */
+V60_CONVERSATION_QUIZ.push(
+  {kind:"reply",focus:"present",cat:"sanjuan-guajira",es:"¡Ajá, primo! Bienvenido a San Juan del Cesar; pasa a la terraza y siéntate en la mecedora al lado del abanico.",en:"¡Muchas gracias! Qué alegría estar aquí en La Guajira con toda la familia y disfrutar la brisa.",tts:"¡Ajá, primo! Bienvenido a San Juan del Cesar; pasa a la terraza y siéntate en la mecedora al lado del abanico.",choices:["¡Muchas gracias! Qué alegría estar aquí en La Guajira con toda la familia y disfrutar la brisa.","Cuenta de ahorros a una sola cuota, por favor.","Se me partió una calza en una muela de atrás.","El edificio está clasificado en estrato cuatro."]},
+  {kind:"meaning",focus:"present",cat:"sanjuan-guajira",es:"¡No me digas embuste, compadre! Hoy almorzamos friche con patacón y queso costeño.",en:"Don't kid me, buddy! Today we're having traditional fried goat with fried plantain and coastal cheese for lunch.",tts:"¡No me digas embuste, compadre! Hoy almorzamos friche con patacón y queso costeño.",choices:["Don't kid me, buddy! Today we're having traditional fried goat with fried plantain and coastal cheese for lunch.","Please notarize the lease agreement at the notary office.","The circuit breaker tripped in the kitchen last night.","Remember to register your visa within fifteen calendar days."]},
+  {kind:"reply",focus:"present",cat:"seguridad-emergencias",es:"Disculpe, se me extravió el pasaporte y necesito el reporte para el seguro y la embajada.",en:"Puede registrar la constancia por pérdida en la página de la Policía Nacional o acercarse al CAI.",tts:"Disculpe, se me extravió el pasaporte y necesito el reporte para el seguro y la embajada.",choices:["Puede registrar la constancia por pérdida en la página de la Policía Nacional o acercarse al CAI.","Con sopa de ajiaco y de principio lentejas.","En leche y bajito de azúcar, por favor.","Con la máquina número dos a los lados."]},
+  {kind:"meaning",focus:"present",cat:"seguridad-emergencias",es:"Para no dar papaya, pidamos el carro desde adentro y revisemos la placa antes de subir.",en:"So we don't make ourselves an easy target, let's order the car from inside and check the license plate before getting in.",tts:"Para no dar papaya, pidamos el carro desde adentro y revisemos la placa antes de subir.",choices:["So we don't make ourselves an easy target, let's order the car from inside and check the license plate before getting in.","Let's buy two pounds of sweet papaya at the neighborhood fruit stand.","Can you tighten the tiny screw on my eyeglasses frame?","The master bedroom faces the interior garden of the gated complex."]},
+  {kind:"reply",focus:"past",cat:"hogar-reparaciones",es:"Veci, se fue la luz en la cocina después del aguacero; ¿qué pudo pasar?",en:"Revisa la caja de tacos detrás de la puerta; seguro se saltó un taco de la luz.",tts:"Veci, se fue la luz en la cocina después del aguacero; ¿qué pudo pasar?",choices:["Revisa la caja de tacos detrás de la puerta; seguro se saltó un taco de la luz.","De sobremesa me regala jugo de maracuyá.","A una sola cuota sin intereses, por favor.","Vamos a bailar salsa este puente festivo."]},
+  {kind:"meaning",focus:"present",cat:"hogar-reparaciones",es:"Voy a dejar autorizado en la portería el ingreso del técnico del internet para esta tarde.",en:"I'm going to authorize entry at the front desk for the internet technician this afternoon.",tts:"Voy a dejar autorizado en la portería el ingreso del técnico del internet para esta tarde.",choices:["I'm going to authorize entry at the front desk for the internet technician this afternoon.","I'm going to request a 90-day extension of my tourist permit.","We're going to watch the soccer match in the west stand.","I'd like a self-pay dental cleaning appointment."]},
+  {kind:"reply",focus:"present",cat:"eventos-futbol",es:"¡Hoy juega la Selección Colombia! ¿Cómo hacemos para pedir las picadas y las bebidas?",en:"Hagamos vaca entre todos de a cuarenta mil pesos por Nequi.",tts:"¡Hoy juega la Selección Colombia! ¿Cómo hacemos para pedir las picadas y las bebidas?",choices:["Hagamos vaca entre todos de a cuarenta mil pesos por Nequi.","Se me cayó una calza masticando algo duro.","Necesito autenticar la firma en la notaría.","Por la EPS toca pedir cita con médico general."]},
+  {kind:"meaning",focus:"present",cat:"eventos-futbol",es:"Ya compré las boletas digitales en tribuna occidental para el concierto del sábado.",en:"I already bought the digital tickets in the west stand for Saturday's concert.",tts:"Ya compré las boletas digitales en tribuna occidental para el concierto del sábado.",choices:["I already bought the digital tickets in the west stand for Saturday's concert.","I already paid the water and electricity bills online.","The bus leaves from platform four at the terminal.","Turn on the electric fan because it's very hot today."]}
+);
+
+V60_FILL_BLANK_QUIZ.push(
+  {kind:"blank",focus:"present",cat:"sanjuan-guajira",es:"En San Juan del Cesar sacamos las ___ a la terraza para coger fresco en la tarde.",en:"mecedoras",tts:"En San Juan del Cesar sacamos las mecedoras a la terraza para coger fresco en la tarde.",trans:"In San Juan del Cesar we bring the rocking chairs out to the front porch to catch the afternoon breeze.",choices:["mecedoras","calzas","cuotas","taquillas"]},
+  {kind:"blank",focus:"present",cat:"sanjuan-guajira",es:"¡Qué va, primo, no me digas ___! ¿De verdad vienen para el Festival de Compositores?",en:"embuste",tts:"¡Qué va, primo, no me digas embuste! ¿De verdad vienen para el Festival de Compositores?",trans:"Come on, cousin, don't kid me / tell fibs! Are you really coming for the Composers Festival?",choices:["embuste","estrato","soroche","peaje"]},
+  {kind:"blank",focus:"present",cat:"sanjuan-guajira",es:"Prende el ___ en tres que hoy está haciendo bastante calor en La Guajira.",en:"abanico",tts:"Prende el abanico en tres que hoy está haciendo bastante calor en La Guajira.",trans:"Turn the electric fan on three because it's quite hot in La Guajira today.",choices:["abanico","datáfono","corrientazo","parqueadero"]},
+  {kind:"blank",focus:"present",cat:"seguridad-emergencias",es:"No saques el celular en una calle sola; es mejor no dar ___.",en:"papaya",tts:"No saques el celular en una calle sola; es mejor no dar papaya.",trans:"Don't take out your phone on a quiet street; it's better not to make yourself an easy target.",choices:["papaya","vaca","calza","cuadra"]},
+  {kind:"blank",focus:"past",cat:"hogar-reparaciones",es:"Se fue la energía en la cocina porque se saltó un ___ de la luz.",en:"taco",tts:"Se fue la energía en la cocina porque se saltó un taco de la luz.",trans:"The power went out in the kitchen because a circuit breaker tripped.",choices:["taco","puente","tinto","estrato"]},
+  {kind:"blank",focus:"present",cat:"eventos-futbol",es:"Hagamos ___ entre todos para comprar las picadas y ver el partido de la Selección.",en:"vaca",tts:"Hagamos vaca entre todos para comprar las picadas y ver el partido de la Selección.",trans:"Let's all pitch in / pool money to buy the shared platters and watch the National Team match.",choices:["vaca","fila","pena","fórmula"]}
+);

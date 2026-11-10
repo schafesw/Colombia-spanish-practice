@@ -2913,3 +2913,51 @@ body.lesson-focus-active .scroll{padding-bottom:calc(var(--safe-bottom) + 118px)
   border: 1px solid rgba(232, 180, 74, 0.35);
   color: #fef3c7;
 }
+
+/* ── v97.0: San Juan del Cesar, Regional Switcher, Global Search & Backup ── */
+.regional-switcher-card {
+  border-color: rgba(232,180,74,0.38);
+  background: linear-gradient(155deg, rgba(232,180,74,0.09), rgba(18,26,34,0.95));
+}
+.search-cat-pill {
+  display: inline-block;
+  font-size: 0.66rem;
+  font-weight: 800;
+  color: var(--gold);
+  background: rgba(232,180,74,0.12);
+  border: 1px solid rgba(232,180,74,0.28);
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-bottom: 3px;
+  width: fit-content;
+}
+.profile-backup-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.profile-backup-btn {
+  font-size: 0.74rem;
+}
+.profile-backup-status {
+  font-size: 0.74rem;
+  color: var(--teal);
+  font-weight: 700;
+}
+.col-region-pill.reg-costa {
+  color: var(--gold);
+  background: rgba(232,180,74,0.14);
+  border: 1px solid rgba(232,180,74,0.3);
+}
+.vc-top:focus-visible,
+.col-card:focus-visible,
+.frase-card:focus-visible,
+.atlas-item-card:focus-visible,
+.sw-variant-card:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}

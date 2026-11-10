@@ -72,9 +72,9 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v96.1 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v97.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);
-  bar.append(label,select,reset,ver);utilityBody.appendChild(bar);drawer.append(summary,utilityBody);host.appendChild(drawer);
+  bar.append(label,select,reset,ver);utilityBody.appendChild(bar);if(typeof attachProfileBackupControls==="function")attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
 buildProfileBar();
 let voices=[],selV=null;
@@ -485,15 +485,38 @@ function renderVocabSearch(term){
   const q=String(term||"").trim().toLowerCase();
   if(!q){showVocabHome();return;}
   vocabHomeJump.hidden=true;vocabHome.hidden=true;vocabCategoryView.hidden=true;vocabSearchView.hidden=false;vocabSearchView.innerHTML="";
-  const head=document.createElement("div");head.className="search-results-head";head.innerHTML=`<strong>Search results</strong><span>${q}</span>`;vocabSearchView.appendChild(head);
+  const head=document.createElement("div");head.className="search-results-head";head.innerHTML=`<strong>Global Search Results</strong><span>${escapeVocabHtml(q)}</span>`;vocabSearchView.appendChild(head);
   const rows=[];
   VOCAB_CATS.forEach(cat=>{
     if(cat.type==="basic")(cat.items||[]).forEach(item=>{if((item.word+" "+item.en).toLowerCase().includes(q))rows.push({word:item.word,en:item.en,tts:item.tts||item.word,cat:cat.label});});
     if(cat.type==="verbos")Object.entries(VERBS).forEach(([word,v])=>{if((word+" "+v.en).toLowerCase().includes(q))rows.push({word,en:v.en,tts:word,cat:cat.label});});
-    if(cat.type==="colombianismos")COLOMBIANISMOS.forEach(item=>{if((item.word+" "+item.en+" "+item.usage+" "+item.example).toLowerCase().includes(q))rows.push({word:item.word,en:item.en,tts:item.tts||item.word,cat:cat.label,usage:item.usage,example:item.example});});
+    if(cat.type==="colombianismos")COLOMBIANISMOS.forEach(item=>{if((item.word+" "+item.en+" "+item.usage+" "+item.example+" "+(item.register||"")).toLowerCase().includes(q))rows.push({word:item.word,en:item.en,tts:item.tts||item.word,cat:cat.label,usage:item.usage,example:item.example});});
   });
-  if(!rows.length){vocabSearchView.appendChild(lpEl("search-empty","No vocabulary matches yet. Try a Spanish or English word."));return;}
-  rows.slice(0,80).forEach(row=>{const card=document.createElement("button");card.type="button";card.className="search-result-card";card.innerHTML=`<span><strong>${escapeVocabHtml(row.word)}</strong><small>${escapeVocabHtml(row.en)}</small>${row.usage?`<em>${escapeVocabHtml(row.usage)}</em>`:""}${row.example?`<small>💬 ${escapeVocabHtml(row.example)}</small>`:""}</span><span>🔊</span>`;card.onclick=()=>{markPractice("vocab",row.tts);speak(row.tts,0.75);};vocabSearchView.appendChild(card);});
+  if(typeof FRASES!=="undefined")FRASES.filter(s=>s.section&&Array.isArray(s.items)).forEach(sec=>{
+    sec.items.forEach(it=>{if((it.es+" "+it.en+" "+(it.register||"")+" "+sec.section).toLowerCase().includes(q))rows.push({word:it.es,en:it.en,tts:it.es,cat:"💬 "+sec.section,usage:it.register||""});});
+  });
+  if(typeof TRAMPAS_COLOMBIANAS!=="undefined")TRAMPAS_COLOMBIANAS.forEach(t=>{
+    if((t.trap+" "+t.realMeaning+" "+t.wrongGuess+" "+t.es+" "+t.en).toLowerCase().includes(q))rows.push({word:`🪤 ${t.trap}`,en:`Real meaning: ${t.realMeaning}`,tts:t.es,cat:"🪤 Trampas Colombianas",usage:`⚠️ Literal trap: ${t.wrongGuess}`,example:t.es});
+  });
+  if(typeof STREET_EAR_LINKER!=="undefined")STREET_EAR_LINKER.forEach(e=>{
+    if((e.streetEs+" "+e.carefulEs+" "+e.en+" "+e.context).toLowerCase().includes(q))rows.push({word:`🎧 ${e.streetEs}`,en:`${e.carefulEs} — ${e.en}`,tts:e.carefulEs,cat:"🎧 Street Ear",usage:e.tip});
+  });
+  if(typeof REGIONAL_ATLAS!=="undefined")REGIONAL_ATLAS.forEach(reg=>{
+    (reg.items||[]).forEach(it=>{if((reg.title+" "+reg.tab+" "+it.es+" "+it.en+" "+it.tip).toLowerCase().includes(q))rows.push({word:it.es,en:it.en,tts:it.es,cat:reg.tab,usage:it.tip});});
+  });
+  if(typeof LESSONS!=="undefined")LESSONS.forEach(les=>{
+    if((les.title+" "+les.sub+" "+les.id).toLowerCase().includes(q))rows.push({word:`🎯 Lesson: ${les.icon} ${les.title}`,en:les.sub,tts:les.title,cat:"📘 Guided Lesson",lessonObj:les});
+  });
+  if(!rows.length){vocabSearchView.appendChild(lpEl("search-empty","No matches yet. Try searching 'San Juan', 'friche', 'cancelar', 'estrato', or any Spanish/English word."));return;}
+  rows.slice(0,80).forEach(row=>{
+    const card=document.createElement("button");card.type="button";card.className="search-result-card";
+    card.innerHTML=`<span><small class="search-cat-pill">${escapeVocabHtml(row.cat||"Vocab")}</small><strong>${escapeVocabHtml(row.word)}</strong><small>${escapeVocabHtml(row.en)}</small>${row.usage?`<em>${escapeVocabHtml(row.usage)}</em>`:""}${row.example?`<small>💬 ${escapeVocabHtml(row.example)}</small>`:""}</span><span>${row.lessonObj?"Open ›":"🔊"}</span>`;
+    card.onclick=()=>{
+      if(row.lessonObj){showPage("lecciones");openLesson(row.lessonObj);return;}
+      markPractice("vocab",row.tts);speak(row.tts,0.75);
+    };
+    vocabSearchView.appendChild(card);
+  });
   if(rows.length>80)vocabSearchView.appendChild(lpEl("search-empty",`Showing 80 of ${rows.length} matches.`));
 }
 if(vocabSearch)vocabSearch.oninput=()=>renderVocabSearch(vocabSearch.value);
@@ -682,7 +705,8 @@ function rV(){
       <div class="vc-info"><div class="vc-word">${item.word}</div><div class="vc-en">${item.en}</div></div><button type="button" class="vc-listen" aria-label="Listen">🔊</button></div>
       <div class="vc-ph">${item.ph}</div><div class="vc-actions"></div>`;
     const play=()=>{markPractice("vocab",item.tts||item.word);speak(item.tts||item.word,0.75);};
-    card.querySelector(".vc-top").onclick=play;card.querySelector(".vc-listen").onclick=e=>{e.stopPropagation();play();};
+    const vcTop=card.querySelector(".vc-top");vcTop.setAttribute("role","button");vcTop.setAttribute("tabindex","0");vcTop.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();play();}};
+    vcTop.onclick=play;card.querySelector(".vc-listen").onclick=e=>{e.stopPropagation();play();};
     addVocabExample(card,item,cat.id,index);attachMic(card.querySelector(".vc-actions"),item.tts||item.word,"vocab");list.appendChild(card);
   });
 }
@@ -773,45 +797,52 @@ function registerBadge(item){
 let colRegionFilter="all";
 const COL_REGIONS=[
   ["all","🇨🇴 All Colombia"],
+  ["costa","🪗 San Juan, Guajira & Costa"],
   ["bogota","🏔️ Bogotá & Rolos"],
   ["medellin","🌸 Medellín & Paisas"],
   ["cali-costa","🌴 Cali & La Costa"]
 ];
 const COL_REGION_LABELS={
   all:"🇨🇴 National",
+  costa:"🪗 San Juan del Cesar / Guajira & Costa",
   bogota:"🏔️ Bogotá / Altiplano",
   medellin:"🌸 Medellín / Eje Cafetero",
   "cali-costa":"🌴 Cali & Costa"
 };
 function rCol(list){
   const note=document.createElement("div");note.className="intro-note";
-  note.innerHTML=`<div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:800">🇨🇴 Colombianismos & Regional Flavors</div>
-    <div style="font-size:0.82rem;color:var(--muted);line-height:1.55">Filter by region to learn how people speak in Bogotá, Medellín, Cali, and across Colombia. Tap any card to hear it, or tap ⭐ to pin it to your practice list.</div>`;
+  note.innerHTML=`<div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:800">🇨🇴 Colombianismos & Regional Flavors (including San Juan del Cesar & La Guajira)</div>
+    <div style="font-size:0.82rem;color:var(--muted);line-height:1.55">Filter by region to learn how people speak in San Juan del Cesar & La Guajira, Bogotá, Medellín, Cali, and across Colombia. Tap any card to hear it, or tap ⭐ to pin it to your practice list.</div>`;
   list.appendChild(note);
+  const matchColRegion=(item,regId)=>regId==="all"||item.region===regId||(regId==="cali-costa"&&item.region==="costa")||item.region==="all";
   const filterBar=document.createElement("div");filterBar.className="col-region-tabs";
   COL_REGIONS.forEach(([regId,regLabel])=>{
-    const count=COLOMBIANISMOS.filter(x=>regId==="all"||x.region===regId||x.region==="all").length;
+    const count=COLOMBIANISMOS.filter(x=>matchColRegion(x,regId)).length;
     const b=document.createElement("button");b.type="button";
     b.className="lp-mode-btn col-region-btn"+(colRegionFilter===regId?" active":"");
+    b.setAttribute("aria-pressed",colRegionFilter===regId?"true":"false");
     b.textContent=`${regLabel} (${count})`;
     b.onclick=()=>{colRegionFilter=regId;rV();};
     filterBar.appendChild(b);
   });
   list.appendChild(filterBar);
-  const filtered=COLOMBIANISMOS.filter(item=>colRegionFilter==="all"||item.region===colRegionFilter||item.region==="all");
+  const filtered=COLOMBIANISMOS.filter(item=>matchColRegion(item,colRegionFilter));
   filtered.forEach(item=>{
     const card=document.createElement("div");card.className="col-card";
+    card.setAttribute("role","button");card.setAttribute("tabindex","0");
     const regKey=item.region||"all";
     const regBadge=`<span class="col-region-pill reg-${regKey}">${COL_REGION_LABELS[regKey]||"🇨🇴 Colombia"}</span>`;
     card.innerHTML=`<div class="col-card-top">
-      <span class="col-flag">${regKey==="bogota"?"🏔️":regKey==="medellin"?"🌸":regKey==="cali-costa"?"🌴":"🇨🇴"}</span>
+      <span class="col-flag">${regKey==="costa"?"🪗":regKey==="bogota"?"🏔️":regKey==="medellin"?"🌸":regKey==="cali-costa"?"🌴":"🇨🇴"}</span>
       <div class="col-word-wrap"><div class="col-word">${item.word}</div><div class="col-en">${item.en}</div></div>
       <div class="col-top-actions"><span class="col-spk">🔊</span></div></div>
       <div class="col-usage">${regBadge}${item.usage}<div class="col-example">💬 ${item.example}</div></div>`;
     if(item.register){const badge=document.createElement("span");badge.className="f-register register-"+registerTone(item);badge.textContent=item.register;const usage=card.querySelector(".col-usage");if(usage){usage.prepend(badge);if(item.registerNote){const rNote=document.createElement("div");rNote.className="col-register-note";rNote.textContent="ⓘ "+item.registerNote;usage.appendChild(rNote);}}}
     const topAct=card.querySelector(".col-top-actions");
     if(topAct&&typeof attachStarBtn==="function")attachStarBtn(topAct,item.example||item.word,"Colombianismos");
-    card.onclick=e=>{if(e.target.closest(".star-pin-btn"))return;markPractice("vocab",item.tts||item.word);speak(item.tts||item.word,0.75);};
+    const playCol=()=>{markPractice("vocab",item.tts||item.word);speak(item.tts||item.word,0.75);};
+    card.onclick=e=>{if(e.target.closest(".star-pin-btn"))return;playCol();};
+    card.onkeydown=e=>{if((e.key==="Enter"||e.key===" ")&&!e.target.closest(".star-pin-btn")){e.preventDefault();playCol();}};
     list.appendChild(card);
   });
 }
@@ -999,7 +1030,11 @@ const PHRASE_EN={
   "🪤 Trampas y falsos amigos (cancelar, provocar, regalar)":"Colombian false friends: cancelar = pay, provocar = crave, regalar = buy",
   "🏘️ Estratos, conjuntos cerrados y barrios":"Socioeconomic utility tiers (1–6), gated complexes, and walkable barrios",
   "🦷 Odontología, óptica y EPS / prepagada":"Dental cleanings, fillings, eyeglasses, and Colombian health plans",
-  "🛂 Migración Colombia, visa y cuenta bancaria":"Tourist extensions, Cédula de Extranjería, notary offices, and bank accounts"
+  "🛂 Migración Colombia, visa y cuenta bancaria":"Tourist extensions, Cédula de Extranjería, notary offices, and bank accounts",
+  "🪗 San Juan del Cesar, La Guajira y vallenato":"Warm Sanjuanero/Guajiro family greetings, terraza & mecedoras, friche, and vallenato",
+  "🚨 Seguridad, emergencias (123) y no dar papaya":"Street smarts (no dar papaya), 123 emergency line, and lost document reports",
+  "🔧 Reparaciones del hogar, recibos y técnico":"Circuit breakers (tacos), plumbers, internet technicians, and utility due dates",
+  "⚽ Fútbol, conciertos, boletas y hacer vaca":"Concert & match tickets (boletas), Selección Colombia, and pooling money (hacer vaca)"
 };
 const DIALOGUE_EN={
   "Saludos formales":"Formal greetings and introductions",
@@ -1047,7 +1082,11 @@ const DIALOGUE_EN={
   "Trampas colombianas: cancelar, provocar y qué pena":"Using cancelar (pay), provocar (crave), regalar, and rising ¿Señor? naturally",
   "Estratos, conjuntos cerrados y barrios":"Evaluating apartment estratos (1–6), gated complexes, and utility costs",
   "Odontología, óptica y medicina prepagada":"Booking a self-pay dental cleaning, fixing a filling, and optical shops",
-  "Migración Colombia, cédula de extranjería y bancos":"Registering a visa, getting your Cédula de Extranjería, and opening a bank account"
+  "Migración Colombia, cédula de extranjería y bancos":"Registering a visa, getting your Cédula de Extranjería, and opening a bank account",
+  "San Juan del Cesar, La Guajira y parranda vallenata":"Visiting in-laws in San Juan del Cesar, front-porch mecedoras, friche, and vallenato",
+  "Seguridad, emergencias (123) y no dar papaya":"Calm street smarts, checking ride-share plates, dialing 123, and police reports",
+  "Reparaciones del hogar, recibos y técnico":"Fixing a tripped breaker (taco), internet technicians, and portería authorization",
+  "Fútbol, conciertos, boletas y hacer vaca":"Buying stadium/concert tickets (boletas) and pitching in together (hacer vaca)"
 };
 function phraseEnglishTitle(title){return PHRASE_EN[title]||"Useful phrases";}
 function dialogueEnglishTitle(title){return DIALOGUE_EN[title]||"Practice conversation";}
@@ -1079,17 +1118,17 @@ function fraseSectionMeta(sec){
 function phraseCollectionGroup(sec){
   const n=String(sec.section||"").toLowerCase();
   if(/groser|bad word|strong language/.test(n))return {id:"strong",label:"⚠️ Strong language / Entender primero"};
-  if(/aeropuerto|migración|visa|bancaria|nequi|datáfono|cajero|sim|trámites|portería|rappi|arriendo|airbnb|hogar|estratos|conjuntos|barrios|direcciones|cuadras|seguridad|panadería|jugos|corrientazo|ejecutivo|onces|buses|finca|peaje|ubicación|uber|transporte|compras|mercado|restaurante|comer fuera|emergencias|ayuda|aclarar|repetir|plata|pagos|médica|urgencias|odontología|óptica|prepagada|sientes|barbería|peluquería|cortesía/.test(n))return {id:"survival",label:"🧭 Survival, Travel & Services / Para desenvolverse"};
+  if(/aeropuerto|migración|visa|bancaria|nequi|datáfono|cajero|sim|trámites|portería|rappi|arriendo|airbnb|hogar|reparaciones|recibos|técnico|estratos|conjuntos|barrios|direcciones|cuadras|seguridad|papaya|123|panadería|jugos|corrientazo|ejecutivo|onces|buses|finca|peaje|ubicación|uber|transporte|compras|mercado|restaurante|comer fuera|emergencias|ayuda|aclarar|repetir|plata|pagos|médica|urgencias|odontología|óptica|prepagada|sientes|barbería|peluquería|cortesía/.test(n))return {id:"survival",label:"🧭 Survival, Travel & Services / Para desenvolverse"};
   if(/conectores|patrones|marcos|construir|contar historias|pronombres|acciones|progreso|muletillas|diminutivos|comodín|trampas|falsos amigos/.test(n))return {id:"build",label:"🧱 Sentence Builders & Local Flow / Construir frases"};
-  if(/saludo|gusto|conversación diaria|social|amigos|fiesta|puentes|salsa|rumba|partido|oficina|planes|teléfono|whatsapp|audios|citas|cumplidos|gimnasio|ciclovía|senderos|familia|empatía|reacciones|amistad/.test(n))return {id:"social",label:"🤝 Social, Work & Daily Life / Conversación diaria"};
+  if(/saludo|gusto|conversación diaria|social|amigos|fiesta|puentes|salsa|rumba|partido|fútbol|conciertos|boletas|vaca|san juan|guajira|vallenato|oficina|planes|teléfono|whatsapp|audios|citas|cumplidos|gimnasio|ciclovía|senderos|familia|empatía|reacciones|amistad/.test(n))return {id:"social",label:"🤝 Social, San Juan / Guajira & Daily Life / Conversación diaria"};
   return {id:"other",label:"📚 More useful phrases / Más frases"};
 }
 function dialogueSituationGroup(d){
   const t=String(d.title||"").toLowerCase();
-  if(/uber|aeropuerto|carro|direcciones|cuadras|hotel|transporte|terminal|peajes|finca/.test(t))return {id:"travel",label:"🛬 Travel, Uber & Getting Around",sub:"Airport, Uber rides, Colombian street grids, buses/fincas, and hotels"};
+  if(/uber|aeropuerto|carro|direcciones|cuadras|seguridad|emergencias|papaya|hotel|transporte|terminal|peajes|finca/.test(t))return {id:"travel",label:"🛬 Travel, Uber, Safety & Getting Around",sub:"Airport, Uber rides, street safety (no dar papaya & 123), buses/fincas, and hotels"};
   if(/restaurante|almuerzo|corrientazo|onces|panadería|jugos|trampas|cancelar|provocar|mercado|tienda|cortesía|pagos|datáfono|nequi|cocina/.test(t))return {id:"food",label:"🍽️ Food, Corrientazo, Trampas & Payments",sub:"Corrientazo lunches, panaderías, false friends (cancelar/provocar), and Nequi"};
-  if(/oficina|trabajo|profesión|cajero|sim|trámites|migración|extranjería|bancos|estratos|conjuntos|odontología|óptica|prepagada|portería|rappi|arriendo|airbnb|lavadora|whatsapp|notas de voz|barbería|farmacia|médica|casa|habitación|baño|teléfono|comunicación|apartamento/.test(t))return {id:"daily",label:"🏠 Daily Life, Estratos, Health & Services",sub:"Migración/banks, estratos/conjuntos, dental/optical, Airbnb, and WhatsApp"};
-  return {id:"social",label:"🇨🇴 Social, Dating, Rumba & Culture",sub:"Dating & family, puentes & salsa, wildcard verbs, gym/ciclovía, and empathy"};
+  if(/oficina|trabajo|profesión|cajero|sim|trámites|migración|extranjería|bancos|estratos|conjuntos|odontología|óptica|prepagada|reparaciones|recibos|técnico|portería|rappi|arriendo|airbnb|lavadora|whatsapp|notas de voz|barbería|farmacia|médica|casa|habitación|baño|teléfono|comunicación|apartamento/.test(t))return {id:"daily",label:"🏠 Daily Life, Estratos, Repairs & Health",sub:"Migración/banks, estratos/conjuntos, home repairs, dental/optical, and WhatsApp"};
+  return {id:"social",label:"🇨🇴 San Juan del Cesar, Social, Rumba & Culture",sub:"San Juan del Cesar & Guajira, dating & family, fútbol/boletas, puentes & salsa"};
 }
 function resetFraseScroll(){const sc=document.querySelector(".scroll");if(sc)sc.scrollTop=0;}
 function renderFraseMenu(){
@@ -1209,6 +1248,7 @@ function renderFraseMenu(){
         ob.onclick=()=>{
           rpPickedOpt=oIdx;
           markPractice("phrases",opt.es);
+          if(typeof recordSrs==="function")recordSrs("rp|"+opt.es,true);
           /* Synchronous speak inside tap handler for iPhone Safari */
           speak(opt.es,0.75);
           renderRp("reply");
@@ -1336,9 +1376,12 @@ function renderFraseSection(idx){
   const st=document.createElement("div");st.className="frase-title";st.style.cssText=sec.cls||"";st.innerHTML="<span>"+escapeVocabHtml(sec.section)+"</span><small>"+escapeVocabHtml(phraseEnglishTitle(sec.section))+"</small>";wrap.appendChild(st);
   sec.items.forEach(item=>{
     const card=document.createElement("div");card.className="frase-card";
+    card.setAttribute("role","button");card.setAttribute("tabindex","0");
     const register=item.register?`<span class="f-register">${escapeVocabHtml(item.register)}</span>`:"";
     card.innerHTML=`<div class="frase-txt"><div class="f-es">${item.es}</div><div class="f-en">${item.en}</div>${register}</div><span class="f-spk">🔊</span>`;
-    card.onclick=e=>{if(e.target.closest(".star-pin-btn"))return;markPractice("phrases",item.es);speak(item.es,0.75);};
+    const playFrase=()=>{markPractice("phrases",item.es);speak(item.es,0.75);};
+    card.onclick=e=>{if(e.target.closest(".star-pin-btn")||e.target.closest(".lp-mic"))return;playFrase();};
+    card.onkeydown=e=>{if((e.key==="Enter"||e.key===" ")&&!e.target.closest("button")){e.preventDefault();playFrase();}};
     if(typeof attachStarBtn==="function")attachStarBtn(card,item.es,sec.section||"Frases");
     attachMic(card,item.es);
     wrap.appendChild(card);
@@ -1642,7 +1685,11 @@ const LESSONS=[
   {id:"trampas-colombianas",icon:"🪤",title:"Trampas: cancelar, provocar y regalar",sub:"Domina los falsos amigos colombianos sin confundirte",vocab:"comida",dialogue:"Trampas colombianas: cancelar, provocar y qué pena",quizCat:"trampas",quizMode:"conversation"},
   {id:"estratos-barrios",icon:"🏘️",title:"Estratos, conjuntos y barrios",sub:"Entiende los estratos 1–6, los conjuntos cerrados y los recibos",vocab:"casa",dialogue:"Estratos, conjuntos cerrados y barrios",quizCat:"estratos",quizMode:"conversation"},
   {id:"odontologia-optica",icon:"🦷",title:"Odontología, óptica y EPS",sub:"Agenda limpieza dental, revisa una calza y pide gafas",vocab:"cuerpo",dialogue:"Odontología, óptica y medicina prepagada",quizCat:"odontologia",quizMode:"conversation"},
-  {id:"migracion-bancos-ce",icon:"🛂",title:"Migración, cédula y bancos",sub:"Registra tu visa, saca tu cédula de extranjería y abre cuenta",vocab:"numeros",dialogue:"Migración Colombia, cédula de extranjería y bancos",quizCat:"migracion-ce",quizMode:"conversation"}
+  {id:"migracion-bancos-ce",icon:"🛂",title:"Migración, cédula y bancos",sub:"Registra tu visa, saca tu cédula de extranjería y abre cuenta",vocab:"numeros",dialogue:"Migración Colombia, cédula de extranjería y bancos",quizCat:"migracion-ce",quizMode:"conversation"},
+  {id:"san-juan-guajira",icon:"🪗",title:"San Juan del Cesar y Guajira",sub:"Habla con la familia en la terraza, prueba el friche y vive el vallenato",vocab:"familia",dialogue:"San Juan del Cesar, La Guajira y parranda vallenata",quizCat:"sanjuan-guajira",quizMode:"conversation"},
+  {id:"seguridad-emergencias",icon:"🚨",title:"Seguridad, 123 y no dar papaya",sub:"Camina seguro, verifica placas, llama al 123 y reporta documentos",vocab:"direcciones",dialogue:"Seguridad, emergencias (123) y no dar papaya",quizCat:"seguridad-emergencias",quizMode:"conversation"},
+  {id:"hogar-reparaciones",icon:"🔧",title:"Reparaciones, recibos y técnico",sub:"Sube los tacos de la luz, agenda técnico de internet y autoriza en portería",vocab:"casa",dialogue:"Reparaciones del hogar, recibos y técnico",quizCat:"hogar-reparaciones",quizMode:"conversation"},
+  {id:"eventos-futbol-cultura",icon:"⚽",title:"Fútbol, conciertos y hacer vaca",sub:"Compra boletas, ponte la camiseta de la Selección y haz vaca con amigos",vocab:"colombianismos",dialogue:"Fútbol, conciertos, boletas y hacer vaca",quizCat:"eventos-futbol",quizMode:"conversation"}
 ];
 LESSONS.forEach(lesson=>{
   if(typeof LESSON_META!=="undefined"&&LESSON_META[lesson.id])Object.assign(lesson,LESSON_META[lesson.id]);
@@ -2341,7 +2388,11 @@ const RR_SERVICE_REFLEXES=[
   {q:"Señorita, ¿en dónde cancelo la cuenta del almuerzo?",qEs:"Señorita, ¿en dónde cancelo la cuenta del almuerzo?",qEn:"Miss, where do I pay the lunch bill?",aEs:"Puede cancelar allá en la caja con tarjeta, efectivo o Nequi.",aTts:"Puede cancelar allá en la caja con tarjeta, efectivo o Nequi.",aEn:"You can pay over at the register by card, cash, or Nequi.",level:"easy",service:true},
   {q:"¿En qué estrato está ubicado este conjunto cerrado?",qEs:"¿En qué estrato está ubicado este conjunto cerrado?",qEn:"What socioeconomic tier is this gated complex in?",aEs:"Está en estrato cuatro, así que los servicios llegan a buen precio.",aTts:"Está en estrato cuatro, así que los servicios llegan a buen precio.",aEn:"It's in tier 4, so the utilities come at a good price.",level:"moderate",service:true},
   {q:"Buenos días, ¿viene por medicina prepagada o consulta particular?",qEs:"Buenos días, ¿viene por medicina prepagada o consulta particular?",qEn:"Good morning, are you coming through private insurance or self-pay?",aEs:"Vengo por consulta particular para una limpieza dental.",aTts:"Vengo por consulta particular para una limpieza dental.",aEn:"I'm coming as self-pay for a dental cleaning.",level:"easy",service:true},
-  {q:"Bienvenido a Migración Colombia. ¿Qué trámite viene a realizar hoy?",qEs:"Bienvenido a Migración Colombia. ¿Qué trámite viene a realizar hoy?",qEn:"Welcome to Migración Colombia. What process are you here for today?",aEs:"Vengo a registrar mi visa para sacar la cédula de extranjería.",aTts:"Vengo a registrar mi visa para sacar la cédula de extranjería.",aEn:"I'm here to register my visa to get my foreigner ID card.",level:"moderate",service:true}
+  {q:"Bienvenido a Migración Colombia. ¿Qué trámite viene a realizar hoy?",qEs:"Bienvenido a Migración Colombia. ¿Qué trámite viene a realizar hoy?",qEn:"Welcome to Migración Colombia. What process are you here for today?",aEs:"Vengo a registrar mi visa para sacar la cédula de extranjería.",aTts:"Vengo a registrar mi visa para sacar la cédula de extranjería.",aEn:"I'm here to register my visa to get my foreigner ID card.",level:"moderate",service:true},
+  {q:"¡Ajá, primo! Bienvenido a San Juan del Cesar; pasa a la terraza y siéntate en la mecedora.",qEs:"¡Ajá, primo! Bienvenido a San Juan del Cesar; pasa a la terraza y siéntate en la mecedora.",qEn:"Hey cousin! Welcome to San Juan del Cesar; come onto the front porch and sit in the rocking chair.",aEs:"¡Muchas gracias! Qué alegría estar aquí en La Guajira con toda la familia.",aTts:"¡Muchas gracias! Qué alegría estar aquí en La Guajira con toda la familia.",aEn:"Thank you so much! What a joy to be here in La Guajira with the whole family.",level:"easy",service:true},
+  {q:"Se fue la luz en la cocina después del aguacero; ¿qué revisamos primero?",qEs:"Se fue la luz en la cocina después del aguacero; ¿qué revisamos primero?",qEn:"The power went out in the kitchen after the downpour; what do we check first?",aEs:"Revisemos la caja de tacos porque seguro se saltó un taco de la luz.",aTts:"Revisemos la caja de tacos porque seguro se saltó un taco de la luz.",aEn:"Let's check the breaker box because a circuit breaker probably tripped.",level:"moderate",service:true},
+  {q:"¡Hoy juega la Selección Colombia! ¿Cómo hacemos para pedir las picadas?",qEs:"¡Hoy juega la Selección Colombia! ¿Cómo hacemos para pedir las picadas?",qEn:"Today the Colombian National Team plays! How should we order the shared platters?",aEs:"Hagamos vaca entre todos por Nequi y pedimos a domicilio.",aTts:"Hagamos vaca entre todos por Nequi y pedimos a domicilio.",aEn:"Let's all pitch in via Nequi and order delivery.",level:"easy",service:true},
+  {q:"Disculpe, agente, se me extravió el pasaporte; ¿dónde pongo el reporte?",qEs:"Disculpe, agente, se me extravió el pasaporte; ¿dónde pongo el reporte?",qEn:"Excuse me, officer, my passport was lost; where do I file the report?",aEs:"Puede registrar la constancia en el portal de la Policía Nacional o en el CAI.",aTts:"Puede registrar la constancia en el portal de la Policía Nacional o en el CAI.",aEn:"You can file the report on the National Police portal or at the CAI post.",level:"moderate",service:true}
 ];
 RR_BANK.push(...RR_SERVICE_REFLEXES);
 let rrTimer=null,rrCurrent=null,rrSession=0,rrPromptToken=0;
@@ -3225,10 +3276,10 @@ function renderLessons(){
   /* Lessons grouped into a speaking-first progression */
   const LESSON_STAGES=[
     {name:"🌱 Stage 1 · Start Here",sub:"Greetings, Colombian politeness, false-friend traps (cancelar/provocar), numbers, and repairing misunderstandings.",ids:["presentate","cortesia-colombiana","trampas-colombianas","plata","survival-communication","casa","gustos"]},
-    {name:"🧭 Stage 2 · Travel and Survival",sub:"Airport, Uber, Colombian street grid & safety, corrientazo lunches, panaderías & jugos, hotels, Nequi, restaurants, markets, dental/optical, and medical care.",ids:["aeropuerto-migracion","uber-ride","uber-completo","hotel-checkin","calle","direcciones","direcciones-cuadras","bancos-pagos","panaderia-jugos","almuerzo-corrientazo","cocina","restaurante-real","mercado-negociar","commands-repair","farmacia","medico-urgencias","odontologia-optica"]},
-    {name:"🏠 Stage 3 · Daily Life",sub:"Migración & Cédula de Extranjería, ATMs & SIM cards, estratos & conjuntos, Airbnb, WhatsApp, portería, office, barbershop, and finca trips.",ids:["trabajo","oficina-real","cajero-sim-tramites","migracion-bancos-ce","porteria-domicilios","arriendo-airbnb","estratos-barrios","whatsapp-audios","barberia","viajes-finca","daily-repair","planes","gerundios-actividades","sentirse"]},
+    {name:"🧭 Stage 2 · Travel and Survival",sub:"Airport, Uber, street safety (no dar papaya & 123), corrientazo lunches, panaderías & jugos, hotels, Nequi, restaurants, markets, dental/optical, and medical care.",ids:["aeropuerto-migracion","uber-ride","uber-completo","hotel-checkin","calle","direcciones","direcciones-cuadras","seguridad-emergencias","bancos-pagos","panaderia-jugos","almuerzo-corrientazo","cocina","restaurante-real","mercado-negociar","commands-repair","farmacia","medico-urgencias","odontologia-optica"]},
+    {name:"🏠 Stage 3 · Daily Life",sub:"Migración & Cédula de Extranjería, ATMs & SIM cards, estratos & conjuntos, home repairs & utilities, Airbnb, WhatsApp, portería, office, barbershop, and finca trips.",ids:["trabajo","oficina-real","cajero-sim-tramites","migracion-bancos-ce","porteria-domicilios","arriendo-airbnb","estratos-barrios","hogar-reparaciones","whatsapp-audios","barberia","viajes-finca","daily-repair","planes","gerundios-actividades","sentirse"]},
     {name:"🧱 Stage 4 · Build Sentences",sub:"Present, future, past, contrast, perfect tenses, conditional, action chunks, connectors, and pronouns.",ids:["sentence-structure","action-chunks","connectors-v36","function-words","gram-presente","gram-futuro","gram-pasado","gram-pasado-historia","gram-pasado-contraste","gram-perfecto","gram-condicional","gram-pasado-perfecto","gram-futuro-perfecto","gram-subjuntivo","gram-necesidades","gram-conectores","gram-pronombres"]},
-    {name:"🇨🇴 Stage 5 · Speak More Naturally",sub:"Colombian wildcard verbs, dating & meeting family, puentes & salsa, empathy & reactions, diminutives, gym & ciclovía.",ids:["colombia","verbos-comodin","citas-familia","puentes-rumba-cultura","empatia-reacciones","muletillas-diminutivos","social-colombia-v36","gym-ciclovia","social-salida","fiesta-gathering","deportes-partido","gram-groserias"]},
+    {name:"🇨🇴 Stage 5 · Speak More Naturally",sub:"San Juan del Cesar & La Guajira (vallenato & family), Colombian wildcard verbs, dating & family, fútbol & conciertos, puentes & salsa, empathy, and diminutives.",ids:["san-juan-guajira","colombia","verbos-comodin","citas-familia","eventos-futbol-cultura","puentes-rumba-cultura","empatia-reacciones","muletillas-diminutivos","social-colombia-v36","gym-ciclovia","social-salida","fiesta-gathering","deportes-partido","gram-groserias"]},
     {name:"🎯 Stage 6 · Conversation Challenge",sub:"Read aloud, react quickly, and complete real speaking missions.",ids:["conversation-challenge"]}
   ];
   const roadmap=lpEl("lesson-roadmap");
@@ -3590,17 +3641,20 @@ function buildSpeakingGuide(){
   }
   if(typeof REGIONAL_ATLAS!=="undefined"&&REGIONAL_ATLAS.length){
     let regAtlasIdx=0;
+    const sjIdx=REGIONAL_ATLAS.findIndex(r=>r.id==="sanjuan-guajira");
+    if(sjIdx>=0)regAtlasIdx=sjIdx;
     const atlasCard=document.createElement("section");atlasCard.className="bridge-trainer-card regional-atlas-card";
     const renderAtlas=()=>{
       const reg=REGIONAL_ATLAS[regAtlasIdx%REGIONAL_ATLAS.length];
-      atlasCard.innerHTML=`<div class="bridge-kicker">🗺️ COLOMBIAN REGIONAL ACCENT & SLANG ATLAS · 4 REGIONS</div>
-        <div class="bridge-context">Tap a region to hear how greetings, slang, food, and rhythm change across Colombia:</div>
-        <div class="reg-tabs-row atlas-tabs"></div>
+      atlasCard.innerHTML=`<div class="bridge-kicker">🗺️ COLOMBIAN REGIONAL ACCENT & SLANG ATLAS · ${REGIONAL_ATLAS.length} REGIONS (INCLUDING SAN JUAN DEL CESAR & GUAJIRA)</div>
+        <div class="bridge-context">Tap a region to hear how family greetings, pronouns, food, and rhythm change across Colombia:</div>
+        <div class="reg-tabs-row atlas-tabs" role="tablist" aria-label="Colombian regions"></div>
         <div class="comodin-sub">${escapeVocabHtml(reg.title)} — ${escapeVocabHtml(reg.vibe)}</div>
         <div class="comodin-chunks-grid atlas-items-grid"></div>`;
       const tRow=atlasCard.querySelector(".atlas-tabs");
       REGIONAL_ATLAS.forEach((r,idx)=>{
         const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(idx===regAtlasIdx?" active":"");
+        b.setAttribute("role","tab");b.setAttribute("aria-selected",idx===regAtlasIdx?"true":"false");
         b.textContent=r.tab;
         b.onclick=()=>{
           regAtlasIdx=idx;
@@ -3612,10 +3666,13 @@ function buildSpeakingGuide(){
       const grid=atlasCard.querySelector(".atlas-items-grid");
       (reg.items||[]).forEach(it=>{
         const row=document.createElement("div");row.className="comodin-chunk-card atlas-item-card";
+        row.setAttribute("role","button");row.setAttribute("tabindex","0");
         row.innerHTML=`<div class="comodin-chunk-head"><span class="comodin-chunk-pill">${escapeVocabHtml(it.category)}</span><span class="comodin-chunk-en">${escapeVocabHtml(it.tip)}</span><div class="comodin-chunk-acts"></div></div>
           <div class="comodin-chunk-es">🗣️ ${escapeVocabHtml(it.es)} 🔊</div>
           <div class="comodin-chunk-esen">${escapeVocabHtml(it.en)}</div>`;
-        row.onclick=e=>{if(e.target.closest("button"))return;markPractice("phrases",it.es);speak(it.es,0.75);};
+        const playIt=()=>{markPractice("phrases",it.es);if(typeof recordSrs==="function")recordSrs("atlas|"+it.es,true);speak(it.es,0.75);};
+        row.onclick=e=>{if(e.target.closest("button"))return;playIt();};
+        row.onkeydown=e=>{if((e.key==="Enter"||e.key===" ")&&!e.target.closest("button")){e.preventDefault();playIt();}};
         const acts=row.querySelector(".comodin-chunk-acts");
         if(typeof attachStarBtn==="function")attachStarBtn(acts,it.es,reg.tab);
         attachMic(acts,it.es,"phrases");
@@ -3624,6 +3681,44 @@ function buildSpeakingGuide(){
     };
     renderAtlas();
     sec.appendChild(atlasCard);
+  }
+  if(typeof REGIONAL_SWITCHER!=="undefined"&&REGIONAL_SWITCHER.length){
+    let swIdx=0;
+    const swCard=document.createElement("section");swCard.className="bridge-trainer-card regional-switcher-card";
+    swCard.setAttribute("aria-label","Regional and pronoun switcher across San Juan del Cesar, Bogotá, Medellín, and Cali");
+    const renderSwitcher=()=>{
+      const cur=REGIONAL_SWITCHER[swIdx%REGIONAL_SWITCHER.length];
+      swCard.innerHTML=`<div class="bridge-kicker">🧭 COMPARADOR REGIONAL · SAN JUAN DEL CESAR VS. BOGOTÁ, MEDELLÍN & CALI (${swIdx+1}/${REGIONAL_SWITCHER.length})</div>
+        <div class="bridge-context">Compare how the exact same everyday meaning changes pronouns (<em>tú / primo</em> vs. <em>usted / sumercé</em> vs. <em>vos / parce</em>) across Colombia:</div>
+        <div class="reg-tabs-row sw-intent-tabs" role="tablist" aria-label="Everyday situations"></div>
+        <div class="comodin-sub"><strong>${escapeVocabHtml(cur.intent)}</strong> — ${escapeVocabHtml(cur.context)}</div>
+        <div class="comodin-chunks-grid sw-variants-grid"></div>`;
+      const tRow=swCard.querySelector(".sw-intent-tabs");
+      REGIONAL_SWITCHER.forEach((item,idx)=>{
+        const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(idx===swIdx?" active":"");
+        b.setAttribute("role","tab");b.setAttribute("aria-selected",idx===swIdx?"true":"false");
+        b.textContent=item.intent;
+        b.onclick=()=>{swIdx=idx;renderSwitcher();if(item.variants&&item.variants[0])speak(item.variants[0].es,0.75);};
+        tRow.appendChild(b);
+      });
+      const vGrid=swCard.querySelector(".sw-variants-grid");
+      (cur.variants||[]).forEach(v=>{
+        const row=document.createElement("div");row.className="comodin-chunk-card sw-variant-card";
+        row.setAttribute("role","button");row.setAttribute("tabindex","0");
+        row.innerHTML=`<div class="comodin-chunk-head"><span class="comodin-chunk-pill">${escapeVocabHtml(v.region)} · ${escapeVocabHtml(v.pronoun)}</span><span class="comodin-chunk-en">${escapeVocabHtml(v.note)}</span><div class="comodin-chunk-acts"></div></div>
+          <div class="comodin-chunk-es">🗣️ ${escapeVocabHtml(v.es)} 🔊</div>
+          <div class="comodin-chunk-esen">${escapeVocabHtml(v.en)}</div>`;
+        const playV=()=>{markPractice("phrases",v.es);if(typeof recordSrs==="function")recordSrs("regsw|"+v.es,true);speak(v.es,0.75);};
+        row.onclick=e=>{if(e.target.closest("button"))return;playV();};
+        row.onkeydown=e=>{if((e.key==="Enter"||e.key===" ")&&!e.target.closest("button")){e.preventDefault();playV();}};
+        const acts=row.querySelector(".comodin-chunk-acts");
+        if(typeof attachStarBtn==="function")attachStarBtn(acts,v.es,v.region);
+        attachMic(acts,v.es,"phrases");
+        vGrid.appendChild(row);
+      });
+    };
+    renderSwitcher();
+    sec.appendChild(swCard);
   }
   if(typeof STREET_EAR_LINKER!=="undefined"&&STREET_EAR_LINKER.length){
     let earIdx=0,earGuess=null;
@@ -3673,6 +3768,9 @@ function buildSpeakingGuide(){
         b.onclick=()=>{
           earGuess=ch.id;
           markPractice("phrases",item.streetEs);
+          if(typeof recordSrs==="function")recordSrs("ear|"+item.streetEs,!!ch.correct);
+          if(!ch.correct&&typeof recordSpeakingError==="function")recordSpeakingError(item.streetEs,"Street Ear");
+          if(ch.correct&&typeof clearSpeakingError==="function")clearSpeakingError(item.streetEs);
           speak(item.carefulEs,0.75);
           renderEar();
         };
@@ -3734,6 +3832,9 @@ function buildSpeakingGuide(){
         b.onclick=()=>{
           trPredicted=o.id;
           markPractice("phrases",t.es);
+          if(typeof recordSrs==="function")recordSrs("trampa|"+t.trap,!!o.isReal);
+          if(!o.isReal&&typeof recordSpeakingError==="function")recordSpeakingError(t.es,"Trampas Colombianas");
+          if(o.isReal&&typeof clearSpeakingError==="function")clearSpeakingError(t.es);
           speak(t.es,0.75);
           renderTrap();
         };
@@ -4122,7 +4223,7 @@ FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
 /* Vocabulary examples remain in Vocab as full context. Only the authored
    prompts above enter Fill blank; generic example sentences stay out. */
 
-const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"cortesia",label:"🙏 Courtesy"},{id:"muletillas",label:"☕ Diminutives & Fillers"},{id:"reparar",label:"🧰 Repair"},{id:"conectores",label:"🔗 Connectors"},{id:"direcciones",label:"🧭 Directions"},{id:"aeropuerto",label:"🛬 Airport"},{id:"uber",label:"🚕 Uber"},{id:"uber-real",label:"🚕 Uber · full trip"},{id:"hotel",label:"🏨 Hotel"},{id:"bancos-pagos",label:"💳 Nequi & Pay"},{id:"restaurante",label:"🍽️ Restaurant"},{id:"restaurante-real",label:"🍽️ Restaurant · real"},{id:"compras",label:"🛒 Shopping"},{id:"mercado",label:"🛍️ Market"},{id:"farmacia",label:"💊 Pharmacy"},{id:"medico",label:"🩺 Medical"},{id:"barberia",label:"💈 Barbershop"},{id:"porteria",label:"🏢 Portería & Rappi"},{id:"panaderia",label:"🥐 Panadería & Jugos"},{id:"viajes-finca",label:"🌄 Buses & Finca"},{id:"empatia",label:"💛 Empathy & Reactions"},{id:"comodin",label:"🔑 Verbos Comodín"},{id:"whatsapp",label:"📱 WhatsApp & Citas"},{id:"arriendo",label:"🔑 Arriendo & Airbnb"},{id:"gym-ciclovia",label:"🚴 Gym & Ciclovía"},{id:"citas-familia",label:"❤️ Citas & Familia"},{id:"corrientazo",label:"🫓 Corrientazo & Onces"},{id:"cajero-sim",label:"🏦 Cajero & SIM Card"},{id:"puentes-rumba",label:"🎉 Puentes & Rumba"},{id:"trampas",label:"🪤 Trampas Colombianas"},{id:"estratos",label:"🏘️ Estratos & Conjuntos"},{id:"odontologia",label:"🦷 Odontología & Óptica"},{id:"migracion-ce",label:"🛂 Migración & Cédula"},{id:"expresiones",label:"🇨🇴 Expressions"},{id:"social",label:"🤝 Social"},{id:"fiesta",label:"🎉 Party"},{id:"deportes",label:"⚽ Sports"},{id:"oficina-real",label:"🧑‍💼 Office"},{id:"gerundios",label:"🔄 Actions in progress"},{id:"mandatos",label:"🗣️ Commands"},{id:"estructura",label:"🧱 Structure"},{id:"subjuntivo",label:"🌱 Subjuntivo"},{id:"pronunciacion",label:"🔊 Sounds"},{id:"groserias",label:"⚠️ Groserías"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animals"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
+const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"cortesia",label:"🙏 Courtesy"},{id:"muletillas",label:"☕ Diminutives & Fillers"},{id:"reparar",label:"🧰 Repair"},{id:"conectores",label:"🔗 Connectors"},{id:"direcciones",label:"🧭 Directions"},{id:"aeropuerto",label:"🛬 Airport"},{id:"uber",label:"🚕 Uber"},{id:"uber-real",label:"🚕 Uber · full trip"},{id:"hotel",label:"🏨 Hotel"},{id:"bancos-pagos",label:"💳 Nequi & Pay"},{id:"restaurante",label:"🍽️ Restaurant"},{id:"restaurante-real",label:"🍽️ Restaurant · real"},{id:"compras",label:"🛒 Shopping"},{id:"mercado",label:"🛍️ Market"},{id:"farmacia",label:"💊 Pharmacy"},{id:"medico",label:"🩺 Medical"},{id:"barberia",label:"💈 Barbershop"},{id:"porteria",label:"🏢 Portería & Rappi"},{id:"panaderia",label:"🥐 Panadería & Jugos"},{id:"viajes-finca",label:"🌄 Buses & Finca"},{id:"empatia",label:"💛 Empathy & Reactions"},{id:"comodin",label:"🔑 Verbos Comodín"},{id:"whatsapp",label:"📱 WhatsApp & Citas"},{id:"arriendo",label:"🔑 Arriendo & Airbnb"},{id:"gym-ciclovia",label:"🚴 Gym & Ciclovía"},{id:"citas-familia",label:"❤️ Citas & Familia"},{id:"corrientazo",label:"🫓 Corrientazo & Onces"},{id:"cajero-sim",label:"🏦 Cajero & SIM Card"},{id:"puentes-rumba",label:"🎉 Puentes & Rumba"},{id:"sanjuan-guajira",label:"🪗 San Juan & Guajira"},{id:"seguridad-emergencias",label:"🚨 Seguridad & 123"},{id:"hogar-reparaciones",label:"🔧 Hogar & Técnico"},{id:"eventos-futbol",label:"⚽ Fútbol & Boletas"},{id:"trampas",label:"🪤 Trampas Colombianas"},{id:"estratos",label:"🏘️ Estratos & Conjuntos"},{id:"odontologia",label:"🦷 Odontología & Óptica"},{id:"migracion-ce",label:"🛂 Migración & Cédula"},{id:"expresiones",label:"🇨🇴 Expressions"},{id:"social",label:"🤝 Social"},{id:"fiesta",label:"🎉 Party"},{id:"deportes",label:"⚽ Sports"},{id:"oficina-real",label:"🧑‍💼 Office"},{id:"gerundios",label:"🔄 Actions in progress"},{id:"mandatos",label:"🗣️ Commands"},{id:"estructura",label:"🧱 Structure"},{id:"subjuntivo",label:"🌱 Subjuntivo"},{id:"pronunciacion",label:"🔊 Sounds"},{id:"groserias",label:"⚠️ Groserías"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animals"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
 const QUIZ_MODES=[
   {id:"mixed",label:"Mixed"},{id:"es-en",label:"ES → EN"},{id:"en-es",label:"EN → ES"},
   {id:"listening",label:"🎧 Listening"},{id:"dictation",label:"⌨️ Dictation"},{id:"blank",label:"✏️ Fill blank"},{id:"conversation",label:"💬 Conversation"}
@@ -4175,8 +4276,8 @@ const SITUATION_BLITZ_PACKS=[
   {id:"food-blitz",label:"🍽️ Order & Pay",cats:["restaurante","restaurante-real","bancos-pagos","cortesia","comida","mercado"]},
   {id:"travel-blitz",label:"🛬 Airport & Hotel",cats:["aeropuerto","hotel","lugares","compras"]},
   {id:"social-blitz",label:"🤝 Social & Parche",cats:["social","fiesta","deportes","muletillas","expresiones","colombianismos"]},
-  {id:"living-blitz",label:"🏢 Apt, Estratos, Migración & Salud",cats:["estratos","migracion-ce","odontologia","cajero-sim","porteria","arriendo","whatsapp","barberia","farmacia","medico","reparar","casa"]},
-  {id:"local-blitz",label:"🇨🇴 Trampas, Corrientazo, Citas & Rumba",cats:["trampas","corrientazo","citas-familia","puentes-rumba","panaderia","viajes-finca","empatia","comodin","gym-ciclovia","direcciones","colombianismos"]}
+  {id:"living-blitz",label:"🏢 Apt, Estratos, Reparaciones & Salud",cats:["estratos","hogar-reparaciones","seguridad-emergencias","migracion-ce","odontologia","cajero-sim","porteria","arriendo","whatsapp","barberia","farmacia","medico","reparar","casa"]},
+  {id:"local-blitz",label:"🪗 San Juan, Trampas, Fútbol & Rumba",cats:["sanjuan-guajira","eventos-futbol","trampas","corrientazo","citas-familia","puentes-rumba","panaderia","viajes-finca","empatia","comodin","gym-ciclovia","direcciones","colombianismos"]}
 ];
 let qBlitzPack=null;
 const qmw=document.getElementById("qmode-wrap");
@@ -4514,3 +4615,55 @@ function runDataValidator(){
 }
 runDataValidator();
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   Portable Profile Backup & Restore (v97.0) — 100% static GitHub Pages sync
+   between PC and iPhone without requiring a backend server.
+   ═══════════════════════════════════════════════════════════════════════════ */
+function attachProfileBackupControls(utilityBody){
+  if(!utilityBody)return;
+  const row=document.createElement("div");row.className="profile-backup-row";
+  const expBtn=document.createElement("button");expBtn.type="button";expBtn.className="profile-reset profile-backup-btn";
+  expBtn.textContent="💾 Export Backup";expBtn.title="Download a JSON backup of this profile's progress to transfer to iPhone or PC";
+  const impBtn=document.createElement("button");impBtn.type="button";impBtn.className="profile-reset profile-backup-btn";
+  impBtn.textContent="📂 Import Backup";impBtn.title="Restore progress from a saved JSON backup file";
+  const fileIn=document.createElement("input");fileIn.type="file";fileIn.accept="application/json,.json";fileIn.hidden=true;
+  const status=document.createElement("small");status.className="profile-backup-status";status.setAttribute("aria-live","polite");
+  expBtn.onclick=()=>{
+    try{
+      const prefix=`esco-profile-${activeProfileId}-`;
+      const data={};
+      for(let i=0;i<nativeStorage.length;i++){
+        const k=nativeStorage.key(i);
+        if(k&&k.startsWith(prefix))data[k.slice(prefix.length)]=nativeStorage.getItem(k);
+      }
+      const payload=JSON.stringify({app:"espanol-colombia",version:"v97.0",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
+      const blob=new Blob([payload],{type:"application/json"});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement("a");
+      a.href=url;a.download=`espanol-colombia-${activeProfileId}-backup.json`;
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1500);
+      status.textContent="✅ Backup downloaded!";
+    }catch(e){status.textContent="⚠️ Could not export backup.";}
+  };
+  impBtn.onclick=()=>fileIn.click();
+  fileIn.onchange=()=>{
+    const f=fileIn.files&&fileIn.files[0];if(!f)return;
+    const reader=new FileReader();
+    reader.onload=()=>{
+      try{
+        const parsed=JSON.parse(String(reader.result||"{}"));
+        const entries=parsed&&parsed.data&&typeof parsed.data==="object"?parsed.data:null;
+        if(!entries)throw new Error("Invalid backup file");
+        const prefix=`esco-profile-${activeProfileId}-`;
+        Object.entries(entries).forEach(([k,v])=>{if(typeof v==="string")nativeStorage.setItem(prefix+k,v);});
+        status.textContent="✅ Backup restored! Reloading…";
+        setTimeout(()=>location.reload(),350);
+      }catch(e){status.textContent="⚠️ Invalid backup JSON file.";}
+    };
+    reader.readAsText(f);
+  };
+  row.append(expBtn,impBtn,fileIn,status);
+  utilityBody.appendChild(row);
+}
+buildProfileBar();
