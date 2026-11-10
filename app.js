@@ -72,7 +72,7 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v96.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v96.1 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);
   bar.append(label,select,reset,ver);utilityBody.appendChild(bar);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -1162,37 +1162,47 @@ function renderFraseMenu(){
   if(typeof BRANCHING_ROLEPLAYS!=="undefined"&&BRANCHING_ROLEPLAYS.length){
     let rpScenarioIdx=0,rpTurnIdx=0,rpPickedOpt=null;
     const rpCard=document.createElement("section");rpCard.className="bridge-trainer-card branching-roleplay-card";
-    const renderRp=()=>{
+    rpCard.setAttribute("aria-label","Interactive Colombian branching roleplay simulator");
+    const bindKeyClick=(el,fn)=>{
+      el.onclick=fn;
+      el.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();fn(e);}};
+    };
+    const renderRp=(focusTarget)=>{
       const scen=BRANCHING_ROLEPLAYS[rpScenarioIdx%BRANCHING_ROLEPLAYS.length];
       const turns=scen.turns||[];
       const turn=turns[rpTurnIdx%turns.length]||{};
       rpCard.innerHTML=`<div class="bridge-kicker">🎭 SIMULADOR DE CONVERSACIÓN · INTERACTIVE BRANCHING ROLEPLAY (NT HEAVY)</div>
         <div class="bridge-context">Choose a real-life Colombian scenario, listen to the speaker, and pick how you want to reply:</div>
-        <div class="reg-tabs-row rp-scenario-tabs"></div>
-        <div class="comodin-sub">${escapeVocabHtml(scen.title)} — ${escapeVocabHtml(scen.sub||"")} · <strong>Turn ${rpTurnIdx+1} of ${turns.length}</strong></div>
-        <div class="rp-npc-box" title="Tap to hear speaker">
+        <div class="reg-tabs-row rp-scenario-tabs" role="tablist" aria-label="Roleplay scenarios"></div>
+        <div class="comodin-sub" aria-live="polite">${escapeVocabHtml(scen.title)} — ${escapeVocabHtml(scen.sub||"")} · <strong>Turn ${rpTurnIdx+1} of ${turns.length}</strong></div>
+        <div class="rp-npc-box" role="button" tabindex="0" title="Tap or press Enter to hear speaker" aria-label="Colombian speaker says: ${escapeVocabHtml(turn.npcEs||"")}. Tap to hear audio.">
           <div class="rp-npc-label">🗣️ Colombian speaker says to you:</div>
           <div class="rp-npc-es">${escapeVocabHtml(turn.npcEs||"")} 🔊</div>
           <div class="rp-npc-en">${escapeVocabHtml(turn.npcEn||"")}</div>
         </div>
-        <div class="rp-options-label">👇 Choose your reply style (tap to speak & see how they respond):</div>
-        <div class="rp-options-grid"></div>
-        <div class="rp-outcome-slot"></div>`;
-      rpCard.querySelector(".rp-npc-box").onclick=()=>speak(turn.npcEs||"",0.75);
+        <div class="rp-options-label">👇 Choose your reply style (tap to speak &amp; see how they respond):</div>
+        <div class="rp-options-grid" role="group" aria-label="Reply style options"></div>
+        <div class="rp-outcome-slot" role="region" aria-live="polite" aria-label="Conversation response and coaching"></div>`;
+      const npcBox=rpCard.querySelector(".rp-npc-box");
+      bindKeyClick(npcBox,()=>speak(turn.npcEs||"",0.75));
       const tRow=rpCard.querySelector(".rp-scenario-tabs");
       BRANCHING_ROLEPLAYS.forEach((sc,idx)=>{
         const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(idx===rpScenarioIdx?" active":"");
+        b.setAttribute("role","tab");
+        b.setAttribute("aria-selected",idx===rpScenarioIdx?"true":"false");
+        b.setAttribute("aria-pressed",idx===rpScenarioIdx?"true":"false");
         b.textContent=sc.title;
         b.onclick=()=>{
           rpScenarioIdx=idx;rpTurnIdx=0;rpPickedOpt=null;
-          renderRp();
           if(sc.turns&&sc.turns[0])speak(sc.turns[0].npcEs,0.75);
+          renderRp("npc");
         };
         tRow.appendChild(b);
       });
       const optGrid=rpCard.querySelector(".rp-options-grid");
       (turn.options||[]).forEach((opt,oIdx)=>{
         const ob=document.createElement("button");ob.type="button";ob.className="rp-option-btn"+(rpPickedOpt===oIdx?" selected":"");
+        ob.setAttribute("aria-pressed",rpPickedOpt===oIdx?"true":"false");
         ob.innerHTML=`<span class="rp-opt-style">${escapeVocabHtml(opt.style)}</span>
           <strong class="rp-opt-es">🗣️ ${escapeVocabHtml(opt.es)} 🔊</strong>
           <small class="rp-opt-en">${escapeVocabHtml(opt.en)}</small>`;
@@ -1201,7 +1211,7 @@ function renderFraseMenu(){
           markPractice("phrases",opt.es);
           /* Synchronous speak inside tap handler for iPhone Safari */
           speak(opt.es,0.75);
-          renderRp();
+          renderRp("reply");
         };
         optGrid.appendChild(ob);
       });
@@ -1209,7 +1219,7 @@ function renderFraseMenu(){
         const chosen=turn.options[rpPickedOpt];
         const outSlot=rpCard.querySelector(".rp-outcome-slot");
         outSlot.innerHTML=`<div class="rp-outcome-box">
-          <div class="rp-reply-box" title="Tap to hear their response">
+          <div class="rp-reply-box" role="button" tabindex="0" title="Tap or press Enter to hear their response" aria-label="They respond: ${escapeVocabHtml(chosen.replyEs)}. Tap to hear audio.">
             <span class="rp-reply-tag">💬 They respond to your choice:</span>
             <strong>${escapeVocabHtml(chosen.replyEs)} 🔊</strong>
             <small>${escapeVocabHtml(chosen.replyEn)}</small>
@@ -1217,21 +1227,27 @@ function renderFraseMenu(){
           <div class="tvc-why">💡 <strong>Why this works in Colombia:</strong> ${escapeVocabHtml(chosen.coach)}</div>
           <div class="bridge-actions rp-nav-actions"></div>
         </div>`;
-        outSlot.querySelector(".rp-reply-box").onclick=()=>speak(chosen.replyEs,0.75);
+        const replyBox=outSlot.querySelector(".rp-reply-box");
+        bindKeyClick(replyBox,()=>speak(chosen.replyEs,0.75));
         const navActs=outSlot.querySelector(".rp-nav-actions");
         const hearReplyBtn=document.createElement("button");hearReplyBtn.type="button";hearReplyBtn.className="lp-nav-btn";hearReplyBtn.textContent="🔊 Hear Their Reply";
         hearReplyBtn.onclick=()=>speak(chosen.replyEs,0.75);
         const nextBtn=document.createElement("button");nextBtn.type="button";nextBtn.className="lp-nav-btn primary";
         if(rpTurnIdx+1<turns.length){
           nextBtn.textContent=`Next Turn (${rpTurnIdx+2}/${turns.length}) →`;
-          nextBtn.onclick=()=>{rpTurnIdx++;rpPickedOpt=null;renderRp();if(turns[rpTurnIdx])speak(turns[rpTurnIdx].npcEs,0.75);};
+          nextBtn.onclick=()=>{rpTurnIdx++;rpPickedOpt=null;if(turns[rpTurnIdx])speak(turns[rpTurnIdx].npcEs,0.75);renderRp("npc");};
         }else{
           nextBtn.textContent="Next Scenario →";
-          nextBtn.onclick=()=>{rpScenarioIdx=(rpScenarioIdx+1)%BRANCHING_ROLEPLAYS.length;rpTurnIdx=0;rpPickedOpt=null;renderRp();const nx=BRANCHING_ROLEPLAYS[rpScenarioIdx];if(nx&&nx.turns&&nx.turns[0])speak(nx.turns[0].npcEs,0.75);};
+          nextBtn.onclick=()=>{rpScenarioIdx=(rpScenarioIdx+1)%BRANCHING_ROLEPLAYS.length;rpTurnIdx=0;rpPickedOpt=null;const nx=BRANCHING_ROLEPLAYS[rpScenarioIdx];if(nx&&nx.turns&&nx.turns[0])speak(nx.turns[0].npcEs,0.75);renderRp("npc");};
         }
         navActs.append(hearReplyBtn,nextBtn);
         if(typeof attachStarBtn==="function")attachStarBtn(navActs,chosen.es,scen.title);
         attachMic(navActs,chosen.es,"phrases");
+      }
+      if(focusTarget==="reply"){
+        const rb=rpCard.querySelector(".rp-reply-box");if(rb)rb.focus();
+      }else if(focusTarget==="npc"){
+        const nb=rpCard.querySelector(".rp-npc-box");if(nb)nb.focus();
       }
     };
     renderRp();
@@ -1647,10 +1663,6 @@ try{dayInfo=Object.assign(dayInfo,JSON.parse(localStorage.getItem(DAY_KEY)||"{}"
 function localDayKey(date=new Date()){
   return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
 }
-function practiceStreak(){
-  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
-  return dayInfo.last===localDayKey()||dayInfo.last===localDayKey(yesterday)?Math.max(0,Number(dayInfo.streak)||0):0;
-}
 function recordPracticeDay(){
   const today=localDayKey();
   if(dayInfo.last===today)return;
@@ -1659,6 +1671,11 @@ function recordPracticeDay(){
   dayInfo.last=today;
   try{localStorage.setItem(DAY_KEY,JSON.stringify(dayInfo));}catch(e){}
 }
+function practiceStreak(){
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  return dayInfo.last===localDayKey()||dayInfo.last===localDayKey(yesterday)?Math.max(0,Number(dayInfo.streak)||0):0;
+}
+recordPracticeDay();
 
 /* Lesson player state */
 let lpLesson=null,lpSteps=[],lpStep=0,lpScore=0,lpQs=[],lpQi=0,lpAnswered=false,lpPracticed=new Set();
@@ -3609,16 +3626,27 @@ function buildSpeakingGuide(){
     sec.appendChild(atlasCard);
   }
   if(typeof STREET_EAR_LINKER!=="undefined"&&STREET_EAR_LINKER.length){
-    let earIdx=0;
+    let earIdx=0,earGuess=null;
     const earCard=document.createElement("section");earCard.className="bridge-trainer-card street-ear-card";
+    earCard.setAttribute("aria-label","Street-speed contractions and ear comprehension trainer");
     const renderEar=()=>{
-      const item=STREET_EAR_LINKER[earIdx%STREET_EAR_LINKER.length];
-      earCard.innerHTML=`<div class="bridge-kicker">🎧 CÓMO SUENA EN LA CALLE · STREET-SPEED CONTRACTIONS (${earIdx+1}/${STREET_EAR_LINKER.length})</div>
-        <div class="bridge-context">${escapeVocabHtml(item.context)} — ${escapeVocabHtml(item.en)}</div>
+      const len=STREET_EAR_LINKER.length;
+      const item=STREET_EAR_LINKER[earIdx%len];
+      const d1=STREET_EAR_LINKER[(earIdx+3)%len];
+      const d2=STREET_EAR_LINKER[(earIdx+7)%len];
+      const rawChoices=[
+        {id:"correct",label:`${item.carefulEs} — ${item.en}`,correct:true},
+        {id:"d1",label:`${d1.carefulEs} — ${d1.en}`,correct:false},
+        {id:"d2",label:`${d2.carefulEs} — ${d2.en}`,correct:false}
+      ];
+      const shift=earIdx%3;
+      const choices=rawChoices.slice(shift).concat(rawChoices.slice(0,shift));
+      earCard.innerHTML=`<div class="bridge-kicker">🎧 CÓMO SUENA EN LA CALLE · STREET-SPEED CONTRACTIONS (${earIdx+1}/${len})</div>
+        <div class="bridge-context">${escapeVocabHtml(item.context)} — Listen first, then test your ear below:</div>
         <div class="tvc-compare-pair">
           <button type="button" class="tvc-box ear-careful" title="Tap to hear careful speed">
             <span class="tvc-tag">🐢 Careful / Written Spanish (0.65x)</span>
-            <strong>${escapeVocabHtml(item.carefulEs)}</strong>
+            <strong>${escapeVocabHtml(earGuess!==null?item.carefulEs:"Tap or answer below to reveal careful form")}</strong>
           </button>
           <button type="button" class="tvc-box tvc-colombian ear-street" title="Tap to hear natural street speed">
             <span class="tvc-tag">⚡ How It Sounds on the Street (0.85x) 🔊</span>
@@ -3626,17 +3654,44 @@ function buildSpeakingGuide(){
             <small class="ear-phonetic">🎵 Rhythm: ${escapeVocabHtml(item.phoneticHint||"")}</small>
           </button>
         </div>
+        <div class="ear-check-box" role="group" aria-label="Street ear comprehension check">
+          <div class="rp-options-label">🎯 Quick Ear Check: What does <strong>"${escapeVocabHtml(item.streetEs)}"</strong> mean?</div>
+          <div class="ear-check-options"></div>
+          <div class="ear-check-feedback" role="region" aria-live="polite"></div>
+        </div>
         <div class="tvc-why">💡 <strong>Ear Linker Tip:</strong> ${escapeVocabHtml(item.tip)}</div>
         <div class="bridge-actions"></div>`;
-      earCard.querySelector(".ear-careful").onclick=()=>speak(item.carefulEs,0.65);
+      earCard.querySelector(".ear-careful").onclick=()=>{earGuess=earGuess||"correct";speak(item.carefulEs,0.65);renderEar();};
       earCard.querySelector(".ear-street").onclick=()=>{markPractice("phrases",item.streetEs);speak(item.streetEs,0.85);};
+      const optWrap=earCard.querySelector(".ear-check-options");
+      choices.forEach(ch=>{
+        const b=document.createElement("button");b.type="button";
+        const isPicked=earGuess===ch.id;
+        b.className="ear-check-btn"+(isPicked?(ch.correct?" correct":" wrong"):"")+(earGuess!==null&&ch.correct?" correct-hint":"");
+        b.setAttribute("aria-pressed",isPicked?"true":"false");
+        b.textContent=ch.label;
+        b.onclick=()=>{
+          earGuess=ch.id;
+          markPractice("phrases",item.streetEs);
+          speak(item.carefulEs,0.75);
+          renderEar();
+        };
+        optWrap.appendChild(b);
+      });
+      if(earGuess!==null){
+        const pickedObj=choices.find(c=>c.id===earGuess);
+        const fb=earCard.querySelector(".ear-check-feedback");
+        fb.innerHTML=pickedObj&&pickedObj.correct
+          ?`<div class="trampas-feedback-banner ok">✅ <strong>¡Buen oído!</strong> "${escapeVocabHtml(item.streetEs)}" links <strong>${escapeVocabHtml(item.carefulEs)}</strong> (${escapeVocabHtml(item.en)}).</div>`
+          :`<div class="trampas-feedback-banner warn">👂 <strong>Close!</strong> "${escapeVocabHtml(item.streetEs)}" is actually <strong>${escapeVocabHtml(item.carefulEs)}</strong> (${escapeVocabHtml(item.en)}).</div>`;
+      }
       const acts=earCard.querySelector(".bridge-actions");
       const slowBtn=document.createElement("button");slowBtn.type="button";slowBtn.className="lp-nav-btn";slowBtn.textContent="🐢 Careful (0.65x)";
       slowBtn.onclick=()=>speak(item.carefulEs,0.65);
       const fastBtn=document.createElement("button");fastBtn.type="button";fastBtn.className="lp-nav-btn";fastBtn.textContent="⚡ Street (0.85x)";
       fastBtn.onclick=()=>{markPractice("phrases",item.streetEs);speak(item.streetEs,0.85);};
       const nextEar=document.createElement("button");nextEar.type="button";nextEar.className="lp-nav-btn primary";nextEar.textContent="Next contraction →";
-      nextEar.onclick=()=>{earIdx=(earIdx+1)%STREET_EAR_LINKER.length;renderEar();};
+      nextEar.onclick=()=>{earIdx=(earIdx+1)%len;earGuess=null;renderEar();};
       acts.append(slowBtn,fastBtn,nextEar);
       if(typeof attachStarBtn==="function")attachStarBtn(acts,item.streetEs,"Street Ear");
     };
@@ -3644,35 +3699,79 @@ function buildSpeakingGuide(){
     sec.appendChild(earCard);
   }
   if(typeof TRAMPAS_COLOMBIANAS!=="undefined"&&TRAMPAS_COLOMBIANAS.length){
-    let trIdx=0;
+    let trIdx=0,trPredicted=null;
     const trCard=document.createElement("section");trCard.className="bridge-trainer-card trampas-decoder-card";
+    trCard.setAttribute("aria-label","Colombian false friends prediction and decoder trainer");
     const renderTrap=()=>{
       const t=TRAMPAS_COLOMBIANAS[trIdx%TRAMPAS_COLOMBIANAS.length];
+      const opts=trIdx%2===0
+        ?[{id:"real",label:t.realMeaning,isReal:true},{id:"trap",label:t.wrongGuess,isReal:false}]
+        :[{id:"trap",label:t.wrongGuess,isReal:false},{id:"real",label:t.realMeaning,isReal:true}];
+      const revealed=trPredicted!==null;
       trCard.innerHTML=`<div class="bridge-kicker">🪤 TRAMPAS COLOMBIANAS · FALSE FRIENDS DECODER (${trIdx+1}/${TRAMPAS_COLOMBIANAS.length})</div>
-        <div class="bridge-context">Colombian phrase: <strong>"${escapeVocabHtml(t.trap)}"</strong></div>
-        <div class="tvc-compare-pair">
-          <div class="tvc-box tvc-textbook">
-            <span class="tvc-tag">❌ Literal Trap / What Gringos Guess</span>
-            <strong>${escapeVocabHtml(t.wrongGuess)}</strong>
-          </div>
-          <div class="tvc-box tvc-colombian">
-            <span class="tvc-tag">✅ Real Meaning in Colombia</span>
-            <strong>${escapeVocabHtml(t.realMeaning)}</strong>
-          </div>
-        </div>
-        <div class="street-grid-example" title="Tap to hear example">
+        <div class="bridge-context">Colombian expression: <strong>"${escapeVocabHtml(t.trap)}"</strong></div>
+        <div class="street-grid-example" role="button" tabindex="0" title="Tap or press Enter to hear example" aria-label="Spanish example: ${escapeVocabHtml(t.es)}. Tap to hear audio.">
           <div class="street-grid-es">🗣️ ${escapeVocabHtml(t.es)} 🔊</div>
-          <div class="street-grid-en">${escapeVocabHtml(t.en)}</div>
+          <div class="street-grid-en">${revealed?escapeVocabHtml(t.en):"<em>Predict the meaning below to unlock the full English translation…</em>"}</div>
         </div>
-        <div class="tvc-why">💡 <strong>Cultural Note:</strong> ${escapeVocabHtml(t.tip)}</div>
+        <div class="trampas-predict-box" role="group" aria-label="Predict what this phrase means in Colombia">
+          <div class="rp-options-label">🤔 Step 1 · Predict: What does <strong>"${escapeVocabHtml(t.trap)}"</strong> mean in Colombia?</div>
+          <div class="ear-check-options trampas-predict-opts"></div>
+        </div>
+        <div class="trampas-reveal-slot" role="region" aria-live="polite"></div>
         <div class="bridge-actions"></div>`;
-      trCard.querySelector(".street-grid-example").onclick=()=>{markPractice("phrases",t.es);speak(t.es,0.75);};
+      const exBox=trCard.querySelector(".street-grid-example");
+      const hearEx=()=>{markPractice("phrases",t.es);speak(t.es,0.75);};
+      exBox.onclick=hearEx;
+      exBox.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();hearEx();}};
+      const pWrap=trCard.querySelector(".trampas-predict-opts");
+      opts.forEach(o=>{
+        const b=document.createElement("button");b.type="button";
+        const isPicked=trPredicted===o.id;
+        b.className="ear-check-btn"+(isPicked?(o.isReal?" correct":" wrong"):"")+(revealed&&o.isReal?" correct-hint":"");
+        b.setAttribute("aria-pressed",isPicked?"true":"false");
+        b.textContent=o.label;
+        b.onclick=()=>{
+          trPredicted=o.id;
+          markPractice("phrases",t.es);
+          speak(t.es,0.75);
+          renderTrap();
+        };
+        pWrap.appendChild(b);
+      });
+      const revSlot=trCard.querySelector(".trampas-reveal-slot");
+      if(revealed){
+        const chosenOpt=opts.find(o=>o.id===trPredicted);
+        const banner=chosenOpt&&chosenOpt.isReal
+          ?`<div class="trampas-feedback-banner ok">✅ <strong>¡Exacto!</strong> You spotted the real Colombian meaning.</div>`
+          :(trPredicted==="reveal"
+            ?`<div class="trampas-feedback-banner ok">👀 <strong>Meaning revealed:</strong> Compare the common literal interpretation with the real Colombian usage below.</div>`
+            :`<div class="trampas-feedback-banner warn">🪤 <strong>Careful — that's the literal trap!</strong> See what it actually means in Colombia below:</div>`);
+        revSlot.innerHTML=`${banner}
+          <div class="tvc-compare-pair">
+            <div class="tvc-box tvc-textbook">
+              <span class="tvc-tag">⚠️ Common literal interpretation</span>
+              <strong>${escapeVocabHtml(t.wrongGuess)}</strong>
+            </div>
+            <div class="tvc-box tvc-colombian">
+              <span class="tvc-tag">✅ Real Meaning in Colombia</span>
+              <strong>${escapeVocabHtml(t.realMeaning)}</strong>
+            </div>
+          </div>
+          <div class="tvc-why">💡 <strong>Cultural Note:</strong> ${escapeVocabHtml(t.tip)}</div>`;
+      }
       const acts=trCard.querySelector(".bridge-actions");
       const hearTrap=document.createElement("button");hearTrap.type="button";hearTrap.className="lp-nav-btn";hearTrap.textContent="🔊 Hear Example";
-      hearTrap.onclick=()=>{markPractice("phrases",t.es);speak(t.es,0.75);};
+      hearTrap.onclick=hearEx;
+      acts.appendChild(hearTrap);
+      if(!revealed){
+        const revBtn=document.createElement("button");revBtn.type="button";revBtn.className="lp-nav-btn";revBtn.textContent="👀 Reveal Meaning";
+        revBtn.onclick=()=>{trPredicted="reveal";renderTrap();};
+        acts.appendChild(revBtn);
+      }
       const nextTrap=document.createElement("button");nextTrap.type="button";nextTrap.className="lp-nav-btn primary";nextTrap.textContent="Next trap →";
-      nextTrap.onclick=()=>{trIdx=(trIdx+1)%TRAMPAS_COLOMBIANAS.length;renderTrap();};
-      acts.append(hearTrap,nextTrap);
+      nextTrap.onclick=()=>{trIdx=(trIdx+1)%TRAMPAS_COLOMBIANAS.length;trPredicted=null;renderTrap();};
+      acts.appendChild(nextTrap);
       if(typeof attachStarBtn==="function")attachStarBtn(acts,t.es,"Trampas Colombianas");
       attachMic(acts,t.es,"phrases");
     };
