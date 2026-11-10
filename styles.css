@@ -2689,3 +2689,160 @@ body.lesson-focus-active .scroll{padding-bottom:calc(var(--safe-bottom) + 118px)
   color: var(--teal) !important;
   background: rgba(74, 168, 160, 0.12) !important;
 }
+
+/* ── v95.0: Regional Atlas & Solo Oído Blind-Listening ────────────────────── */
+.regional-atlas-card {
+  border-color: rgba(167,139,250,0.34);
+  background: linear-gradient(155deg, rgba(167,139,250,0.09), rgba(24,22,40,0.94));
+}
+.blind-listen-btn {
+  border-color: rgba(167,139,250,0.4) !important;
+  color: var(--purple) !important;
+  background: rgba(167,139,250,0.12) !important;
+}
+.blind-listen-btn.active {
+  background: rgba(167,139,250,0.28) !important;
+  box-shadow: 0 0 0 2px rgba(167,139,250,0.25);
+}
+.dialogue.dlg-blind-listen .dlg-bubble:not(.blind-revealed) .dlg-es,
+.dialogue.dlg-blind-listen .dlg-bubble:not(.blind-revealed) .dlg-en {
+  filter: blur(6px);
+  user-select: none;
+  transition: filter 0.18s ease;
+}
+.dialogue.dlg-blind-listen .dlg-bubble:not(.blind-revealed)::after {
+  content: "👂 1st tap: Hear audio · 2nd tap: Reveal text";
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.67rem;
+  font-weight: 800;
+  color: var(--gold);
+  background: rgba(232,180,74,0.14);
+  border: 1px solid rgba(232,180,74,0.3);
+  border-radius: 999px;
+  padding: 2px 9px;
+}
+.dialogue.dlg-blind-listen .dlg-bubble.blind-heard:not(.blind-revealed)::after {
+  content: "👀 Heard! Tap again to reveal text & replay 🔊";
+  color: var(--teal);
+  background: rgba(74,168,160,0.16);
+  border-color: rgba(74,168,160,0.36);
+}
+
+/* ── v96.0: Branching Roleplay Simulator, Street Ear Linker & Trampas Decoder ─ */
+.branching-roleplay-card {
+  border-color: rgba(232,180,74,0.38);
+  background: linear-gradient(155deg, rgba(232,180,74,0.10), rgba(18,24,34,0.95));
+  margin-bottom: 14px;
+}
+.rp-npc-box {
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-left: 3px solid var(--teal);
+  border-radius: 12px;
+  padding: 11px 13px;
+  margin: 8px 0 10px;
+  cursor: pointer;
+}
+.rp-npc-label {
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 3px;
+}
+.rp-npc-es {
+  font-size: 0.96rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.rp-npc-en {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.rp-options-label {
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin: 8px 0 6px;
+}
+.rp-options-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+.rp-option-btn {
+  text-align: left;
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+}
+.rp-option-btn:hover {
+  border-color: rgba(232,180,74,0.45);
+  background: rgba(232,180,74,0.08);
+}
+.rp-option-btn.selected {
+  border-color: var(--gold);
+  background: rgba(232,180,74,0.14);
+  box-shadow: 0 0 0 2px rgba(232,180,74,0.2);
+}
+.rp-opt-style {
+  font-size: 0.66rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gold);
+}
+.rp-opt-es {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text);
+}
+.rp-opt-en {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.rp-outcome-box {
+  margin-top: 10px;
+  padding: 11px 13px;
+  border-radius: 12px;
+  background: rgba(52,211,153,0.08);
+  border: 1px solid rgba(52,211,153,0.28);
+}
+.rp-reply-box {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+.rp-reply-tag {
+  font-size: 0.67rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--green);
+}
+.street-ear-card {
+  border-color: rgba(74,168,160,0.36);
+  background: linear-gradient(155deg, rgba(74,168,160,0.09), rgba(18,26,34,0.94));
+}
+.ear-phonetic {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.73rem;
+  color: var(--gold);
+  font-weight: 700;
+}
+.trampas-decoder-card {
+  border-color: rgba(232,93,117,0.34);
+  background: linear-gradient(155deg, rgba(232,93,117,0.08), rgba(24,20,32,0.94));
+}

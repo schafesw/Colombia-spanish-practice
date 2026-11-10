@@ -72,7 +72,7 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v94.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v96.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);
   bar.append(label,select,reset,ver);utilityBody.appendChild(bar);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -991,7 +991,15 @@ const PHRASE_EN={
   "🔑 Verbos comodín (dar, hacer, poner, echar, quedar)":"High-frequency Colombian wildcard verb chunks",
   "📱 WhatsApp, audios y citas":"Voice notes, polite requests with colaborar, and appointments",
   "🔑 Arriendo, Airbnb y servicios del hogar":"Renting, utilities, water heater, washer, and house cleaning",
-  "🚴 Gimnasio, ciclovía y senderos":"Gym sets, Sunday Ciclovía, mountain trails, and altitude"
+  "🚴 Gimnasio, ciclovía y senderos":"Gym sets, Sunday Ciclovía, mountain trails, and altitude",
+  "❤️ Citas, cumplidos y la familia":"Dating, natural compliments, and meeting Colombian parents",
+  "🫓 Almuerzo ejecutivo (corrientazo) y onces":"Weekday lunch specials (sopa, principio, sobremesa) & afternoon coffee",
+  "🏦 Cajero, SIM card y trámites":"ATMs, savings vs. checking, prepaid SIM top-ups, and passport ID",
+  "🎉 Puentes festivos, salsa y rumba":"Long holiday weekends, salsa clubs, aguardiente toasts, and guayabo",
+  "🪤 Trampas y falsos amigos (cancelar, provocar, regalar)":"Colombian false friends: cancelar = pay, provocar = crave, regalar = buy",
+  "🏘️ Estratos, conjuntos cerrados y barrios":"Socioeconomic utility tiers (1–6), gated complexes, and walkable barrios",
+  "🦷 Odontología, óptica y EPS / prepagada":"Dental cleanings, fillings, eyeglasses, and Colombian health plans",
+  "🛂 Migración Colombia, visa y cuenta bancaria":"Tourist extensions, Cédula de Extranjería, notary offices, and bank accounts"
 };
 const DIALOGUE_EN={
   "Saludos formales":"Formal greetings and introductions",
@@ -1031,7 +1039,15 @@ const DIALOGUE_EN={
   "Verbos comodín en acción":"Using dar, hacer, poner, echar, tocar, and quedar naturally",
   "WhatsApp, notas de voz y citas":"Voice notes, asking with colaborar, and confirming plans",
   "Arriendo, Airbnb, aseo y lavadora":"Apartment check-in, appliances, HOA fee, and cleaning",
-  "Gimnasio, ciclovía, senderos y soroche":"Sharing gym machines, Sunday Ciclovía, and altitude pacing"
+  "Gimnasio, ciclovía, senderos y soroche":"Sharing gym machines, Sunday Ciclovía, and altitude pacing",
+  "Citas, cumplidos y conocer a la familia":"Warm compliments, inviting someone out, and greeting Colombian parents",
+  "Almuerzo ejecutivo, corrientazo y onces":"Ordering sopa, principio, proteína, sobremesa, and afternoon onces",
+  "Cajero automático, SIM card y trámites":"Activating a prepaid SIM, using your passport, and finding safe ATMs",
+  "Puentes festivos, salsa y rumba":"Holiday weekend plans, dancing salsa, and toasting with friends",
+  "Trampas colombianas: cancelar, provocar y qué pena":"Using cancelar (pay), provocar (crave), regalar, and rising ¿Señor? naturally",
+  "Estratos, conjuntos cerrados y barrios":"Evaluating apartment estratos (1–6), gated complexes, and utility costs",
+  "Odontología, óptica y medicina prepagada":"Booking a self-pay dental cleaning, fixing a filling, and optical shops",
+  "Migración Colombia, cédula de extranjería y bancos":"Registering a visa, getting your Cédula de Extranjería, and opening a bank account"
 };
 function phraseEnglishTitle(title){return PHRASE_EN[title]||"Useful phrases";}
 function dialogueEnglishTitle(title){return DIALOGUE_EN[title]||"Practice conversation";}
@@ -1063,17 +1079,17 @@ function fraseSectionMeta(sec){
 function phraseCollectionGroup(sec){
   const n=String(sec.section||"").toLowerCase();
   if(/groser|bad word|strong language/.test(n))return {id:"strong",label:"⚠️ Strong language / Entender primero"};
-  if(/aeropuerto|migración|nequi|datáfono|portería|rappi|arriendo|airbnb|hogar|direcciones|cuadras|seguridad|panadería|jugos|buses|finca|peaje|ubicación|uber|transporte|compras|mercado|restaurante|comer fuera|emergencias|ayuda|aclarar|repetir|plata|pagos|médica|urgencias|sientes|barbería|peluquería|cortesía/.test(n))return {id:"survival",label:"🧭 Survival, Travel & Services / Para desenvolverse"};
-  if(/conectores|patrones|marcos|construir|contar historias|pronombres|acciones|progreso|muletillas|diminutivos|comodín/.test(n))return {id:"build",label:"🧱 Sentence Builders & Local Flow / Construir frases"};
-  if(/saludo|gusto|conversación diaria|social|amigos|fiesta|partido|oficina|planes|teléfono|whatsapp|audios|gimnasio|ciclovía|senderos|familia|empatía|reacciones|amistad/.test(n))return {id:"social",label:"🤝 Social, Work & Daily Life / Conversación diaria"};
+  if(/aeropuerto|migración|visa|bancaria|nequi|datáfono|cajero|sim|trámites|portería|rappi|arriendo|airbnb|hogar|estratos|conjuntos|barrios|direcciones|cuadras|seguridad|panadería|jugos|corrientazo|ejecutivo|onces|buses|finca|peaje|ubicación|uber|transporte|compras|mercado|restaurante|comer fuera|emergencias|ayuda|aclarar|repetir|plata|pagos|médica|urgencias|odontología|óptica|prepagada|sientes|barbería|peluquería|cortesía/.test(n))return {id:"survival",label:"🧭 Survival, Travel & Services / Para desenvolverse"};
+  if(/conectores|patrones|marcos|construir|contar historias|pronombres|acciones|progreso|muletillas|diminutivos|comodín|trampas|falsos amigos/.test(n))return {id:"build",label:"🧱 Sentence Builders & Local Flow / Construir frases"};
+  if(/saludo|gusto|conversación diaria|social|amigos|fiesta|puentes|salsa|rumba|partido|oficina|planes|teléfono|whatsapp|audios|citas|cumplidos|gimnasio|ciclovía|senderos|familia|empatía|reacciones|amistad/.test(n))return {id:"social",label:"🤝 Social, Work & Daily Life / Conversación diaria"};
   return {id:"other",label:"📚 More useful phrases / Más frases"};
 }
 function dialogueSituationGroup(d){
   const t=String(d.title||"").toLowerCase();
   if(/uber|aeropuerto|carro|direcciones|cuadras|hotel|transporte|terminal|peajes|finca/.test(t))return {id:"travel",label:"🛬 Travel, Uber & Getting Around",sub:"Airport, Uber rides, Colombian street grids, buses/fincas, and hotels"};
-  if(/restaurante|panadería|jugos|mercado|tienda|cortesía|pagos|datáfono|nequi|cocina/.test(t))return {id:"food",label:"🍽️ Food, Panadería & Payments",sub:"Panaderías, fresh juices, restaurants, markets, Nequi, and cooking"};
-  if(/oficina|trabajo|profesión|portería|rappi|arriendo|airbnb|lavadora|whatsapp|notas de voz|barbería|farmacia|médica|casa|habitación|baño|teléfono|comunicación|apartamento/.test(t))return {id:"daily",label:"🏠 Daily Life, Work & Services",sub:"Airbnb/renting, WhatsApp, portería, office, barbershop, pharmacy, and doctor"};
-  return {id:"social",label:"🇨🇴 Social, Empathy & Culture",sub:"Greetings, wildcard verbs, gym/ciclovía, empathy reactions, parties, and fútbol"};
+  if(/restaurante|almuerzo|corrientazo|onces|panadería|jugos|trampas|cancelar|provocar|mercado|tienda|cortesía|pagos|datáfono|nequi|cocina/.test(t))return {id:"food",label:"🍽️ Food, Corrientazo, Trampas & Payments",sub:"Corrientazo lunches, panaderías, false friends (cancelar/provocar), and Nequi"};
+  if(/oficina|trabajo|profesión|cajero|sim|trámites|migración|extranjería|bancos|estratos|conjuntos|odontología|óptica|prepagada|portería|rappi|arriendo|airbnb|lavadora|whatsapp|notas de voz|barbería|farmacia|médica|casa|habitación|baño|teléfono|comunicación|apartamento/.test(t))return {id:"daily",label:"🏠 Daily Life, Estratos, Health & Services",sub:"Migración/banks, estratos/conjuntos, dental/optical, Airbnb, and WhatsApp"};
+  return {id:"social",label:"🇨🇴 Social, Dating, Rumba & Culture",sub:"Dating & family, puentes & salsa, wildcard verbs, gym/ciclovía, and empathy"};
 }
 function resetFraseScroll(){const sc=document.querySelector(".scroll");if(sc)sc.scrollTop=0;}
 function renderFraseMenu(){
@@ -1142,7 +1158,86 @@ function renderFraseMenu(){
     });
     g1.appendChild(fold);
   });
-  const conversationGroup=document.createElement("section");conversationGroup.className="fr-conversation-group";conversationGroup.append(h1,g1);
+  const conversationGroup=document.createElement("section");conversationGroup.className="fr-conversation-group";
+  if(typeof BRANCHING_ROLEPLAYS!=="undefined"&&BRANCHING_ROLEPLAYS.length){
+    let rpScenarioIdx=0,rpTurnIdx=0,rpPickedOpt=null;
+    const rpCard=document.createElement("section");rpCard.className="bridge-trainer-card branching-roleplay-card";
+    const renderRp=()=>{
+      const scen=BRANCHING_ROLEPLAYS[rpScenarioIdx%BRANCHING_ROLEPLAYS.length];
+      const turns=scen.turns||[];
+      const turn=turns[rpTurnIdx%turns.length]||{};
+      rpCard.innerHTML=`<div class="bridge-kicker">🎭 SIMULADOR DE CONVERSACIÓN · INTERACTIVE BRANCHING ROLEPLAY (NT HEAVY)</div>
+        <div class="bridge-context">Choose a real-life Colombian scenario, listen to the speaker, and pick how you want to reply:</div>
+        <div class="reg-tabs-row rp-scenario-tabs"></div>
+        <div class="comodin-sub">${escapeVocabHtml(scen.title)} — ${escapeVocabHtml(scen.sub||"")} · <strong>Turn ${rpTurnIdx+1} of ${turns.length}</strong></div>
+        <div class="rp-npc-box" title="Tap to hear speaker">
+          <div class="rp-npc-label">🗣️ Colombian speaker says to you:</div>
+          <div class="rp-npc-es">${escapeVocabHtml(turn.npcEs||"")} 🔊</div>
+          <div class="rp-npc-en">${escapeVocabHtml(turn.npcEn||"")}</div>
+        </div>
+        <div class="rp-options-label">👇 Choose your reply style (tap to speak & see how they respond):</div>
+        <div class="rp-options-grid"></div>
+        <div class="rp-outcome-slot"></div>`;
+      rpCard.querySelector(".rp-npc-box").onclick=()=>speak(turn.npcEs||"",0.75);
+      const tRow=rpCard.querySelector(".rp-scenario-tabs");
+      BRANCHING_ROLEPLAYS.forEach((sc,idx)=>{
+        const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(idx===rpScenarioIdx?" active":"");
+        b.textContent=sc.title;
+        b.onclick=()=>{
+          rpScenarioIdx=idx;rpTurnIdx=0;rpPickedOpt=null;
+          renderRp();
+          if(sc.turns&&sc.turns[0])speak(sc.turns[0].npcEs,0.75);
+        };
+        tRow.appendChild(b);
+      });
+      const optGrid=rpCard.querySelector(".rp-options-grid");
+      (turn.options||[]).forEach((opt,oIdx)=>{
+        const ob=document.createElement("button");ob.type="button";ob.className="rp-option-btn"+(rpPickedOpt===oIdx?" selected":"");
+        ob.innerHTML=`<span class="rp-opt-style">${escapeVocabHtml(opt.style)}</span>
+          <strong class="rp-opt-es">🗣️ ${escapeVocabHtml(opt.es)} 🔊</strong>
+          <small class="rp-opt-en">${escapeVocabHtml(opt.en)}</small>`;
+        ob.onclick=()=>{
+          rpPickedOpt=oIdx;
+          markPractice("phrases",opt.es);
+          /* Synchronous speak inside tap handler for iPhone Safari */
+          speak(opt.es,0.75);
+          renderRp();
+        };
+        optGrid.appendChild(ob);
+      });
+      if(rpPickedOpt!==null&&turn.options&&turn.options[rpPickedOpt]){
+        const chosen=turn.options[rpPickedOpt];
+        const outSlot=rpCard.querySelector(".rp-outcome-slot");
+        outSlot.innerHTML=`<div class="rp-outcome-box">
+          <div class="rp-reply-box" title="Tap to hear their response">
+            <span class="rp-reply-tag">💬 They respond to your choice:</span>
+            <strong>${escapeVocabHtml(chosen.replyEs)} 🔊</strong>
+            <small>${escapeVocabHtml(chosen.replyEn)}</small>
+          </div>
+          <div class="tvc-why">💡 <strong>Why this works in Colombia:</strong> ${escapeVocabHtml(chosen.coach)}</div>
+          <div class="bridge-actions rp-nav-actions"></div>
+        </div>`;
+        outSlot.querySelector(".rp-reply-box").onclick=()=>speak(chosen.replyEs,0.75);
+        const navActs=outSlot.querySelector(".rp-nav-actions");
+        const hearReplyBtn=document.createElement("button");hearReplyBtn.type="button";hearReplyBtn.className="lp-nav-btn";hearReplyBtn.textContent="🔊 Hear Their Reply";
+        hearReplyBtn.onclick=()=>speak(chosen.replyEs,0.75);
+        const nextBtn=document.createElement("button");nextBtn.type="button";nextBtn.className="lp-nav-btn primary";
+        if(rpTurnIdx+1<turns.length){
+          nextBtn.textContent=`Next Turn (${rpTurnIdx+2}/${turns.length}) →`;
+          nextBtn.onclick=()=>{rpTurnIdx++;rpPickedOpt=null;renderRp();if(turns[rpTurnIdx])speak(turns[rpTurnIdx].npcEs,0.75);};
+        }else{
+          nextBtn.textContent="Next Scenario →";
+          nextBtn.onclick=()=>{rpScenarioIdx=(rpScenarioIdx+1)%BRANCHING_ROLEPLAYS.length;rpTurnIdx=0;rpPickedOpt=null;renderRp();const nx=BRANCHING_ROLEPLAYS[rpScenarioIdx];if(nx&&nx.turns&&nx.turns[0])speak(nx.turns[0].npcEs,0.75);};
+        }
+        navActs.append(hearReplyBtn,nextBtn);
+        if(typeof attachStarBtn==="function")attachStarBtn(navActs,chosen.es,scen.title);
+        attachMic(navActs,chosen.es,"phrases");
+      }
+    };
+    renderRp();
+    conversationGroup.appendChild(rpCard);
+  }
+  conversationGroup.append(h1,g1);
   const h2=document.createElement("div");h2.className="fr-home-label";h2.textContent="📋 Phrase collections · tap to open";
   const g2=document.createElement("div");g2.className="fr-collections-groups";
   const groupOrder=["survival","social","build","strong","other"];
@@ -1317,6 +1412,14 @@ function renderFraseDialogue(dialogue,tense){
   stepper.append(stepStatus,stepBtn);
   box.appendChild(stepper);
   const langBtn=document.createElement("button");langBtn.type="button";langBtn.className="practice-btn language-toggle";langBtn.textContent="🇺🇸 Hide English";langBtn.onclick=()=>{const hidden=box.classList.toggle("dlg-no-english");langBtn.textContent=hidden?"🇺🇸 Show English":"🇺🇸 Hide English";};pBtns.appendChild(langBtn);
+  const blindBtn=document.createElement("button");blindBtn.type="button";blindBtn.className="practice-btn blind-listen-btn";blindBtn.textContent="🙈 Solo Oído";blindBtn.title="Blur text so you train your ear first: 1st tap plays audio, 2nd tap reveals text";
+  blindBtn.onclick=()=>{
+    const on=box.classList.toggle("dlg-blind-listen");
+    blindBtn.classList.toggle("active",on);
+    blindBtn.textContent=on?"👂 Solo Oído: ON":"🙈 Solo Oído";
+    bubbles.forEach(b=>{b.el.classList.remove("blind-heard","blind-revealed");});
+  };
+  pBtns.appendChild(blindBtn);
   if(typeof CONVERSATION_CURVEBALLS!=="undefined"&&CONVERSATION_CURVEBALLS.length){
     const sitCat=dialogueSituationGroup(dialogue).id;
     const catPool=CONVERSATION_CURVEBALLS.filter(x=>x.cat===sitCat);
@@ -1390,6 +1493,10 @@ function renderFraseDialogue(dialogue,tense){
       bub.onclick=e=>{
         if(e.target.closest(".star-pin-btn"))return;
         if(bub.classList.contains("dlg-hidden"))bub.classList.remove("dlg-hidden");
+        if(box.classList.contains("dlg-blind-listen")){
+          if(!bub.classList.contains("blind-heard"))bub.classList.add("blind-heard");
+          else bub.classList.add("blind-revealed");
+        }
         markPractice("phrases",line.es);
         speak(line.tts,0.75);
       };
@@ -1511,7 +1618,15 @@ const LESSONS=[
   {id:"verbos-comodin",icon:"🔑",title:"Verbos comodín de Colombia",sub:"Usa dar, hacer, poner, echar, tocar y quedar como un local",vocab:"verbos",dialogue:"Verbos comodín en acción",quizCat:"comodin",quizMode:"conversation"},
   {id:"whatsapp-audios",icon:"📱",title:"WhatsApp, audios y citas",sub:"Manda notas de voz, usa ¿me colaboras? y confirma citas",vocab:"tecnologia",dialogue:"WhatsApp, notas de voz y citas",quizCat:"whatsapp",quizMode:"conversation"},
   {id:"arriendo-airbnb",icon:"🔑",title:"Arriendo, Airbnb y aseo",sub:"Pregunta por administración, calentador, lavadora y aseo",vocab:"casa",dialogue:"Arriendo, Airbnb, aseo y lavadora",quizCat:"arriendo",quizMode:"conversation"},
-  {id:"gym-ciclovia",icon:"🚴",title:"Gimnasio, ciclovía y senderos",sub:"Túrnate en el gym, sal a la ciclovía y cuídate del soroche",vocab:"cuerpo",dialogue:"Gimnasio, ciclovía, senderos y soroche",quizCat:"gym-ciclovia",quizMode:"conversation"}
+  {id:"gym-ciclovia",icon:"🚴",title:"Gimnasio, ciclovía y senderos",sub:"Túrnate en el gym, sal a la ciclovía y cuídate del soroche",vocab:"cuerpo",dialogue:"Gimnasio, ciclovía, senderos y soroche",quizCat:"gym-ciclovia",quizMode:"conversation"},
+  {id:"citas-familia",icon:"❤️",title:"Citas, cumplidos y la familia",sub:"Invita a salir, haz cumplidos naturales y saluda a los papás",vocab:"familia",dialogue:"Citas, cumplidos y conocer a la familia",quizCat:"citas-familia",quizMode:"conversation"},
+  {id:"almuerzo-corrientazo",icon:"🫓",title:"El corrientazo y las onces",sub:"Pide sopa, principio, proteína, sobremesa y las onces",vocab:"comida",dialogue:"Almuerzo ejecutivo, corrientazo y onces",quizCat:"corrientazo",quizMode:"conversation"},
+  {id:"cajero-sim-tramites",icon:"🏦",title:"Cajero, SIM card y trámites",sub:"Saca efectivo seguro, activa tu SIM prepago y usa tu pasaporte",vocab:"numeros",dialogue:"Cajero automático, SIM card y trámites",quizCat:"cajero-sim",quizMode:"conversation"},
+  {id:"puentes-rumba-cultura",icon:"🎉",title:"Puentes festivos, salsa y rumba",sub:"Arma plan de puente festivo, baila salsa y brinda con amigos",vocab:"colombianismos",dialogue:"Puentes festivos, salsa y rumba",quizCat:"puentes-rumba",quizMode:"conversation"},
+  {id:"trampas-colombianas",icon:"🪤",title:"Trampas: cancelar, provocar y regalar",sub:"Domina los falsos amigos colombianos sin confundirte",vocab:"comida",dialogue:"Trampas colombianas: cancelar, provocar y qué pena",quizCat:"trampas",quizMode:"conversation"},
+  {id:"estratos-barrios",icon:"🏘️",title:"Estratos, conjuntos y barrios",sub:"Entiende los estratos 1–6, los conjuntos cerrados y los recibos",vocab:"casa",dialogue:"Estratos, conjuntos cerrados y barrios",quizCat:"estratos",quizMode:"conversation"},
+  {id:"odontologia-optica",icon:"🦷",title:"Odontología, óptica y EPS",sub:"Agenda limpieza dental, revisa una calza y pide gafas",vocab:"cuerpo",dialogue:"Odontología, óptica y medicina prepagada",quizCat:"odontologia",quizMode:"conversation"},
+  {id:"migracion-bancos-ce",icon:"🛂",title:"Migración, cédula y bancos",sub:"Registra tu visa, saca tu cédula de extranjería y abre cuenta",vocab:"numeros",dialogue:"Migración Colombia, cédula de extranjería y bancos",quizCat:"migracion-ce",quizMode:"conversation"}
 ];
 LESSONS.forEach(lesson=>{
   if(typeof LESSON_META!=="undefined"&&LESSON_META[lesson.id])Object.assign(lesson,LESSON_META[lesson.id]);
@@ -1529,15 +1644,21 @@ function saveLessons(){try{localStorage.setItem(LESSON_KEY,JSON.stringify(lesson
 const DAY_KEY="esco-days-v1";
 let dayInfo={last:"",streak:0};
 try{dayInfo=Object.assign(dayInfo,JSON.parse(localStorage.getItem(DAY_KEY)||"{}"));}catch(e){}
-(function(){
-  const today=new Date().toISOString().slice(0,10);
-  if(dayInfo.last!==today){
-    const y=new Date(Date.now()-86400000).toISOString().slice(0,10);
-    dayInfo.streak=(dayInfo.last===y)?(dayInfo.streak||0)+1:1;
-    dayInfo.last=today;
-    try{localStorage.setItem(DAY_KEY,JSON.stringify(dayInfo));}catch(e){}
-  }
-})();
+function localDayKey(date=new Date()){
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+}
+function practiceStreak(){
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  return dayInfo.last===localDayKey()||dayInfo.last===localDayKey(yesterday)?Math.max(0,Number(dayInfo.streak)||0):0;
+}
+function recordPracticeDay(){
+  const today=localDayKey();
+  if(dayInfo.last===today)return;
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  dayInfo.streak=dayInfo.last===localDayKey(yesterday)?Math.max(0,Number(dayInfo.streak)||0)+1:1;
+  dayInfo.last=today;
+  try{localStorage.setItem(DAY_KEY,JSON.stringify(dayInfo));}catch(e){}
+}
 
 /* Lesson player state */
 let lpLesson=null,lpSteps=[],lpStep=0,lpScore=0,lpQs=[],lpQi=0,lpAnswered=false,lpPracticed=new Set();
@@ -2195,7 +2316,15 @@ const RR_SERVICE_REFLEXES=[
   {q:"¿Te queda bien si nos vemos mañana a las diez?",qEs:"¿Te queda bien si nos vemos mañana a las diez?",qEn:"Does it work for you if we meet tomorrow at ten?",aEs:"¡De una! Así quedamos; me confirmas por WhatsApp.",aTts:"¡De una! Así quedamos; me confirmas por WhatsApp.",aEn:"For sure! It's a plan; confirm with me on WhatsApp.",level:"easy",service:true},
   {q:"¿Cuántas series te faltan? ¿Nos turnamos en la máquina?",qEs:"¿Cuántas series te faltan? ¿Nos turnamos en la máquina?",qEn:"How many sets do you have left? Shall we take turns on the machine?",aEs:"Claro, hágale, solo me quedan dos series.",aTts:"Claro, hágale, solo me quedan dos series.",aEn:"Sure, go ahead, I only have two sets left.",level:"easy",service:true},
   {q:"¿En el arriendo están incluidos la administración y los servicios?",qEs:"¿En el arriendo están incluidos la administración y los servicios?",qEn:"Are the HOA fee and utilities included in the rent?",aEs:"Sí, todo está incluido y el calentador es a gas.",aTts:"Sí, todo está incluido y el calentador es a gas.",aEn:"Yes, everything is included and the water heater is gas.",level:"moderate",service:true},
-  {q:"¿Será que me colaboras enviándome la ubicación por acá?",qEs:"¿Será que me colaboras enviándome la ubicación por acá?",qEn:"Could you help me out by sending me the location here?",aEs:"Claro que sí, ya mismo te la mando por WhatsApp.",aTts:"Claro que sí, ya mismo te la mando por WhatsApp.",aEn:"Of course, I'll send it to you on WhatsApp right now.",level:"easy",service:true}
+  {q:"¿Será que me colaboras enviándome la ubicación por acá?",qEs:"¿Será que me colaboras enviándome la ubicación por acá?",qEn:"Could you help me out by sending me the location here?",aEs:"Claro que sí, ya mismo te la mando por WhatsApp.",aTts:"Claro que sí, ya mismo te la mando por WhatsApp.",aEn:"Of course, I'll send it to you on WhatsApp right now.",level:"easy",service:true},
+  {q:"Buenas tardes, ¿con sopa o fruta? ¿Y qué principio le pongo?",qEs:"Buenas tardes, ¿con sopa o fruta? ¿Y qué principio le pongo?",qEn:"Good afternoon, with soup or fruit? And what side shall I put?",aEs:"Con sopa, por favor, y de principio frijoles con tajadas.",aTts:"Con sopa, por favor, y de principio frijoles con tajadas.",aEn:"With soup, please, and beans with plantains for the side.",level:"easy",service:true},
+  {q:"Para registrar la SIM card necesito su número de cédula, por favor.",qEs:"Para registrar la SIM card necesito su número de cédula, por favor.",qEn:"To register the SIM card I need your Colombian ID number, please.",aEs:"Todavía no tengo cédula; ¿le sirve el número de mi pasaporte?",aTts:"Todavía no tengo cédula; ¿le sirve el número de mi pasaporte?",aEn:"I don't have a Colombian ID yet; does my passport number work?",level:"moderate",service:true},
+  {q:"Bienvenido a la casa; te presento a mis papás, don Hernán y doña Clara.",qEs:"Bienvenido a la casa; te presento a mis papás, don Hernán y doña Clara.",qEn:"Welcome to the house; let me introduce my parents, Mr. Hernán and Mrs. Clara.",aEs:"Mucho gusto; me han hablado muchísimo de ustedes. ¡Qué casa tan acogedora!",aTts:"Mucho gusto; me han hablado muchísimo de ustedes. ¡Qué casa tan acogedora!",aEn:"Nice to meet you; I've heard so much about you. What a welcoming home!",level:"easy",service:true},
+  {q:"¡Por fin viernes! ¿Qué planes tienes para este puente festivo?",qEs:"¡Por fin viernes! ¿Qué planes tienes para este puente festivo?",qEn:"Finally Friday! What plans do you have for this holiday weekend?",aEs:"Hoy vamos a una salsoteca y mañana salimos temprano para un pueblito.",aTts:"Hoy vamos a una salsoteca y mañana salimos temprano para un pueblito.",aEn:"Tonight we're going to a salsa club and tomorrow we leave early for a small town.",level:"easy",service:true},
+  {q:"Señorita, ¿en dónde cancelo la cuenta del almuerzo?",qEs:"Señorita, ¿en dónde cancelo la cuenta del almuerzo?",qEn:"Miss, where do I pay the lunch bill?",aEs:"Puede cancelar allá en la caja con tarjeta, efectivo o Nequi.",aTts:"Puede cancelar allá en la caja con tarjeta, efectivo o Nequi.",aEn:"You can pay over at the register by card, cash, or Nequi.",level:"easy",service:true},
+  {q:"¿En qué estrato está ubicado este conjunto cerrado?",qEs:"¿En qué estrato está ubicado este conjunto cerrado?",qEn:"What socioeconomic tier is this gated complex in?",aEs:"Está en estrato cuatro, así que los servicios llegan a buen precio.",aTts:"Está en estrato cuatro, así que los servicios llegan a buen precio.",aEn:"It's in tier 4, so the utilities come at a good price.",level:"moderate",service:true},
+  {q:"Buenos días, ¿viene por medicina prepagada o consulta particular?",qEs:"Buenos días, ¿viene por medicina prepagada o consulta particular?",qEn:"Good morning, are you coming through private insurance or self-pay?",aEs:"Vengo por consulta particular para una limpieza dental.",aTts:"Vengo por consulta particular para una limpieza dental.",aEn:"I'm coming as self-pay for a dental cleaning.",level:"easy",service:true},
+  {q:"Bienvenido a Migración Colombia. ¿Qué trámite viene a realizar hoy?",qEs:"Bienvenido a Migración Colombia. ¿Qué trámite viene a realizar hoy?",qEn:"Welcome to Migración Colombia. What process are you here for today?",aEs:"Vengo a registrar mi visa para sacar la cédula de extranjería.",aTts:"Vengo a registrar mi visa para sacar la cédula de extranjería.",aEn:"I'm here to register my visa to get my foreigner ID card.",level:"moderate",service:true}
 ];
 RR_BANK.push(...RR_SERVICE_REFLEXES);
 let rrTimer=null,rrCurrent=null,rrSession=0,rrPromptToken=0;
@@ -2421,7 +2550,24 @@ const SRS_INTERVALS=[1,3,7,14,30];
 function saveSrs(){try{localStorage.setItem(SRS_KEY,JSON.stringify(srsStore));}catch(e){}}
 function srsDue(key){const card=srsStore[key];return !!card&&(!card.due||card.due<=Date.now());}
 function srsDueCount(){return Object.keys(srsStore).filter(srsDue).length;}
-function recordSrs(key,correct){const card=srsStore[key]||{reps:0,interval:0,lapses:0,due:0};if(correct){card.reps=(card.reps||0)+1;card.interval=Math.min((card.interval||0)+1,SRS_INTERVALS.length);card.due=Date.now()+SRS_INTERVALS[card.interval-1]*86400000;}else{card.lapses=(card.lapses||0)+1;card.reps=0;card.interval=0;card.due=Date.now()+86400000;}srsStore[key]=card;saveSrs();}
+function recordSrs(key,correct){
+  recordPracticeDay();
+  const now=Date.now(),today=localDayKey();
+  const card=srsStore[key]||{reps:0,interval:0,lapses:0,due:0};
+  if(correct){
+    if(card.lastReviewDay!==today&&(!card.due||card.due<=now)){
+      card.reps=(card.reps||0)+1;
+      card.spacedReviews=(card.spacedReviews||0)+1;
+      card.interval=Math.min((card.interval||0)+1,SRS_INTERVALS.length);
+      card.due=now+SRS_INTERVALS[card.interval-1]*86400000;
+      card.lastReviewDay=today;
+    }
+  }else{
+    card.lapses=(card.lapses||0)+1;card.reps=0;card.spacedReviews=0;card.interval=0;
+    card.due=now+86400000;card.lastReviewDay=today;
+  }
+  srsStore[key]=card;saveSrs();
+}
 function srsNextLabel(card){if(!card||!card.interval)return "tomorrow";const days=SRS_INTERVALS[Math.max(0,Math.min(SRS_INTERVALS.length-1,card.interval-1))];return days===1?"tomorrow":`in ${days} days`;}
 
 /* v61: a small, profile-scoped error journal. Quiz misses and speaking
@@ -2870,6 +3016,10 @@ function quizAcceptedAnswers(q){
   const values=[];const add=value=>{if(value!==undefined&&value!==null&&String(value).trim())values.push(String(value));};
   if(q&&q.answer!==undefined)add(q.answer);else add(q&&q.en);
   (q&&Array.isArray(q.acceptedAnswers)?q.acceptedAnswers:[]).forEach(add);
+  if(q&&!q.kind&&(!q.answer||q.answer===q.en)&&typeof aQ!=="undefined"){
+    const prompt=normalizeQuizPrompt(q.quizPrompt||q.es);
+    aQ.filter(other=>!other.kind&&normalizeQuizPrompt(other.quizPrompt||other.es)===prompt).forEach(other=>add(other.en));
+  }
   return [...new Map(values.map(value=>[normalizeQuizText(value),value])).values()];
 }
 function quizAnswerMatches(q,value){
@@ -2944,7 +3094,7 @@ function syncMissedQueueLauncher(){
   host.innerHTML=`<span>🧠 <strong>${count} missed question${count===1?"":"s"}</strong> waiting for review</span><button type="button" class="quiz-review-launch-btn">Review missed →</button>`;
   const btn=host.querySelector("button");if(btn)btn.onclick=openMissedQueue;
 }
-function openReviewSession(){qMissedOnly=false;showPage("quiz");qMode="mixed";qCat="all";qFocus="all";syncQuizControls();repasoLeft=10;resetQuizRound();nQ();}
+function openReviewSession(){qBlitzPack=null;qMissedOnly=false;showPage("quiz");qMode="mixed";qCat="all";qFocus="all";syncQuizControls();repasoLeft=10;resetQuizRound();nQ();}
 
 function renderLessons(){
   const root=document.getElementById("lesson-list");if(!root)return;
@@ -3057,11 +3207,11 @@ function renderLessons(){
 
   /* Lessons grouped into a speaking-first progression */
   const LESSON_STAGES=[
-    {name:"🌱 Stage 1 · Start Here",sub:"Greetings, Colombian politeness, numbers, and repairing misunderstandings.",ids:["presentate","cortesia-colombiana","plata","survival-communication","casa","gustos"]},
-    {name:"🧭 Stage 2 · Travel and Survival",sub:"Airport, Uber, Colombian street grid & safety, panaderías & jugos, hotels, Nequi, restaurants, markets, pharmacy, and medical care.",ids:["aeropuerto-migracion","uber-ride","uber-completo","hotel-checkin","calle","direcciones","direcciones-cuadras","bancos-pagos","panaderia-jugos","cocina","restaurante-real","mercado-negociar","commands-repair","farmacia","medico-urgencias"]},
-    {name:"🏠 Stage 3 · Daily Life",sub:"Work, office, Airbnb & apartment life, WhatsApp & voice notes, portería, barbershop, bus terminals & finca trips.",ids:["trabajo","oficina-real","porteria-domicilios","arriendo-airbnb","whatsapp-audios","barberia","viajes-finca","daily-repair","planes","gerundios-actividades","sentirse"]},
+    {name:"🌱 Stage 1 · Start Here",sub:"Greetings, Colombian politeness, false-friend traps (cancelar/provocar), numbers, and repairing misunderstandings.",ids:["presentate","cortesia-colombiana","trampas-colombianas","plata","survival-communication","casa","gustos"]},
+    {name:"🧭 Stage 2 · Travel and Survival",sub:"Airport, Uber, Colombian street grid & safety, corrientazo lunches, panaderías & jugos, hotels, Nequi, restaurants, markets, dental/optical, and medical care.",ids:["aeropuerto-migracion","uber-ride","uber-completo","hotel-checkin","calle","direcciones","direcciones-cuadras","bancos-pagos","panaderia-jugos","almuerzo-corrientazo","cocina","restaurante-real","mercado-negociar","commands-repair","farmacia","medico-urgencias","odontologia-optica"]},
+    {name:"🏠 Stage 3 · Daily Life",sub:"Migración & Cédula de Extranjería, ATMs & SIM cards, estratos & conjuntos, Airbnb, WhatsApp, portería, office, barbershop, and finca trips.",ids:["trabajo","oficina-real","cajero-sim-tramites","migracion-bancos-ce","porteria-domicilios","arriendo-airbnb","estratos-barrios","whatsapp-audios","barberia","viajes-finca","daily-repair","planes","gerundios-actividades","sentirse"]},
     {name:"🧱 Stage 4 · Build Sentences",sub:"Present, future, past, contrast, perfect tenses, conditional, action chunks, connectors, and pronouns.",ids:["sentence-structure","action-chunks","connectors-v36","function-words","gram-presente","gram-futuro","gram-pasado","gram-pasado-historia","gram-pasado-contraste","gram-perfecto","gram-condicional","gram-pasado-perfecto","gram-futuro-perfecto","gram-subjuntivo","gram-necesidades","gram-conectores","gram-pronombres"]},
-    {name:"🇨🇴 Stage 5 · Speak More Naturally",sub:"Colombian wildcard verbs (verbos comodín), empathy & reactions, diminutives, gym & ciclovía, social plans, parties, and fútbol.",ids:["colombia","verbos-comodin","empatia-reacciones","muletillas-diminutivos","social-colombia-v36","gym-ciclovia","social-salida","fiesta-gathering","deportes-partido","gram-groserias"]},
+    {name:"🇨🇴 Stage 5 · Speak More Naturally",sub:"Colombian wildcard verbs, dating & meeting family, puentes & salsa, empathy & reactions, diminutives, gym & ciclovía.",ids:["colombia","verbos-comodin","citas-familia","puentes-rumba-cultura","empatia-reacciones","muletillas-diminutivos","social-colombia-v36","gym-ciclovia","social-salida","fiesta-gathering","deportes-partido","gram-groserias"]},
     {name:"🎯 Stage 6 · Conversation Challenge",sub:"Read aloud, react quickly, and complete real speaking missions.",ids:["conversation-challenge"]}
   ];
   const roadmap=lpEl("lesson-roadmap");
@@ -3421,6 +3571,114 @@ function buildSpeakingGuide(){
     renderTvc();
     sec.appendChild(tvcCard);
   }
+  if(typeof REGIONAL_ATLAS!=="undefined"&&REGIONAL_ATLAS.length){
+    let regAtlasIdx=0;
+    const atlasCard=document.createElement("section");atlasCard.className="bridge-trainer-card regional-atlas-card";
+    const renderAtlas=()=>{
+      const reg=REGIONAL_ATLAS[regAtlasIdx%REGIONAL_ATLAS.length];
+      atlasCard.innerHTML=`<div class="bridge-kicker">🗺️ COLOMBIAN REGIONAL ACCENT & SLANG ATLAS · 4 REGIONS</div>
+        <div class="bridge-context">Tap a region to hear how greetings, slang, food, and rhythm change across Colombia:</div>
+        <div class="reg-tabs-row atlas-tabs"></div>
+        <div class="comodin-sub">${escapeVocabHtml(reg.title)} — ${escapeVocabHtml(reg.vibe)}</div>
+        <div class="comodin-chunks-grid atlas-items-grid"></div>`;
+      const tRow=atlasCard.querySelector(".atlas-tabs");
+      REGIONAL_ATLAS.forEach((r,idx)=>{
+        const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(idx===regAtlasIdx?" active":"");
+        b.textContent=r.tab;
+        b.onclick=()=>{
+          regAtlasIdx=idx;
+          renderAtlas();
+          if(r.items&&r.items[0])speak(r.items[0].es,0.75);
+        };
+        tRow.appendChild(b);
+      });
+      const grid=atlasCard.querySelector(".atlas-items-grid");
+      (reg.items||[]).forEach(it=>{
+        const row=document.createElement("div");row.className="comodin-chunk-card atlas-item-card";
+        row.innerHTML=`<div class="comodin-chunk-head"><span class="comodin-chunk-pill">${escapeVocabHtml(it.category)}</span><span class="comodin-chunk-en">${escapeVocabHtml(it.tip)}</span><div class="comodin-chunk-acts"></div></div>
+          <div class="comodin-chunk-es">🗣️ ${escapeVocabHtml(it.es)} 🔊</div>
+          <div class="comodin-chunk-esen">${escapeVocabHtml(it.en)}</div>`;
+        row.onclick=e=>{if(e.target.closest("button"))return;markPractice("phrases",it.es);speak(it.es,0.75);};
+        const acts=row.querySelector(".comodin-chunk-acts");
+        if(typeof attachStarBtn==="function")attachStarBtn(acts,it.es,reg.tab);
+        attachMic(acts,it.es,"phrases");
+        grid.appendChild(row);
+      });
+    };
+    renderAtlas();
+    sec.appendChild(atlasCard);
+  }
+  if(typeof STREET_EAR_LINKER!=="undefined"&&STREET_EAR_LINKER.length){
+    let earIdx=0;
+    const earCard=document.createElement("section");earCard.className="bridge-trainer-card street-ear-card";
+    const renderEar=()=>{
+      const item=STREET_EAR_LINKER[earIdx%STREET_EAR_LINKER.length];
+      earCard.innerHTML=`<div class="bridge-kicker">🎧 CÓMO SUENA EN LA CALLE · STREET-SPEED CONTRACTIONS (${earIdx+1}/${STREET_EAR_LINKER.length})</div>
+        <div class="bridge-context">${escapeVocabHtml(item.context)} — ${escapeVocabHtml(item.en)}</div>
+        <div class="tvc-compare-pair">
+          <button type="button" class="tvc-box ear-careful" title="Tap to hear careful speed">
+            <span class="tvc-tag">🐢 Careful / Written Spanish (0.65x)</span>
+            <strong>${escapeVocabHtml(item.carefulEs)}</strong>
+          </button>
+          <button type="button" class="tvc-box tvc-colombian ear-street" title="Tap to hear natural street speed">
+            <span class="tvc-tag">⚡ How It Sounds on the Street (0.85x) 🔊</span>
+            <strong>${escapeVocabHtml(item.streetEs)}</strong>
+            <small class="ear-phonetic">🎵 Rhythm: ${escapeVocabHtml(item.phoneticHint||"")}</small>
+          </button>
+        </div>
+        <div class="tvc-why">💡 <strong>Ear Linker Tip:</strong> ${escapeVocabHtml(item.tip)}</div>
+        <div class="bridge-actions"></div>`;
+      earCard.querySelector(".ear-careful").onclick=()=>speak(item.carefulEs,0.65);
+      earCard.querySelector(".ear-street").onclick=()=>{markPractice("phrases",item.streetEs);speak(item.streetEs,0.85);};
+      const acts=earCard.querySelector(".bridge-actions");
+      const slowBtn=document.createElement("button");slowBtn.type="button";slowBtn.className="lp-nav-btn";slowBtn.textContent="🐢 Careful (0.65x)";
+      slowBtn.onclick=()=>speak(item.carefulEs,0.65);
+      const fastBtn=document.createElement("button");fastBtn.type="button";fastBtn.className="lp-nav-btn";fastBtn.textContent="⚡ Street (0.85x)";
+      fastBtn.onclick=()=>{markPractice("phrases",item.streetEs);speak(item.streetEs,0.85);};
+      const nextEar=document.createElement("button");nextEar.type="button";nextEar.className="lp-nav-btn primary";nextEar.textContent="Next contraction →";
+      nextEar.onclick=()=>{earIdx=(earIdx+1)%STREET_EAR_LINKER.length;renderEar();};
+      acts.append(slowBtn,fastBtn,nextEar);
+      if(typeof attachStarBtn==="function")attachStarBtn(acts,item.streetEs,"Street Ear");
+    };
+    renderEar();
+    sec.appendChild(earCard);
+  }
+  if(typeof TRAMPAS_COLOMBIANAS!=="undefined"&&TRAMPAS_COLOMBIANAS.length){
+    let trIdx=0;
+    const trCard=document.createElement("section");trCard.className="bridge-trainer-card trampas-decoder-card";
+    const renderTrap=()=>{
+      const t=TRAMPAS_COLOMBIANAS[trIdx%TRAMPAS_COLOMBIANAS.length];
+      trCard.innerHTML=`<div class="bridge-kicker">🪤 TRAMPAS COLOMBIANAS · FALSE FRIENDS DECODER (${trIdx+1}/${TRAMPAS_COLOMBIANAS.length})</div>
+        <div class="bridge-context">Colombian phrase: <strong>"${escapeVocabHtml(t.trap)}"</strong></div>
+        <div class="tvc-compare-pair">
+          <div class="tvc-box tvc-textbook">
+            <span class="tvc-tag">❌ Literal Trap / What Gringos Guess</span>
+            <strong>${escapeVocabHtml(t.wrongGuess)}</strong>
+          </div>
+          <div class="tvc-box tvc-colombian">
+            <span class="tvc-tag">✅ Real Meaning in Colombia</span>
+            <strong>${escapeVocabHtml(t.realMeaning)}</strong>
+          </div>
+        </div>
+        <div class="street-grid-example" title="Tap to hear example">
+          <div class="street-grid-es">🗣️ ${escapeVocabHtml(t.es)} 🔊</div>
+          <div class="street-grid-en">${escapeVocabHtml(t.en)}</div>
+        </div>
+        <div class="tvc-why">💡 <strong>Cultural Note:</strong> ${escapeVocabHtml(t.tip)}</div>
+        <div class="bridge-actions"></div>`;
+      trCard.querySelector(".street-grid-example").onclick=()=>{markPractice("phrases",t.es);speak(t.es,0.75);};
+      const acts=trCard.querySelector(".bridge-actions");
+      const hearTrap=document.createElement("button");hearTrap.type="button";hearTrap.className="lp-nav-btn";hearTrap.textContent="🔊 Hear Example";
+      hearTrap.onclick=()=>{markPractice("phrases",t.es);speak(t.es,0.75);};
+      const nextTrap=document.createElement("button");nextTrap.type="button";nextTrap.className="lp-nav-btn primary";nextTrap.textContent="Next trap →";
+      nextTrap.onclick=()=>{trIdx=(trIdx+1)%TRAMPAS_COLOMBIANAS.length;renderTrap();};
+      acts.append(hearTrap,nextTrap);
+      if(typeof attachStarBtn==="function")attachStarBtn(acts,t.es,"Trampas Colombianas");
+      attachMic(acts,t.es,"phrases");
+    };
+    renderTrap();
+    sec.appendChild(trCard);
+  }
   SPEAKING_GUIDE.forEach((g,i)=>{
     const card=document.createElement("article");card.className="speaking-guide-card";
     card.innerHTML=`<div class='speaking-guide-number'>${i+1}</div><div class='speaking-guide-copy'><h3>${escapeVocabHtml(g.title)}</h3><div class='speaking-guide-formula'>${escapeVocabHtml(g.formula)}</div><p>${escapeVocabHtml(g.explain)}</p><div class='speaking-guide-mistake'>⚠️ ${escapeVocabHtml(g.mistake)}</div></div>`;
@@ -3765,7 +4023,7 @@ FILL_BLANK_QUIZ.forEach(q=>aQ.push(q));
 /* Vocabulary examples remain in Vocab as full context. Only the authored
    prompts above enter Fill blank; generic example sentences stay out. */
 
-const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"cortesia",label:"🙏 Courtesy"},{id:"muletillas",label:"☕ Diminutives & Fillers"},{id:"reparar",label:"🧰 Repair"},{id:"conectores",label:"🔗 Connectors"},{id:"direcciones",label:"🧭 Directions"},{id:"aeropuerto",label:"🛬 Airport"},{id:"uber",label:"🚕 Uber"},{id:"uber-real",label:"🚕 Uber · full trip"},{id:"hotel",label:"🏨 Hotel"},{id:"bancos-pagos",label:"💳 Nequi & Pay"},{id:"restaurante",label:"🍽️ Restaurant"},{id:"restaurante-real",label:"🍽️ Restaurant · real"},{id:"compras",label:"🛒 Shopping"},{id:"mercado",label:"🛍️ Market"},{id:"farmacia",label:"💊 Pharmacy"},{id:"medico",label:"🩺 Medical"},{id:"barberia",label:"💈 Barbershop"},{id:"porteria",label:"🏢 Portería & Rappi"},{id:"panaderia",label:"🥐 Panadería & Jugos"},{id:"viajes-finca",label:"🌄 Buses & Finca"},{id:"empatia",label:"💛 Empathy & Reactions"},{id:"comodin",label:"🔑 Verbos Comodín"},{id:"whatsapp",label:"📱 WhatsApp & Citas"},{id:"arriendo",label:"🔑 Arriendo & Airbnb"},{id:"gym-ciclovia",label:"🚴 Gym & Ciclovía"},{id:"expresiones",label:"🇨🇴 Expressions"},{id:"social",label:"🤝 Social"},{id:"fiesta",label:"🎉 Party"},{id:"deportes",label:"⚽ Sports"},{id:"oficina-real",label:"🧑‍💼 Office"},{id:"gerundios",label:"🔄 Actions in progress"},{id:"mandatos",label:"🗣️ Commands"},{id:"estructura",label:"🧱 Structure"},{id:"subjuntivo",label:"🌱 Subjuntivo"},{id:"pronunciacion",label:"🔊 Sounds"},{id:"groserias",label:"⚠️ Groserías"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animals"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
+const QC=[{id:"all",label:"All"},{id:"frases",label:"Frases"},{id:"cortesia",label:"🙏 Courtesy"},{id:"muletillas",label:"☕ Diminutives & Fillers"},{id:"reparar",label:"🧰 Repair"},{id:"conectores",label:"🔗 Connectors"},{id:"direcciones",label:"🧭 Directions"},{id:"aeropuerto",label:"🛬 Airport"},{id:"uber",label:"🚕 Uber"},{id:"uber-real",label:"🚕 Uber · full trip"},{id:"hotel",label:"🏨 Hotel"},{id:"bancos-pagos",label:"💳 Nequi & Pay"},{id:"restaurante",label:"🍽️ Restaurant"},{id:"restaurante-real",label:"🍽️ Restaurant · real"},{id:"compras",label:"🛒 Shopping"},{id:"mercado",label:"🛍️ Market"},{id:"farmacia",label:"💊 Pharmacy"},{id:"medico",label:"🩺 Medical"},{id:"barberia",label:"💈 Barbershop"},{id:"porteria",label:"🏢 Portería & Rappi"},{id:"panaderia",label:"🥐 Panadería & Jugos"},{id:"viajes-finca",label:"🌄 Buses & Finca"},{id:"empatia",label:"💛 Empathy & Reactions"},{id:"comodin",label:"🔑 Verbos Comodín"},{id:"whatsapp",label:"📱 WhatsApp & Citas"},{id:"arriendo",label:"🔑 Arriendo & Airbnb"},{id:"gym-ciclovia",label:"🚴 Gym & Ciclovía"},{id:"citas-familia",label:"❤️ Citas & Familia"},{id:"corrientazo",label:"🫓 Corrientazo & Onces"},{id:"cajero-sim",label:"🏦 Cajero & SIM Card"},{id:"puentes-rumba",label:"🎉 Puentes & Rumba"},{id:"trampas",label:"🪤 Trampas Colombianas"},{id:"estratos",label:"🏘️ Estratos & Conjuntos"},{id:"odontologia",label:"🦷 Odontología & Óptica"},{id:"migracion-ce",label:"🛂 Migración & Cédula"},{id:"expresiones",label:"🇨🇴 Expressions"},{id:"social",label:"🤝 Social"},{id:"fiesta",label:"🎉 Party"},{id:"deportes",label:"⚽ Sports"},{id:"oficina-real",label:"🧑‍💼 Office"},{id:"gerundios",label:"🔄 Actions in progress"},{id:"mandatos",label:"🗣️ Commands"},{id:"estructura",label:"🧱 Structure"},{id:"subjuntivo",label:"🌱 Subjuntivo"},{id:"pronunciacion",label:"🔊 Sounds"},{id:"groserias",label:"⚠️ Groserías"},{id:"pronombres",label:"Lo / La / Le"},{id:"vocales",label:"Vocales"},{id:"numeros",label:"Números"},{id:"meses",label:"Meses"},{id:"colores",label:"Colores"},{id:"dias",label:"Días"},{id:"familia",label:"Familia"},{id:"verbos",label:"Verbos"},{id:"acciones",label:"Acciones"},{id:"cuerpo",label:"Cuerpo"},{id:"comida",label:"Comida"},{id:"lugares",label:"Lugares"},{id:"tiempo",label:"Tiempo"},{id:"adjetivos",label:"Adjetivos"},{id:"profesiones",label:"Profesiones"},{id:"casa",label:"Casa"},{id:"habitacion",label:"Habitación"},{id:"bano",label:"Baño"},{id:"trabajo",label:"Trabajo"},{id:"oficina",label:"Oficina"},{id:"carropartes",label:"Partes del carro"},{id:"cocina",label:"Cocina"},{id:"gustos",label:"Gustos"},{id:"tv",label:"TV"},{id:"ropa",label:"Ropa"},{id:"animales",label:"Animals"},{id:"clima",label:"Clima"},{id:"tecnologia",label:"Tecnología"},{id:"emociones",label:"Emociones"},{id:"colombianismos",label:"Colombia"}];
 const QUIZ_MODES=[
   {id:"mixed",label:"Mixed"},{id:"es-en",label:"ES → EN"},{id:"en-es",label:"EN → ES"},
   {id:"listening",label:"🎧 Listening"},{id:"dictation",label:"⌨️ Dictation"},{id:"blank",label:"✏️ Fill blank"},{id:"conversation",label:"💬 Conversation"}
@@ -3818,8 +4076,8 @@ const SITUATION_BLITZ_PACKS=[
   {id:"food-blitz",label:"🍽️ Order & Pay",cats:["restaurante","restaurante-real","bancos-pagos","cortesia","comida","mercado"]},
   {id:"travel-blitz",label:"🛬 Airport & Hotel",cats:["aeropuerto","hotel","lugares","compras"]},
   {id:"social-blitz",label:"🤝 Social & Parche",cats:["social","fiesta","deportes","muletillas","expresiones","colombianismos"]},
-  {id:"living-blitz",label:"🏢 Apt, Airbnb & WhatsApp",cats:["porteria","arriendo","whatsapp","barberia","farmacia","medico","reparar","casa"]},
-  {id:"local-blitz",label:"🥐 Panadería, Comodín & Ciclovía",cats:["panaderia","viajes-finca","empatia","comodin","gym-ciclovia","direcciones","colombianismos"]}
+  {id:"living-blitz",label:"🏢 Apt, Estratos, Migración & Salud",cats:["estratos","migracion-ce","odontologia","cajero-sim","porteria","arriendo","whatsapp","barberia","farmacia","medico","reparar","casa"]},
+  {id:"local-blitz",label:"🇨🇴 Trampas, Corrientazo, Citas & Rumba",cats:["trampas","corrientazo","citas-familia","puentes-rumba","panaderia","viajes-finca","empatia","comodin","gym-ciclovia","direcciones","colombianismos"]}
 ];
 let qBlitzPack=null;
 const qmw=document.getElementById("qmode-wrap");
@@ -3862,7 +4120,7 @@ const BLANK_EN={
 };
 function quizPool(){
   let pool;
-  if(qMode==="blank")pool=FILL_BLANK_QUIZ.map(q=>({...q,answer:q.en,prompt:q.es}));
+  if(qMode==="blank")pool=FILL_BLANK_QUIZ.map(q=>({...q,answer:q.en,prompt:q.quizPrompt||q.es}));
   else if(qMode==="conversation")pool=CONVERSATION_QUIZ.map(q=>({...q,answer:q.en,prompt:q.es}));
   else if(qMode==="dictation")pool=aQ.filter(q=>!q.kind&&q.es&&q.tts).map(q=>({...q,answer:q.es,prompt:"🎧",dictation:true}));
   else if(qMode==="en-es")pool=aQ.filter(q=>!q.kind).map(q=>({...q,answer:q.es,prompt:q.en}));
@@ -3896,9 +4154,9 @@ function englishAnswer(q){
 }
 function normalizeDictation(text,stripAccents){
   let s=String(text||"").toLowerCase().trim().replace(/[¿?¡!.,;:…]+/g,"").replace(/\s+/g," ");
-  return stripAccents?s.normalize("NFD").replace(/[\u0300-\u036f]/g,""):s;
+  return stripAccents?s.normalize("NFD").replace(/n\u0303/g,"ñ").replace(/[\u0300-\u036f]/g,""):s;
 }
-function normalizeQuizText(text){return String(text||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[¿?¡!.,;:…]+/g,"").replace(/\s+/g," ").trim();}
+function normalizeQuizText(text){return String(text||"").toLowerCase().normalize("NFD").replace(/n\u0303/g,"ñ").replace(/[\u0300-\u036f]/g,"").replace(/[’‘]/g,"'").replace(/\bit's\b/g,"it is").replace(/\bi'm\b/g,"i am").replace(/\b(you|we|they)'re\b/g,"$1 are").replace(/[¿?¡!.,;:…]+/g,"").replace(/\s+/g," ").trim();}
 /* Audit prompts keep accents so "si" and "sí" are not treated as the same
    Spanish word. Answer cleanup ignores parenthetical teaching notes when it
    compares duplicate records. */
@@ -3943,7 +4201,7 @@ function clearMissedQuiz(q){
   if(legacy!==canonical&&qStore.missed[legacy])delete qStore.missed[legacy];
 }
 function exitMissedQueue(){qMissedOnly=false;repasoLeft=0;resetQuizRound();nQ();}
-function openMissedQueue(){showPage("quiz");qMissedOnly=true;qMode="mixed";qCat="all";qFocus="all";repasoLeft=0;resetQuizRound();syncQuizControls();nQ();}
+function openMissedQueue(){qBlitzPack=null;showPage("quiz");qMissedOnly=true;qMode="mixed";qCat="all";qFocus="all";repasoLeft=0;resetQuizRound();syncQuizControls();nQ();}
 function nQ(){
   an=false;document.getElementById("quiz-next").style.display="none";const quizFb=document.getElementById("quiz-fb"),quizReveal=document.getElementById("quiz-reveal");quizFb.innerHTML="";if(quizReveal){quizFb.appendChild(quizReveal);quizReveal.innerHTML="";}quizFb.classList.remove("visible");syncMissedQueueLauncher();
   const helpRow=document.getElementById("quiz-help-row"),helpBtn=document.getElementById("quiz-help"),helpText=document.getElementById("quiz-help-text");

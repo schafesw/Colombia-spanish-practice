@@ -1,4 +1,4 @@
-﻿// Spanish learning app data
+// Spanish learning app data
 // ── Alphabet ──────────────────────────────────────────────────────────────────
 const VW=["a","e","i","o","u"],VL=["A","E","I","O","U"];
 const AL=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","Ñ","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
@@ -1458,28 +1458,28 @@ const V60_CONVERSATION_QUIZ=[
   {kind:"reply",focus:"future",cat:"deportes",es:"¿Vas a ver el partido esta noche?",en:"Of course, I wouldn't miss it.",tts:"¿Vas a ver el partido esta noche?",choices:["Of course, I wouldn't miss it.","I need to change the order.","The entrance is behind it.","I went to the market."]},
   {kind:"reply",focus:"present",cat:"oficina-real",es:"¿Necesitas ayuda con el informe?",en:"Yes, can you review this part for me?",tts:"¿Necesitas ayuda con el informe?",choices:["Yes, can you review this part for me?","No, the music is good.","I am going to the corner.","Give me a kilo."]},
   {kind:"reply",focus:"present",cat:"mandatos",es:"Disculpe, no entendí.",en:"No problem. I will repeat it.",tts:"Disculpe, no entendí.",choices:["No problem. I will repeat it.","The game is tomorrow.","I would like a table.","I am behind schedule."]},
-  {kind:"meaning",focus:"present",cat:"gerundios",es:"Estaba trabajando cuando me llamaste.",en:"I was working when you called.",tts:"Estaba trabajando cuando me llamaste.",choices:["I was working when you called.","I will work after I call.","I just finished working.","I went shopping for work."]},
+  {kind:"meaning",focus:"past",cat:"gerundios",es:"Estaba trabajando cuando me llamaste.",en:"I was working when you called.",tts:"Estaba trabajando cuando me llamaste.",choices:["I was working when you called.","I will work after I call.","I just finished working.","I went shopping for work."]},
   {kind:"reply",focus:"pronombres",cat:"oficina-real",es:"¿Qué hacemos con el proyecto?",en:"We will send it to the client tomorrow.",tts:"¿Qué hacemos con el proyecto?",choices:["We will send it to the client tomorrow.","I am looking for the driver.","It is a little expensive.","I hope Colombia wins."]}
 ];
 const V60_FILL_BLANK_QUIZ=[
-  {kind:"blank",focus:"gerundios",cat:"gerundios",es:"Ahora ___ la cena.",en:"estoy cocinando",tts:"Ahora estoy cocinando la cena.",trans:"Right now I am cooking dinner.",choices:["estoy cocinando","cociné","voy a cocinar","cocinar"]},
+  {kind:"blank",focus:"gerundios",cat:"gerundios",es:"Ahora ___ la cena.",quizPrompt:"Complete to mean 'Right now I am cooking dinner.': Ahora ___ la cena.",en:"estoy cocinando",tts:"Ahora estoy cocinando la cena.",trans:"Right now I am cooking dinner.",choices:["estoy cocinando","cociné","voy a cocinar","cocinar"]},
   {kind:"blank",focus:"gerundios",cat:"gerundios",es:"¿Qué ___ haciendo?",en:"estás",tts:"¿Qué estás haciendo?",trans:"What are you doing?",choices:["estás","eres","fuiste","vas"]},
-  {kind:"blank",focus:"gerundios",cat:"gerundios",es:"Mientras ___, me llamaste.",en:"trabajaba",tts:"Mientras trabajaba, me llamaste.",trans:"While I was working, you called me.",choices:["trabajaba","trabajé","trabajo","trabajaré"]},
+  {kind:"blank",focus:"gerundios",cat:"gerundios",es:"Mientras ___, me llamaste.",quizPrompt:"Complete to mean 'While I was working, you called me.': Mientras ___, me llamaste.",en:"trabajaba",tts:"Mientras trabajaba, me llamaste.",trans:"While I was working, you called me.",choices:["trabajaba","trabajé","trabajo","trabajaré"]},
   {kind:"blank",focus:"past",cat:"gerundios",es:"Ayer fui de ___.",en:"compras",tts:"Ayer fui de compras.",trans:"Yesterday I went shopping.",choices:["compras","cocinar","trabajo","salir"]},
-  {kind:"blank",focus:"present",cat:"mandatos",es:"___ más despacio, por favor.",en:"Hábleme",tts:"Hábleme más despacio, por favor.",trans:"Speak to me more slowly, please.",choices:["Hábleme","Hablame","Háblate","Hablar"]},
-  {kind:"blank",focus:"present",cat:"mandatos",es:"___ la pregunta, por favor.",en:"Repítame",tts:"Repítame la pregunta, por favor.",trans:"Repeat the question for me, please.",choices:["Repítame","Repíteme","Repetir","Repítate"]},
-  {kind:"blank",focus:"present",cat:"mandatos",es:"___, no entendí.",en:"Disculpe",tts:"Disculpe, no entendí.",trans:"Excuse me, I did not understand.",choices:["Disculpe","Discúlpame","Disculpa a él","Disculpen"]},
-  {kind:"blank",focus:"present",cat:"direcciones",es:"___ derecho hasta la esquina.",en:"Siga",tts:"Siga derecho hasta la esquina.",trans:"Go straight to the corner.",choices:["Siga","Sigue","Seguir","Sigan"]},
+  {kind:"blank",focus:"present",cat:"mandatos",es:"___ más despacio, por favor.",quizPrompt:"Use usted (one person): ___ más despacio, por favor.",en:"Hábleme",tts:"Hábleme más despacio, por favor.",trans:"Speak to me more slowly, please.",choices:["Hábleme","Hablame","Háblate","Hablar"]},
+  {kind:"blank",focus:"present",cat:"mandatos",es:"___ la pregunta, por favor.",quizPrompt:"Use usted (one person): ___ la pregunta, por favor.",en:"Repítame",tts:"Repítame la pregunta, por favor.",trans:"Repeat the question for me, please.",choices:["Repítame","Repíteme","Repetir","Repítate"]},
+  {kind:"blank",focus:"present",cat:"mandatos",es:"___, no entendí.",quizPrompt:"Use usted (one person): ___, no entendí.",en:"Disculpe",tts:"Disculpe, no entendí.",trans:"Excuse me, I did not understand.",choices:["Disculpe","Discúlpame","Disculpa a él","Disculpen"]},
+  {kind:"blank",focus:"present",cat:"direcciones",es:"___ derecho hasta la esquina.",quizPrompt:"Use usted (one person): ___ derecho hasta la esquina.",en:"Siga",tts:"Siga derecho hasta la esquina.",trans:"Go straight to the corner.",choices:["Siga","Sigue","Seguir","Sigan"]},
   {kind:"blank",focus:"present",cat:"restaurante-real",es:"Quisiera ___ una sopa.",en:"pedir",tts:"Quisiera pedir una sopa.",trans:"I would like to order a soup.",choices:["pedir","pido","pedí","pidiendo"]},
-  {kind:"blank",focus:"present",cat:"mercado",es:"¿Cuánto ___ el kilo?",en:"cuesta",tts:"¿Cuánto cuesta el kilo?",trans:"How much does the kilo cost?",choices:["cuesta","costó","costando","costar"]},
-  {kind:"blank",focus:"present",cat:"mercado",es:"¿Me ___ un descuento?",en:"hace",tts:"¿Me hace un descuento?",trans:"Can you give me a discount?",choices:["hace","hizo","haciendo","hacer"]},
+  {kind:"blank",focus:"present",cat:"mercado",es:"¿Cuánto ___ el kilo?",quizPrompt:"Complete to mean 'How much does the kilo cost?': ¿Cuánto ___ el kilo?",en:"cuesta",tts:"¿Cuánto cuesta el kilo?",trans:"How much does the kilo cost?",choices:["cuesta","costó","costando","costar"]},
+  {kind:"blank",focus:"present",cat:"mercado",es:"¿Me ___ un descuento?",quizPrompt:"Complete to mean 'Can you give me a discount?': ¿Me ___ un descuento?",en:"hace",tts:"¿Me hace un descuento?",trans:"Can you give me a discount?",choices:["hace","hizo","haciendo","hacer"]},
   {kind:"blank",focus:"future",cat:"social",es:"Voy a ___ con unos amigos.",en:"salir",tts:"Voy a salir con unos amigos.",trans:"I am going out with some friends.",choices:["salir","salgo","salí","saliendo"]},
   {kind:"blank",focus:"future",cat:"social",es:"Avísame cuando ___.",en:"llegues",tts:"Avísame cuando llegues.",trans:"Let me know when you arrive.",choices:["llegues","llegas","llegaste","llegar"]},
-  {kind:"blank",focus:"subjuntivo",cat:"deportes",es:"Ojalá ___ Colombia.",en:"gane",tts:"Ojalá gane Colombia.",trans:"I hope Colombia wins.",choices:["gane","gana","ganó","ganar"]},
+  {kind:"blank",focus:"subjuntivo",cat:"deportes",es:"Ojalá ___ Colombia.",quizPrompt:"Complete to mean 'I hope Colombia wins.': Ojalá ___ Colombia.",en:"gane",tts:"Ojalá gane Colombia.",trans:"I hope Colombia wins.",choices:["gane","gana","ganó","ganar"]},
   {kind:"blank",focus:"present",cat:"oficina-real",es:"Estoy un poco ___.",en:"atrasado",tts:"Estoy un poco atrasado.",trans:"I am a little behind.",choices:["atrasado","atrasar","atrasando","atrasé"]},
   {kind:"blank",focus:"pronombres",cat:"pronombres",es:"¿Tienes la dirección? Sí, ___ tengo aquí.",en:"la",tts:"¿Tienes la dirección? Sí, la tengo aquí.",trans:"Do you have the address? Yes, I have it here.",choices:["la","lo","le","las"]},
   {kind:"blank",focus:"pronombres",cat:"pronombres",es:"El proyecto es importante; mañana ___ mandamos al cliente.",en:"lo",tts:"El proyecto es importante; mañana lo mandamos al cliente.",trans:"The project is important; tomorrow we will send it to the client.",choices:["lo","la","le","los"]},
-  {kind:"blank",focus:"present",cat:"fiesta",es:"La música ___ muy buena.",en:"está",tts:"La música está muy buena.",trans:"The music is really good.",choices:["está","es","fue","sea"]}
+  {kind:"blank",focus:"present",cat:"fiesta",es:"La música ___ muy buena.",quizPrompt:"Describe how the music sounds right now: La música ___ muy buena.",en:"está",tts:"La música está muy buena.",trans:"The music is really good.",choices:["está","están","fue","sea"]}
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -4048,4 +4048,1304 @@ V60_FILL_BLANK_QUIZ.push(
   {kind:"blank",focus:"present",cat:"arriendo",es:"El sábado por la mañana nos toca hacer ___ en el apartamento.",en:"aseo",tts:"El sábado por la mañana nos toca hacer aseo en el apartamento.",trans:"On Saturday morning we have to clean the apartment.",choices:["aseo","trancón","soroche","pasaje"]},
   {kind:"blank",focus:"present",cat:"gym-ciclovia",es:"Parce, ¿nos ___ en la máquina mientras descansas un minuto?",en:"turnamos",tts:"Parce, ¿nos turnamos en la máquina mientras descansas un minuto?",trans:"Buddy, shall we take turns on the machine while you rest a minute?",choices:["turnamos","empacamos","cobramos","aterrizamos"]},
   {kind:"blank",focus:"present",cat:"gym-ciclovia",es:"El domingo por la mañana salimos a montar en bici por la ___.",en:"ciclovía",tts:"El domingo por la mañana salimos a montar en bici por la ciclovía.",trans:"On Sunday morning we go out to ride bikes on the Ciclovía.",choices:["ciclovía","portería","droguería","peluquería"]}
+);
+// ── V95.0 COLOMBIAN SPEAKING MASTERY & REGIONAL ATLAS EXPANSION ─────────────
+/* 1. Interactive 4-Region Colombian Accent & Slang Atlas (Bogotá, Medellín, Costa, Cali)
+   2. 4 New Real-World Colombian Scenarios (Lessons 61–64, Dialogues 51–54):
+      - Citas, cumplidos y conocer a la familia (invitar a salir, caer bien, elogiar la casa/comida)
+      - Almuerzo ejecutivo, corrientazo y onces (sopa o fruta, principio, proteína, sobremesa)
+      - Cajero automático, SIM card y trámites (ahorros o corriente, recarga Claro, cédula/pasaporte)
+      - Puentes festivos, salsa y rumba (puente festivo, bailar salsa/vallenato, media de guaro) */
+
+const REGIONAL_ATLAS = [
+  {
+    "id": "bogota",
+    "tab": "🏔️ Bogotá (Rolo)",
+    "title": "Bogotá & Altiplano (Rolo / Cachaco)",
+    "vibe": "Polite, melodic, uses usted/tú/sumercé, diminutives (-ico/-ito), and warm courtesy.",
+    "items": [
+      {
+        "category": "👋 Greeting & Friend",
+        "es": "¿Cómo amaneció, sumercé? Qué dicha volverlo a ver, ¿todo bien?",
+        "en": "How did you wake up, sumercé? It’s so nice to see you again—is everything good?",
+        "tip": "Sumercé expresses warmth and respect; rolos also soften speech with diminutives."
+      },
+      {
+        "category": "✨ 'That's awesome!'",
+        "es": "¡Uy, qué chévere! Ese plan quedó muy bonito, ¿sí o qué?",
+        "en": "Wow, that’s awesome! That plan turned out really nice, right?",
+        "tip": "Uy and ¿sí o qué? add friendly emphasis without sounding overly loud."
+      },
+      {
+        "category": "☕ Food & Drink Specialty",
+        "es": "Hagamos una paradita para un tintico y un pancito, y luego nos comemos un ajiaco.",
+        "en": "Let’s make a little stop for a small coffee and some bread, and then we’ll have ajiaco.",
+        "tip": "Tintico and pancito are affectionate diminutives commonly heard in Bogotá; ajiaco is the local classic."
+      },
+      {
+        "category": "🎉 Plans & Hangout",
+        "es": "¿Te provoca que nos tomemos un cafecito por La Candelaria esta tardecita?",
+        "en": "Would you like to have a little coffee in La Candelaria this afternoon?",
+        "tip": "Te provoca and diminutives make invitations sound gentle and courteous."
+      },
+      {
+        "category": "🗣️ Signature Filler / Rhythm",
+        "es": "Pues sí, claro, con mucho gusto; me cuenta cualquier cosita y yo le colaboro.",
+        "en": "Well yes, of course, gladly; let me know if you need anything and I’ll help you out.",
+        "tip": "Polite fillers such as pues, claro, and con mucho gusto create the characteristic courteous rhythm."
+      }
+    ]
+  },
+  {
+    "id": "medellin",
+    "tab": "🌸 Medellín (Paisa)",
+    "title": "Medellín & Eje Cafetero (Paisa)",
+    "vibe": "Expressive, musical intonation, uses vos/tú, 'pues' at the end of phrases, and 'parce'.",
+    "items": [
+      {
+        "category": "👋 Greeting & Friend",
+        "es": "¿Qué más, pues, parce? ¿Cómo vas o qué?",
+        "en": "What’s up, buddy? How are you doing?",
+        "tip": "Parce is a very common friendly word, while pues and o qué give the greeting its Paisa rhythm."
+      },
+      {
+        "category": "✨ 'That's awesome!'",
+        "es": "¡No, parce, eso está una chimba, pues!",
+        "en": "No way, buddy, that’s awesome!",
+        "tip": "Una chimba is enthusiastic and informal; use it with friends, not in formal settings."
+      },
+      {
+        "category": "☕ Food & Drink Specialty",
+        "es": "Vení, nos tomamos un tinto y después nos comemos una bandejita paisa, ¿sí o qué?",
+        "en": "Come on, let’s have a black coffee and then eat a little bandeja paisa, all right?",
+        "tip": "Vení is the familiar voseo imperative, and bandeja paisa is Medellín’s emblematic hearty dish."
+      },
+      {
+        "category": "🎉 Plans & Hangout",
+        "es": "¿Vos qué vas a hacer esta noche? Caé a mi casa y parchamos un rato, pues.",
+        "en": "What are you doing tonight? Come over to my place and let’s hang out for a while.",
+        "tip": "Vos forms such as caé and parchamos are strongly associated with relaxed Paisa conversation."
+      },
+      {
+        "category": "🗣️ Signature Filler / Rhythm",
+        "es": "Eso sí queda listo mañana, pues, ¿cierto?",
+        "en": "That will definitely be ready tomorrow, right?",
+        "tip": "Pues at the end of a phrase and ¿cierto? create the recognizable musical Paisa cadence."
+      }
+    ]
+  },
+  {
+    "id": "costa",
+    "tab": "🌴 Costa Caribe (Costeño)",
+    "title": "Cartagena, Barranquilla & Santa Marta (Costeño)",
+    "vibe": "Fast, rhythmic, warm Caribbean energy, drops final -s, uses 'ajá', 'mani', 'chevere/bacano', and 'no joda'.",
+    "items": [
+      {
+        "category": "👋 Greeting & Friend",
+        "es": "¿Ajá, maní, qué más? ¿Todo bien o qué?",
+        "en": "Hey, buddy, what’s up? Everything good or what?",
+        "tip": "Ajá opens many Caribbean exchanges, while maní is a warm, informal way to address a friend."
+      },
+      {
+        "category": "✨ 'That's awesome!'",
+        "es": "¡Eso está bacano, no joda; quedó chévere de verdad!",
+        "en": "That’s awesome, seriously; it turned out really great!",
+        "tip": "Bacano and chévere mean cool or excellent; no joda intensifies the excitement."
+      },
+      {
+        "category": "☕ Food & Drink Specialty",
+        "es": "Vamos por una arepita de huevo y un juguito de corozo, que hace una calor tremenda.",
+        "en": "Let’s get an egg-stuffed arepa and a corozo juice, because it’s incredibly hot.",
+        "tip": "Arepa de huevo and corozo are iconic Caribbean foods and drinks; final -s may be weakened or dropped in speech."
+      },
+      {
+        "category": "🎉 Plans & Hangout",
+        "es": "Esta noche nos vamos pa’l malecón a escuchar música y a pasarla bacano, ¿ajá?",
+        "en": "Tonight we’re going to the waterfront to listen to music and have a great time, all right?",
+        "tip": "Pa’l is the conversational contraction of para el, and pasarla bacano reflects the region’s easygoing warmth."
+      },
+      {
+        "category": "🗣️ Signature Filler / Rhythm",
+        "es": "Ajá, entonces nos vemos ahorita, pero no te me demorés, ¿oíste?",
+        "en": "All right, then I’ll see you in a little while, but don’t take too long, you hear?",
+        "tip": "Ajá, ahorita, and ¿oíste? give the speech a quick, rhythmic Caribbean pulse."
+      }
+    ]
+  },
+  {
+    "id": "cali",
+    "tab": "💃 Cali (Valluno)",
+    "title": "Cali & Valle del Cauca (Valluno / Caleño)",
+    "vibe": "Salsa capital rhythm, uses 'vos' ('mirá, ve, oís'), 'qué nota', and warm open hospitality.",
+    "items": [
+      {
+        "category": "👋 Greeting & Friend",
+        "es": "¿Qué más, vos? Vení, dame un abrazo, que hace rato no te veía.",
+        "en": "What’s up? Come here, give me a hug—I haven’t seen you in a while.",
+        "tip": "Caleños often combine vos with warm, open invitations and affectionate physical greetings."
+      },
+      {
+        "category": "✨ 'That's awesome!'",
+        "es": "¡Mirá, ve, qué nota ese concierto; estuvo buenísimo!",
+        "en": "Look, that concert was so awesome; it was amazing!",
+        "tip": "Qué nota means how cool or great, while mirá and ve are characteristic conversational markers."
+      },
+      {
+        "category": "☕ Food & Drink Specialty",
+        "es": "Después de bailar nos vamos por un champús y un pandebono calientico.",
+        "en": "After dancing, we’ll go get some champús and a warm pandebono.",
+        "tip": "Champús and pandebono are beloved Valle del Cauca specialties; calientico adds affectionate warmth."
+      },
+      {
+        "category": "🎉 Plans & Hangout",
+        "es": "¿Vos qué decís si salimos a bailar salsa esta noche? Mirá que hay una rumba muy buena.",
+        "en": "What do you say we go dancing salsa tonight? There’s a really good party happening.",
+        "tip": "Salsa is central to Cali’s identity, and vos forms such as decís are common in casual speech."
+      },
+      {
+        "category": "🗣️ Signature Filler / Rhythm",
+        "es": "Eso queda listo, ve; vos llegás temprano y me avisás, ¿oís?",
+        "en": "That’ll be all set; you arrive early and let me know, you hear?",
+        "tip": "Ve and oís shape the lively Caleño rhythm, while llegás and avisás show familiar voseo."
+      }
+    ]
+  }
+];
+
+FRASES.push(
+  {section:"❤️ Citas, cumplidos y la familia",quizCat:"citas-familia",cls:"color:var(--pink);background:rgba(232,93,117,0.1);border:1px solid rgba(232,93,117,0.2)",items:[
+    {es:"Me encanta conversar contigo; ¿te gustaría salir a tomar un café o un cóctel el viernes?",en:"I love talking with you; would you like to go out for a coffee or cocktail on Friday?",register:"Colombian · dating"},
+    {es:"¡Uy, ese color te queda súper bien! Te ves muy linda hoy.",en:"Wow, that color looks great on you! You look very pretty today.",register:"Colombian · natural compliment"},
+    {es:"Mucho gusto, señora Marta; Camila me ha hablado muchísimo de ustedes.",en:"Very nice to meet you, Mrs. Marta; Camila has told me so much about you all.",register:"Meeting family · polite"},
+    {es:"¡Qué casa tan acogedora tienen! Muchas gracias por la invitación a almorzar.",en:"What a welcoming/cozy home you have! Thank you so much for the lunch invitation.",register:"Meeting family · warm"},
+    {es:"Tu familia me cayó súper bien; son unas personas muy queridas y atentas.",en:"I really liked your family; they are such sweet and attentive people.",register:"Colombian · caer bien"},
+    {es:"Avísame apenas llegues a la casa para quedarme tranquilo.",en:"Let me know as soon as you get home so I know you're safe.",register:"Colombian · caring"}
+  ]},
+  {section:"🫓 Almuerzo ejecutivo (corrientazo) y onces",quizCat:"corrientazo",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[
+    {es:"Buenas tardes, veci, ¿qué trae hoy el almuerzo ejecutivo?",en:"Good afternoon, neighbor, what comes with today's lunch special?",register:"Colombian · corrientazo"},
+    {es:"Con sopa de ajiaco, de principio lentejas y la pechuga a la plancha, por favor.",en:"With ajiaco soup, lentils for the side, and the grilled chicken breast, please.",register:"Ordering corrientazo"},
+    {es:"¿Me cambia el arroz por más ensalada y tajadas de plátano maduro?",en:"Could you swap the rice for more salad and sweet plantain slices?",register:"Customizing lunch"},
+    {es:"¿Qué hay de sobremesa hoy? Me regala limonada natural sin azúcar.",en:"What drink comes with lunch today? I'll have fresh unsweetened lemonade.",register:"Colombian · sobremesa"},
+    {es:"A las cuatro vamos a tomar las onces con aguapanela, queso y almojábana.",en:"At four o'clock let's have afternoon coffee/snack with aguapanela, cheese, and almojábana.",register:"Bogotá & Andes · onces"},
+    {es:"Compré un poquito de mecato para picar en el camino.",en:"I bought some snacks/treats to nibble on along the way.",register:"Medellín & Colombia · mecato"}
+  ]},
+  {section:"🏦 Cajero, SIM card y trámites",quizCat:"cajero-sim",cls:"color:var(--blue);background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2)",items:[
+    {es:"Disculpe, ¿dónde queda un cajero automático de Bancolombia o Davivienda cerca?",en:"Excuse me, where is a Bancolombia or Davivienda ATM nearby?",register:"Banking · everyday"},
+    {es:"Para pagar con tarjeta extranjera en el datáfono, a veces toca elegir cuenta de ahorros o crédito.",en:"To pay with a foreign card on the terminal, sometimes you have to choose savings or credit.",register:"Colombian payments"},
+    {es:"Buenas, ¿me colabora con una SIM card prepago y una recarga de treinta mil pesos?",en:"Hi, could you help me with a prepaid SIM card and a 30,000-peso top-up?",register:"Phone & SIM"},
+    {es:"No tengo cédula colombiana todavía; ¿le sirve el número de mi pasaporte?",en:"I don't have a Colombian ID yet; does my passport number work for you?",register:"Errands & ID"},
+    {es:"El cajero me descontó la plata pero no me entregó los billetes.",en:"The ATM deducted the money from my account but didn't give me the bills.",register:"Bank issue"},
+    {es:"¿Dónde puedo sacar una fotocopia de la cédula o imprimir este formulario?",en:"Where can I make a photocopy of my ID or print this form?",register:"Paperwork"}
+  ]},
+  {section:"🎉 Puentes festivos, salsa y rumba",quizCat:"puentes-rumba",cls:"color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)",items:[
+    {es:"¿Qué planes tienes para este puente festivo? ¿Te quedas en la ciudad o viajas?",en:"What plans do you have for this long holiday weekend? Are you staying in town or traveling?",register:"Colombian · puente"},
+    {es:"El sábado por la noche vamos a rumbear a una salsoteca muy buena.",en:"On Saturday night we're going out partying/dancing at a great salsa club.",register:"Colombian · rumba"},
+    {es:"Yo tengo dos pies izquierdos, pero si me enseñas el paso básico de salsa, yo le hago.",en:"I have two left feet, but if you teach me the basic salsa step, I'll go for it.",register:"Dancing · friendly"},
+    {es:"¡Salud! Pidamos una media de guaro con agua y limón para brindar.",en:"Cheers! Let's order a half-bottle of aguardiente with water and lime to toast.",register:"Colombian · rumba"},
+    {es:"En Colombia ponen salsa, merengue, reggaetón y vallenato en todas las fiestas.",en:"In Colombia they play salsa, merengue, reggaeton, and vallenato at every party.",register:"Culture"},
+    {es:"¡Uy, qué guayabo tan bravo tengo hoy! Necesito un caldo de costilla urgente.",en:"Oof, what a rough hangover I have today! I urgently need a beef rib broth.",register:"Morning after · guayabo"}
+  ]}
+);
+
+CONVERSATIONS.push(
+  v60Dialogue("Citas, cumplidos y conocer a la familia","Inviting someone out, giving warm compliments, and meeting Colombian parents",[
+    ["A","¡Hola, Valeria! Qué alegría verte. Ese vestido te queda súper bien.","Hi Valeria! So great to see you. That dress looks amazing on you."],
+    ["B","¡Ay, tan bello, muchas gracias! Adelante, sigue; te presento a mis papás, don Hernán y doña Clara.","Aw, how sweet of you, thank you so much! Come on in; let me introduce you to my parents, Mr. Hernán and Mrs. Clara."],
+    ["A","Mucho gusto, don Hernán y doña Clara. Valeria me ha hablado muchísimo de ustedes; ¡qué casa tan acogedora tienen!","Very nice to meet you, Mr. Hernán and Mrs. Clara. Valeria has told me so much about you; what a welcoming home you have!"],
+    ["B","El gusto es de nosotros, mijo. Siéntate como en tu casa; ¿te provocan unas onces con tintico y pandebono?","The pleasure is ours, son. Make yourself at home; would you like an afternoon coffee with pandebono?"],
+    ["A","¡Claro que sí, doña Clara, muchas gracias! Todo huele delicioso.","Of course, Mrs. Clara, thank you very much! Everything smells delicious."],
+    ["B","Qué bueno que viniste; tus papás también están muy invitados cuando vengan a Colombia.","So glad you came; your parents are also very welcome whenever they visit Colombia."]
+  ],[{es:"Tus papás me cayeron súper bien; son muy queridos.",en:"I really liked your parents; they are so sweet.",tts:"Tus papás me cayeron súper bien; son muy queridos."},{es:"¿Te gustaría salir a cenar conmigo este viernes?",en:"Would you like to go out to dinner with me this Friday?",tts:"¿Te gustaría salir a cenar conmigo este viernes?"}]),
+  v60Dialogue("Almuerzo ejecutivo, corrientazo y onces","Ordering a Colombian weekday lunch special (sopa, principio, proteína, sobremesa)",[
+    ["A","Buenas tardes, bienvenido. ¿Va a pedir el almuerzo ejecutivo de hoy?","Good afternoon, welcome. Are you ordering today's lunch special?"],
+    ["B","Buenas tardes, veci. Sí, por favor, ¿qué trae el ejecutivo hoy?","Good afternoon, neighbor. Yes, please, what comes with the lunch special today?"],
+    ["A","Hoy tenemos sopa de verduras o fruta; de principio hay frijoles, lentejas o tajadas de maduro; y de proteína carne asada, pechuga a la plancha o mojarra.","Today we have vegetable soup or fruit; for the side there's beans, lentils, or sweet plantain; and for protein grilled beef, grilled chicken breast, or fried tilapia."],
+    ["B","Me regala con sopa, de principio frijoles con tajadas, y la pechuga a la plancha, por favor.","I'll have it with soup, beans and plantains for the side, and the grilled chicken breast, please."],
+    ["A","¡Con mucho gusto! ¿Y de sobremesa qué desea tomar: limonada de panela o jugo de maracuyá?","With pleasure! And for the lunch drink what would you like: panela lemonade or passionfruit juice?"],
+    ["B","Jugo de maracuyá bajito de azúcar, por favor. Y más tarde pasamos por unas onces con buñuelo.","Passionfruit juice low on sugar, please. And later we'll stop by for an afternoon snack with a buñuelo."]
+  ],[{es:"¿Me cambia el arroz por más ensalada, por favor?",en:"Could you swap the rice for more salad, please?",tts:"¿Me cambia el arroz por más ensalada, por favor?"},{es:"El corrientazo de esta esquina es casero, rico y barato.",en:"The daily lunch at this corner spot is homemade, tasty, and cheap.",tts:"El corrientazo de esta esquina es casero, rico y barato."}]),
+  v60Dialogue("Cajero automático, SIM card y trámites","Withdrawing cash, activating a prepaid SIM card, and using your passport for ID",[
+    ["A","Buenas tardes, joven. ¿Me colabora activando una SIM card prepago con datos para el celular?","Good afternoon. Could you help me activate a prepaid SIM card with data for my phone?"],
+    ["B","Claro que sí, con mucho gusto. Para registrar la línea necesito su cédula o su pasaporte.","Of course, with pleasure. To register the line I need your Colombian ID or your passport."],
+    ["A","Todavía no tengo cédula de extranjería, pero aquí tengo mi pasaporte. ¿Le puedo hacer una recarga de treinta mil pesos?","I don't have a foreigner ID card yet, but here is my passport. Can I put a 30,000-peso top-up on it?"],
+    ["B","Sí, señor, con ese paquete le quedan quince gigas por un mes. ¿Paga en efectivo o con tarjeta?","Yes, sir, with that package you get 15 GB for a month. Are you paying cash or by card?"],
+    ["A","Con tarjeta, por favor. ¿Sabe si por esta cuadra hay un cajero automático seguro para sacar efectivo ahorita?","By card, please. Do you know if there's a safe ATM on this block to withdraw cash right now?"],
+    ["B","Sí, adentro del centro comercial de la esquina hay cajeros de todos los bancos; es mucho más seguro allá.","Yes, inside the mall on the corner there are ATMs for all banks; it's much safer in there."]
+  ],[{es:"En el datáfono elija cuenta de ahorros o tarjeta de crédito.",en:"On the card terminal choose savings account or credit card.",tts:"En el datáfono elija cuenta de ahorros o tarjeta de crédito."},{es:"¿Me hace una recarga de veinte mil a este número de Claro?",en:"Can you do a 20,000-peso top-up to this Claro number?",tts:"¿Me hace una recarga de veinte mil a este número de Claro?"}]),
+  v60Dialogue("Puentes festivos, salsa y rumba","Planning a long holiday weekend, dancing salsa, and toasting with friends",[
+    ["A","¡Por fin viernes y con puente festivo! ¿Qué vas a hacer este puente, parce?","Finally Friday and with a long holiday weekend! What are you doing this long weekend, buddy?"],
+    ["B","Esta noche vamos a rumbear a una salsoteca en el barrio, y mañana salimos temprano para un pueblito.","Tonight we're going out dancing at a salsa club in the neighborhood, and tomorrow we leave early for a small town."],
+    ["A","¡Qué nota de plan! Yo quiero ir a la salsoteca, aunque todavía me cuesta un poquito el paso de salsa.","What a great plan! I want to go to the salsa club, even though the salsa step is still a little tough for me."],
+    ["B","¡Tranquilo, hágale sin miedo! Allá todo el mundo es relajado y te enseñamos a llevar el ritmo.","Don't worry, go for it! Everyone there is laid-back and we'll teach you how to keep the beat."],
+    ["A","¡De una! Entonces yo invito la primera ronda o una media de guaro para brindar.","I'm in! Then I'll buy the first round or a half-bottle of aguardiente to toast."],
+    ["B","¡Listo, trato hecho! Pero tomamos juicio con agua para no amanecer con guayabo mañana.","Deal! But let's drink responsibly with water so we don't wake up with a hangover tomorrow."]
+  ],[{es:"¡Salud! Que viva la música y los buenos amigos.",en:"Cheers! Long live music and good friends.",tts:"¡Salud! Que viva la música y los buenos amigos."},{es:"Para el guayabo no hay nada mejor que un caldo de costilla.",en:"For a hangover there's nothing better than a beef rib broth.",tts:"Para el guayabo no hay nada mejor que un caldo de costilla."}])
+);
+
+READINGS.push(
+  {id:"lectura-citas-familia",level:"B1",title:"La calidez de las familias colombianas",lesson:"citas-familia",intro:"Learn how compliments, hospitality, and meeting the family work in Colombia.",lines:[
+    {es:"En Colombia, cuando sales con alguien o haces buenos amigos, es muy común que te inviten a almorzar o a tomar las onces con la familia.",en:"In Colombia, when you date someone or make close friends, it's very common to be invited for lunch or afternoon coffee with the family.",tts:"En Colombia, cuando sales con alguien o haces buenos amigos, es muy común que te inviten a almorzar o a tomar las onces con la familia."},
+    {es:"A los papás se les trata con mucho respeto usando don o doña con su nombre, como don Carlos o doña María.",en:"Parents are addressed with great respect using 'don' or 'doña' with their first name, like Don Carlos or Doña María.",tts:"A los papás se les trata con mucho respeto usando don o doña con su nombre, como don Carlos o doña María."},
+    {es:"Elogiar la casa y la comida diciendo ¡qué casa tan acogedora! o ¡todo está delicioso! siempre deja una excelente impresión.",en:"Complimenting the home and food by saying 'what a welcoming house!' or 'everything is delicious!' always leaves a great impression.",tts:"Elogiar la casa y la comida diciendo ¡qué casa tan acogedora! o ¡todo está delicioso! siempre deja una excelente impresión."},
+    {es:"Cuando alguien es amable y simpático en Colombia, decimos: esa persona es muy querida y me cayó súper bien.",en:"When someone is kind and likable in Colombia, we say: 'that person is very sweet (querida) and I really liked them (me cayó súper bien).'",tts:"Cuando alguien es amable y simpático en Colombia, decimos: esa persona es muy querida y me cayó súper bien."}
+  ],questions:[{q:"¿Qué significa decir que alguien 'es muy querido/a' en Colombia?",choices:["Que es una persona muy amable, cálida y atenta","Que cuesta mucho dinero","Que vive muy lejos del centro"],answer:"Que es una persona muy amable, cálida y atenta"}]},
+  {id:"lectura-corrientazo",level:"A2",title:"El arte de pedir un corrientazo",lesson:"almuerzo-corrientazo",intro:"Decode the 4 parts of Colombia's famous weekday lunch special.",lines:[
+    {es:"Al mediodía en toda Colombia, el almuerzo del día se conoce con cariño como el corrientazo o el almuerzo ejecutivo.",en:"At noon all across Colombia, the daily lunch special is affectionately known as the 'corrientazo' or 'almuerzo ejecutivo'.",tts:"Al mediodía en toda Colombia, el almuerzo del día se conoce con cariño como el corrientazo o el almuerzo ejecutivo."},
+    {es:"Primero eliges entre sopa o fruta; después eliges el principio, que puede ser frijoles, lentejas, garbanzos o tajadas.",en:"First you choose between soup or fruit; next you choose the 'principio' (side), which can be beans, lentils, chickpeas, or plantains.",tts:"Primero eliges entre sopa o fruta; después eliges el principio, que puede ser frijoles, lentejas, garbanzos o tajadas."},
+    {es:"El plato fuerte viene con arroz, ensalada y una proteína como carne asada, pollo a la plancha o pescado.",en:"The main plate comes with rice, salad, and a protein like grilled beef, grilled chicken, or fish.",tts:"El plato fuerte viene con arroz, ensalada y una proteína como carne asada, pollo a la plancha o pescado."},
+    {es:"Y la bebida que acompaña el almuerzo se llama la sobremesa, que casi siempre es jugo natural o limonada de panela.",en:"And the drink that comes with lunch is called the 'sobremesa', which is almost always fresh fruit juice or panela lemonade.",tts:"Y la bebida que acompaña el almuerzo se llama la sobremesa, que casi siempre es jugo natural o limonada de panela."}
+  ],questions:[{q:"En un almuerzo colombiano, ¿qué es 'la sobremesa'?",choices:["La bebida que acompaña el almuerzo","La silla donde te sientas","La cuenta del restaurante"],answer:"La bebida que acompaña el almuerzo"}]},
+  {id:"lectura-cajero-sim",level:"A2",title:"Cajeros, tarjetas y SIM card en Colombia",lesson:"cajero-sim-tramites",intro:"Practical tips for ATMs, prepaid phone lines, and ID numbers in Colombia.",lines:[
+    {es:"Cuando necesitas sacar efectivo, lo más recomendable es usar un cajero automático dentro de un centro comercial o supermercado.",en:"When you need to withdraw cash, it is best to use an ATM inside a shopping mall or supermarket.",tts:"Cuando necesitas sacar efectivo, lo más recomendable es usar un cajero automático dentro de un centro comercial o supermercado."},
+    {es:"Para tener internet en la calle desde el primer día, puedes comprar una SIM card prepago de Claro, Movistar o Tigo.",en:"To have mobile internet on the street from day one, you can buy a prepaid SIM card from Claro, Movistar, or Tigo.",tts:"Para tener internet en la calle desde el primer día, puedes comprar una SIM card prepago de Claro, Movistar o Tigo."},
+    {es:"Solo necesitas tu pasaporte para registrar la línea y pedir una recarga o un paquete de datos en cualquier droguería o tienda.",en:"You only need your passport to register the line and ask for a top-up or data package at any pharmacy or shop.",tts:"Solo necesitas tu pasaporte para registrar la línea y pedir una recarga o un paquete de datos en cualquier droguería o tienda."},
+    {es:"Y en las cajas siempre te van a pedir el número de cédula o pasaporte para el registro de la compra.",en:"And at checkout counters they will always ask for your ID or passport number to register the purchase.",tts:"Y en las cajas siempre te van a pedir el número de cédula o pasaporte para el registro de la compra."}
+  ],questions:[{q:"¿Dónde es más seguro usar un cajero automático en las ciudades colombianas?",choices:["Dentro de un centro comercial o supermercado","En una esquina oscura a medianoche","En el bus intermunicipal"],answer:"Dentro de un centro comercial o supermercado"}]},
+  {id:"lectura-puentes-rumba",level:"B1",title:"Puentes festivos, salsa y alegría",lesson:"puentes-rumba-cultura",intro:"Why Colombia is famous for its long holiday weekends and musical culture.",lines:[
+    {es:"Colombia es uno de los países con más días festivos del mundo, y muchos se trasladan al lunes para formar un puente festivo.",en:"Colombia is one of the countries with the most public holidays in the world, and many move to Monday to create a long weekend ('puente festivo').",tts:"Colombia es uno de los países con más días festivos del mundo, y muchos se trasladan al lunes para formar un puente festivo."},
+    {es:"Por eso desde el jueves la pregunta favorita en la oficina o con amigos es: ¿Qué vas a hacer este puente?",en:"That's why starting Thursday the favorite question at the office or with friends is: 'What are you doing this long weekend?'",tts:"Por eso desde el jueves la pregunta favorita en la oficina o con amigos es: ¿Qué vas a hacer este puente?"},
+    {es:"En las noches de rumba nunca faltan la salsa caleña, el vallenato de la Costa, el merengue y el reggaetón de Medellín.",en:"On nights out dancing, Cali salsa, Caribbean vallenato, merengue, and Medellín reggaeton are always playing.",tts:"En las noches de rumba nunca faltan la salsa caleña, el vallenato de la Costa, el merengue y el reggaetón de Medellín."},
+    {es:"Y si alguien amanece con guayabo al día siguiente, el remedio tradicional es un buen caldo de costilla o una changua.",en:"And if someone wakes up with a hangover the next day, the traditional cure is a good beef rib broth or 'changua'.",tts:"Y si alguien amanece con guayabo al día siguiente, el remedio tradicional es un buen caldo de costilla o una changua."}
+  ],questions:[{q:"¿Qué es un 'puente festivo' en Colombia?",choices:["Un fin de semana largo con lunes festivo","Un puente peatonal sobre una autopista","Un plato típico con pescado"],answer:"Un fin de semana largo con lunes festivo"}]}
+);
+
+CONVERSATION_MISSIONS.push(
+  {id:"mision-citas-familia",title:"Saluda a los papás y haz un cumplido natural",scenario:"You arrive at your Colombian partner's or friend's family home for afternoon coffee (las onces). Greet the parents warmly and compliment their home.",prompt:"Saluda a los papás con calidez:",lesson:"citas-familia",models:[
+    {es:"Mucho gusto, don Hernán y doña Clara; me han hablado muchísimo de ustedes. ¡Qué casa tan acogedora tienen!",en:"Very nice to meet you, Mr. Hernán and Mrs. Clara; I've heard so much about you. What a welcoming home you have!",tts:"Mucho gusto, don Hernán y doña Clara; me han hablado muchísimo de ustedes. ¡Qué casa tan acogedora tienen!"},
+    {es:"Muchas gracias por la invitación a tomar las onces; todo se ve delicioso.",en:"Thank you so much for the invitation for afternoon coffee; everything looks delicious.",tts:"Muchas gracias por la invitación a tomar las onces; todo se ve delicioso."}
+  ]},
+  {id:"mision-corrientazo",title:"Pide tu almuerzo ejecutivo completo",scenario:"The server asks what you want for your weekday lunch special (sopa o fruta, principio, proteína, and sobremesa).",prompt:"Haz tu pedido completo como un local:",lesson:"almuerzo-corrientazo",models:[
+    {es:"Me regala el ejecutivo con sopa, de principio lentejas con tajadas, pechuga a la plancha y de sobremesa limonada natural.",en:"I'll have the lunch special with soup, lentils and plantains for the side, grilled chicken breast, and fresh lemonade for the drink.",tts:"Me regala el ejecutivo con sopa, de principio lentejas con tajadas, pechuga a la plancha y de sobremesa limonada natural."},
+    {es:"¿Será que me puede cambiar el arroz por una porción extra de ensalada, por favor?",en:"Could you swap the rice for an extra portion of salad, please?",tts:"¿Será que me puede cambiar el arroz por una porción extra de ensalada, por favor?"}
+  ]},
+  {id:"mision-cajero-sim",title:"Compra una SIM card y pregunta por un cajero",scenario:"You are at a mobile shop. Ask to activate a prepaid SIM card with your passport, add a 30,000-peso top-up, and ask where a safe ATM is.",prompt:"Habla con el asesor de la tienda:",lesson:"cajero-sim-tramites",models:[
+    {es:"Buenas tardes, ¿me colabora con una SIM card prepago y una recarga de treinta mil? Aquí tengo mi pasaporte.",en:"Good afternoon, could you help me with a prepaid SIM card and a 30,000-peso top-up? Here is my passport.",tts:"Buenas tardes, ¿me colabora con una SIM card prepago y una recarga de treinta mil? Aquí tengo mi pasaporte."},
+    {es:"Disculpe, ¿dónde queda un cajero automático seguro por acá cerca para sacar efectivo?",en:"Excuse me, where is a safe ATM nearby to withdraw cash?",tts:"Disculpe, ¿dónde queda un cajero automático seguro por acá cerca para sacar efectivo?"}
+  ]},
+  {id:"mision-puentes-rumba",title:"Arma plan para el puente festivo y la salsoteca",scenario:"It's Friday before a three-day holiday weekend (puente festivo). Ask your friend about their weekend plans and invite them to dance salsa tonight.",prompt:"Cuadra el plan del puente con tu amigo:",lesson:"puentes-rumba-cultura",models:[
+    {es:"¡Qué nota que este fin de semana es puente festivo! ¿Qué vas a hacer este puente? ¿Vamos hoy a una salsoteca?",en:"So awesome that this weekend is a holiday weekend! What are you doing this long weekend? Shall we go to a salsa club tonight?",tts:"¡Qué nota que este fin de semana es puente festivo! ¿Qué vas a hacer este puente? ¿Vamos hoy a una salsoteca?"},
+    {es:"Yo apenas estoy aprendiendo a bailar salsa, pero allá le cogemos el ritmo y brindamos con los amigos.",en:"I'm just learning to dance salsa, but we'll catch the rhythm there and toast with friends.",tts:"Yo apenas estoy aprendiendo a bailar salsa, pero allá le cogemos el ritmo y brindamos con los amigos."}
+  ]}
+);
+
+Object.assign(LESSON_CONTENT,{
+  "citas-familia":{
+    goal:{es:"Mucho gusto, me han hablado mucho de ustedes; ¡qué casa tan acogedora! Me cayeron súper bien.",en:"Nice to meet you, I've heard so much about you; what a welcoming home! I really liked them."},
+    words:[{es:"te queda súper bien",en:"it looks great on you"},{es:"¿te gustaría salir?",en:"would you like to go out?"},{es:"me cayeron súper bien",en:"I really liked them"},{es:"una persona muy querida",en:"a very sweet / kind person"},{es:"acogedor / acogedora",en:"cozy / welcoming"},{es:"don / doña + nombre",en:"respectful title for parents/elders"}],
+    phrases:[{en:"That color looks great on you!",es:"¡Ese color te queda súper bien!"},{en:"Would you like to go for a coffee on Friday?",es:"¿Te gustaría ir a tomar un café el viernes?"},{en:"What a welcoming home you have!",es:"¡Qué casa tan acogedora tienen!"},{en:"Your family is so sweet; I really liked them.",es:"Tu familia es muy querida; me cayeron súper bien."}]
+  },
+  "almuerzo-corrientazo":{
+    goal:{es:"Me regala el ejecutivo con sopa, de principio frijoles, pechuga a la plancha y de sobremesa limonada.",en:"I'll have the lunch special with soup, beans for the side, grilled chicken, and lemonade to drink."},
+    words:[{es:"el corrientazo / ejecutivo",en:"weekday daily lunch special"},{es:"el principio",en:"lunch side choice (beans/lentils/plantain)"},{es:"la sobremesa",en:"drink included with lunch"},{es:"a la plancha / asada",en:"grilled"},{es:"las onces / el algo",en:"afternoon coffee & snack"},{es:"el mecato",en:"snacks / treats between meals"}],
+    phrases:[{en:"What comes with today's lunch special?",es:"¿Qué trae hoy el almuerzo ejecutivo?"},{en:"With soup and beans for the side, please.",es:"Con sopa y de principio frijoles, por favor."},{en:"What drink comes with lunch today?",es:"¿Qué hay de sobremesa hoy?"},{en:"Let's have afternoon coffee with pandebono.",es:"Vamos a tomar las onces con pandebono."}]
+  },
+  "cajero-sim-tramites":{
+    goal:{es:"¿Me colabora con una recarga de treinta mil a Claro? ¿Y dónde hay un cajero automático seguro?",en:"Can you help me with a 30,000 top-up on Claro? And where is a safe ATM?"},
+    words:[{es:"el cajero automático",en:"ATM"},{es:"ahorros o corriente",en:"savings or checking account"},{es:"una recarga",en:"prepaid phone top-up"},{es:"la cédula / el pasaporte",en:"Colombian ID / passport"},{es:"sacar efectivo",en:"to withdraw cash"},{es:"la fotocopia",en:"photocopy"}],
+    phrases:[{en:"Where is a safe ATM nearby?",es:"¿Dónde queda un cajero automático seguro por acá?"},{en:"Can you do a 20,000-peso top-up to this number?",es:"¿Me hace una recarga de veinte mil a este número?"},{en:"Does my passport number work for you?",es:"¿Le sirve el número de mi pasaporte?"},{en:"Savings account, one installment, please.",es:"Cuenta de ahorros, a una sola cuota, por favor."}]
+  },
+  "puentes-rumba-cultura":{
+    goal:{es:"¿Qué vas a hacer este puente festivo? Esta noche vamos a rumbear y a bailar salsa.",en:"What are you doing this long weekend? Tonight we're going out partying and dancing salsa."},
+    words:[{es:"el puente festivo",en:"3-day holiday weekend"},{es:"rumbear / la rumba",en:"to party / nightlife"},{es:"la salsoteca",en:"salsa dance club"},{es:"una media de guaro",en:"half-bottle of aguardiente"},{es:"el guayabo",en:"hangover"},{es:"el caldo de costilla",en:"beef rib broth (hangover cure)"}],
+    phrases:[{en:"What are you doing this long holiday weekend?",es:"¿Qué vas a hacer este puente festivo?"},{en:"On Saturday night we're going out to a salsa club.",es:"El sábado por la noche vamos a una salsoteca."},{en:"Teach me the basic salsa step!",es:"¡Enséñame el paso básico de salsa!"},{en:"I have a hangover; I need a rib broth.",es:"Tengo guayabo; necesito un caldo de costilla."}]
+  }
+});
+
+Object.assign(LESSON_META,{
+  "citas-familia":{stage:"Speak More Naturally",difficulty:"Easy",prereq:"Empatía, reacciones y amistad",dialogue:"Citas, cumplidos y conocer a la familia",vocab:"familia",quizCat:"citas-familia",quizMode:"conversation",guideIds:["gustar","usted-tu-vos"],readingId:"lectura-citas-familia",missionId:"mision-citas-familia"},
+  "almuerzo-corrientazo":{stage:"Travel and Survival",difficulty:"Easy",prereq:"Panadería, tinto y jugos",dialogue:"Almuerzo ejecutivo, corrientazo y onces",vocab:"comida",quizCat:"corrientazo",quizMode:"conversation",guideIds:["cortesia-colombiana","usted-tu-vos"],readingId:"lectura-corrientazo",missionId:"mision-corrientazo"},
+  "cajero-sim-tramites":{stage:"Daily Life",difficulty:"Easy",prereq:"Nequi, datáfono y cuentas",dialogue:"Cajero automático, SIM card y trámites",vocab:"numeros",quizCat:"cajero-sim",quizMode:"conversation",guideIds:["cortesia-colombiana","por-para"],readingId:"lectura-cajero-sim",missionId:"mision-cajero-sim"},
+  "puentes-rumba-cultura":{stage:"Speak More Naturally",difficulty:"Easy",prereq:"En una fiesta",dialogue:"Puentes festivos, salsa y rumba",vocab:"colombianismos",quizCat:"puentes-rumba",quizMode:"conversation",guideIds:["futuro","gustar"],readingId:"lectura-puentes-rumba",missionId:"mision-puentes-rumba"}
+});
+
+Object.assign(SENTENCE_LADDERS,{
+  "citas-familia":{
+    title:"Give warm compliments, ask someone out, and greet Colombian parents",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Me encanta hablar contigo.",en:"I love talking with you."},
+      {tag:"2. + Invite out",es:"Me encanta hablar contigo; ¿salimos a tomar un café el viernes?",en:"I love talking with you; shall we go out for a coffee on Friday?"},
+      {tag:"3. + Greet parents",es:"Mucho gusto, don Hernán y doña Clara; me han hablado muchísimo de ustedes.",en:"Very nice to meet you, Mr. Hernán and Mrs. Clara; I've heard so much about you."},
+      {tag:"4. + Warm follow-up",es:"¡Qué casa tan acogedora tienen! Tus papás me cayeron súper bien; son unas personas muy queridas.",en:"What a welcoming home you have! I really liked your parents; they are such sweet people."}
+    ],
+    swaps:[
+      {label:"Natural compliment",es:"¡Uy, esa chaqueta te queda súper bien!",en:"Wow, that jacket looks great on you!"},
+      {label:"Get home safe",es:"Avísame por WhatsApp apenas llegues a la casa.",en:"Let me know on WhatsApp as soon as you get home."},
+      {label:"Thank for food",es:"Muchas gracias por el almuerzo, doña Clara; le quedó delicioso.",en:"Thank you very much for lunch, Mrs. Clara; it turned out delicious."}
+    ]
+  },
+  "almuerzo-corrientazo":{
+    title:"Order a full Colombian 'almuerzo ejecutivo / corrientazo' without freezing",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Qué trae hoy el ejecutivo?",en:"What comes with today's lunch special?"},
+      {tag:"2. + Sopa & principio",es:"Me regala el ejecutivo con sopa y de principio frijoles.",en:"I'll have the lunch special with soup and beans for the side."},
+      {tag:"3. + Proteína",es:"Con sopa, de principio frijoles con tajadas, y la pechuga a la plancha.",en:"With soup, beans and plantains for the side, and the grilled chicken breast."},
+      {tag:"4. + Sobremesa",es:"Buenas, veci, me regala el ejecutivo con sopa, frijoles, pechuga a la plancha y de sobremesa limonada de panela, por favor.",en:"Afternoon, neighbor, I'll have the lunch special with soup, beans, grilled chicken, and panela lemonade for the drink, please."}
+    ],
+    swaps:[
+      {label:"Swap rice for salad",es:"¿Me cambia el arroz por más ensalada y aguacate, porfa?",en:"Can you swap the rice for more salad and avocado, please?"},
+      {label:"Afternoon onces",es:"A las cuatro pasamos por unas onces con aguapanela y queso.",en:"At four let's stop by for afternoon coffee with aguapanela and cheese."},
+      {label:"Fried fish option",es:"Hoy quiero la mojarra frita con patacones y sopa de pescado.",en:"Today I want the fried tilapia with patacones and fish soup."}
+    ]
+  },
+  "cajero-sim-tramites":{
+    title:"Activate a prepaid SIM, top up data, and use ATMs safely",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Me colabora con una recarga?",en:"Could you help me with a phone top-up?"},
+      {tag:"2. + Carrier & amount",es:"Buenas, ¿me colabora con una recarga de treinta mil a Claro?",en:"Hi, could you help me with a 30,000-peso top-up to Claro?"},
+      {tag:"3. + Passport ID",es:"No tengo cédula todavía, pero aquí tengo el número de mi pasaporte.",en:"I don't have a Colombian ID yet, but here is my passport number."},
+      {tag:"4. + Safe ATM",es:"Muchas gracias; disculpe, ¿dónde queda un cajero automático seguro dentro de este centro comercial para sacar efectivo?",en:"Thank you very much; excuse me, where is a safe ATM inside this mall to withdraw cash?"}
+    ],
+    swaps:[
+      {label:"Savings or checking",es:"En el datáfono es cuenta de ahorros a una sola cuota.",en:"On the card terminal it's savings account in one installment."},
+      {label:"Prepaid SIM package",es:"¿Qué paquete prepago tiene con quince gigas por treinta días?",en:"What prepaid package do you have with 15 GB for 30 days?"},
+      {label:"Photocopy / print",es:"¿Dónde puedo imprimir este documento y sacar una fotocopia?",en:"Where can I print this document and make a photocopy?"}
+    ]
+  },
+  "puentes-rumba-cultura":{
+    title:"Make long-weekend ('puente') plans and talk about salsa and nightlife",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Qué vas a hacer este puente?",en:"What are you doing this long weekend?"},
+      {tag:"2. + Friday salsa plan",es:"¿Qué vas a hacer este puente festivo? ¿Vamos hoy a una salsoteca?",en:"What are you doing this long holiday weekend? Shall we go to a salsa club tonight?"},
+      {tag:"3. + Learning to dance",es:"Todavía estoy aprendiendo a bailar salsa, pero si me enseñas el paso, yo le hago.",en:"I'm still learning to dance salsa, but if you teach me the step, I'll go for it."},
+      {tag:"4. + Toast & hangover cure",es:"¡Salud por el puente festivo! Pero tomemos agua también para no amanecer mañana con guayabo.",en:"Cheers to the long weekend! But let's drink water too so we don't wake up with a hangover tomorrow."}
+    ],
+    swaps:[
+      {label:"Order guaro",es:"¿Pedimos una media de guaro con agua y limón para la mesa?",en:"Shall we order a half-bottle of aguardiente with water and lime for the table?"},
+      {label:"Hangover cure",es:"Para el guayabo vamos por un caldo de costilla bien caliente.",en:"For the hangover let's go get a piping hot beef rib broth."},
+      {label:"Travel on puente",es:"En puente festivo toca salir temprano por el trancón en el peaje.",en:"On a holiday weekend you have to leave early because of traffic at the toll."}
+    ]
+  }
+});
+
+/* 3. 6 More High-Frequency Colombianismos (72 total) */
+COLOMBIANISMOS.push(
+  {word:"Corrientazo / Ejecutivo",en:"Colombian weekday daily lunch special",region:"all",register:"Colombian · food & daily life",registerGroup:"everyday",usage:"Includes sopa or fruta, principio (beans/lentils/plantain), arroz, ensalada, proteína, and sobremesa (juice/lemonade).",example:"Vamos a almorzar un corrientazo casero aquí a la vuelta.",tts:"Vamos a almorzar un corrientazo casero aquí a la vuelta."},
+  {word:"Puente (festivo)",en:"Three-day holiday weekend (Monday off)",region:"all",register:"Colombian · culture",registerGroup:"everyday",usage:"Colombia moves most bank holidays to Mondays ('Ley Emiliani'), making '¿Qué vas a hacer este puente?' universal small talk.",example:"Este fin de semana hay puente festivo; vamos para Villa de Leyva.",tts:"Este fin de semana hay puente festivo; vamos para Villa de Leyva."},
+  {word:"Caer bien / Ser muy querido",en:"To make a great impression / Be very sweet & kind",region:"all",register:"Colombian · social",registerGroup:"everyday",usage:"'Me cayó súper bien' means you really liked someone; 'es muy querido/a' means someone is warm and kind-hearted.",example:"Tus amigos me cayeron súper bien; son muy queridos.",tts:"Tus amigos me cayeron súper bien; son muy queridos."},
+  {word:"Las onces / El algo / Mecato",en:"Afternoon coffee & snack (4–5 PM) / Treats",region:"all",register:"Colombian · food culture",registerGroup:"everyday",usage:"Called 'las onces' in Bogotá, 'el algo' in Medellín, and 'mecato' for snacks/pastries between meals.",example:"¿Tomamos las onces con un tintico y un pandebono?",tts:"¿Tomamos las onces con un tintico y un pandebono?"},
+  {word:"Rumbear / La rumba",en:"To party / go out dancing",region:"all",register:"Colombian · nightlife",registerGroup:"informal",usage:"In Colombia, 'ir de rumba' or 'rumbear' always centers on dancing (salsa, vallenato, merengue, reggaetón) with friends.",example:"El viernes por la noche vamos a rumbear en Provenza.",tts:"El viernes por la noche vamos a rumbear en Provenza."},
+  {word:"Guaro (Aguardiente)",en:"Anise-flavored Colombian spirit for toasting",region:"all",register:"Colombian · nightlife",registerGroup:"informal",usage:"Ordered by the bottle or half-bottle ('una media de guaro') and shared in small shot glasses at parties and concerts.",example:"Pidamos una media de guaro sin azúcar para brindar.",tts:"Pidamos una media de guaro sin azúcar para brindar."}
+);
+
+/* 4. 11th 3-Column Slot-Swapper Matrix: Citas, Cumplidos & Familia */
+SLOT_SWAP_MATRICES.push(
+  {
+    id:"citas-familia-matrix",
+    title:"❤️ Citas, Cumplidos & Familia",
+    sub:"Give warm compliments, invite someone out naturally, and connect with Colombian families",
+    col1Title:"1. Warm Opener",
+    col2Title:"2. Invitation or Compliment",
+    col3Title:"3. Friendly Close",
+    col1:[
+      {es:"Me encanta conversar contigo y quería saber si",en:"I love talking with you and wanted to see if"},
+      {es:"Mucho gusto en conocerlos; me alegra mucho que",en:"So nice to meet you all; I'm really glad that"},
+      {es:"¡Qué alegría verte hoy! Te quería decir que",en:"So great to see you today! I wanted to tell you that"},
+      {es:"Muchas gracias por la invitación a su casa;",en:"Thank you so much for the invitation to your home;"}
+    ],
+    col2:[
+      {es:"te gustaría salir a tomar un café o a cenar",en:"you'd like to go out for a coffee or dinner"},
+      {es:"podamos compartir este almuerzo en familia",en:"we can share this lunch together as a family"},
+      {es:"ese estilo te queda súper bien y me caes genial",en:"that style looks great on you and I really like your vibe"},
+      {es:"tienen un hogar súper acogedor y todo está delicioso",en:"you have such a welcoming home and everything is delicious"}
+    ],
+    col3:[
+      {es:"este viernes por la noche.",en:"this Friday evening."},
+      {es:"porque son unas personas muy queridas.",en:"because you are such sweet, kind people."},
+      {es:"cuando tengas un ratico libre.",en:"whenever you have a little free time."},
+      {es:"y me sentí como en mi propia casa.",en:"and I felt right at home."}
+    ]
+  }
+);
+
+/* 5. New Quiz Items for v95 Scenarios (Citas/Familia, Corrientazo, Cajero/SIM, Puentes/Rumba) */
+V60_CONVERSATION_QUIZ.push(
+  {kind:"reply",focus:"present",cat:"citas-familia",es:"Adelante, bienvenido a la casa; te presento a mis papás, don Hernán y doña Clara.",en:"Mucho gusto, don Hernán y doña Clara; ¡qué casa tan acogedora tienen!",tts:"Adelante, bienvenido a la casa; te presento a mis papás, don Hernán y doña Clara.",choices:["Mucho gusto, don Hernán y doña Clara; ¡qué casa tan acogedora tienen!","Cuenta de ahorros a una sola cuota, por favor.","¿Por cuál plataforma sale el bus para Medellín?","Se dañó la lavadora y está botando agua."]},
+  {kind:"meaning",focus:"past",cat:"citas-familia",es:"Tus papás me cayeron súper bien; son unas personas muy queridas.",en:"I really liked your parents; they are such sweet/kind people.",tts:"Tus papás me cayeron súper bien; son unas personas muy queridas.",choices:["I really liked your parents; they are such sweet/kind people.","Your parents live two blocks north of the traffic light.","I sent your parents a PDF on WhatsApp.","Your parents asked for a half-bottle of aguardiente."]},
+  {kind:"reply",focus:"present",cat:"corrientazo",es:"Buenas tardes, ¿con sopa o fruta? ¿Y qué principio le pongo al ejecutivo?",en:"Con sopa, por favor, y de principio frijoles con tajadas de maduro.",tts:"Buenas tardes, ¿con sopa o fruta? ¿Y qué principio le pongo al ejecutivo?",choices:["Con sopa, por favor, y de principio frijoles con tajadas de maduro.","Con la máquina número dos a los lados.","No soy alérgico a ningún medicamento.","Aquí tiene mi pasaporte para registrar la línea."]},
+  {kind:"meaning",focus:"present",cat:"corrientazo",es:"¿Qué hay de sobremesa hoy en el almuerzo ejecutivo?",en:"What drink comes with the lunch special today?",tts:"¿Qué hay de sobremesa hoy en el almuerzo ejecutivo?",choices:["What drink comes with the lunch special today?","How much is the monthly HOA fee?","Where is the baggage claim carousel?","How many sets do you have left on this machine?"]},
+  {kind:"reply",focus:"present",cat:"cajero-sim",es:"Para registrar la SIM card prepago necesito su número de cédula, por favor.",en:"Todavía no tengo cédula colombiana; ¿le sirve el número de mi pasaporte?",tts:"Para registrar la SIM card prepago necesito su número de cédula, por favor.",choices:["Todavía no tengo cédula colombiana; ¿le sirve el número de mi pasaporte?","En leche y bajito de azúcar, por favor.","De principio me regala lentejas.","Vamos suave para que no nos dé soroche."]},
+  {kind:"meaning",focus:"present",cat:"cajero-sim",es:"¿Me colabora con una recarga de treinta mil pesos a este número de Claro?",en:"Could you help me with a 30,000-peso top-up to this Claro number?",tts:"¿Me colabora con una recarga de treinta mil pesos a este número de Claro?",choices:["Could you help me with a 30,000-peso top-up to this Claro number?","Can you watch my suitcase while I use the restroom?","Is the water heater gas or electric?","Would you like soup or fruit with your lunch?"]},
+  {kind:"reply",focus:"future",cat:"puentes-rumba",es:"¡Por fin viernes! ¿Qué planes tienes para este puente festivo?",en:"Hoy vamos a una salsoteca y mañana salimos temprano para un pueblito.",tts:"¡Por fin viernes! ¿Qué planes tienes para este puente festivo?",choices:["Hoy vamos a una salsoteca y mañana salimos temprano para un pueblito.","Una tableta cada ocho horas después de comer.","Consumidor final sin factura electrónica.","Suba tres cuadras hacia los cerros."]},
+  {kind:"meaning",focus:"present",cat:"puentes-rumba",es:"¡Uy, qué guayabo tengo hoy! Vamos por un caldo de costilla.",en:"Oof, what a hangover I have today! Let's go get a beef rib broth.",tts:"¡Uy, qué guayabo tengo hoy! Vamos por un caldo de costilla.",choices:["Oof, what a hangover I have today! Let's go get a beef rib broth.","It's raining hard; let's wait under the roof until it lets up.","The ATM inside the shopping mall is much safer.","Can you swap the rice for more salad, please?"]}
+);
+
+V60_FILL_BLANK_QUIZ.push(
+  {kind:"blank",focus:"past",cat:"citas-familia",es:"Tus amigos me ___ súper bien; son unas personas muy queridas.",en:"cayeron",tts:"Tus amigos me cayeron súper bien; son unas personas muy queridas.",trans:"I really liked your friends; they are such sweet people.",choices:["cayeron","cobraron","aterrizaron","alquilaron"]},
+  {kind:"blank",focus:"present",cat:"corrientazo",es:"En el almuerzo ejecutivo, ¿qué desea tomar de ___: limonada o jugo de mora?",en:"sobremesa",tts:"En el almuerzo ejecutivo, ¿qué desea tomar de sobremesa: limonada o jugo de mora?",trans:"With the lunch special, what would you like to drink: lemonade or blackberry juice?",choices:["sobremesa","portería","cuadra","cédula"]},
+  {kind:"blank",focus:"present",cat:"corrientazo",es:"A las cuatro de la tarde vamos a la panadería a tomar las ___ con tintico.",en:"onces",tts:"A las cuatro de la tarde vamos a la panadería a tomar las onces con tintico.",trans:"At four in the afternoon let's go to the bakery for afternoon coffee/snack.",choices:["onces","cuotas","series","maletas"]},
+  {kind:"blank",focus:"present",cat:"cajero-sim",es:"¿Me hace una ___ de veinte mil pesos para tener datos en el celular?",en:"recarga",tts:"¿Me hace una recarga de veinte mil pesos para tener datos en el celular?",trans:"Can you do a 20,000-peso top-up so I have data on my phone?",choices:["recarga","almojábana","quebrada","salsoteca"]},
+  {kind:"blank",focus:"future",cat:"puentes-rumba",es:"Como el lunes es festivo, este ___ vamos a viajar a la finca.",en:"puente",tts:"Como el lunes es festivo, este puente vamos a viajar a la finca.",trans:"Since Monday is a holiday, this long weekend we're traveling to the country house.",choices:["puente","cajero","datáfono","calentador"]},
+  {kind:"blank",focus:"present",cat:"puentes-rumba",es:"El sábado por la noche vamos a ___ a una salsoteca muy buena.",en:"rumbear",tts:"El sábado por la noche vamos a rumbear a una salsoteca muy buena.",trans:"On Saturday night we're going out partying/dancing at a great salsa club.",choices:["rumbear","escampar","facturar","madrugar"]}
+);
+// ── V96.0 COLOMBIAN SPEAKING MASTERY (NT HEAVY + BATCH JOBS EXPANSION) ──────
+/* 1. Interactive "Choose Your Reply" Branching Roleplays (authored by NT Heavy)
+   2. Street-Speed Contractions & Ear Linker ("Cómo suena en la calle", authored by NT Heavy)
+   3. Trampas Colombianas — 12 Colombian False Friends & Listening Traps (via /ai/v1/jobs batch)
+   4. 4 New Real-World Colombian Scenarios (Lessons 65–68, Dialogues 55–58):
+      - Trampas colombianas: cancelar, provocar y qué pena
+      - Estratos, conjuntos cerrados y barrios
+      - Odontología, óptica y medicina prepagada (EPS)
+      - Migración Colombia, cédula de extranjería y bancos */
+
+const BRANCHING_ROLEPLAYS = [
+  {
+    "id": "rp-uber",
+    "title": "🚕 Uber en la portería",
+    "sub": "Find your driver outside a residential building and confirm the ride.",
+    "turns": [
+      {
+        "npcEs": "Hola, soy su conductor. Estoy frente a la portería. ¿Ya va a bajar?",
+        "npcEn": "Hi, I'm your driver. I'm in front of the building's security entrance. Are you coming down?",
+        "options": [
+          {
+            "style": "🙏 Cortesía (Usted)",
+            "es": "Sí, señor. Ya bajo. ¿Me espera un momentico, por favor?",
+            "en": "Yes, sir. I'm coming down. Could you wait just a moment, please?",
+            "replyEs": "Claro, con mucho gusto. Aquí lo espero.",
+            "replyEn": "Of course, happy to. I'll wait here.",
+            "coach": "Using usted and momentico makes a brief request sound respectful and warm."
+          },
+          {
+            "style": "🇨🇴 Callejero / Local",
+            "es": "¡Listo! Ya voy bajando. Regáleme un minutico.",
+            "en": "Great! I'm heading down now. Give me just a minute.",
+            "replyEs": "De una, aquí estoy pendiente.",
+            "replyEn": "Sure thing, I'll keep an eye out here.",
+            "coach": "Regáleme un minutico is a common Colombian way to ask for a little time; it is not a request for a gift."
+          },
+          {
+            "style": "🔄 Pivot / Aclarar",
+            "es": "¿Está en la entrada principal o en la de visitantes?",
+            "en": "Are you at the main entrance or the visitors' entrance?",
+            "replyEs": "En la de visitantes, al lado de la talanquera.",
+            "replyEn": "At the visitors' entrance, next to the vehicle barrier.",
+            "coach": "Buildings may have several entrances, and talanquera commonly refers to a vehicle access barrier."
+          }
+        ]
+      },
+      {
+        "npcEs": "¿Va para la carrera quince con calle ochenta y cinco?",
+        "npcEn": "Are you going to Carrera 15 at Calle 85?",
+        "options": [
+          {
+            "style": "🙏 Cortesía (Usted)",
+            "es": "Sí, esa es la dirección. ¿Me confirma la placa antes de subir, por favor?",
+            "en": "Yes, that's the address. Could you confirm the license plate before I get in, please?",
+            "replyEs": "Claro, termina en cuatro, siete, dos. Revise que coincida con la aplicación.",
+            "replyEn": "Of course, it ends in four, seven, two. Check that it matches the app.",
+            "coach": "Confirming the plate is a practical safety step, and me confirma sounds courteous."
+          },
+          {
+            "style": "🇨🇴 Callejero / Local",
+            "es": "Sí, ahí es. Ya reviso la placa y me subo.",
+            "en": "Yes, that's the place. I'll check the plate and get in.",
+            "replyEs": "Listo, sin afán. Aquí lo espero.",
+            "replyEn": "All right, no rush. I'll wait here.",
+            "coach": "Ahí es and listo are natural everyday confirmations; sin afán means there is no need to hurry."
+          },
+          {
+            "style": "🔄 Pivot / Aclarar",
+            "es": "Sí, pero la entrada queda por la ochenta y cinco. ¿Podemos llegar por ese lado?",
+            "en": "Yes, but the entrance is on 85th Street. Can we arrive on that side?",
+            "replyEs": "Claro, si la vía lo permite, lo dejo por esa entrada.",
+            "replyEn": "Of course, if the road allows it, I'll drop you at that entrance.",
+            "coach": "Once the street type is clear, locals often shorten calle ochenta y cinco to la ochenta y cinco."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rp-panaderia",
+    "title": "🥐 Pan calientico en la panadería",
+    "sub": "Order fresh warm bread and juice at a neighborhood bakery.",
+    "turns": [
+      {
+        "npcEs": "¡Buenas! Acaba de salir el pan del horno. ¿Qué le provoca?",
+        "npcEn": "Hello! The bread just came out of the oven. What sounds good?",
+        "options": [
+          {
+            "style": "🙏 Cortesía (Usted)",
+            "es": "Buenos días. ¿Me hace el favor de darme dos panes de queso calienticos?",
+            "en": "Good morning. Could you please give me two warm cheese breads?",
+            "replyEs": "Con mucho gusto. Estos están recién salidos.",
+            "replyEn": "With pleasure. These just came out.",
+            "coach": "¿Me hace el favor de…? is a familiar Colombian service request, and calienticos adds warmth to the interaction."
+          },
+          {
+            "style": "🇨🇴 Callejero / Local",
+            "es": "¡Uy, qué rico huele! Regáleme dos panes de queso de esos calienticos.",
+            "en": "Wow, that smells delicious! Could I get two of those warm cheese breads?",
+            "replyEs": "¡Claro! Le escojo dos bien fresquitos.",
+            "replyEn": "Of course! I'll pick out two really fresh ones for you.",
+            "coach": "Regáleme commonly means 'I'd like' when ordering in Colombia; you are still expected to pay."
+          },
+          {
+            "style": "🔄 Pivot / Aclarar",
+            "es": "¿Cuáles están recién hechos? Quisiera algo con queso.",
+            "en": "Which ones are freshly made? I'd like something with cheese.",
+            "replyEs": "Los panes de queso y las almojábanas acaban de salir.",
+            "replyEn": "The cheese breads and almojábanas just came out.",
+            "coach": "Asking what is recién hecho helps you find the freshest batch without needing to know every bread name."
+          }
+        ]
+      },
+      {
+        "npcEs": "¿Y para tomar? Hay jugo de naranja y de mora. ¿Es para acá o para llevar?",
+        "npcEn": "And to drink? We have orange juice and blackberry juice. Is it for here or to go?",
+        "options": [
+          {
+            "style": "🙏 Cortesía (Usted)",
+            "es": "Un jugo de naranja, por favor. Para tomar acá. ¿Me lo puede servir sin hielo?",
+            "en": "An orange juice, please. To have here. Could you serve it without ice?",
+            "replyEs": "Sí, claro. Se lo llevo a la mesa sin hielo.",
+            "replyEn": "Yes, of course. I'll bring it to your table without ice.",
+            "coach": "Para tomar acá clearly identifies dine-in service, and me lo puede… politely introduces a preference."
+          },
+          {
+            "style": "🇨🇴 Callejero / Local",
+            "es": "Uno de mora en agua, porfa, y todo para llevar.",
+            "en": "A blackberry juice made with water, please, and everything to go.",
+            "replyEs": "Listo, ya le empaco el pan y le preparo el juguito.",
+            "replyEn": "Sure, I'll pack your bread and make your juice.",
+            "coach": "Many Colombian fruit juices can be made en agua or en leche; porfa is a friendly informal 'please.'"
+          },
+          {
+            "style": "🔄 Pivot / Aclarar",
+            "es": "Para llevar. ¿El de mora lo preparan al momento? ¿Puede ser sin azúcar?",
+            "en": "To go. Do you make the blackberry juice to order? Can it be without sugar?",
+            "replyEs": "Sí, lo preparamos al momento y se lo hacemos sin azúcar.",
+            "replyEn": "Yes, we make it to order, and we can make yours without sugar.",
+            "coach": "Checking whether juice is made al momento helps you find out whether sweetness can be adjusted."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rp-airbnb",
+    "title": "🔑 Llegada al apartamento",
+    "sub": "Check into your rental and ask how the building and utilities work.",
+    "turns": [
+      {
+        "npcEs": "Bienvenido. Para registrarlo en portería, ¿me muestra su documento, por favor?",
+        "npcEn": "Welcome. To register you with building security, could you show me your ID, please?",
+        "options": [
+          {
+            "style": "🙏 Cortesía (Usted)",
+            "es": "Claro, aquí tiene mi pasaporte. ¿Necesita algo más para el registro?",
+            "en": "Of course, here's my passport. Do you need anything else for registration?",
+            "replyEs": "Gracias. Solo confirmar su nombre y las fechas de la reserva.",
+            "replyEn": "Thank you. I just need to confirm your name and reservation dates.",
+            "coach": "Aquí tiene is a respectful way to hand someone a document without sounding stiff."
+          },
+          {
+            "style": "🇨🇴 Callejero / Local",
+            "es": "¡Claro que sí! Ya se lo muestro. ¿Con eso quedamos listos?",
+            "en": "Absolutely! I'll show it to you now. Does that take care of everything?",
+            "replyEs": "Sí, con eso queda registrado. Ya le entrego las llaves.",
+            "replyEn": "Yes, that gets you registered. I'll give you the keys now.",
+            "coach": "¿Con eso quedamos listos? is a friendly way to check whether a practical task is complete."
+          },
+          {
+            "style": "🔄 Pivot / Aclarar",
+            "es": "Claro. Antes de subir, ¿me explica cómo entro si regreso tarde?",
+            "en": "Of course. Before I go up, could you explain how to get in if I return late?",
+            "replyEs": "Hay portero las veinticuatro horas. Le dice su nombre y el número del apartamento.",
+            "replyEn": "There's a security attendant around the clock. Tell them your name and apartment number.",
+            "coach": "Ask about the actual entry procedure rather than assuming every building uses a keypad or self-check-in."
+          }
+        ]
+      },
+      {
+        "npcEs": "Esta es la clave del wifi. Los servicios están incluidos. ¿Tiene alguna pregunta?",
+        "npcEn": "Here's the Wi-Fi password. Utilities are included. Do you have any questions?",
+        "options": [
+          {
+            "style": "🙏 Cortesía (Usted)",
+            "es": "Muchas gracias. ¿Me explica cómo funciona el agua caliente y dónde se saca la basura?",
+            "en": "Thank you very much. Could you explain how the hot water works and where to take the trash?",
+            "replyEs": "Claro. La ducha tiene calentador a gas y el cuarto de basuras está en el sótano.",
+            "replyEn": "Of course. The shower has a gas water heater, and the trash room is in the basement.",
+            "coach": "Los servicios often means utilities in housing contexts; asking about hot water is useful because systems vary."
+          },
+          {
+            "style": "🇨🇴 Callejero / Local",
+            "es": "¡Buenísimo! ¿Y si se va la luz o falla el internet, a quién le escribo?",
+            "en": "Great! And if the power goes out or the internet stops working, who should I message?",
+            "replyEs": "Me escribe por la aplicación y yo le ayudo.",
+            "replyEn": "Message me through the app, and I'll help you.",
+            "coach": "Se va la luz is the everyday expression for a power outage, and escribirle a alguien can mean messaging them."
+          },
+          {
+            "style": "🔄 Pivot / Aclarar",
+            "es": "Cuando dice servicios incluidos, ¿se refiere al agua, la luz, el gas y el internet?",
+            "en": "When you say utilities are included, do you mean water, electricity, gas, and internet?",
+            "replyEs": "Sí, esos cuatro están incluidos. El aseo adicional se cobra aparte.",
+            "replyEn": "Yes, those four are included. Extra cleaning is charged separately.",
+            "coach": "Listing each service avoids ambiguity; aseo can refer to cleaning rather than a utility."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rp-cuenta",
+    "title": "💳 La cuenta: datáfono o Nequi",
+    "sub": "Handle the optional service charge and pay by card or Nequi.",
+    "turns": [
+      {
+        "npcEs": "Aquí tiene la cuenta. ¿Desea incluir el diez por ciento de servicio voluntario?",
+        "npcEn": "Here's your bill. Would you like to include the voluntary ten percent service charge?",
+        "options": [
+          {
+            "style": "🙏 Cortesía (Usted)",
+            "es": "Sí, por favor, inclúyalo. ¿Me trae el datáfono?",
+            "en": "Yes, please include it. Could you bring me the card terminal?",
+            "replyEs": "Con mucho gusto. Ya se lo traigo.",
+            "replyEn": "With pleasure. I'll bring it right over.",
+            "coach": "Datáfono is the usual Colombian word for a card terminal; the suggested service charge is voluntary."
+          },
+          {
+            "style": "🇨🇴 Callejero / Local",
+            "es": "Sí, de una, con el servicio. ¿Reciben Nequi?",
+            "en": "Yes, absolutely, include the service charge. Do you take Nequi?",
+            "replyEs": "Sí, claro. Puede pagar por Nequi o con tarjeta.",
+            "replyEn": "Yes, of course. You can pay with Nequi or by card.",
+            "coach": "De una gives an upbeat confirmation, while ¿reciben Nequi? checks whether the restaurant accepts that payment method."
+          },
+          {
+            "style": "🔄 Pivot / Aclarar",
+            "es": "Por ahora, sin el servicio, por favor. ¿Me confirma el total?",
+            "en": "Without the service charge for now, please. Could you confirm the total?",
+            "replyEs": "Claro, no hay problema. Sin servicio son sesenta mil pesos.",
+            "replyEn": "Of course, no problem. Without the service charge, it's sixty thousand pesos.",
+            "coach": "You can decline a voluntary service charge politely without giving a justification."
+          }
+        ]
+      },
+      {
+        "npcEs": "Si paga con tarjeta de crédito, ¿a cuántas cuotas? Si prefiere Nequi, le muestro el QR.",
+        "npcEn": "If you're paying by credit card, how many installments? If you prefer Nequi, I'll show you the QR code.",
+        "options": [
+          {
+            "style": "🙏 Cortesía (Usted)",
+            "es": "Con tarjeta de crédito, a una cuota, por favor. ¿Me permite revisar el valor?",
+            "en": "By credit card, in one installment, please. May I check the amount?",
+            "replyEs": "Claro. Aquí puede ver el total antes de pagar.",
+            "replyEn": "Of course. You can see the total here before paying.",
+            "coach": "A una cuota requests a single installment; interest and foreign-card handling depend on your issuer and the terminal."
+          },
+          {
+            "style": "🇨🇴 Callejero / Local",
+            "es": "Por Nequi, de una. Muéstreme el QR y ya le confirmo.",
+            "en": "Nequi it is. Show me the QR code, and I'll confirm once it's sent.",
+            "replyEs": "Listo, aquí está. Verifique el nombre del negocio antes de confirmar.",
+            "replyEn": "Great, here it is. Check the business name before confirming.",
+            "coach": "This suits someone with an active Nequi account; verify the recipient and amount before sending."
+          },
+          {
+            "style": "🔄 Pivot / Aclarar",
+            "es": "Mi tarjeta es extranjera. ¿Podemos intentar a una cuota?",
+            "en": "My card is foreign. Can we try one installment?",
+            "replyEs": "Claro, intentemos. Si no aparece esa opción, revisamos qué permite el datáfono.",
+            "replyEn": "Of course, let's try. If that option doesn't appear, we'll check what the terminal allows.",
+            "coach": "Foreign cards may not support local installment options, so asking to try avoids assuming they will."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rp-familia",
+    "title": "☕ Onces con la familia",
+    "sub": "Meet your Colombian partner's parents over afternoon drinks and snacks.",
+    "turns": [
+      {
+        "npcEs": "¡Qué gusto conocerle! Siga, está en su casa. ¿Le provoca un tintico o un chocolate para las onces?",
+        "npcEn": "It's lovely to meet you! Come in, make yourself at home. Would you like a black coffee or hot chocolate for our afternoon snack?",
+        "options": [
+          {
+            "style": "🙏 Cortesía (Usted)",
+            "es": "Mucho gusto. Muchas gracias por recibirme. Un chocolate estaría perfecto, si es tan amable.",
+            "en": "It's a pleasure to meet you. Thank you so much for having me. A hot chocolate would be perfect, if you don't mind.",
+            "replyEs": "Con mucho gusto. Ya se lo sirvo con una almojábana.",
+            "replyEn": "With pleasure. I'll serve it with an almojábana.",
+            "coach": "Thanking your hosts and starting with usted is a respectful default; follow their lead if they prefer another form."
+          },
+          {
+            "style": "🇨🇴 Callejero / Local",
+            "es": "¡Qué gusto! Gracias por invitarme. Un tintico me cae de maravilla.",
+            "en": "So nice to meet you! Thanks for inviting me. A little black coffee sounds wonderful.",
+            "replyEs": "¡Claro que sí! Siéntese, que ya sale el café.",
+            "replyEn": "Absolutely! Have a seat; the coffee will be ready in a moment.",
+            "coach": "In Colombia, a tinto is black coffee, not red wine; tintico makes the offer or request sound affectionate."
+          },
+          {
+            "style": "🔄 Pivot / Aclarar",
+            "es": "Muchas gracias. No tomo café; ¿será que me puede dar una aromática?",
+            "en": "Thank you very much. I don't drink coffee; could I have an herbal tea?",
+            "replyEs": "Por supuesto. Tengo de hierbabuena y de manzanilla.",
+            "replyEn": "Of course. I have mint and chamomile.",
+            "coach": "¿Será que…? softens a request, and an aromática is an herbal or fruit infusion."
+          }
+        ]
+      },
+      {
+        "npcEs": "Cuéntenos, ¿cómo se han sentido en Colombia? ¿Ya han podido pasear un poquito?",
+        "npcEn": "Tell us, how have you both been finding Colombia? Have you had a chance to explore a little?",
+        "options": [
+          {
+            "style": "🙏 Cortesía (Usted)",
+            "es": "Nos hemos sentido muy bien, gracias. ¿Usted qué lugar nos recomendaría conocer?",
+            "en": "We've felt very welcome, thank you. What place would you recommend we visit?",
+            "replyEs": "Les recomendaría Villa de Leyva. Es muy bonito para ir con tiempo.",
+            "replyEn": "I'd recommend Villa de Leyva. It's lovely if you have time to explore.",
+            "coach": "A sincere answer followed by a question invites your host into the conversation without requiring exaggerated praise."
+          },
+          {
+            "style": "🇨🇴 Callejero / Local",
+            "es": "¡Muy rico todo! Hemos paseado poquito, pero ahí vamos. ¿Qué plan nos recomiendan?",
+            "en": "It's all been lovely! We haven't explored much yet, but we're getting there. What outing would you recommend?",
+            "replyEs": "Un paseo por un pueblito les puede gustar. Les mostramos unas fotos.",
+            "replyEn": "You might enjoy visiting a small town. We'll show you some photos.",
+            "coach": "Rico can describe a pleasant experience, not just food; un plan can mean an outing or activity."
+          },
+          {
+            "style": "🔄 Pivot / Aclarar",
+            "es": "Todavía estamos conociendo. Y ustedes, ¿siempre han vivido en esta ciudad?",
+            "en": "We're still getting to know the place. And have you always lived in this city?",
+            "replyEs": "No, somos de Boyacá, pero llevamos muchos años acá.",
+            "replyEn": "No, we're from Boyacá, but we've lived here for many years.",
+            "coach": "A gentle question about their background keeps the exchange reciprocal without making assumptions about their hometown."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rp-puente",
+    "title": "💃 Viernes de puente y salsoteca",
+    "sub": "Make Friday dance plans and coordinate a holiday-weekend outing.",
+    "turns": [
+      {
+        "npcEs": "¿Qué va a hacer este viernes? Como el lunes es festivo, tenemos puente. ¿Se anima a ir a una salsoteca?",
+        "npcEn": "What are you doing this Friday? Since Monday is a public holiday, we have a long weekend. Are you up for going to a salsa club?",
+        "options": [
+          {
+            "style": "🙏 Cortesía (Usted)",
+            "es": "Sí, muchas gracias por invitarme. ¿A qué hora le parece que nos encontremos?",
+            "en": "Yes, thank you very much for inviting me. What time would you like us to meet?",
+            "replyEs": "A las ocho y media estaría bien, así llegamos temprano.",
+            "replyEn": "Eight thirty would be good, so we get there early.",
+            "coach": "Usted can be friendly as well as formal in Colombia; its use among friends varies by region and person."
+          },
+          {
+            "style": "🇨🇴 Callejero / Local",
+            "es": "¡De una, me le mido! Hace rato quiero salir a bailar.",
+            "en": "Absolutely, I'm in! I've been wanting to go dancing for a while.",
+            "replyEs": "¡Eso! Entonces vamos armando el parche.",
+            "replyEn": "That's the spirit! Let's start getting the group together.",
+            "coach": "Me le mido means you're willing to give something a go; el parche can refer to the group you're hanging out with."
+          },
+          {
+            "style": "🔄 Pivot / Aclarar",
+            "es": "Me suena, pero bailo poquito. ¿El lugar sirve para principiantes?",
+            "en": "Sounds good, but I don't dance much. Is the place suitable for beginners?",
+            "replyEs": "Sí, vamos a pasarla bueno. No tiene que ser experto.",
+            "replyEn": "Yes, we're going to have a good time. You don't have to be an expert.",
+            "coach": "Me suena expresses interest without fully committing, and bailo poquito modestly signals your comfort level."
+          }
+        ]
+      },
+      {
+        "npcEs": "Entonces, ¿nos vemos allá el viernes? Y para el puente, ¿armamos un paseo el domingo?",
+        "npcEn": "So, shall we meet there on Friday? And for the long weekend, shall we plan an outing on Sunday?",
+        "options": [
+          {
+            "style": "🙏 Cortesía (Usted)",
+            "es": "Me parece muy bien. ¿Me comparte la ubicación y me cuenta cuánto debemos presupuestar para cada plan?",
+            "en": "That sounds very good. Could you send me the location and tell me how much we should budget for each outing?",
+            "replyEs": "Claro. Le mando la ubicación y averiguo el cover y los gastos del paseo.",
+            "replyEn": "Of course. I'll send you the location and check the club's cover charge and the outing costs.",
+            "coach": "Asking about the budget is practical; cover is commonly used for a venue's entrance charge."
+          },
+          {
+            "style": "🇨🇴 Callejero / Local",
+            "es": "¡Listo! Nos pillamos allá el viernes, y el domingo salimos tempranito para evitar el trancón.",
+            "en": "Great! See you there Friday, and on Sunday we'll leave nice and early to avoid traffic.",
+            "replyEs": "De una. Armamos un grupo y cuadramos quién lleva carro.",
+            "replyEn": "Absolutely. We'll make a group chat and work out who's driving.",
+            "coach": "Nos pillamos is an informal 'see you,' cuadrar means to arrange, and trancón means a traffic jam."
+          },
+          {
+            "style": "🔄 Pivot / Aclarar",
+            "es": "El viernes sí puedo; lo del domingo se lo confirmo mañana. ¿Hay que reservar en la salsoteca?",
+            "en": "I can do Friday; I'll confirm Sunday tomorrow. Do we need a reservation at the salsa club?",
+            "replyEs": "Perfecto. Para el viernes voy a preguntar si necesitamos reserva.",
+            "replyEn": "Perfect. I'll ask whether we need a reservation for Friday.",
+            "coach": "Confirming one plan while leaving another pending sets a clear boundary without sounding dismissive."
+          }
+        ]
+      }
+    ]
+  }
+];
+
+const STREET_EAR_LINKER = [
+  {
+    "id": "ear1",
+    "context": "🚕 Asking where someone is going",
+    "carefulEs": "¿Para dónde va?",
+    "streetEs": "¿Pa' dónde va?",
+    "phoneticHint": "pah DOHN-deh bah",
+    "en": "Where are you going?",
+    "tip": "In casual Colombian speech, para often becomes pa'; this is an informal reduction, not a requirement."
+  },
+  {
+    "id": "ear2",
+    "context": "🥐 Taking a bakery order to go",
+    "carefulEs": "Para llevar, por favor.",
+    "streetEs": "Pa' llevar, por favor.",
+    "phoneticHint": "pah yeh-BAHR por fah-BOHR",
+    "en": "To go, please.",
+    "tip": "The reduced pa' links directly into llevar, while por favor can remain fully pronounced."
+  },
+  {
+    "id": "ear3",
+    "context": "🚪 Saying you are on your way out",
+    "carefulEs": "Ya voy a salir.",
+    "streetEs": "Ya voya salir.",
+    "phoneticHint": "yah BOY-ah sah-LEER",
+    "en": "I'm about to head out.",
+    "tip": "Voy a flows together as voya in connected speech; the sound-spelling here is a listening aid, not standard writing."
+  },
+  {
+    "id": "ear4",
+    "context": "🔑 Finding out whether someone has arrived",
+    "carefulEs": "¿Está en la portería?",
+    "streetEs": "¿Estáen la portería?",
+    "phoneticHint": "eh-STAH-ehn lah por-teh-REE-ah",
+    "en": "Are you at the building's security entrance?",
+    "tip": "The vowels at the está en boundary connect smoothly without the pause that written spaces might suggest."
+  },
+  {
+    "id": "ear5",
+    "context": "☕ Accepting a coffee",
+    "carefulEs": "Me da un tinto, por favor.",
+    "streetEs": "Me daun tinto, por favor.",
+    "phoneticHint": "meh dah-oon TEEN-toh por fah-BOHR",
+    "en": "A black coffee, please.",
+    "tip": "Da un often runs together in one rhythmic stretch, with both vowel qualities still potentially audible."
+  },
+  {
+    "id": "ear6",
+    "context": "💳 Choosing a single credit-card installment",
+    "carefulEs": "A una cuota, por favor.",
+    "streetEs": "Auna cuota, por favor.",
+    "phoneticHint": "ah-OO-nah KWOH-tah por fah-BOHR",
+    "en": "In one installment, please.",
+    "tip": "A una links without a break, making the payment phrase sound like one short unit."
+  },
+  {
+    "id": "ear7",
+    "context": "🍽️ Asking for the bill",
+    "carefulEs": "¿Me trae la cuenta, por favor?",
+    "streetEs": "¿Me trae la cuenta, porfa?",
+    "phoneticHint": "meh TRAH-eh lah KWEHN-tah POR-fah",
+    "en": "Could you bring me the bill, please?",
+    "tip": "Porfa is a common informal shortening of por favor in Colombia and elsewhere in the Spanish-speaking world."
+  },
+  {
+    "id": "ear8",
+    "context": "👨‍👩‍👧 Explaining who you are meeting",
+    "carefulEs": "Voy con mis amigos.",
+    "streetEs": "Voy con mi-samigos.",
+    "phoneticHint": "boy kohn mee-sah-MEE-gohs",
+    "en": "I'm going with my friends.",
+    "tip": "When retained, the final s in mis links to the following vowel in amigos; s pronunciation varies across Colombian regions."
+  },
+  {
+    "id": "ear9",
+    "context": "💃 Suggesting dancing",
+    "carefulEs": "Vamos a bailar.",
+    "streetEs": "Vamo-sa bailar.",
+    "phoneticHint": "BAH-moh-sah bai-LAHR",
+    "en": "Let's go dancing.",
+    "tip": "With the s retained, vamos a is heard as va-mo-sa because the final consonant links to the next vowel."
+  },
+  {
+    "id": "ear10",
+    "context": "📍 Saying you are outside",
+    "carefulEs": "Estoy en la entrada.",
+    "streetEs": "Estoyen laentrada.",
+    "phoneticHint": "eh-STOY-ehn lah-ehn-TRAH-dah",
+    "en": "I'm at the entrance.",
+    "tip": "Estoy en and la entrada flow across word boundaries, so listen for stress and meaning rather than pauses between words."
+  }
+];
+
+const TRAMPAS_COLOMBIANAS = [
+  {
+    "trap": "Cancelar la cuenta",
+    "wrongGuess": "To cancel the account or bill",
+    "realMeaning": "To pay or settle the bill",
+    "es": "Ya terminamos de comer; ¿podemos cancelar la cuenta con tarjeta, por favor?",
+    "en": "We’ve finished eating; can we pay the bill by card, please?",
+    "tip": "In Colombia, cancelar una cuenta usually means paying it, especially at a restaurant or store."
+  },
+  {
+    "trap": "¿Qué te provoca?",
+    "wrongGuess": "What is provoking or making you angry?",
+    "realMeaning": "What do you feel like eating or drinking?",
+    "es": "¿Qué te provoca para el almuerzo: una bandeja paisa o una sopa?",
+    "en": "What do you feel like having for lunch: a bandeja paisa or a soup?",
+    "tip": "The phrase commonly asks about a craving or preference for food and drinks."
+  },
+  {
+    "trap": "¡Qué pena con usted!",
+    "wrongGuess": "I feel deeply ashamed in front of you",
+    "realMeaning": "Excuse me, sorry to bother you, or I’m sorry",
+    "es": "¡Qué pena con usted! ¿Me podría repetir la dirección?",
+    "en": "Excuse me! Could you repeat the address?",
+    "tip": "Pena is often a polite way to soften an interruption, request, or apology."
+  },
+  {
+    "trap": "¿Me regala...?",
+    "wrongGuess": "Will you give me this for free?",
+    "realMeaning": "Can I have or buy this, please?",
+    "es": "¿Me regala un tinto y una empanada, por favor?",
+    "en": "Could I have a black coffee and an empanada, please?",
+    "tip": "At a Colombian counter, regáleme or ¿me regala...? is a polite way to order; it does not normally imply a free item."
+  },
+  {
+    "trap": "Ahorita",
+    "wrongGuess": "Right this second",
+    "realMeaning": "In a little while, later, or soon",
+    "es": "Ahorita voy a su oficina; estoy terminando este informe.",
+    "en": "I’ll come to your office in a little while; I’m finishing this report.",
+    "tip": "Its timing is flexible and depends on context; it often means soon or later rather than immediately."
+  },
+  {
+    "trap": "¿Señor? / ¿Señora? with rising intonation",
+    "wrongGuess": "Yes, sir or yes, ma’am",
+    "realMeaning": "Pardon? or What did you say?",
+    "es": "—La cita es mañana a las ocho. —¿Señor? No le alcancé a oír.",
+    "en": "—The appointment is tomorrow at eight. —Pardon? I didn’t quite hear you.",
+    "tip": "With rising intonation after not hearing someone, the title functions as a polite request for repetition."
+  },
+  {
+    "trap": "Un tinto",
+    "wrongGuess": "A red wine",
+    "realMeaning": "A small black coffee; red wine is called vino tinto",
+    "es": "Para empezar el día, me tomé un tinto en la cafetería de la esquina.",
+    "en": "To start the day, I had a small black coffee at the café on the corner.",
+    "tip": "In Colombia, ordering un tinto by itself normally means coffee, not wine."
+  },
+  {
+    "trap": "Un perico",
+    "wrongGuess": "A parrot",
+    "realMeaning": "In a café or bakery, it can mean a small coffee with milk or scrambled eggs with tomato and onion, depending on the context",
+    "es": "En la panadería pedí un perico y dos panes de bono para desayunar.",
+    "en": "At the bakery, I ordered a small coffee with milk and two cheese breads for breakfast.",
+    "tip": "The food-and-drink context tells you whether perico means coffee with milk or scrambled eggs."
+  },
+  {
+    "trap": "Coger el bus / coger confianza",
+    "wrongGuess": "A vulgar sexual expression, or an unusually blunt way to say take or gain",
+    "realMeaning": "A completely normal everyday way in Colombia to take transportation or gain confidence",
+    "es": "Voy a coger el bus antes de que se llene, y después espero coger confianza con mis nuevos compañeros.",
+    "en": "I’m going to catch the bus before it gets full, and afterward I hope to become more comfortable with my new colleagues.",
+    "tip": "Although coger has vulgar meanings in some Spanish-speaking regions, it is ordinary and widely used in Colombia in these expressions."
+  },
+  {
+    "trap": "Estar verraco / berraco",
+    "wrongGuess": "To be a wild boar, or simply to be tough in every situation",
+    "realMeaning": "Estar verraco or berraco can mean to be angry; ser verraco or berraco can mean to be very talented or admirable, while something can also be verraco or berraco when it is very difficult",
+    "es": "Mi hermana está berraca porque le dañaron el computador, pero es una verraca para las matemáticas y resolvió el problema más berraco del examen.",
+    "en": "My sister is angry because her computer was damaged, but she is amazing at math and solved the hardest problem on the exam.",
+    "tip": "The meaning depends heavily on context and whether it describes a person’s mood, a person’s ability, or a difficult situation; both verraco and berraco are heard."
+  },
+  {
+    "trap": "Dar papaya",
+    "wrongGuess": "To give someone a papaya",
+    "realMeaning": "To leave yourself vulnerable or give someone an easy opportunity to rob, deceive, or take advantage of you",
+    "es": "No saques el celular en esa calle, porque estarías dando papaya.",
+    "en": "Don’t take out your cellphone on that street, because you would be making yourself vulnerable.",
+    "tip": "The phrase is especially common in warnings about displaying phones, wallets, jewelry, or other valuables in public."
+  },
+  {
+    "trap": "Quedar mal / quedar bien",
+    "wrongGuess": "To remain physically badly or well",
+    "realMeaning": "Quedar mal means to let someone down, fail to follow through, or make a bad impression; quedar bien means to keep your word or make a good impression",
+    "es": "Si no llegas a la reunión después de confirmar, vas a quedar mal; si cumples lo que prometiste, vas a quedar bien con todos.",
+    "en": "If you don’t come to the meeting after confirming, you’ll let everyone down; if you do what you promised, you’ll make a good impression with everyone.",
+    "tip": "These expressions are often about social reliability and how your actions affect your reputation."
+  }
+];
+
+FRASES.push(
+  {section:"🪤 Trampas y falsos amigos (cancelar, provocar, regalar)",quizCat:"trampas",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[
+    {es:"Buenas tardes, señorita, ¿en dónde cancelo la cuenta del almuerzo?",en:"Good afternoon, miss, where do I pay the lunch bill? ('cancelar' = to pay!)",register:"Colombian trap · cancelar"},
+    {es:"¿Qué te provoca comer hoy? ¿Te provoca una arepita con queso o un pandebono?",en:"What do you feel like eating today? Would you like an arepa with cheese or a pandebono?",register:"Colombian trap · provocar"},
+    {es:"¡Qué pena con usted molestarla! ¿Me indica dónde queda la salida?",en:"Excuse me for bothering you! Could you show me where the exit is?",register:"Colombian trap · qué pena"},
+    {es:"Veci, ¿me regala una botella de agua sin gas, por favor? ¿Cuánto le debo?",en:"Neighbor, can I buy/have a bottle of still water, please? How much do I owe you?",register:"Colombian trap · regalar"},
+    {es:"Ahorita después del almuerzo paso por tu oficina y revisamos eso.",en:"In a little while after lunch I'll stop by your office and we'll check that.",register:"Colombian trap · ahorita"},
+    {es:"¿Señor? Qué pena, no le escuché bien por el ruido de la calle.",en:"Pardon / What did you say? Sorry, I didn't hear you well because of the street noise.",register:"Colombian trap · ¿Señor?"}
+  ]},
+  {section:"🏘️ Estratos, conjuntos cerrados y barrios",quizCat:"estratos",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[
+    {es:"¿En qué estrato está ubicado el edificio? Es para calcular cuánto llegan los servicios públicos.",en:"What socioeconomic tier (1–6) is the building in? It's to estimate how much the utility bills cost.",register:"Living in Colombia · estratos"},
+    {es:"El apartamento queda en un conjunto cerrado con vigilancia las veinticuatro horas y salón comunal.",en:"The apartment is in a gated complex with 24-hour security and a community room.",register:"Colombian housing"},
+    {es:"En Colombia los estratos cuatro, cinco y seis pagan un poquito más en el recibo de la luz y el agua.",en:"In Colombia tiers 4, 5, and 6 pay a bit more on the electricity and water bills.",register:"Living in Colombia"},
+    {es:"Este barrio es muy caminable; tiene parques, supermercados y panaderías a dos cuadras.",en:"This neighborhood is very walkable; it has parks, supermarkets, and bakeries two blocks away.",register:"Neighborhoods"},
+    {es:"Para usar el gimnasio o la terraza del conjunto toca reservar turno en la administración.",en:"To use the gym or rooftop of the complex you have to book a slot with the building office.",register:"Conjunto life"},
+    {es:"¿La ventana del cuarto da hacia la avenida principal o hacia el interior del conjunto?",en:"Does the bedroom window face the main avenue or the inside of the complex?",register:"Quiet apartment check"}
+  ]},
+  {section:"🦷 Odontología, óptica y EPS / prepagada",quizCat:"odontologia",cls:"color:var(--blue);background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2)",items:[
+    {es:"Quisiera agendar una cita de odontología para una limpieza dental y una valoración general.",en:"I'd like to schedule a dental appointment for a cleaning and a general checkup.",register:"Dentist · Colombia"},
+    {es:"Se me partió una calza en una muela de atrás y me duele al tomar cosas frías.",en:"A filling chipped in a back molar and it hurts when I drink cold things.",register:"Dentist · emergency"},
+    {es:"¿Ustedes atienden por medicina prepagada o la consulta es particular?",en:"Do you take private supplemental health insurance or is the appointment self-pay?",register:"Healthcare · Colombia"},
+    {es:"Necesito hacerme un examen de optometría para cambiar el aumento de los lentes.",en:"I need to get an eye exam to update my glasses prescription.",register:"Optometrist · óptica"},
+    {es:"Se me soltó un tornillito del marco de las gafas; ¿me colabora ajustándolo?",en:"A tiny screw came loose on my glasses frame; could you help me tighten it?",register:"Óptica · everyday"},
+    {es:"Para pedir la cita por la EPS toca primero pasar por médico general.",en:"To book the appointment through public/standard health insurance you first have to see a general practitioner.",register:"Colombian EPS"}
+  ]},
+  {section:"🛂 Migración Colombia, visa y cuenta bancaria",quizCat:"migracion-ce",cls:"color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)",items:[
+    {es:"Vengo a solicitar la prórroga del permiso de turismo antes de que se cumplan los noventa días.",en:"I'm here to request an extension of my tourist permit before the 90 days are up.",register:"Migración Colombia"},
+    {es:"Ya me aprobaron la visa; ahora tengo que registrar el trámite para sacar la cédula de extranjería.",en:"My visa was already approved; now I have to register the process to get my foreigner ID card.",register:"Expat paperwork"},
+    {es:"Buenas tardes, con mi cédula de extranjería quisiera abrir una cuenta de ahorros y activar Nequi.",en:"Good afternoon, with my foreigner ID card I'd like to open a savings account and activate Nequi.",register:"Colombian banking"},
+    {es:"¿Qué documentos me piden en la notaría para autenticar la firma del contrato?",en:"What documents do they ask for at the notary office to notarize the contract signature?",register:"Notaría · Colombia"},
+    {es:"Recuerde que tiene quince días calendario después de aprobada la visa para inscribirse en Migración.",en:"Remember you have 15 calendar days after visa approval to register with Migración.",register:"Visa rule"},
+    {es:"¿Me regala un certificado bancario de titularidad para recibir pagos locales?",en:"Can you give me a bank account ownership certificate to receive local payments?",register:"Banking · work"}
+  ]}
+);
+
+CONVERSATIONS.push(
+  v60Dialogue("Trampas colombianas: cancelar, provocar y qué pena","Navigating Colombian false friends at a café and checkout counter without confusion",[
+    ["A","¡Hola! Qué pena hacerte esperar, es que dije ahorita vengo y me demoré veinte minutos en el banco.","Hi! Sorry to make you wait—I said 'I'll be back in a little bit' and took twenty minutes at the bank."],
+    ["B","¡Tranquilo, no pasa nada! Más bien dime: ¿qué te provoca tomar? ¿Un tintico o un jugo frío?","No worries at all! Instead tell me: what do you feel like drinking? A black coffee or a cold juice?"],
+    ["A","Me provoca un perico bien calientico con un pandebono. Veci, ¿me regala un perico y dos pandebonos, por favor?","I feel like a warm small coffee with milk and a pandebono. Neighbor, can I have a perico and two pandebonos, please?"],
+    ["B","¿Señor? Qué pena con usted, no le escuché bien lo último.","Pardon? Excuse me, I didn't quite catch that last part."],
+    ["A","Un café con leche pequeño y dos pandebonos, por favor. ¿Y en dónde cancelo la cuenta?","A small coffee with milk and two pandebonos, please. And where do I pay the bill?"],
+    ["B","Con mucho gusto; puede cancelar allá en la caja con efectivo o Nequi cuando termine.","With pleasure; you can pay over at the register with cash or Nequi when you finish."]
+  ],[{es:"En Colombia 'cancelar la cuenta' significa pagar, no anular el pedido.",en:"In Colombia 'cancelar la cuenta' means to pay the bill, not cancel the order.",tts:"En Colombia cancelar la cuenta significa pagar, no anular el pedido."},{es:"Cuando alguien dice '¿Señor?' con tono de pregunta, significa '¿Cómo dijo?'",en:"When someone says '¿Señor?' with a rising tone, it means 'Pardon / What did you say?'",tts:"Cuando alguien dice Señor con tono de pregunta, significa Cómo dijo."}]),
+  v60Dialogue("Estratos, conjuntos cerrados y barrios","Comparing apartments in a gated complex and understanding Colombian utility tiers (estratos)",[
+    ["A","Este apartamento está ubicado en un conjunto cerrado muy tranquilo, con portería veinticuatro horas y gimnasio.","This apartment is located in a very quiet gated complex, with a 24-hour front desk and a gym."],
+    ["B","Se ve súper bien e iluminado. Disculpe, ¿en qué estrato está este edificio?","It looks super nice and bright. Excuse me, what socioeconomic tier is this building in?"],
+    ["A","Aquí estamos en estrato cuatro, así que los recibos del agua, la luz y el gas llegan a un precio muy razonable.","Here we are in tier 4, so the water, electricity, and gas bills come at a very reasonable price."],
+    ["B","¡Excelente! Porque en estrato seis los servicios públicos salen bastante más caros cada mes.","Excellent! Because in tier 6 the utility bills come out quite a bit more expensive every month."],
+    ["A","Exactamente. Además, este cuarto da hacia el jardín interior del conjunto, entonces no se escucha nada de ruido de la avenida.","Exactly. Plus, this bedroom faces the interior garden of the complex, so you don't hear any street noise from the avenue."],
+    ["B","Me encanta. ¿Y para usar el salón comunal o la terraza toca pedir turno en la administración?","I love it. And to use the community room or rooftop do you have to book a slot at the building office?"]
+  ],[{es:"En Colombia los estratos van del uno al seis según el sector.",en:"In Colombia socioeconomic tiers run from 1 to 6 depending on the area.",tts:"En Colombia los estratos van del uno al seis según el sector."},{es:"Este barrio es muy seguro y tiene de todo a dos cuadras.",en:"This neighborhood is very safe and has everything within two blocks.",tts:"Este barrio es muy seguro y tiene de todo a dos cuadras."}]),
+  v60Dialogue("Odontología, óptica y medicina prepagada","Booking a dental cleaning, fixing a chipped filling, and checking glasses",[
+    ["A","Buenos días, bienvenido al consultorio odontológico. ¿Viene por medicina prepagada o consulta particular?","Good morning, welcome to the dental office. Are you coming through private supplemental insurance or self-pay?"],
+    ["B","Buenos días. Vengo por consulta particular; quisiera hacerme una limpieza dental y que el doctor me revise una muela.","Good morning. I'm coming as self-pay; I'd like to get a dental cleaning and have the doctor check a molar."],
+    ["A","Claro que sí. ¿Siente dolor en esa muela o se le cayó alguna calza?","Of course. Do you feel pain in that molar or did a filling fall out?"],
+    ["B","Ayer comiendo se me partió un pedacito de la calza y me da sensibilidad al tomar agua fría.","Yesterday while eating a tiny piece of the filling chipped and it gives me sensitivity when drinking cold water."],
+    ["A","Listo, la doctora ya lo atiende en cinco minutos. ¿Necesita factura electrónica con su pasaporte?","Got it, the doctor will see you in five minutes. Do you need an electronic invoice with your passport?"],
+    ["B","Sí, por favor. Y saliendo de acá voy a pasar a la óptica de al lado para hacerme el examen de las gafas.","Yes, please. And when I leave here I'm going to stop by the optical shop next door to get my glasses exam."]
+  ],[{es:"¿Cuánto cuesta la limpieza dental particular sin prepagada?",en:"How much does a self-pay dental cleaning cost without insurance?",tts:"¿Cuánto cuesta la limpieza dental particular sin prepagada?"},{es:"En la óptica me ajustaron los tornillos de las gafas gratis.",en:"At the optical shop they tightened the screws on my glasses for free.",tts:"En la óptica me ajustaron los tornillos de las gafas gratis."}]),
+  v60Dialogue("Migración Colombia, cédula de extranjería y bancos","Extending a tourist stamp, picking up a foreigner ID card, and opening a bank account",[
+    ["A","Buenos días, bienvenido a Migración Colombia. ¿Viene a reclamar su cédula de extranjería o a prorrogar el permiso de turismo?","Good morning, welcome to Migración Colombia. Are you here to pick up your foreigner ID card or extend your tourist permit?"],
+    ["B","Buenos días. Ya me aprobaron la visa de residente temporal y vine a mi cita para registrar la visa y sacar la cédula de extranjería.","Good morning. My temporary resident visa was already approved and I came for my appointment to register the visa and get my foreigner ID card."],
+    ["A","Perfecto, llegó dentro de los quince días de plazo. Me regala su pasaporte original y la copia de la visa electrónica.","Perfect, you arrived within the 15-day window. Please hand me your original passport and the copy of the e-visa."],
+    ["B","Aquí los tiene. Una pregunta: ¿en cuántos días queda lista la cédula física para poder abrir mi cuenta bancaria?","Here they are. One question: in how many days will the physical ID card be ready so I can open my bank account?"],
+    ["A","En unos cinco días hábiles le llega la notificación al correo. Con ese plástico ya puede abrir cuenta de ahorros y Nequi.","In about five business days the notification will arrive by email. With that physical card you can open a savings account and Nequi."],
+    ["B","¡Qué alivio, muchas gracias por su colaboración! Ahora solo me falta pasar por la notaría para autenticar el contrato.","What a relief, thank you so much for your help! Now I just need to stop by the notary office to notarize the contract."]
+  ],[{es:"Para abrir cuenta de ahorros en Colombia casi siempre piden la cédula de extranjería.",en:"To open a savings account in Colombia they almost always ask for the foreigner ID card.",tts:"Para abrir cuenta de ahorros en Colombia casi siempre piden la cédula de extranjería."},{es:"La prórroga de turismo se puede pedir en línea por la página de Migración.",en:"The tourist extension can be requested online on the Migración website.",tts:"La prórroga de turismo se puede pedir en línea por la página de Migración."}])
+);
+
+READINGS.push(
+  {id:"lectura-trampas",level:"A2",title:"Palabras trampa en Colombia: cancelar, provocar y regalar",lesson:"trampas-colombianas",intro:"Why everyday Colombian words mean something totally different from literal English translations.",lines:[
+    {es:"Si en un restaurante colombiano el mesero te dice puede cancelar en la caja, no significa que tu pedido se anuló: cancelar significa pagar la cuenta.",en:"If a waiter in a Colombian restaurant tells you 'puede cancelar en la caja', it doesn't mean your order was canceled: 'cancelar' means to pay the bill.",tts:"Si en un restaurante colombiano el mesero te dice puede cancelar en la caja, no significa que tu pedido se anuló: cancelar significa pagar la cuenta."},
+    {es:"Cuando un amigo te pregunta ¿qué te provoca?, no está buscando pelea; te está preguntando con cariño qué tienes ganas de comer o tomar.",en:"When a friend asks '¿qué te provoca?', they aren't looking for a fight; they are warmly asking what you feel like eating or drinking.",tts:"Cuando un amigo te pregunta ¿qué te provoca?, no está buscando pelea; te está preguntando con cariño qué tienes ganas de comer o tomar."},
+    {es:"Y si alguien no escuchó lo que dijiste, te va a mirar y va a decir ¿Señor? o ¿Señora?, que significa ¿puede repetir, por favor?",en:"And if someone didn't hear what you said, they will look at you and say '¿Señor?' or '¿Señora?', which means 'could you repeat that, please?'",tts:"Y si alguien no escuchó lo que dijiste, te va a mirar y va a decir ¿Señor? o ¿Señora?, que significa ¿puede repetir, por favor?"},
+    {es:"Dominar estos falsos amigos te ahorra confusiones todos los días desde tu primera semana en el país.",en:"Mastering these false friends saves you confusion every single day from your very first week in the country.",tts:"Dominar estos falsos amigos te ahorra confusiones todos los días desde tu primera semana en el país."}
+  ],questions:[{q:"En una tienda o restaurante de Colombia, ¿qué significa '¿Dónde cancelo?'?",choices:["¿Dónde pago la cuenta?","¿Dónde anulo la reserva?","¿Dónde queda el baño?"],answer:"¿Dónde pago la cuenta?"}]},
+  {id:"lectura-estratos",level:"B1",title:"Cómo funcionan los estratos y conjuntos en Colombia",lesson:"estratos-barrios",intro:"Understand Colombia's unique 1-to-6 socioeconomic tier system for utilities and housing.",lines:[
+    {es:"En las ciudades colombianas, las viviendas están clasificadas en estratos socioeconómicos que van del uno al seis según las características del barrio.",en:"In Colombian cities, homes are classified into socioeconomic tiers ('estratos') from 1 to 6 based on neighborhood characteristics.",tts:"En las ciudades colombianas, las viviendas están clasificadas en estratos socioeconómicos que van del uno al seis según las características del barrio."},
+    {es:"El sistema sirve para que los estratos cinco y seis ayuden a subsidiar los recibos de agua, luz y gas de los estratos uno, dos y tres.",en:"The system works so that tiers 5 and 6 help subsidize the water, electricity, and gas bills of tiers 1, 2, and 3.",tts:"El sistema sirve para que los estratos cinco y seis ayuden a subsidiar los recibos de agua, luz y gas de los estratos uno, dos y tres."},
+    {es:"El estrato cuatro es el punto medio: no recibe subsidio, pero tampoco paga sobrecosto en los servicios públicos.",en:"Tier 4 is the middle ground: it receives no subsidy, but also pays no surcharge on utility bills.",tts:"El estrato cuatro es el punto medio: no recibe subsidio, pero tampoco paga sobrecosto en los servicios públicos."},
+    {es:"Además, gran parte de los edificios hacen parte de conjuntos cerrados con portería, zonas verdes y administración propia.",en:"Additionally, most apartment buildings are part of gated complexes ('conjuntos cerrados') with a front desk, green areas, and their own HOA.",tts:"Además, gran parte de los edificios hacen parte de conjuntos cerrados con portería, zonas verdes y administración propia."}
+  ],questions:[{q:"¿Para qué sirve principalmente el sistema de estratos (1 al 6) en un apartamento en Colombia?",choices:["Para definir el costo de los servicios públicos (agua, luz, gas)","Para saber cuántos pisos tiene el edificio","Para elegir el color del taxi"],answer:"Para definir el costo de los servicios públicos (agua, luz, gas)"}]},
+  {id:"lectura-odontologia",level:"B1",title:"Odontología, ópticas y salud en Colombia",lesson:"odontologia-optica",intro:"Why Colombia is famous for high-quality dental care, optical shops, and accessible clinics.",lines:[
+    {es:"Colombia es reconocida por tener excelente odontología y clínicas médicas modernas en ciudades como Bogotá, Medellín y Cali.",en:"Colombia is renowned for having excellent dentistry and modern medical clinics in cities like Bogotá, Medellín, and Cali.",tts:"Colombia es reconocida por tener excelente odontología y clínicas modernas en ciudades como Bogotá, Medellín y Cali."},
+    {es:"Los residentes cotizan a una EPS para el sistema general de salud, y muchos complementan con una póliza de medicina prepagada.",en:"Residents contribute to an EPS for the standard health system, and many supplement it with a private 'medicina prepagada' plan.",tts:"Los residentes cotizan a una EPS para el sistema general de salud, y muchos complementan con una póliza de medicina prepagada."},
+    {es:"Si eres visitante o prefieres rapidez, también puedes pedir una cita particular para una limpieza dental, una calza o un examen de optometría.",en:"If you are a visitor or prefer speed, you can also book a self-pay ('particular') appointment for a dental cleaning, a filling, or an eye exam.",tts:"Si eres visitante o prefieres rapidez, también puedes pedir una cita particular para una limpieza dental, una calza o un examen de optometría."},
+    {es:"En las ópticas del barrio te hacen el examen visual el mismo día y te entregan las gafas muy rápido.",en:"At neighborhood optical shops they do your eye exam the same day and have your glasses ready very quickly.",tts:"En las ópticas del barrio te hacen el examen visual el mismo día y te entregan las gafas muy rápido."}
+  ],questions:[{q:"¿Cómo se llama una consulta médica u odontológica cuando pagas directamente sin usar seguro ni EPS?",choices:["Consulta particular","Consulta de peaje","Consulta de ciclovía"],answer:"Consulta particular"}]},
+  {id:"lectura-migracion-ce",level:"B1",title:"Prórrogas, visas y cédula de extranjería",lesson:"migracion-bancos-ce",intro:"How tourist extensions, Colombian visas, and the Cédula de Extranjería unlock local banking.",lines:[
+    {es:"Los turistas de muchos países reciben noventa días al entrar a Colombia y pueden pedir una prórroga por otros noventa días al año.",en:"Tourists from many countries receive 90 days upon entering Colombia and can request an extension ('prórroga') for another 90 days per year.",tts:"Los turistas de muchos países reciben noventa días al entrar a Colombia y pueden pedir una prórroga por otros noventa días al año."},
+    {es:"Si decides vivir más tiempo y sacas una visa, debes registrarla ante Migración Colombia y tramitar tu cédula de extranjería.",en:"If you decide to stay longer and get a visa, you must register it with Migración Colombia and apply for your foreigner ID card ('cédula de extranjería').",tts:"Si decides vivir más tiempo y sacas una visa, debes registrarla ante Migración Colombia y tramitar tu cédula de extranjería."},
+    {es:"Esa cédula de extranjería es la llave para abrir una cuenta de ahorros en bancos locales, tener Nequi con topes completos y firmar contratos.",en:"That foreigner ID card is the key to opening a savings account at local banks, having full-limit Nequi, and signing contracts.",tts:"Esa cédula de extranjería es la llave para abrir una cuenta de ahorros en bancos locales, tener Nequi con topes completos y firmar contratos."},
+    {es:"Y para firmar contratos de arriendo o documentos legales, en Colombia se usa muchísimo ir a una notaría para autenticar la firma.",en:"And to sign lease agreements or legal documents, in Colombia it is very common to go to a notary office ('notaría') to authenticate your signature.",tts:"Y para firmar contratos de arriendo o documentos legales, en Colombia se usa muchísimo ir a una notaría para autenticar la firma."}
+  ],questions:[{q:"¿Cuál es el documento colombiano indispensable para que un extranjero residente abra una cuenta bancaria local?",choices:["La cédula de extranjería","El tiquete del bus","El recibo de la panadería"],answer:"La cédula de extranjería"}]}
+);
+
+CONVERSATION_MISSIONS.push(
+  {id:"mision-trampas",title:"Usa 'cancelar', 'provocar' y 'qué pena' como un colombiano",scenario:"You are at a café with a friend. Ask what they feel like eating (provocar), order from the counter (regalar), and ask where to pay the bill (cancelar).",prompt:"Habla con tu amigo y con el cajero:",lesson:"trampas-colombianas",models:[
+    {es:"¿Qué te provoca comer hoy? Veci, qué pena con usted, ¿me regala dos tinticos y me dice dónde cancelo la cuenta?",en:"What do you feel like eating today? Neighbor, excuse me, can I have two black coffees and can you tell me where I pay the bill?",tts:"¿Qué te provoca comer hoy? Veci, qué pena con usted, ¿me regala dos tinticos y me dice dónde cancelo la cuenta?"},
+    {es:"Ahorita cuando terminemos cancelamos en la caja con Nequi.",en:"In a little bit when we finish we'll pay at the register with Nequi.",tts:"Ahorita cuando terminemos cancelamos en la caja con Nequi."}
+  ]},
+  {id:"mision-estratos",title:"Pregunta por el estrato y las zonas del conjunto cerrado",scenario:"You are viewing an apartment to rent. Ask what socioeconomic tier (estrato) the building is in and whether the bedroom faces away from street noise.",prompt:"Hazle las preguntas clave al arrendador:",lesson:"estratos-barrios",models:[
+    {es:"Disculpe, ¿en qué estrato está ubicado este conjunto cerrado para calcular el costo de los servicios públicos?",en:"Excuse me, what socioeconomic tier is this gated complex in so I can estimate the cost of utilities?",tts:"Disculpe, ¿en qué estrato está ubicado este conjunto cerrado para calcular el costo de los servicios públicos?"},
+    {es:"¿La habitación principal da hacia el interior del conjunto o hacia la avenida?",en:"Does the master bedroom face the inside of the complex or the avenue?",tts:"¿La habitación principal da hacia el interior del conjunto o hacia la avenida?"}
+  ]},
+  {id:"mision-odontologia",title:"Agenda una limpieza dental y revisión de una calza",scenario:"Call or visit a dental clinic in Colombia. Ask for a self-pay (particular) appointment for a cleaning and a chipped filling.",prompt:"Explica lo que necesitas en la clínica:",lesson:"odontologia-optica",models:[
+    {es:"Buenos días, quisiera pedir una cita particular de odontología para una limpieza dental y revisar una calza que se me partió.",en:"Good morning, I'd like to book a self-pay dental appointment for a cleaning and to check a filling that chipped.",tts:"Buenos días, quisiera pedir una cita particular de odontología para una limpieza dental y revisar una calza que se me partió."},
+    {es:"Tengo un poquito de sensibilidad al tomar agua fría en una muela de atrás.",en:"I have a bit of sensitivity when drinking cold water in a back molar.",tts:"Tengo un poquito de sensibilidad al tomar agua fría en una muela de atrás."}
+  ]},
+  {id:"mision-migracion-ce",title:"Registra tu visa y abre una cuenta con tu cédula de extranjería",scenario:"You are at Migración Colombia to register your visa for your Cédula de Extranjería so you can open a savings account.",prompt:"Habla con el funcionario:",lesson:"migracion-bancos-ce",models:[
+    {es:"Buenos días, vengo a mi cita para registrar la visa y tramitar mi cédula de extranjería; aquí tengo mi pasaporte.",en:"Good morning, I'm here for my appointment to register my visa and apply for my foreigner ID card; here is my passport.",tts:"Buenos días, vengo a mi cita para registrar la visa y tramitar mi cédula de extranjería; aquí tengo mi pasaporte."},
+    {es:"Apenas me entreguen la cédula física voy al banco a abrir una cuenta de ahorros y activar Nequi.",en:"As soon as they give me the physical ID card I'm going to the bank to open a savings account and activate Nequi.",tts:"Apenas me entreguen la cédula física voy al banco a abrir una cuenta de ahorros y activar Nequi."}
+  ]}
+);
+
+Object.assign(LESSON_CONTENT,{
+  "trampas-colombianas":{
+    goal:{es:"¿Qué te provoca pedir? Veci, ¿me regala un perico y me dice dónde cancelo la cuenta?",en:"What do you feel like ordering? Neighbor, can I have a small milk coffee and can you tell me where I pay the bill?"},
+    words:[{es:"cancelar la cuenta",en:"to pay / settle the bill (NOT cancel!)"},{es:"¿qué te provoca?",en:"what do you feel like (eating/drinking)?"},{es:"¡qué pena con usted!",en:"excuse me / sorry to bother you"},{es:"¿me regala…?",en:"can I buy / have…? (polite counter request)"},{es:"ahorita",en:"in a little while / later / soon"},{es:"¿señor? / ¿señora?",en:"pardon? / could you repeat that?"}],
+    phrases:[{en:"Where do I pay the bill?",es:"¿En dónde cancelo la cuenta?"},{en:"What do you feel like eating today?",es:"¿Qué te provoca comer hoy?"},{en:"Excuse me for bothering you!",es:"¡Qué pena con usted molestarlo!"},{en:"In a little while I'll stop by your house.",es:"Ahorita paso por tu casa."}]
+  },
+  "estratos-barrios":{
+    goal:{es:"El apartamento queda en un conjunto cerrado en estrato cuatro, muy tranquilo y caminable.",en:"The apartment is in a gated complex in tier 4, very quiet and walkable."},
+    words:[{es:"el estrato (1 al 6)",en:"socioeconomic utility tier"},{es:"el conjunto cerrado",en:"gated residential complex"},{es:"los servicios públicos",en:"public utilities (water/power/gas)"},{es:"el salón comunal",en:"building community room"},{es:"dar hacia el interior",en:"to face the quiet interior"},{es:"barrio caminable",en:"walkable neighborhood"}],
+    phrases:[{en:"What socioeconomic tier is the building in?",es:"¿En qué estrato está ubicado el edificio?"},{en:"The apartment is in a gated complex with 24-hour security.",es:"El apartamento queda en un conjunto cerrado con vigilancia."},{en:"Does the window face the avenue or the interior?",es:"¿La ventana da hacia la avenida o hacia el interior?"},{en:"Tier 4 pays a reasonable price for utilities.",es:"En estrato cuatro los servicios llegan a buen precio."}]
+  },
+  "odontologia-optica":{
+    goal:{es:"Quisiera pedir una cita particular de odontología para una limpieza y revisar una calza.",en:"I'd like to book a self-pay dental appointment for a cleaning and to check a filling."},
+    words:[{es:"la limpieza dental",en:"dental cleaning"},{es:"la calza / la muela",en:"filling / molar tooth"},{es:"consulta particular",en:"self-pay appointment (no insurance needed)"},{es:"la medicina prepagada / EPS",en:"private supplemental / standard health plan"},{es:"la óptica / las gafas",en:"optical shop / eyeglasses"},{es:"la sensibilidad",en:"tooth sensitivity"}],
+    phrases:[{en:"I'd like a self-pay dental cleaning appointment.",es:"Quisiera una cita particular para una limpieza dental."},{en:"A filling chipped in a back molar.",es:"Se me partió una calza en una muela de atrás."},{en:"Do you take private insurance or self-pay?",es:"¿Atienden por medicina prepagada o particular?"},{en:"Can you tighten the screw on my glasses?",es:"¿Me colabora ajustando el tornillo de las gafas?"}]
+  },
+  "migracion-bancos-ce":{
+    goal:{es:"Vengo a registrar mi visa para sacar la cédula de extranjería y abrir una cuenta de ahorros.",en:"I'm here to register my visa to get my foreigner ID card and open a savings account."},
+    words:[{es:"la cédula de extranjería",en:"Colombian foreigner ID card"},{es:"la prórroga de turismo",en:"90-day tourist permit extension"},{es:"registrar la visa",en:"to register an approved visa"},{es:"la notaría / autenticar",en:"notary office / to notarize a signature"},{es:"abrir cuenta de ahorros",en:"to open a savings account"},{es:"días hábiles",en:"business days"}],
+    phrases:[{en:"I'm here to request an extension of my tourist permit.",es:"Vengo a solicitar la prórroga del permiso de turismo."},{en:"I need to apply for my foreigner ID card.",es:"Necesito tramitar mi cédula de extranjería."},{en:"With my foreigner ID I want to open a savings account.",es:"Con mi cédula de extranjería quiero abrir una cuenta de ahorros."},{en:"Where is a notary office to notarize this contract?",es:"¿Dónde queda una notaría para autenticar este contrato?"}]
+  }
+});
+
+Object.assign(LESSON_META,{
+  "trampas-colombianas":{stage:"Start Here",difficulty:"Easy",prereq:"Cortesía colombiana",dialogue:"Trampas colombianas: cancelar, provocar y qué pena",vocab:"comida",quizCat:"trampas",quizMode:"conversation",guideIds:["cortesia-colombiana","usted-tu-vos"],readingId:"lectura-trampas",missionId:"mision-trampas"},
+  "estratos-barrios":{stage:"Daily Life",difficulty:"Easy",prereq:"Arriendo, Airbnb y aseo",dialogue:"Estratos, conjuntos cerrados y barrios",vocab:"casa",quizCat:"estratos",quizMode:"conversation",guideIds:["ser-estar","por-para"],readingId:"lectura-estratos",missionId:"mision-estratos"},
+  "odontologia-optica":{stage:"Travel and Survival",difficulty:"Easy",prereq:"Cita médica y urgencias",dialogue:"Odontología, óptica y medicina prepagada",vocab:"cuerpo",quizCat:"odontologia",quizMode:"conversation",guideIds:["se-me","cortesia-colombiana"],readingId:"lectura-odontologia",missionId:"mision-odontologia"},
+  "migracion-bancos-ce":{stage:"Daily Life",difficulty:"Moderate",prereq:"Cajero, SIM card y trámites",dialogue:"Migración Colombia, cédula de extranjería y bancos",vocab:"numeros",quizCat:"migracion-ce",quizMode:"conversation",guideIds:["por-para","futuro"],readingId:"lectura-migracion-ce",missionId:"mision-migracion-ce"}
+});
+
+Object.assign(SENTENCE_LADDERS,{
+  "trampas-colombianas":{
+    title:"Use Colombian 'false friends' (cancelar, provocar, regalar, ahorita) like a native",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Qué te provoca pedir?",en:"What do you feel like ordering?"},
+      {tag:"2. + Polite regalar",es:"¿Qué te provoca? Veci, ¿me regala un perico y un pandebono?",en:"What do you feel like? Neighbor, can I have a small milk coffee and a pandebono?"},
+      {tag:"3. + Cancelar (pay)",es:"Veci, qué pena con usted, ¿en dónde cancelo la cuenta?",en:"Neighbor, excuse me, where do I pay the bill?"},
+      {tag:"4. + Ahorita follow-up",es:"Cancela tú en la caja con Nequi y ahorita en la tarde yo te invito a las onces.",en:"You pay at the register with Nequi and in a little while this afternoon I'll treat you to afternoon coffee."}
+    ],
+    swaps:[
+      {label:"Rising ¿Señor?",es:"¿Señor? Qué pena, no le alcancé a escuchar bien.",en:"Pardon? Sorry, I didn't quite catch what you said."},
+      {label:"Provocar cold drink",es:"Con este calor me provoca una limonada de coco bien fría.",en:"With this heat I feel like an ice-cold coconut lemonade."},
+      {label:"Cancelar at counter",es:"¿Cancelo de una vez aquí en la barra o al final en la mesa?",en:"Do I pay right now here at the counter or at the end at the table?"}
+    ]
+  },
+  "estratos-barrios":{
+    title:"Evaluate a Colombian apartment's estrato, noise level, and conjunto amenities",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿En qué estrato está el edificio?",en:"What socioeconomic tier is the building in?"},
+      {tag:"2. + Conjunto cerrado",es:"¿En qué estrato está este conjunto cerrado con vigilancia?",en:"What tier is this gated complex with security in?"},
+      {tag:"3. + Utility cost",es:"Está en estrato cuatro, así que los servicios públicos llegan a buen precio.",en:"It's in tier 4, so the utility bills come at a good price."},
+      {tag:"4. + Quiet window check",es:"El conjunto está en estrato cuatro y la alcoba da hacia el interior, así que no se oye ruido de la calle.",en:"The complex is in tier 4 and the bedroom faces the interior, so you don't hear street noise."}
+    ],
+    swaps:[
+      {label:"Book rooftop/gym",es:"¿Cómo se reserva turno para el gimnasio en la administración?",en:"How do you book a slot for the gym with the building office?"},
+      {label:"Walkable barrio",es:"Este barrio es súper caminable y tiene parques a dos cuadras.",en:"This neighborhood is super walkable and has parks two blocks away."},
+      {label:"Visitor parking",es:"¿El conjunto cerrado tiene parqueadero de visitantes?",en:"Does the gated complex have visitor parking?"}
+    ]
+  },
+  "odontologia-optica":{
+    title:"Book a self-pay dental cleaning, explain a chipped filling, and visit an optical shop",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Quisiera una cita de odontología.",en:"I'd like a dental appointment."},
+      {tag:"2. + Particular & cleaning",es:"Quisiera una cita particular para una limpieza dental.",en:"I'd like a self-pay appointment for a dental cleaning."},
+      {tag:"3. + Chipped filling",es:"Ayer se me partió una calza en una muela y tengo sensibilidad.",en:"Yesterday a filling chipped in a molar and I have sensitivity."},
+      {tag:"4. + Optical shop",es:"Después de la limpieza dental voy a pasar a la óptica para hacerme el examen de las gafas.",en:"After the dental cleaning I'm going to stop by the optical shop to get my glasses exam."}
+    ],
+    swaps:[
+      {label:"Tighten glasses",es:"Se me aflojó una patica de las gafas; ¿me colabora ajustándola?",en:"An arm on my glasses came loose; could you help me tighten it?"},
+      {label:"Prepagada vs particular",es:"¿Atienden por medicina prepagada o solo consulta particular?",en:"Do you accept private supplemental insurance or only self-pay?"},
+      {label:"Cold water pain",es:"Me duele un poquito la muela cuando tomo cosas muy frías.",en:"My molar hurts a little when I drink very cold things."}
+    ]
+  },
+  "migracion-bancos-ce":{
+    title:"Handle Migración Colombia, get your Cédula de Extranjería, and open a bank account",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Vengo a registrar mi visa.",en:"I'm here to register my visa."},
+      {tag:"2. + Cédula de extranjería",es:"Vengo a registrar mi visa para sacar la cédula de extranjería.",en:"I'm here to register my visa to get my foreigner ID card."},
+      {tag:"3. + Delivery timeline",es:"¿En cuántos días hábiles me entregan la cédula de extranjería física?",en:"In how many business days will they hand me the physical foreigner ID card?"},
+      {tag:"4. + Bank & notaría",es:"Apenas tenga mi cédula de extranjería, abro la cuenta de ahorros en el banco y autentico el contrato en la notaría.",en:"As soon as I have my foreigner ID card, I'll open a savings account at the bank and notarize the contract at the notary office."}
+    ],
+    swaps:[
+      {label:"Tourist extension",es:"Quiero solicitar la prórroga de noventa días del permiso de turismo.",en:"I want to request the 90-day extension of my tourist permit."},
+      {label:"Notary signature",es:"Buenas, vengo a autenticar mi firma en este contrato de arriendo.",en:"Hi, I'm here to notarize my signature on this lease agreement."},
+      {label:"Bank certificate",es:"¿Me descarga el certificado de titularidad de mi cuenta de ahorros?",en:"Can you download the ownership certificate for my savings account?"}
+    ]
+  }
+});
+
+/* 5. 6 More High-Frequency Colombianismos (78 total) */
+COLOMBIANISMOS.push(
+  {word:"Cancelar (la cuenta)",en:"To pay / settle the bill (NOT cancel!)",region:"all",register:"Colombian · essential trap",registerGroup:"formal",usage:"At every Colombian store, café, restaurant, or clinic, '¿Dónde cancelo?' means 'Where do I pay?'. To cancel an order, say 'anular'.",example:"Señorita, ¿le cancelo a usted o allá en la caja?",tts:"Señorita, ¿le cancelo a usted o allá en la caja?"},
+  {word:"¿Qué te provoca?",en:"What do you feel like (eating/drinking/doing)?",region:"all",register:"Colombian · warm everyday",registerGroup:"everyday",usage:"In Colombia, 'provocar' with food/drink/plans means 'to crave / feel like / sound good to you' ('¿Te provoca un tintico?').",example:"¿Qué te provoca almorzar hoy? ¿Te provoca ajiaco?",tts:"¿Qué te provoca almorzar hoy? ¿Te provoca ajiaco?"},
+  {word:"El estrato (1 al 6)",en:"Socioeconomic neighborhood tier (1–6)",region:"all",register:"Colombian · housing & daily life",registerGroup:"everyday",usage:"Every block in Colombia is assigned a tier from 1 to 6 that determines utility rates (water, electricity, gas).",example:"Ese edificio queda en estrato cuatro y los servicios son económicos.",tts:"Ese edificio queda en estrato cuatro y los servicios son económicos."},
+  {word:"El conjunto cerrado",en:"Gated apartment/housing complex with guard desk",region:"all",register:"Colombian · housing",registerGroup:"everyday",usage:"Most urban apartments in Colombia are inside a 'conjunto cerrado' with 24/7 'portería' security and shared amenities.",example:"Vivo en un conjunto cerrado a dos cuadras del parque.",tts:"Vivo en un conjunto cerrado a dos cuadras del parque."},
+  {word:"La EPS / La prepagada",en:"Standard health insurance / Private supplemental plan",region:"all",register:"Colombian · healthcare",registerGroup:"everyday",usage:"Everyone enrolled in Colombian healthcare has an 'EPS', and many also have 'medicina prepagada' (or pay 'consulta particular').",example:"Pedí la cita de odontología como consulta particular.",tts:"Pedí la cita de odontología como consulta particular."},
+  {word:"La cédula de extranjería",en:"Colombian Foreigner ID card (for visa holders)",region:"all",register:"Colombian · expats & banking",registerGroup:"formal",usage:"Issued by Migración Colombia after your visa is approved; required to open local bank accounts and full Nequi.",example:"Con la cédula de extranjería ya pude abrir mi cuenta en Bancolombia.",tts:"Con la cédula de extranjería ya pude abrir mi cuenta en Bancolombia."}
+);
+
+/* 6. 12th 3-Column Slot-Swapper Matrix: Trampas, Cancelar & Provocar */
+SLOT_SWAP_MATRICES.push(
+  {
+    id:"trampas-cortesia-matrix",
+    title:"🪤 Trampas: Cancelar, Provocar & Regalar",
+    sub:"Use Colombia's famous false-friend verbs ('cancelar', 'provocar', 'regalar', 'qué pena') with 100% native confidence",
+    col1Title:"1. Polite Opener",
+    col2Title:"2. Colombian Verb Trap",
+    col3Title:"3. Natural Context",
+    col1:[
+      {es:"Veci, qué pena con usted,",en:"Neighbor, excuse me for bothering you,"},
+      {es:"Oye, antes de pedir,",en:"Hey, before we order,"},
+      {es:"Buenas tardes, señorita,",en:"Good afternoon, miss,"},
+      {es:"Ahorita cuando terminemos,",en:"In a little while when we finish,"}
+    ],
+    col2:[
+      {es:"¿en dónde cancelo la cuenta",en:"where do I pay the bill"},
+      {es:"¿qué te provoca tomar hoy",en:"what do you feel like drinking today"},
+      {es:"¿me regala un perico bien calientico",en:"can I buy/have a piping hot small milk coffee"},
+      {es:"cancelamos de una vez en la caja",en:"we'll pay right away at the register"}
+    ],
+    col3:[
+      {es:"con tarjeta o código QR de Nequi?",en:"by card or Nequi QR code?"},
+      {es:"para acompañar estos pandebonos?",en:"to go with these pandebonos?"},
+      {es:"antes de que nos coja la tarde.",en:"before it gets late on us."},
+      {es:"y salimos a caminar por el barrio.",en:"and head out for a walk around the neighborhood."}
+    ]
+  }
+);
+
+/* 7. New Quiz Items for v96 Scenarios (Trampas, Estratos, Odontología, Migración/CE) */
+V60_CONVERSATION_QUIZ.push(
+  {kind:"reply",focus:"present",cat:"trampas",es:"Buenas tardes, ¿en dónde cancelo la cuenta del almuerzo?",en:"Puede cancelar allá en la caja en efectivo, con tarjeta o por Nequi.",tts:"Buenas tardes, ¿en dónde cancelo la cuenta del almuerzo?",choices:["Puede cancelar allá en la caja en efectivo, con tarjeta o por Nequi.","Suba dos cuadras hacia los cerros.","Se me partió una calza en una muela.","El bus sale por la plataforma cuatro."]},
+  {kind:"meaning",focus:"present",cat:"trampas",es:"¿Qué te provoca tomar: un tintico o una limonada fría?",en:"What do you feel like drinking: a black coffee or a cold lemonade?",tts:"¿Qué te provoca tomar: un tintico o una limonada fría?",choices:["What do you feel like drinking: a black coffee or a cold lemonade?","Why are you trying to make me angry?","Did you cancel the reservation at the hotel?","How many installments on your credit card?"]},
+  {kind:"reply",focus:"present",cat:"estratos",es:"Disculpe, ¿en qué estrato está ubicado este conjunto cerrado?",en:"Está en estrato cuatro, así que los servicios públicos llegan a muy buen precio.",tts:"Disculpe, ¿en qué estrato está ubicado este conjunto cerrado?",choices:["Está en estrato cuatro, así que los servicios públicos llegan a muy buen precio.","En agua y bajito de azúcar, por favor.","Con la máquina número dos a los lados.","Una tableta cada ocho horas después de comer."]},
+  {kind:"meaning",focus:"present",cat:"estratos",es:"La habitación principal da hacia el jardín interior del conjunto cerrado.",en:"The master bedroom faces the interior garden of the gated complex.",tts:"La habitación principal da hacia el jardín interior del conjunto cerrado.",choices:["The master bedroom faces the interior garden of the gated complex.","The washing machine is leaking water on the floor.","The ATM deducted the money from my savings account.","We have to leave early because of traffic at the toll booth."]},
+  {kind:"reply",focus:"past",cat:"odontologia",es:"Buenos días, ¿viene por limpieza dental o tiene algún dolor?",en:"Ayer se me partió una calza en una muela y tengo sensibilidad al frío.",tts:"Buenos días, ¿viene por limpieza dental o tiene algún dolor?",choices:["Ayer se me partió una calza en una muela y tengo sensibilidad al frío.","Con sopa de verduras y de principio lentejas.","Consumidor final a una sola cuota.","Todavía no tengo cédula de extranjería."]},
+  {kind:"meaning",focus:"present",cat:"odontologia",es:"¿Ustedes atienden por medicina prepagada o solo consulta particular?",en:"Do you accept private supplemental insurance or only self-pay appointments?",tts:"¿Ustedes atienden por medicina prepagada o solo consulta particular?",choices:["Do you accept private supplemental insurance or only self-pay appointments?","Are the HOA fee and utilities included in the monthly rent?","Shall we take turns on the gym machine while you rest?","Where can I get a 30,000-peso top-up for my prepaid SIM?"]},
+  {kind:"reply",focus:"present",cat:"migracion-ce",es:"Buenos días, bienvenido a Migración Colombia. ¿Qué trámite viene a realizar hoy?",en:"Vengo a registrar mi visa para sacar la cédula de extranjería.",tts:"Buenos días, bienvenido a Migración Colombia. ¿Qué trámite viene a realizar hoy?",choices:["Vengo a registrar mi visa para sacar la cédula de extranjería.","Me regala dos almojábanas calienticas y un perico.","Hoy vamos a rumbear a una salsoteca.","De sobremesa quiero jugo de maracuyá."]},
+  {kind:"meaning",focus:"present",cat:"migracion-ce",es:"Con la cédula de extranjería ya puedes abrir tu cuenta de ahorros en el banco.",en:"With your foreigner ID card you can now open your savings account at the bank.",tts:"Con la cédula de extranjería ya puedes abrir tu cuenta de ahorros en el banco.",choices:["With your foreigner ID card you can now open your savings account at the bank.","You can leave your package with the building doorman at the front desk.","On Sunday morning they close the main avenues for the Ciclovía.","If you climb too fast in Bogotá you might get altitude sickness."]}
+);
+
+V60_FILL_BLANK_QUIZ.push(
+  {kind:"blank",focus:"present",cat:"trampas",es:"Señorita, ¿en dónde ___ la cuenta del almuerzo: aquí o en la caja?",en:"cancelo",tts:"Señorita, ¿en dónde cancelo la cuenta del almuerzo: aquí o en la caja?",trans:"Miss, where do I pay the lunch bill: here or at the register?",choices:["cancelo","aterrizo","escampo","alquilo"]},
+  {kind:"blank",focus:"present",cat:"trampas",es:"Hace mucho calor; ¿qué te ___ tomar bien frío?",en:"provoca",tts:"Hace mucho calor; ¿qué te provoca tomar bien frío?",trans:"It's very hot; what do you feel like drinking ice-cold?",choices:["provoca","empaca","madruga","factura"]},
+  {kind:"blank",focus:"present",cat:"estratos",es:"Este apartamento queda en ___ cuatro, por eso el recibo de la luz es económico.",en:"estrato",tts:"Este apartamento queda en estrato cuatro, por eso el recibo de la luz es económico.",trans:"This apartment is in socioeconomic tier 4, so the electric bill is affordable.",choices:["estrato","peaje","soroche","guayabo"]},
+  {kind:"blank",focus:"past",cat:"odontologia",es:"Ayer masticando se me partió una ___ en una muela de atrás.",en:"calza",tts:"Ayer masticando se me partió una calza en una muela de atrás.",trans:"Yesterday while chewing a filling chipped in a back molar.",choices:["calza","cuadra","cuota","taquilla"]},
+  {kind:"blank",focus:"present",cat:"migracion-ce",es:"Para abrir cuenta bancaria como residente necesitas tu cédula de ___.",en:"extranjería",tts:"Para abrir cuenta bancaria como residente necesitas tu cédula de extranjería.",trans:"To open a bank account as a resident you need your foreigner ID card.",choices:["extranjería","panadería","peluquería","ciclovía"]},
+  {kind:"blank",focus:"present",cat:"migracion-ce",es:"Vamos a la ___ de la esquina para autenticar la firma del contrato.",en:"notaría",tts:"Vamos a la notaría de la esquina para autenticar la firma del contrato.",trans:"Let's go to the notary office on the corner to notarize the contract signature.",choices:["notaría","salsoteca","lavadora","quebrada"]}
 );
