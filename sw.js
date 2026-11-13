@@ -1,5 +1,5 @@
-/* Network-first Service Worker with offline fallback for Español · Colombia PWA (v102.0) */
-const CACHE_NAME = "esco-pwa-v102.0";
+/* Network-first Service Worker with offline fallback for Español · Colombia PWA (v103.0) */
+const CACHE_NAME = "esco-pwa-v103.0";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -7,7 +7,6 @@ const CORE_ASSETS = [
   "./app.js",
   "./data.js",
   "./manifest.json",
-  "./icon.svg",
   "./icon-512.png",
   "./hero-colombia.webp",
   "./region-sanjuan.webp",
@@ -45,8 +44,7 @@ const CORE_ASSETS = [
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(CORE_ASSETS))
-      .catch(() => {})
+      .then(cache => Promise.allSettled(CORE_ASSETS.map(url => cache.add(url).catch(() => {}))))
       .then(() => self.skipWaiting())
   );
 });
