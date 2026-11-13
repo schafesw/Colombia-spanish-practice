@@ -72,7 +72,7 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v101.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v102.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);const themeBtn=document.createElement("button");themeBtn.type="button";themeBtn.id="theme-toggle-btn";themeBtn.className="profile-reset";themeBtn.textContent=(localStorage.getItem("esco-theme-v101")==="light"?"🌙 Dark":"☀️ Sun");themeBtn.title="Switch dark / sunlight theme";themeBtn.onclick=()=>toggleAppTheme();
   bar.append(label,select,reset,ver,themeBtn);utilityBody.appendChild(bar);if(typeof attachProfileBackupControls==="function")attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -503,6 +503,7 @@ function renderVocabHome(){
   const phon=document.createElement("button");phon.type="button";phon.className="vocab-phonetic-card";
   phon.innerHTML="<span class='vocab-phonetic-icon'>🔤</span><span><strong>Fonética</strong><small>Vocales, consonantes, y sílabas</small></span><span class='vocab-home-arrow'>›</span>";
   phon.onclick=()=>{showPage("fonetica");showPhonetic("letters");};vocabHome.appendChild(phon);
+  if(typeof mountPictureMatchEntry==="function")mountPictureMatchEntry(vocabHome);
   VOCAB_GROUPS.forEach(group=>{
     const section=document.createElement("section");section.className="vocab-home-group";
     section.innerHTML=`<div class="vocab-home-group-title">${group.title}</div><div class="vocab-home-group-sub">${group.sub}</div>`;
@@ -1465,6 +1466,8 @@ function renderFraseMenu(){
     renderStory();
     conversationGroup.appendChild(stCard);
   }
+  if(typeof mountNaturalEarLab==="function")mountNaturalEarLab(conversationGroup);
+  if(typeof mountGringoTrapLab==="function")mountGringoTrapLab(conversationGroup);
   conversationGroup.append(h1,g1);
   const h2=document.createElement("div");h2.className="fr-home-label";h2.textContent="📋 Phrase collections · tap to open";
   const g2=document.createElement("div");g2.className="fr-collections-groups";
@@ -3576,7 +3579,7 @@ function renderLessons(){
   if(lvlMode==="starter"&&done<3){
     const soundBtn=document.createElement("button");soundBtn.type="button";soundBtn.className="starter-sound-btn";
     soundBtn.innerHTML=`<span>🔤 <strong>2-Min Sound Basics</strong> <small>A·E·I·O·U · Silent H · Ñ · RR</small></span><span>Start →</span>`;
-    soundBtn.onclick=()=>{showPage("phonetics");showPhonetic("letras");};
+    soundBtn.onclick=()=>{showPage("fonetica");showPhonetic("letters");};
     hero.appendChild(soundBtn);
   }else{
     const expRow=document.createElement("div");expRow.className="explorer-shortcut-row";
@@ -3586,7 +3589,13 @@ function renderLessons(){
     const stShortcut=document.createElement("button");stShortcut.type="button";stShortcut.className="starter-sound-btn explorer-story-btn";
     stShortcut.innerHTML=`<span>📖 <strong>Story Builder</strong> <small>Chain 3 real turns</small></span><span>Build →</span>`;
     stShortcut.onclick=()=>{showPage("frases");const card=document.querySelector(".story-builder-card");if(card)card.scrollIntoView({behavior:"smooth",block:"start"});};
-    expRow.append(vvShortcut,stShortcut);
+    const pmShortcut=document.createElement("button");pmShortcut.type="button";pmShortcut.className="starter-sound-btn explorer-pm-btn";
+    pmShortcut.innerHTML=`<span>🖼️ <strong>Picture Match</strong> <small>Audio → photo</small></span><span>Play →</span>`;
+    pmShortcut.onclick=()=>{showPage("vocab");if(typeof openVocabPictureMatch==="function")openVocabPictureMatch();};
+    const spShortcut=document.createElement("button");spShortcut.type="button";spShortcut.className="starter-sound-btn explorer-sp-btn";
+    spShortcut.innerHTML=`<span>⏱️ <strong>60s Sprint</strong> <small>Fast recall mix</small></span><span>Go →</span>`;
+    spShortcut.onclick=()=>{showPage("quiz");if(typeof openQuizV102Tab==="function")openQuizV102Tab("sprint");};
+    expRow.append(vvShortcut,stShortcut,pmShortcut,spShortcut);
     hero.appendChild(expRow);
   }
 
@@ -5290,6 +5299,9 @@ function runDataValidator(){
     [...CONVERSATION_QUIZ,...FILL_BLANK_QUIZ].forEach((q,i)=>{if(!Array.isArray(q.choices))return;const choices=q.choices.map(String);const normalized=choices.map(normalizeQuizText);if(choices.length!==4)issues.push('Data quiz question '+(i+1)+' needs exactly four answer choices');if(new Set(normalized).size!==normalized.length)issues.push('Data quiz question '+(i+1)+' has duplicate answer choices');if(q.en&&!normalized.includes(normalizeQuizText(q.en)))issues.push('Data quiz question '+(i+1)+' correct answer is not in its choices');if(q.kind==="blank"&&!String(q.es).includes("___"))issues.push('Data quiz question '+(i+1)+' is marked blank but has no blank in its Spanish prompt');});
     aQ.forEach((q,i)=>{if(!Array.isArray(q.choices))return;const choices=q.choices.map(String);const normalized=choices.map(normalizeQuizText);if(choices.length!==4)issues.push('Quiz question '+(i+1)+' needs exactly four answer choices');if(new Set(normalized).size!==normalized.length)issues.push('Quiz question '+(i+1)+' has duplicate answer choices');if(q.en&&!normalized.includes(normalizeQuizText(q.en)))issues.push('Quiz question '+(i+1)+' correct answer is not in its choices');if(q.kind==="blank"&&!String(q.es).includes("___"))issues.push('Quiz question '+(i+1)+' is marked blank but has no blank in its Spanish prompt');});
     FRASES.forEach(s=>{if(s.id&&s.section)issues.push('FRASES "'+s.id+'": has BOTH id and section (breaks hybrid filters)');});
+    if(typeof PICTURE_MATCH_BANK!=="undefined")PICTURE_MATCH_BANK.forEach(p=>{if(!p.id||!p.word||!p.img||!p.tts||!p.en)issues.push('Picture match "'+(p.id||"?")+'": missing required field');});
+    if(typeof GRINGO_TRAPS!=="undefined")GRINGO_TRAPS.forEach(g=>{if(!g.id||!g.trap||!g.local||!g.tts||!g.why)issues.push('Gringo trap "'+(g.id||"?")+'": missing required field');});
+    if(typeof NATURAL_EAR_CLIPS!=="undefined")NATURAL_EAR_CLIPS.forEach(n=>{if(!n.id||!n.fast||!n.clear||!Array.isArray(n.choices)||n.choices.length<3||!n.answer)issues.push('Natural ear clip "'+(n.id||"?")+'": incomplete clip');});
   }catch(e){issues.push("Validator crashed: "+e.message);}
   if(issues.length){
     const b=document.createElement("div");b.className="data-warning";
@@ -5353,3 +5365,290 @@ function attachProfileBackupControls(utilityBody){
   utilityBody.appendChild(row);
 }
 buildProfileBar();
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v102.0: Picture-to-Word Match, 60s Fluency Sprint, Natural-Speed Ear,
+   and Gringo-Trap Fixer (audio/TTS block lines 80-190 untouched)
+   ═══════════════════════════════════════════════════════════════════════════ */
+var pmOpenInVocab=false,pmSetFilter="all",pmDirection="audio2pic",pmTargetIdx=0,pmPickedId=null;
+function pmFilteredPool(){
+  if(typeof PICTURE_MATCH_BANK==="undefined"||!PICTURE_MATCH_BANK.length)return[];
+  const sub=pmSetFilter==="all"?PICTURE_MATCH_BANK:PICTURE_MATCH_BANK.filter(x=>x.set===pmSetFilter);
+  return sub.length>=4?sub:PICTURE_MATCH_BANK;
+}
+function pmChoicesFor(target,pool){
+  const others=PICTURE_MATCH_BANK.filter(x=>x.id!==target.id);
+  const sameSet=others.filter(x=>x.set===target.set);
+  const pick=[target];
+  for(const item of [...sameSet,...others]){
+    if(pick.length>=4)break;
+    if(!pick.some(p=>p.id===item.id))pick.push(item);
+  }
+  return pick.sort((a,b)=>(a.id.charCodeAt(3)+target.word.length)%7-((b.id.charCodeAt(3)+target.word.length)%7));
+}
+function renderPictureMatchDeck(host){
+  if(!host||typeof PICTURE_MATCH_BANK==="undefined"||!PICTURE_MATCH_BANK.length)return;
+  host.innerHTML="";
+  const pool=pmFilteredPool();
+  const target=pool[pmTargetIdx%pool.length];
+  const choices=pmChoicesFor(target,pool);
+  const isAudio=pmDirection==="audio2pic";
+  const box=document.createElement("div");box.className="pm-deck";
+  box.innerHTML=`<div class="pm-controls">
+    <div class="pm-set-row"></div>
+    <div class="pm-dir-row">
+      <button type="button" class="mf-chip${isAudio?" active":""}" data-dir="audio2pic">🔊 Hear → Tap Photo</button>
+      <button type="button" class="mf-chip${!isAudio?" active":""}" data-dir="pic2word">👁️ Photo → Pick Word</button>
+    </div>
+  </div>
+  <div class="pm-prompt-box"></div>
+  <div class="pm-grid"></div>
+  <div class="pm-feedback" aria-live="polite"></div>
+  <div class="bridge-actions pm-actions"></div>`;
+  const sRow=box.querySelector(".pm-set-row");
+  [["all","All (12)"],["food","☕ Food"],["city","🚕 City"],["gear","🎒 Gear"]].forEach(([sid,lbl])=>{
+    const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(pmSetFilter===sid?" active":"");
+    b.textContent=lbl;b.onclick=()=>{pmSetFilter=sid;pmTargetIdx=0;pmPickedId=null;renderPictureMatchDeck(host);};
+    sRow.appendChild(b);
+  });
+  box.querySelectorAll(".pm-dir-row button").forEach(b=>{
+    b.onclick=()=>{pmDirection=b.dataset.dir;pmPickedId=null;renderPictureMatchDeck(host);if(pmDirection==="audio2pic")speak(target.tts,0.82);};
+  });
+  const pBox=box.querySelector(".pm-prompt-box");
+  if(isAudio){
+    pBox.innerHTML=`<button type="button" class="lp-nav-btn primary pm-hear-btn">🔊 Tap to Hear Colombian Phrase</button>
+      <div class="pm-prompt-hint">No English shown — match what you hear directly to the photo!</div>`;
+    pBox.querySelector(".pm-hear-btn").onclick=()=>speak(target.tts,0.82);
+  }else{
+    pBox.innerHTML=`<div class="pm-solo-img-wrap"><img class="pm-solo-img" src="${target.img}" alt="${escapeVocabHtml(target.en)}"/></div>
+      <div class="pm-prompt-hint">Which Colombian Spanish phrase matches this picture?</div>`;
+  }
+  const grid=box.querySelector(".pm-grid");
+  const fb=box.querySelector(".pm-feedback");
+  choices.forEach(item=>{
+    const btn=document.createElement("button");btn.type="button";
+    btn.className="pm-choice-card"+(isAudio?" photo-only":" word-only")+(pmPickedId===item.id?(item.id===target.id?" is-right":" is-wrong"):(pmPickedId&&item.id===target.id?" is-right":""));
+    if(isAudio){
+      btn.innerHTML=`<img src="${item.img}" alt="${escapeVocabHtml(item.word)}"/>${pmPickedId?`<span class="pm-cap">${escapeVocabHtml(item.word)}</span>`:""}`;
+    }else{
+      btn.innerHTML=`<strong>${escapeVocabHtml(item.word)}</strong><small>${escapeVocabHtml(item.tts)}</small>`;
+    }
+    btn.onclick=()=>{
+      if(pmPickedId===target.id)return;
+      pmPickedId=item.id;
+      const ok=item.id===target.id;
+      if(ok){
+        markPractice("vocab",target.tts);
+        if(typeof recordSrs==="function")recordSrs("pm|"+target.id,true);
+      }else if(typeof recordSrs==="function"){
+        recordSrs("pm|"+target.id,false);
+      }
+      speak(target.tts,0.8);
+      renderPictureMatchDeck(host);
+    };
+    grid.appendChild(btn);
+  });
+  if(pmPickedId){
+    const ok=pmPickedId===target.id;
+    fb.className="pm-feedback "+(ok?"ok":"warn");
+    fb.innerHTML=`${ok?"✅ <strong>¡Exacto!</strong>":"🔁 <strong>Keep listening:</strong>"} <strong>${escapeVocabHtml(target.word)}</strong> — <em>${escapeVocabHtml(target.en)}</em><small>${escapeVocabHtml(target.hint)}</small>`;
+  }
+  const acts=box.querySelector(".pm-actions");
+  const nextB=document.createElement("button");nextB.type="button";nextB.className="lp-nav-btn primary";
+  nextB.textContent="Next Picture →";
+  nextB.onclick=()=>{pmTargetIdx=(pmTargetIdx+1)%pool.length;pmPickedId=null;renderPictureMatchDeck(host);if(pmDirection==="audio2pic"){const nx=pmFilteredPool()[pmTargetIdx%pmFilteredPool().length];if(nx)speak(nx.tts,0.82);}};
+  acts.appendChild(nextB);
+  attachMic(acts,target.tts,"vocab");
+  host.appendChild(box);
+}
+function mountPictureMatchEntry(vocabHome){
+  if(!vocabHome||typeof PICTURE_MATCH_BANK==="undefined"||!PICTURE_MATCH_BANK.length)return;
+  const wrap=document.createElement("section");wrap.className="pm-card-shell";
+  const hdr=document.createElement("button");hdr.type="button";hdr.className="vocab-phonetic-card pm-launch-btn";
+  hdr.innerHTML=`<span class="vocab-phonetic-icon">🖼️</span><span><strong>Picture-to-Word Match (${PICTURE_MATCH_BANK.length})</strong><small>Connect photos directly to Colombian Spanish — no English</small></span><span class="vocab-home-arrow">${pmOpenInVocab?"▾":"›"}</span>`;
+  const deckHost=document.createElement("div");deckHost.className="pm-deck-host";deckHost.hidden=!pmOpenInVocab;
+  hdr.onclick=()=>{
+    pmOpenInVocab=!pmOpenInVocab;deckHost.hidden=!pmOpenInVocab;
+    hdr.querySelector(".vocab-home-arrow").textContent=pmOpenInVocab?"▾":"›";
+    if(pmOpenInVocab)renderPictureMatchDeck(deckHost);
+  };
+  wrap.append(hdr,deckHost);
+  if(pmOpenInVocab)renderPictureMatchDeck(deckHost);
+  vocabHome.appendChild(wrap);
+}
+function openVocabPictureMatch(){
+  if(typeof showVocabHome==="function")showVocabHome();
+  pmOpenInVocab=true;
+  if(typeof renderVocabHome==="function")renderVocabHome();
+  const card=document.querySelector(".pm-card-shell");
+  if(card)card.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function mountNaturalEarLab(parent){
+  if(!parent||typeof NATURAL_EAR_CLIPS==="undefined"||!NATURAL_EAR_CLIPS.length)return;
+  let neIdx=0,nePicked=null,neReveal=false;
+  const card=document.createElement("section");card.className="bridge-trainer-card natural-ear-card";
+  const renderNe=()=>{
+    const c=NATURAL_EAR_CLIPS[neIdx%NATURAL_EAR_CLIPS.length];
+    card.innerHTML=`<div class="bridge-kicker">🎧 NATURAL-SPEED COLOMBIAN EAR · HOW LOCALS BLEND WORDS</div>
+      <div class="bridge-context">Listen at full Colombian speed first, spot what was said, then reveal the shortened spoken form:</div>
+      <div class="ne-audio-row">
+        <button type="button" class="lp-nav-btn primary ne-play-norm">🗣️ Normal (1.0x)</button>
+        <button type="button" class="lp-nav-btn ne-play-fast">⚡ Street Fast (1.15x)</button>
+        <button type="button" class="lp-nav-btn ne-play-slow">🐢 Clear Slow (0.7x)</button>
+      </div>
+      <div class="ne-choices"></div>
+      <div class="ne-reveal-box" ${neReveal?"":"hidden"}>
+        <div class="ne-forms"><strong>Spoken Fast:</strong> ${escapeVocabHtml(c.fast)} <span class="ne-phon">[${escapeVocabHtml(c.phonetic)}]</span></div>
+        <div class="ne-clear"><strong>Full Textbook Form:</strong> ${escapeVocabHtml(c.clear)}</div>
+        <div class="tvc-why">💡 ${escapeVocabHtml(c.tip)}</div>
+      </div>
+      <div class="bridge-actions ne-foot"></div>`;
+    card.querySelector(".ne-play-norm").onclick=()=>speak(c.fast,1.0);
+    card.querySelector(".ne-play-fast").onclick=()=>speak(c.fast,1.15);
+    card.querySelector(".ne-play-slow").onclick=()=>speak(c.clear,0.7);
+    const chBox=card.querySelector(".ne-choices");
+    c.choices.forEach(opt=>{
+      const b=document.createElement("button");b.type="button";
+      b.className="vv-quiz-opt"+(nePicked===opt?(opt===c.answer?" is-right":" is-wrong"):(nePicked&&opt===c.answer?" is-right":""));
+      b.textContent=opt;
+      b.onclick=()=>{nePicked=opt;neReveal=true;markPractice("phrases",c.fast);renderNe();speak(c.fast,0.95);};
+      chBox.appendChild(b);
+    });
+    const foot=card.querySelector(".ne-foot");
+    const peek=document.createElement("button");peek.type="button";peek.className="lp-nav-btn";
+    peek.textContent=neReveal?"🙈 Hide Transcript":"👁️ Show Spoken Breakdown";
+    peek.onclick=()=>{neReveal=!neReveal;renderNe();};
+    const nextB=document.createElement("button");nextB.type="button";nextB.className="lp-nav-btn primary";
+    nextB.textContent=`Next Clip (${(neIdx%NATURAL_EAR_CLIPS.length)+1}/${NATURAL_EAR_CLIPS.length}) →`;
+    nextB.onclick=()=>{neIdx=(neIdx+1)%NATURAL_EAR_CLIPS.length;nePicked=null;neReveal=false;renderNe();speak(NATURAL_EAR_CLIPS[neIdx].fast,1.0);};
+    foot.append(peek,nextB);
+  };
+  renderNe();
+  parent.appendChild(card);
+}
+
+function mountGringoTrapLab(parent){
+  if(!parent||typeof GRINGO_TRAPS==="undefined"||!GRINGO_TRAPS.length)return;
+  let gtIdx=0;
+  const card=document.createElement("section");card.className="bridge-trainer-card gringo-trap-card";
+  const renderGt=()=>{
+    const g=GRINGO_TRAPS[gtIdx%GRINGO_TRAPS.length];
+    card.innerHTML=`<div class="bridge-kicker">🚧 GRINGO-TRAP FIXER · STOP WORD-FOR-WORD TRANSLATIONS</div>
+      <div class="bridge-context"><strong>Goal:</strong> ${escapeVocabHtml(g.intent)}</div>
+      <div class="gt-compare-grid">
+        <div class="gt-box gt-avoid"><span>❌ Literal English Trap</span><strong>${escapeVocabHtml(g.trap)}</strong></div>
+        <div class="gt-box gt-local" role="button" tabindex="0"><span>✅ Natural Colombian</span><strong>${escapeVocabHtml(g.local)} 🔊</strong></div>
+      </div>
+      <div class="tvc-why">💡 ${escapeVocabHtml(g.why)}</div>
+      <div class="bridge-actions gt-foot"></div>`;
+    card.querySelector(".gt-local").onclick=()=>{markPractice("phrases",g.tts);speak(g.tts,0.8);};
+    const foot=card.querySelector(".gt-foot");
+    const hear=document.createElement("button");hear.type="button";hear.className="lp-nav-btn primary";hear.textContent="🔊 Hear Local Example";
+    hear.onclick=()=>{markPractice("phrases",g.tts);speak(g.tts,0.8);};
+    const prev=document.createElement("button");prev.type="button";prev.className="lp-nav-btn";prev.textContent="‹ Prev";
+    prev.onclick=()=>{gtIdx=(gtIdx-1+GRINGO_TRAPS.length)%GRINGO_TRAPS.length;renderGt();};
+    const next=document.createElement("button");next.type="button";next.className="lp-nav-btn";next.textContent=`Next (${(gtIdx%GRINGO_TRAPS.length)+1}/${GRINGO_TRAPS.length}) ›`;
+    next.onclick=()=>{gtIdx=(gtIdx+1)%GRINGO_TRAPS.length;renderGt();};
+    foot.append(hear,prev,next);
+    attachMic(foot,g.tts,"phrases");
+  };
+  renderGt();
+  parent.appendChild(card);
+}
+
+var qV102Tab="off",spRunning=false,spTimer=null,spLeft=60,spScore=0,spTotal=0,spItem=null,spFb="";
+const SPRINT_BEST_KEY="esco-sprint-best-v102";
+function nextSprintQuestion(){
+  const pool=[];
+  if(typeof PICTURE_MATCH_BANK!=="undefined")PICTURE_MATCH_BANK.forEach(p=>pool.push({kind:"Pic Match",cue:p.en,tts:p.tts,img:p.img,ans:p.word,pool:PICTURE_MATCH_BANK.map(x=>x.word)}));
+  if(typeof GRINGO_TRAPS!=="undefined")GRINGO_TRAPS.forEach(g=>pool.push({kind:"Local Fix",cue:"Replace '"+g.trap+"' ("+g.intent+")",tts:g.tts,ans:g.local,pool:GRINGO_TRAPS.map(x=>x.local)}));
+  if(typeof RR_BANK!=="undefined")RR_BANK.slice(0,20).forEach(r=>pool.push({kind:"Reflex",cue:r.promptEn||r.sayEn||r.prompt,tts:r.tts||r.bestEs,ans:r.bestEs,pool:RR_BANK.slice(0,20).map(x=>x.bestEs)}));
+  const pick=pool[Math.floor(Math.random()*pool.length)]||{kind:"Reflex",cue:"I'll take a black coffee",tts:"Me regala un tinto",ans:"¿Me regala un tinto?",pool:["¿Me regala un tinto?","Estoy caliente","Hasta luego"]};
+  const alts=[pick.ans];
+  for(const cand of pick.pool.slice().sort(()=>Math.random()-0.5)){
+    if(alts.length>=3)break;
+    if(cand&&!alts.includes(cand))alts.push(cand);
+  }
+  while(alts.length<3)alts.push("¡De una!");
+  pick.opts=alts.sort(()=>Math.random()-0.5);
+  return pick;
+}
+function renderQuizV102Hub(){
+  const host=document.getElementById("quiz-v102-hub");if(!host)return;
+  host.innerHTML="";
+  const bar=document.createElement("div");bar.className="qv102-bar";
+  [["off","📝 Standard Quiz"],["picture","🖼️ Picture Match (12)"],["sprint","⏱️ 60s Fluency Sprint"]].forEach(([tid,lbl])=>{
+    const b=document.createElement("button");b.type="button";b.className="mf-chip"+(qV102Tab===tid?" active":"");
+    b.textContent=lbl;
+    b.onclick=()=>{
+      if(tid!=="sprint"&&spTimer){clearInterval(spTimer);spTimer=null;spRunning=false;}
+      qV102Tab=tid;renderQuizV102Hub();
+    };
+    bar.appendChild(b);
+  });
+  host.appendChild(bar);
+  if(qV102Tab==="picture"){
+    const pmSlot=document.createElement("div");pmSlot.className="qv102-panel";
+    renderPictureMatchDeck(pmSlot);
+    host.appendChild(pmSlot);
+  }else if(qV102Tab==="sprint"){
+    const spBox=document.createElement("section");spBox.className="bridge-trainer-card sprint-card";
+    const best=Number(localStorage.getItem(SPRINT_BEST_KEY)||0);
+    if(!spRunning&&spLeft===60){
+      spBox.innerHTML=`<div class="bridge-kicker">⏱️ 60-SECOND COLOMBIAN FLUENCY SPRINT</div>
+        <div class="bridge-context">Mixes Picture Match, Gringo-Trap swaps &amp; Reacción Rápida against a 60s clock. Best score: <strong>${best}</strong></div>
+        <button type="button" class="lp-nav-btn primary sprint-start-btn">▶ Start 60s Sprint</button>`;
+      spBox.querySelector(".sprint-start-btn").onclick=()=>{
+        spRunning=true;spLeft=60;spScore=0;spTotal=0;spFb="";spItem=nextSprintQuestion();
+        if(spTimer)clearInterval(spTimer);
+        spTimer=setInterval(()=>{
+          spLeft--;
+          if(spLeft<=0){clearInterval(spTimer);spTimer=null;spRunning=false;if(spScore>best)try{localStorage.setItem(SPRINT_BEST_KEY,String(spScore));}catch(e){}}
+          renderQuizV102Hub();
+        },1000);
+        renderQuizV102Hub();
+      };
+    }else if(!spRunning&&spLeft<=0){
+      const updatedBest=Math.max(best,spScore);
+      spBox.innerHTML=`<div class="bridge-kicker">🏁 SPRINT COMPLETE!</div>
+        <div class="sprint-done-score">Score: <strong>${spScore}</strong> / ${spTotal} · 🏆 Best: <strong>${updatedBest}</strong></div>
+        <button type="button" class="lp-nav-btn primary sprint-again-btn">↻ Sprint Again (60s)</button>`;
+      spBox.querySelector(".sprint-again-btn").onclick=()=>{spLeft=60;spScore=0;spTotal=0;spFb="";renderQuizV102Hub();};
+    }else{
+      const q=spItem||(spItem=nextSprintQuestion());
+      spBox.innerHTML=`<div class="sprint-head"><span>⏱️ <strong>${spLeft}s</strong> left</span><span>✅ Score: <strong>${spScore}</strong>/${spTotal}</span><span>🏆 Best: ${best}</span></div>
+        <div class="sprint-cue"><span class="vv-row-tag">${escapeVocabHtml(q.kind)}</span>${q.img?`<img class="sprint-thumb" src="${q.img}" alt="${escapeVocabHtml(q.cue)}"/>`:""}<strong>${escapeVocabHtml(q.cue)}</strong></div>
+        <div class="vv-quiz-opts sprint-opts"></div>
+        <div class="vv-quiz-fb">${escapeVocabHtml(spFb)}</div>`;
+      const oWrap=spBox.querySelector(".sprint-opts");
+      q.opts.forEach(opt=>{
+        const b=document.createElement("button");b.type="button";b.className="vv-quiz-opt";b.textContent=opt;
+        b.onclick=()=>{
+          spTotal++;
+          if(opt===q.ans){spScore++;spFb="✅ +1 · "+q.ans;speak(q.tts,0.9);}
+          else{spFb="⚠️ Local answer: "+q.ans;speak(q.tts,0.85);}
+          spItem=nextSprintQuestion();renderQuizV102Hub();
+        };
+        oWrap.appendChild(b);
+      });
+    }
+    host.appendChild(spBox);
+  }
+}
+function openQuizV102Tab(tab){
+  qV102Tab=tab||"sprint";
+  renderQuizV102Hub();
+  const h=document.getElementById("quiz-v102-hub");
+  if(h)h.scrollIntoView({behavior:"smooth",block:"start"});
+}
+(function initQuizV102Hub(){
+  const pq=document.getElementById("page-quiz");
+  const qc=pq&&pq.querySelector(".quiz-card");
+  if(pq&&qc&&!document.getElementById("quiz-v102-hub")){
+    const hub=document.createElement("div");hub.id="quiz-v102-hub";
+    pq.insertBefore(hub,qc);
+    renderQuizV102Hub();
+  }
+})();

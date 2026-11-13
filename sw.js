@@ -1,5 +1,5 @@
-/* Network-first Service Worker with offline fallback for Español · Colombia PWA (v101.0) */
-const CACHE_NAME = "esco-pwa-v101.0";
+/* Network-first Service Worker with offline fallback for Español · Colombia PWA (v102.0) */
+const CACHE_NAME = "esco-pwa-v102.0";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -22,7 +22,24 @@ const CORE_ASSETS = [
   "./guide-panaderia.webp",
   "./guide-conectores.webp",
   "./guide-pagos.webp",
-  "./guide-comodines.webp"
+  "./guide-comodines.webp",
+  "./guide-comida.webp",
+  "./guide-modismos.webp",
+  "./scene-panaderia.webp",
+  "./scene-tienda.webp",
+  "./scene-bogota-noche.webp",
+  "./pm-tinto.webp",
+  "./pm-arepa.webp",
+  "./pm-empanada.webp",
+  "./pm-lulo.webp",
+  "./pm-buseta.webp",
+  "./pm-drogueria.webp",
+  "./pm-tienda.webp",
+  "./pm-esquina.webp",
+  "./pm-sombrilla.webp",
+  "./pm-abanico.webp",
+  "./pm-morral.webp",
+  "./pm-sencillo.webp"
 ];
 
 self.addEventListener("install", event => {
