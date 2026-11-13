@@ -72,7 +72,7 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v97.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v98.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);
   bar.append(label,select,reset,ver);utilityBody.appendChild(bar);if(typeof attachProfileBackupControls==="function")attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -1210,9 +1210,11 @@ function renderFraseMenu(){
       const scen=BRANCHING_ROLEPLAYS[rpScenarioIdx%BRANCHING_ROLEPLAYS.length];
       const turns=scen.turns||[];
       const turn=turns[rpTurnIdx%turns.length]||{};
+      const rpHero=(typeof ROLEPLAY_IMAGES!=="undefined"&&ROLEPLAY_IMAGES[scen.id])?`<div class="rp-hero-banner"><img src="${ROLEPLAY_IMAGES[scen.id]}" alt="${escapeVocabHtml(scen.title)}"/><span class="region-hero-badge">${escapeVocabHtml(scen.title)}</span></div>`:"";
       rpCard.innerHTML=`<div class="bridge-kicker">🎭 SIMULADOR DE CONVERSACIÓN · INTERACTIVE BRANCHING ROLEPLAY (NT HEAVY)</div>
         <div class="bridge-context">Choose a real-life Colombian scenario, listen to the speaker, and pick how you want to reply:</div>
         <div class="reg-tabs-row rp-scenario-tabs" role="tablist" aria-label="Roleplay scenarios"></div>
+        ${rpHero}
         <div class="comodin-sub" aria-live="polite">${escapeVocabHtml(scen.title)} — ${escapeVocabHtml(scen.sub||"")} · <strong>Turn ${rpTurnIdx+1} of ${turns.length}</strong></div>
         <div class="rp-npc-box" role="button" tabindex="0" title="Tap or press Enter to hear speaker" aria-label="Colombian speaker says: ${escapeVocabHtml(turn.npcEs||"")}. Tap to hear audio.">
           <div class="rp-npc-label">🗣️ Colombian speaker says to you:</div>
@@ -3646,9 +3648,11 @@ function buildSpeakingGuide(){
     const atlasCard=document.createElement("section");atlasCard.className="bridge-trainer-card regional-atlas-card";
     const renderAtlas=()=>{
       const reg=REGIONAL_ATLAS[regAtlasIdx%REGIONAL_ATLAS.length];
+      const regHero=(typeof REGION_IMAGES!=="undefined"&&REGION_IMAGES[reg.id])?`<div class="region-hero-banner"><img src="${REGION_IMAGES[reg.id]}" alt="${escapeVocabHtml(reg.title)}"/><span class="region-hero-badge">${escapeVocabHtml(reg.tab)}</span></div>`:"";
       atlasCard.innerHTML=`<div class="bridge-kicker">🗺️ COLOMBIAN REGIONAL ACCENT & SLANG ATLAS · ${REGIONAL_ATLAS.length} REGIONS (INCLUDING SAN JUAN DEL CESAR & GUAJIRA)</div>
         <div class="bridge-context">Tap a region to hear how family greetings, pronouns, food, and rhythm change across Colombia:</div>
         <div class="reg-tabs-row atlas-tabs" role="tablist" aria-label="Colombian regions"></div>
+        ${regHero}
         <div class="comodin-sub">${escapeVocabHtml(reg.title)} — ${escapeVocabHtml(reg.vibe)}</div>
         <div class="comodin-chunks-grid atlas-items-grid"></div>`;
       const tRow=atlasCard.querySelector(".atlas-tabs");
@@ -3719,6 +3723,61 @@ function buildSpeakingGuide(){
     };
     renderSwitcher();
     sec.appendChild(swCard);
+  }
+  if(typeof VISUAL_GUIDES!=="undefined"&&VISUAL_GUIDES.length){
+    const vgCard=document.createElement("section");vgCard.className="bridge-trainer-card visual-guides-card";
+    vgCard.setAttribute("aria-label","Visual Colombian guides and illustrated phrase posters");
+    vgCard.innerHTML=`<div class="bridge-kicker">🖼️ GUÍAS VISUALES DE COLOMBIA · ILLUSTRATED CULTURAL POSTERS</div>
+      <div class="bridge-context">Tap any poster to zoom in full-screen, or tap the phrase below each poster to hear &amp; practice it:</div>
+      <div class="visual-guides-grid"></div>`;
+    let lb=document.getElementById("vg-lightbox");
+    if(!lb){
+      lb=document.createElement("div");lb.id="vg-lightbox";lb.className="vg-lightbox";lb.hidden=true;
+      lb.setAttribute("role","dialog");lb.setAttribute("aria-modal","true");lb.setAttribute("aria-labelledby","vg-lb-title");
+      lb.innerHTML=`<div class="vg-lightbox-panel"><div class="vg-lightbox-head"><div class="vg-lightbox-title" id="vg-lb-title"></div><button type="button" class="vg-lightbox-close" id="vg-lb-close" aria-label="Close visual guide">✕ Close</button></div><img id="vg-lb-img" src="" alt=""/><div class="vg-lightbox-cap" id="vg-lb-cap"></div></div>`;
+      document.body.appendChild(lb);
+      const closeLb=()=>{
+        lb.hidden=true;
+        if(lb._opener&&typeof lb._opener.focus==="function"){lb._opener.focus();lb._opener=null;}
+      };
+      lb.querySelector("#vg-lb-close").onclick=closeLb;
+      lb.onclick=e=>{if(e.target===lb)closeLb();};
+      document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!lb.hidden)closeLb();});
+    }
+    const vgGrid=vgCard.querySelector(".visual-guides-grid");
+    VISUAL_GUIDES.forEach(vg=>{
+      const tile=document.createElement("article");tile.className="visual-guide-tile";
+      tile.innerHTML=`<button type="button" class="visual-guide-thumb" aria-label="Zoom ${escapeVocabHtml(vg.title)}">
+          <img src="${vg.img}" alt="${escapeVocabHtml(vg.alt)}" loading="lazy"/>
+          <span class="visual-guide-zoom">🔍 Zoom</span>
+        </button>
+        <div class="visual-guide-title">${escapeVocabHtml(vg.title)}</div>
+        <div class="visual-guide-sub">${escapeVocabHtml(vg.sub)}</div>
+        <div class="visual-guide-cap">${escapeVocabHtml(vg.caption)}</div>
+        <div class="visual-guide-phrase" role="button" tabindex="0" aria-label="Listen to ${escapeVocabHtml(vg.es)}">
+          <div class="comodin-chunk-head"><span class="comodin-chunk-pill">${escapeVocabHtml(vg.region)}</span><div class="comodin-chunk-acts"></div></div>
+          <div class="visual-guide-es">🗣️ ${escapeVocabHtml(vg.es)} 🔊</div>
+          <div class="visual-guide-en">${escapeVocabHtml(vg.en)}</div>
+        </div>`;
+      const thumb=tile.querySelector(".visual-guide-thumb");
+      thumb.onclick=()=>{
+        lb._opener=thumb;
+        lb.querySelector("#vg-lb-title").textContent=vg.title;
+        const im=lb.querySelector("#vg-lb-img");im.src=vg.img;im.alt=vg.alt;
+        lb.querySelector("#vg-lb-cap").textContent=vg.caption;
+        lb.hidden=false;
+        lb.querySelector("#vg-lb-close").focus();
+      };
+      const phraseBox=tile.querySelector(".visual-guide-phrase");
+      const playVg=()=>{markPractice("phrases",vg.es);if(typeof recordSrs==="function")recordSrs("vg|"+vg.es,true);speak(vg.es,0.75);};
+      phraseBox.onclick=e=>{if(e.target.closest("button"))return;playVg();};
+      phraseBox.onkeydown=e=>{if((e.key==="Enter"||e.key===" ")&&!e.target.closest("button")){e.preventDefault();playVg();}};
+      const acts=phraseBox.querySelector(".comodin-chunk-acts");
+      if(typeof attachStarBtn==="function")attachStarBtn(acts,vg.es,vg.region);
+      attachMic(acts,vg.es,"phrases");
+      vgGrid.appendChild(tile);
+    });
+    sec.appendChild(vgCard);
   }
   if(typeof STREET_EAR_LINKER!=="undefined"&&STREET_EAR_LINKER.length){
     let earIdx=0,earGuess=null;

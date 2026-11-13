@@ -1,4 +1,4 @@
-﻿
+
 html{font-size:18px;width:100%;height:100%;-webkit-text-size-adjust:none;text-size-adjust:none;}
 :root{
   --teal:#4aa8a0;--pink:#e85d75;--gold:#e8b44a;--purple:#a78bfa;--green:#34d399;--blue:#60a5fa;
@@ -2960,4 +2960,189 @@ body.lesson-focus-active .scroll{padding-bottom:calc(var(--safe-bottom) + 118px)
 .sw-variant-card:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
+}
+
+/* ── v98.0: GE API Region Illustrations, Roleplay Heroes & Visual Guides Gallery ── */
+.region-hero-banner,
+.rp-hero-banner {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.12);
+  margin: 8px 0 10px;
+  background: rgba(15, 23, 42, 0.85);
+}
+.region-hero-banner img,
+.rp-hero-banner img {
+  display: block;
+  width: 100%;
+  height: 156px;
+  object-fit: cover;
+}
+.rp-hero-banner img {
+  height: 126px;
+}
+.region-hero-badge {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #fef3c7;
+  background: rgba(12, 18, 28, 0.82);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(232,180,74,0.42);
+}
+.visual-guides-card {
+  border-color: rgba(56,189,248,0.34);
+  background: linear-gradient(155deg, rgba(56,189,248,0.08), rgba(18,26,34,0.95));
+}
+.visual-guides-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+.visual-guide-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(15, 23, 36, 0.9);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 10px;
+}
+.visual-guide-thumb {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0b1220;
+  cursor: pointer;
+}
+.visual-guide-thumb:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+.visual-guide-thumb img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+.visual-guide-thumb:hover img {
+  transform: scale(1.02);
+}
+.visual-guide-zoom {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #fff;
+  background: rgba(10, 15, 24, 0.78);
+  border: 1px solid rgba(255,255,255,0.22);
+}
+.visual-guide-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text);
+}
+.visual-guide-sub {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+.visual-guide-cap {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.visual-guide-phrase {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer;
+}
+.visual-guide-phrase:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+.visual-guide-es {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+.visual-guide-en {
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+.vg-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(5, 8, 15, 0.88);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.vg-lightbox[hidden] {
+  display: none;
+}
+.vg-lightbox-panel {
+  max-width: 780px;
+  width: 100%;
+  max-height: 92vh;
+  overflow-y: auto;
+  background: #111827;
+  border: 1px solid rgba(232,180,74,0.45);
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.vg-lightbox-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.vg-lightbox-title {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #fef3c7;
+}
+.vg-lightbox-close {
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.vg-lightbox-panel img {
+  width: 100%;
+  border-radius: 10px;
+  display: block;
+}
+.vg-lightbox-cap {
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: #cbd5e1;
 }
