@@ -9,10 +9,10 @@
 <meta name="referrer" content="no-referrer"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
-  <link rel="manifest" href="manifest.json?v=98.0"/>
+  <link rel="manifest" href="manifest.json?v=99.0"/>
   <link rel="icon" type="image/svg+xml" href="icon.svg"/>
   <link rel="apple-touch-icon" href="icon-512.png"/>
-  <link rel="stylesheet" href="styles.css?v=98.0"/>
+  <link rel="stylesheet" href="styles.css?v=99.0"/>
 </head>
 <body>
 <div id="app">
@@ -27,7 +27,7 @@
     <button class="phonetic-tab active" id="pt-letters" onclick="showPhonetic('letters')">🔤 Letras</button>
     <button class="phonetic-tab" id="pt-syllables" onclick="showPhonetic('syllables')">🔡 Sílabas</button>
   </div>
-  <div id="voice-bar-fonetica"></div>
+  <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-fonetica"></div></details>
   <div class="phonetic-panel active" id="phonetic-letters">
     <div class="sl" style="color:var(--pink)">Vocales</div>
     <div class="g5" id="vowel-grid"></div>
@@ -134,7 +134,7 @@
   <div class="ph"><div class="ph-label">Your path</div>
     <div class="ph-title" style="color:var(--gold)">Lecciones</div>
     <div class="ph-sub">One short step toward a real conversation</div></div>
-  <div id="voice-bar-lecciones"></div>
+  <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-lecciones"></div></details>
   <div id="profile-host"></div>
   <div id="lesson-list"></div>
 </div>
@@ -144,7 +144,7 @@
   <div class="ph"><div class="ph-label">Español Colombiano</div>
     <div class="ph-title" style="color:var(--teal)">Vocabulario</div>
     <div class="ph-sub">Tap any word to hear it</div></div>
-  <div id="voice-bar-vocab"></div>
+  <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-vocab"></div></details>
   <input class="content-search" id="vocab-search" type="search" placeholder="🔎 Search words, phrases, San Juan, trampas, lessons…" aria-label="Search vocabulary"/>
   <div class="vocab-home-jump" id="vocab-home-jump">
     <div class="vocab-home-jump-label">Jump directly · Ir a una categoría</div>
@@ -173,16 +173,16 @@
   <div class="ph"><div class="ph-label">Español Colombiano</div>
     <div class="ph-title" style="color:var(--pink)">Frases</div>
     <div class="ph-sub">Daily conversation · Tap to listen</div></div>
-  <div id="voice-bar-frases"></div>
+  <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-frases"></div></details>
   <div id="frases-list"></div>
 </div>
 
 <!-- GRAMÁTICA -->
 <div class="page" id="page-gram">
   <div class="ph"><div class="ph-label">Español Colombiano</div>
-    <div class="ph-title" style="color:var(--purple)">Gramática</div>
-    <div class="ph-sub">Verb tenses · Memory tricks</div></div>
-  <div id="voice-bar-gram"></div>
+    <div class="ph-title" style="color:var(--purple)">Guías &amp; Gramática</div>
+    <div class="ph-sub">Regions · Visual posters · Patterns</div></div>
+  <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-gram"></div></details>
   <div class="gram-groups">
     <button class="ggroup active" data-g="tiempos" onclick="showGramGroup('tiempos')">⏱️ Tiempos</button>
     <button class="ggroup" data-g="pronombres" onclick="showGramGroup('pronombres')">👤 Pronombres</button>
@@ -210,7 +210,7 @@
   <div class="ph"><div class="ph-label">Practice</div>
     <div class="ph-title"><span style="color:var(--gold)">Quiz</span></div>
     <div class="ph-sub">How much do you remember?</div></div>
-  <div id="voice-bar-quiz"></div>
+  <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-quiz"></div></details>
   <div class="quiz-score-bar">
     <div class="qs-item"><div class="qs-num" id="q-correct" style="color:var(--teal)">0</div><div class="qs-label">Correct</div></div>
     <div class="qs-item"><div class="qs-num" id="q-streak" style="color:var(--gold)">🔥 0</div><div class="qs-label">Streak</div></div>
@@ -246,6 +246,10 @@
     <div class="qc-label">Translate to English</div>
     <div class="qc-word" id="qc-word">—</div>
     <button class="qc-hear" onclick="quizHear()">🔊 Listen</button>
+    <div class="quiz-blind-row" id="quiz-blind-row">
+      <button type="button" class="blind-ear-chip" id="quiz-blind-toggle" onclick="toggleQuizBlindEar()">🎧 Blind-Ear: OFF</button>
+      <button type="button" class="quiz-blind-peek-btn" id="quiz-blind-peek" hidden>👁️ Peek Spanish</button>
+    </div>
     <div class="quiz-help-row" id="quiz-help-row" hidden>
       <button type="button" class="quiz-help-btn" id="quiz-help">💡 Show English help</button>
       <div class="quiz-help-text" id="quiz-help-text" hidden></div>
@@ -267,12 +271,12 @@
   <button class="tab-item active" id="tb-lecciones" onclick="showPage('lecciones')"><span class="ti">🎓</span><span>Lecciones</span></button>
   <button class="tab-item" id="tb-vocab" onclick="showPage('vocab')"><span class="ti">📚</span><span>Vocab</span></button>
   <button class="tab-item tfrases" id="tb-frases" onclick="showPage('frases')"><span class="ti">💬</span><span>Frases</span></button>
-  <button class="tab-item tgram" id="tb-gram" onclick="showPage('gram')"><span class="ti">📖</span><span>Gram</span></button>
+  <button class="tab-item tgram" id="tb-gram" onclick="showPage('gram')"><span class="ti">🇨🇴</span><span>Guías</span></button>
   <button class="tab-item tquiz" id="tb-quiz" onclick="showPage('quiz')"><span class="ti">🧪</span><span>Quiz</span></button>
 </div>
 </div>
 
-  <script src="data.js?v=98.0"></script><script src="app.js?v=98.0"></script>
-  <script>if('serviceWorker' in navigator && /^https?:$/i.test(location.protocol)){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js?v=98.0').catch(()=>{});});}</script>
+  <script src="data.js?v=99.0"></script><script src="app.js?v=99.0"></script>
+  <script>if('serviceWorker' in navigator && /^https?:$/i.test(location.protocol)){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js?v=99.0').catch(()=>{});});}</script>
 </body>
 </html>

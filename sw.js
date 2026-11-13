@@ -1,5 +1,5 @@
-/* Network-first Service Worker with offline fallback for Español · Colombia PWA (v98.0) */
-const CACHE_NAME = "esco-pwa-v98.1";
+/* Network-first Service Worker with offline fallback for Español · Colombia PWA (v99.0) */
+const CACHE_NAME = "esco-pwa-v99.0";
 const CORE_ASSETS = [
   "./",
   "./index.html",

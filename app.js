@@ -72,7 +72,7 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v98.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v99.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);
   bar.append(label,select,reset,ver);utilityBody.appendChild(bar);if(typeof attachProfileBackupControls==="function")attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -187,6 +187,43 @@ if(window.speechSynthesis){
   window.speechSynthesis.onvoiceschanged=loadV;
   setTimeout(loadV,100);
   setTimeout(loadV,500);
+}
+
+// ── v99.0 Adaptive Mode, Life Focus & Blind-Ear Preferences ───────────────────
+const USER_PREFS_KEY="esco-user-prefs-v99";
+let userPrefs={level:"auto",focus:"all",blindEar:false,hablarTab:"regions"};
+try{
+  const rawP=JSON.parse(localStorage.getItem(USER_PREFS_KEY)||"null");
+  if(rawP&&typeof rawP==="object"){
+    if(["auto","starter","explorer","fluent"].includes(rawP.level))userPrefs.level=rawP.level;
+    if(["all","sanjuan","travel","daily"].includes(rawP.focus))userPrefs.focus=rawP.focus;
+    userPrefs.blindEar=!!rawP.blindEar;
+    if(["regions","visual","ear","trampas","all"].includes(rawP.hablarTab))userPrefs.hablarTab=rawP.hablarTab;
+  }
+}catch(e){}
+function saveUserPrefs(){try{localStorage.setItem(USER_PREFS_KEY,JSON.stringify(userPrefs));}catch(e){}}
+function effectiveLevel(){
+  if(userPrefs.level!=="auto")return userPrefs.level;
+  try{
+    const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
+    return done>=3?"explorer":"starter";
+  }catch(e){return "starter";}
+}
+function isBlindEarActive(){return !!(userPrefs.blindEar||effectiveLevel()==="fluent");}
+function spanishStressHint(text){
+  const clean=String(text||"").replace(/[¿?¡!.,;:]+/g,"").trim();
+  const words=clean.split(/\s+/).filter(Boolean).slice(0,14);
+  return words.map(raw=>{
+    const w=raw.toLowerCase();
+    if(w.length<=2)return w;
+    const vowels=[...w.matchAll(/[aeiouáéíóúü]/gi)];
+    if(!vowels.length)return w;
+    const acc=w.search(/[áéíóú]/i);
+    if(acc>=0)return w.slice(0,acc)+w[acc].toUpperCase()+w.slice(acc+1);
+    const endsVowelOrNS=/[aeiousn]$/i.test(w);
+    const targetV=vowels[Math.max(0,endsVowelOrNS?vowels.length-2:vowels.length-1)];
+    return w.slice(0,targetV.index)+targetV[0].toUpperCase()+w.slice(targetV.index+1);
+  }).join(" · ");
 }
 
 // ── Build Letras ──────────────────────────────────────────────────────────────
@@ -1206,24 +1243,37 @@ function renderFraseMenu(){
       el.onclick=fn;
       el.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();fn(e);}};
     };
+    let rpBlindPeek=false;
     const renderRp=(focusTarget)=>{
       const scen=BRANCHING_ROLEPLAYS[rpScenarioIdx%BRANCHING_ROLEPLAYS.length];
       const turns=scen.turns||[];
       const turn=turns[rpTurnIdx%turns.length]||{};
+      const blind=isBlindEarActive()&&!rpBlindPeek;
       const rpHero=(typeof ROLEPLAY_IMAGES!=="undefined"&&ROLEPLAY_IMAGES[scen.id])?`<div class="rp-hero-banner"><img src="${ROLEPLAY_IMAGES[scen.id]}" alt="${escapeVocabHtml(scen.title)}"/><span class="region-hero-badge">${escapeVocabHtml(scen.title)}</span></div>`:"";
-      rpCard.innerHTML=`<div class="bridge-kicker">🎭 SIMULADOR DE CONVERSACIÓN · INTERACTIVE BRANCHING ROLEPLAY (NT HEAVY)</div>
+      rpCard.innerHTML=`<div class="bridge-kicker-row"><div class="bridge-kicker">🎭 SIMULADOR DE CONVERSACIÓN · INTERACTIVE BRANCHING ROLEPLAY</div><button type="button" class="blind-ear-chip${isBlindEarActive()?" active":""}" aria-pressed="${isBlindEarActive()?"true":"false"}">🎧 Blind-Ear: ${isBlindEarActive()?"ON":"OFF"}</button></div>
         <div class="bridge-context">Choose a real-life Colombian scenario, listen to the speaker, and pick how you want to reply:</div>
         <div class="reg-tabs-row rp-scenario-tabs" role="tablist" aria-label="Roleplay scenarios"></div>
         ${rpHero}
         <div class="comodin-sub" aria-live="polite">${escapeVocabHtml(scen.title)} — ${escapeVocabHtml(scen.sub||"")} · <strong>Turn ${rpTurnIdx+1} of ${turns.length}</strong></div>
         <div class="rp-npc-box" role="button" tabindex="0" title="Tap or press Enter to hear speaker" aria-label="Colombian speaker says: ${escapeVocabHtml(turn.npcEs||"")}. Tap to hear audio.">
           <div class="rp-npc-label">🗣️ Colombian speaker says to you:</div>
-          <div class="rp-npc-es">${escapeVocabHtml(turn.npcEs||"")} 🔊</div>
-          <div class="rp-npc-en">${escapeVocabHtml(turn.npcEn||"")}</div>
+          <div class="rp-npc-es">${blind?"🎧 Listen first — tap to hear (use Peek below to read)":escapeVocabHtml(turn.npcEs||"")+" 🔊"}</div>
+          <div class="rp-npc-en">${blind?"English & transcript hidden in Blind-Ear mode":escapeVocabHtml(turn.npcEn||"")}</div>
+        </div>
+        <div class="rp-audio-tools">
+          <button type="button" class="warmup-btn rp-slow-btn">🐢 Slow (0.6x)</button>
+          <button type="button" class="warmup-btn rp-fast-btn">🗣️ Natural (0.85x)</button>
+          ${isBlindEarActive()?`<button type="button" class="warmup-btn rp-peek-btn">${rpBlindPeek?"🙈 Hide text":"👁️ Peek text"}</button>`:""}
         </div>
         <div class="rp-options-label">👇 Choose your reply style (tap to speak &amp; see how they respond):</div>
         <div class="rp-options-grid" role="group" aria-label="Reply style options"></div>
         <div class="rp-outcome-slot" role="region" aria-live="polite" aria-label="Conversation response and coaching"></div>`;
+      const beBtn=rpCard.querySelector(".blind-ear-chip");
+      if(beBtn)beBtn.onclick=()=>{userPrefs.blindEar=!isBlindEarActive();if(!userPrefs.blindEar&&userPrefs.level==="fluent")userPrefs.level="explorer";rpBlindPeek=false;saveUserPrefs();renderRp();};
+      rpCard.querySelector(".rp-slow-btn").onclick=()=>speak(turn.npcEs||"",0.6);
+      rpCard.querySelector(".rp-fast-btn").onclick=()=>speak(turn.npcEs||"",0.85);
+      const peekBtn=rpCard.querySelector(".rp-peek-btn");
+      if(peekBtn)peekBtn.onclick=()=>{rpBlindPeek=!rpBlindPeek;renderRp();};
       const npcBox=rpCard.querySelector(".rp-npc-box");
       bindKeyClick(npcBox,()=>speak(turn.npcEs||"",0.75));
       const tRow=rpCard.querySelector(".rp-scenario-tabs");
@@ -1875,9 +1925,17 @@ function renderLessonStep(){
     goalEs.onclick=()=>speak(c.goal.es,0.75);
     body.appendChild(goalEs);
     body.appendChild(lpEl("lp-goal-en",c.goal.en));
-    body.appendChild(lpSpeakBtn(c.goal.es));
+    const speedRow=lpEl("lp-speed-row");
+    const slowGoal=lpSpeakBtn(c.goal.es,"🐢 Slow (0.6x)");slowGoal.classList.add("lp-speed-btn");slowGoal.onclick=()=>speak(c.goal.es,0.6);
+    const natGoal=lpSpeakBtn(c.goal.es,"🗣️ Natural (0.85x)");natGoal.classList.add("lp-speed-btn");natGoal.onclick=()=>speak(c.goal.es,0.85);
+    speedRow.append(slowGoal,natGoal);
+    body.appendChild(speedRow);
+    const stressBox=document.createElement("details");stressBox.className="starter-stress-box";
+    if(effectiveLevel()==="starter")stressBox.open=true;
+    stressBox.innerHTML=`<summary>🔤 Pronunciation stress guide (CAPS = stressed vowel)</summary><div class="starter-stress-guide">${escapeVocabHtml(spanishStressHint(c.goal.es))}</div>`;
+    body.appendChild(stressBox);
     attachMic(body,c.goal.es);
-    body.appendChild(lpEl("lp-hint","Tap the Spanish sentence or 🔊 button to listen, then say it out loud twice."));
+    body.appendChild(lpEl("lp-hint","Tap 🐢 Slow first if needed, then 🗣️ Natural, and say it out loud twice."));
     navBtn("Start →",next,true);
   }
   else if(step==="escalera"){
@@ -2753,13 +2811,30 @@ function renderFramePractice(advance){
   modeBar.append(slotTab,cardTab);root.appendChild(modeBar);
 
   if(frameMode==="slots"&&typeof SLOT_SWAP_MATRICES!=="undefined"&&SLOT_SWAP_MATRICES.length){
+    const slotFilter=window._slotFilter||"all";
+    const matchSlotFilter=(m,cat)=>{
+      if(cat==="all")return true;
+      const t=(m.id+" "+m.title+" "+(m.sub||"")).toLowerCase();
+      if(cat==="sanjuan")return /sanjuan|familia|citas|social/.test(t);
+      if(cat==="travel")return /uber|aeropuerto|direcciones|cafe|panaderia|mercado|corrientazo|restaurante|finca|viajes/.test(t);
+      return !/sanjuan|familia|citas/.test(t);
+    };
+    const visibleMatrices=SLOT_SWAP_MATRICES.map((m,i)=>({m,i})).filter(x=>matchSlotFilter(x.m,slotFilter));
+    if(visibleMatrices.length&&!visibleMatrices.some(x=>x.i===slotMatrixIndex))slotMatrixIndex=visibleMatrices[0].i;
     const matrix=SLOT_SWAP_MATRICES[slotMatrixIndex%SLOT_SWAP_MATRICES.length];
     const card=lpEl("lp-card frame-practice-card");
-    card.appendChild(lpEl("frame-kicker","🎰 CONSTRUCTOR DE FRASES · MIX & SPEAK"));
+    card.appendChild(lpEl("frame-kicker","🎰 CONSTRUCTOR DE FRASES · SENTENCE VERSATILITY LAB"));
     card.appendChild(lpEl("frame-title",matrix.title));
-    card.appendChild(lpEl("frame-explain",matrix.sub+" Tap one piece in each column below to hear it, then say your complete sentence out loud."));
+    card.appendChild(lpEl("frame-explain",matrix.sub+" Combine pieces from each column to bend tense, politeness, and context automatically."));
+    const fRow=lpEl("slot-filter-row");
+    [["all","🌎 All ("+SLOT_SWAP_MATRICES.length+")"],["travel","✈️ Travel & Food"],["daily","🏠 Daily Life"],["sanjuan","🪗 San Juan & Family"]].forEach(([fid,flbl])=>{
+      const fb=document.createElement("button");fb.type="button";fb.className="reg-tab-btn slot-filter-btn"+(slotFilter===fid?" active":"");fb.textContent=flbl;
+      fb.onclick=()=>{window._slotFilter=fid;renderFramePractice(false);};
+      fRow.appendChild(fb);
+    });
+    card.appendChild(fRow);
     const mSwitch=lpEl("slot-matrix-tabs");
-    SLOT_SWAP_MATRICES.forEach((m,idx)=>{
+    (visibleMatrices.length?visibleMatrices:SLOT_SWAP_MATRICES.map((m,i)=>({m,i}))).forEach(({m,i:idx})=>{
       const b=document.createElement("button");b.type="button";b.className="lp-mode-btn"+(idx===slotMatrixIndex?" active":"");b.textContent=m.title;
       b.onclick=()=>{slotMatrixIndex=idx;slotPick=[0,0,0];renderFramePractice(false);};
       mSwitch.appendChild(b);
@@ -2779,11 +2854,11 @@ function renderFramePractice(advance){
     preview.style.cursor="pointer";
     preview.onclick=e=>{if(!e.target.closest("button")){markPractice("phrases",assembledEs);speak(assembledEs,0.76);}};
     const pAct=preview.querySelector(".slot-assembled-actions");
-    const hearBtn=document.createElement("button");hearBtn.type="button";hearBtn.className="lp-nav-btn primary";hearBtn.textContent="🔊 Hear sentence";
-    hearBtn.onclick=e=>{e.stopPropagation();markPractice("phrases",assembledEs);speak(assembledEs,0.76);};
-    const slowBtn=document.createElement("button");slowBtn.type="button";slowBtn.textContent="🐢 Slow";slowBtn.className="lp-nav-btn";
-    slowBtn.onclick=e=>{e.stopPropagation();speak(assembledEs,0.52);};
-    const randBtn=document.createElement("button");randBtn.type="button";randBtn.className="lp-nav-btn";randBtn.textContent="🎲 Randomize";
+    const slowBtn=document.createElement("button");slowBtn.type="button";slowBtn.textContent="🐢 Slow (0.6x)";slowBtn.className="lp-nav-btn";
+    slowBtn.onclick=e=>{e.stopPropagation();speak(assembledEs,0.6);};
+    const hearBtn=document.createElement("button");hearBtn.type="button";hearBtn.className="lp-nav-btn primary";hearBtn.textContent="🗣️ Natural (0.85x)";
+    hearBtn.onclick=e=>{e.stopPropagation();markPractice("phrases",assembledEs);speak(assembledEs,0.85);};
+    const randBtn=document.createElement("button");randBtn.type="button";randBtn.className="lp-nav-btn slot-remix-btn";randBtn.textContent="🎲 Remix Sentence";
     randBtn.onclick=e=>{
       e.stopPropagation();
       slotPick=[
@@ -2795,9 +2870,9 @@ function renderFramePractice(advance){
       const r1=matrix.col1[slotPick[0]]||matrix.col1[0],r2=matrix.col2[slotPick[1]]||matrix.col2[0],r3=matrix.col3[slotPick[2]]||matrix.col3[0];
       const rQ=r1.es.trim().startsWith("¿");
       const rRaw=`${r1.es} ${r2.es} ${r3.es}`.replace(/\s+/g," ").trim();
-      speak(rQ?(rRaw.replace(/\.$/,"")+"?"):rRaw,0.76);
+      speak(rQ?(rRaw.replace(/\.$/,"")+"?"):rRaw,0.8);
     };
-    pAct.append(hearBtn,slowBtn,randBtn);
+    pAct.append(slowBtn,hearBtn,randBtn);
     attachMic(pAct,assembledEs,"phrases");
     card.appendChild(preview);
 
@@ -3166,29 +3241,191 @@ function syncMissedQueueLauncher(){
 }
 function openReviewSession(){qBlitzPack=null;qMissedOnly=false;showPage("quiz");qMode="mixed";qCat="all";qFocus="all";syncQuizControls();repasoLeft=10;resetQuizRound();nQ();}
 
+const FOCUS_LESSON_SETS={
+  all:null,
+  sanjuan:["san-juan-guajira","cortesia-colombiana","trampas-colombianas","plata","casa","panaderia-jugos","almuerzo-corrientazo","verbos-comodin","citas-familia","puentes-rumba-cultura","empatia-reacciones","muletillas-diminutivos"],
+  travel:["presentate","cortesia-colombiana","trampas-colombianas","aeropuerto-migracion","uber-ride","uber-completo","hotel-checkin","direcciones","direcciones-cuadras","seguridad-emergencias","bancos-pagos","panaderia-jugos","almuerzo-corrientazo","restaurante-real","mercado-negociar","farmacia"],
+  daily:["presentate","cortesia-colombiana","casa","trabajo","oficina-real","cajero-sim-tramites","migracion-bancos-ce","porteria-domicilios","arriendo-airbnb","estratos-barrios","hogar-reparaciones","whatsapp-audios","barberia","viajes-finca"]
+};
+function renderModeFocusBar(root){
+  const bar=document.createElement("section");bar.className="mode-focus-bar";bar.setAttribute("aria-label","Learning level and life focus");
+  const curLvl=effectiveLevel();
+  const lvlOpts=[["starter","🌱 Starter A0"],["explorer","🚀 Explorer A1–A2"],["fluent","🔥 Fluent Flow B1+"]];
+  const focOpts=[["all","🌎 All"],["sanjuan","🪗 San Juan"],["travel","✈️ Travel & Food"],["daily","🏠 Daily CO"]];
+  const lvlRow=document.createElement("div");lvlRow.className="mf-row";
+  lvlOpts.forEach(([id,lbl])=>{
+    const b=document.createElement("button");b.type="button";b.className="mf-pill"+(curLvl===id?" active":"");
+    b.textContent=lbl;b.setAttribute("aria-pressed",curLvl===id?"true":"false");
+    b.onclick=()=>{
+      userPrefs.level=id;
+      if(id==="fluent")userPrefs.blindEar=true;
+      else if(id==="starter"&&userPrefs.blindEar)userPrefs.blindEar=false;
+      saveUserPrefs();renderLessons();
+      if(typeof buildSpeakingGuide==="function")buildSpeakingGuide();
+    };
+    lvlRow.appendChild(b);
+  });
+  const focRow=document.createElement("div");focRow.className="mf-row mf-row-sub";
+  focOpts.forEach(([id,lbl])=>{
+    const b=document.createElement("button");b.type="button";b.className="mf-chip"+(userPrefs.focus===id?" active":"");
+    b.textContent=lbl;b.setAttribute("aria-pressed",userPrefs.focus===id?"true":"false");
+    b.onclick=()=>{userPrefs.focus=id;saveUserPrefs();renderLessons();};
+    focRow.appendChild(b);
+  });
+  const earBtn=document.createElement("button");earBtn.type="button";
+  const earOn=isBlindEarActive();
+  earBtn.className="mf-chip blind-ear-chip"+(earOn?" active":"");
+  earBtn.textContent=earOn?"🎧 Blind-Ear: ON":"🎧 Blind-Ear: OFF";
+  earBtn.setAttribute("aria-pressed",earOn?"true":"false");
+  earBtn.onclick=()=>{
+    if(effectiveLevel()==="fluent"&&earOn){userPrefs.level="explorer";userPrefs.blindEar=false;}
+    else{userPrefs.blindEar=!earOn;}
+    saveUserPrefs();renderLessons();
+    if(typeof buildSpeakingGuide==="function")buildSpeakingGuide();
+  };
+  focRow.appendChild(earBtn);
+  bar.append(lvlRow,focRow);root.appendChild(bar);
+}
+function openStageTestOut(stage,stageLessons){
+  const root=document.getElementById("lesson-list");if(!root)return;
+  setLeccionesFocusMode(true);
+  scrollAppTop();
+  const poolItems=[];
+  stageLessons.forEach(l=>{
+    const c=typeof LESSON_CONTENT!=="undefined"&&LESSON_CONTENT[l.id];
+    if(!c)return;
+    const item=(c.examples&&c.examples[0])||c.goal;
+    if(item&&item.es&&item.en)poolItems.push({lesson:l,es:item.es,en:item.en});
+  });
+  if(poolItems.length<2){openLesson(stageLessons[0]);return;}
+  const stepN=Math.max(1,Math.floor(poolItems.length/5));
+  const picks=[];
+  for(let i=0;i<poolItems.length&&picks.length<5;i+=stepN)picks.push(poolItems[i]);
+  for(let i=0;picks.length<Math.min(5,poolItems.length)&&i<poolItems.length;i++){
+    if(!picks.includes(poolItems[i]))picks.push(poolItems[i]);
+  }
+  const allDistractors=LESSONS.map(l=>LESSON_CONTENT[l.id]&&((LESSON_CONTENT[l.id].examples&&LESSON_CONTENT[l.id].examples[0])||LESSON_CONTENT[l.id].goal)).filter(x=>x&&x.es&&x.en);
+  const questions=picks.map((p,idx)=>{
+    const askEsToEn=idx%2===0;
+    const correct=askEsToEn?p.en:p.es;
+    const seen=new Set([correct.toLowerCase()]);
+    const wrong=[];
+    for(const cand of allDistractors){
+      if(wrong.length>=3)break;
+      const val=askEsToEn?cand.en:cand.es;
+      if(!val||seen.has(val.toLowerCase()))continue;
+      seen.add(val.toLowerCase());wrong.push(val);
+    }
+    const opts=[correct,...wrong].sort(()=>Math.random()-0.5);
+    return{title:p.lesson.title,prompt:askEsToEn?p.es:p.en,askEsToEn,tts:p.es,correct,opts};
+  });
+  let qi=0,score=0,answered=false;
+  const passNeed=Math.min(questions.length,Math.max(3,Math.ceil(questions.length*0.8)));
+  const renderTest=()=>{
+    root.innerHTML="";
+    const wrap=document.createElement("section");wrap.className="lp-wrap testout-card";
+    const back=document.createElement("button");back.type="button";back.className="lp-back";back.textContent="‹ Back to Ruta";
+    back.onclick=()=>{setLeccionesFocusMode(false);renderLessons();};
+    wrap.appendChild(back);
+    if(qi>=questions.length){
+      const passed=score>=passNeed;
+      if(passed){
+        stageLessons.forEach(l=>{lessonProgress[l.id]=true;});
+        saveLessons();
+      }
+      const res=document.createElement("div");res.className="testout-result";
+      res.innerHTML=`<div class="testout-kicker">${passed?"🎉 STAGE TEST-OUT PASSED":"🧭 KEEP PRACTICING"}</div>
+        <h3>${score}/${questions.length} Correct</h3>
+        <p>${passed?`All ${stageLessons.length} lessons in <strong>${escapeVocabHtml(stage.name)}</strong> are now marked complete!`:`Score ${passNeed}/${questions.length} to test out and unlock the next stage faster.`}</p>
+        <div class="testout-acts"></div>`;
+      const acts=res.querySelector(".testout-acts");
+      if(passed){
+        const cont=document.createElement("button");cont.type="button";cont.className="lp-nav-btn primary";cont.textContent="Continue to Next Stage →";
+        cont.onclick=()=>{setLeccionesFocusMode(false);renderLessons();};
+        acts.appendChild(cont);
+      }else{
+        const retry=document.createElement("button");retry.type="button";retry.className="lp-nav-btn primary";retry.textContent="🔄 Retry Test-Out";
+        retry.onclick=()=>openStageTestOut(stage,stageLessons);
+        const startL=document.createElement("button");startL.type="button";startL.className="lp-nav-btn";startL.textContent="Start Lesson 1 →";
+        startL.onclick=()=>openLesson(stageLessons[0]);
+        acts.append(retry,startL);
+      }
+      wrap.appendChild(res);root.appendChild(wrap);return;
+    }
+    const q=questions[qi];answered=false;
+    const card=document.createElement("div");card.className="lp-card";
+    card.innerHTML=`<div class="lp-kicker">⚡ STAGE TEST-OUT · ${qi+1} OF ${questions.length} (NEED ${passNeed})</div>
+      <div class="lp-step-sub">${escapeVocabHtml(stage.name)} · ${escapeVocabHtml(q.title)}</div>
+      <div class="testout-prompt">${escapeVocabHtml(q.prompt)}</div>
+      ${q.askEsToEn?'<button type="button" class="lp-nav-btn testout-hear">🔊 Listen</button>':""}
+      <div class="testout-opts"></div>
+      <div class="testout-fb" aria-live="polite"></div>
+      <div class="testout-next-row"></div>`;
+    if(q.askEsToEn){
+      card.querySelector(".testout-hear").onclick=()=>speak(q.tts,0.75);
+    }
+    const optsWrap=card.querySelector(".testout-opts"),fb=card.querySelector(".testout-fb"),nextRow=card.querySelector(".testout-next-row");
+    q.opts.forEach(opt=>{
+      const b=document.createElement("button");b.type="button";b.className="qopt testout-opt";b.textContent=opt;
+      b.onclick=()=>{
+        if(answered)return;
+        answered=true;
+        const ok=opt===q.correct;
+        if(ok){score++;b.classList.add("correct");}
+        else{
+          b.classList.add("wrong");
+          optsWrap.querySelectorAll("button").forEach(x=>{if(x.textContent===q.correct)x.classList.add("reveal");});
+        }
+        fb.textContent=ok?"✅ ¡Correcto!":`❌ Correct answer: ${q.correct}`;
+        fb.className="testout-fb "+(ok?"ok":"warn");
+        speak(q.tts,0.75);
+        const nxt=document.createElement("button");nxt.type="button";nxt.className="lp-nav-btn primary";
+        nxt.textContent=qi+1<questions.length?"Next question →":"See Test-Out Result →";
+        nxt.onclick=()=>{qi++;renderTest();};
+        nextRow.appendChild(nxt);
+      };
+      optsWrap.appendChild(b);
+    });
+    wrap.appendChild(card);root.appendChild(wrap);
+  };
+  renderTest();
+}
+
 function renderLessons(){
   const root=document.getElementById("lesson-list");if(!root)return;
   if(lpLesson){renderLessonStep();return;}
   setLeccionesFocusMode(false);
   root.innerHTML="";
   buildLessonViewTabs(root);
+  renderModeFocusBar(root);
   const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
   const percent=LESSONS.length?done/LESSONS.length:0;
+  const lvlMode=effectiveLevel();
   const pathLevel=percent<0.16?"A0 · Foundations":percent<0.38?"A1 · Everyday basics":percent<0.68?"A2 · Connected speech":"B1 · Conversational";
   const resume=loadResume();
   const resLesson=resume&&LESSONS.find(l=>l.id===resume.id);
-  const nextLesson=LESSONS.find(l=>!lessonProgress[l.id]);
+  const focusIds=FOCUS_LESSON_SETS[userPrefs.focus];
+  const focusedNext=focusIds?focusIds.map(id=>LESSONS.find(l=>l.id===id)).find(l=>l&&!lessonProgress[l.id]):null;
+  const nextLesson=focusedNext||LESSONS.find(l=>!lessonProgress[l.id]);
 
   /* 1. Unified Hero Card — Status + Primary Lesson CTA + 1-Tap Session Launchers */
   const hero=document.createElement("section");hero.className="today-hero-card";hero.dataset.lessonView="today";
-  hero.innerHTML=`<div class="today-hero-status"><span class="hero-pill streak">🔥 ${dayInfo.streak}d streak</span><span class="hero-pill level">🧭 ${pathLevel}</span><span class="hero-pill count">${done}/${LESSONS.length} lessons</span></div><div class="lesson-progress"><span style="width:${Math.round(percent*100)}%"></span></div>`;
+  hero.innerHTML=`<div class="today-hero-status"><span class="hero-pill streak">🔥 ${dayInfo.streak}d streak</span><span class="hero-pill level">🧭 ${pathLevel}</span><span class="hero-pill count">${done}/${LESSONS.length} lessons · ~4 min</span></div><div class="lesson-progress"><span style="width:${Math.round(percent*100)}%"></span></div>`;
 
-  const primaryLesson=(resLesson&&!lessonProgress[resLesson.id])?resLesson:(nextLesson||LESSONS[0]);
-  const isResuming=!!(resLesson&&!lessonProgress[resLesson.id]);
+  const primaryLesson=(resLesson&&!lessonProgress[resLesson.id]&&(!focusIds||focusIds.includes(resLesson.id)))?resLesson:(nextLesson||LESSONS[0]);
+  const isResuming=!!(resLesson&&primaryLesson.id===resLesson.id&&!lessonProgress[resLesson.id]);
+  const focusTag=userPrefs.focus==="sanjuan"?"🪗 SAN JUAN":userPrefs.focus==="travel"?"✈️ TRAVEL & FOOD":userPrefs.focus==="daily"?"🏠 DAILY CO":"";
   const heroCta=document.createElement("button");heroCta.type="button";heroCta.className="today-hero-cta";
-  heroCta.innerHTML=`<div class="today-hero-cta-icon">${primaryLesson.icon||"🎓"}</div><div class="today-hero-cta-copy"><span class="today-hero-cta-kicker">${isResuming?`▶️ CONTINUE · STEP ${(resume.step|0)+1}`:(done===0?"🚀 START HERE · LESSON 1":"🎓 NEXT LESSON")}</span><strong>${escapeVocabHtml(primaryLesson.title)}</strong><small>${escapeVocabHtml(primaryLesson.sub)}</small></div><div class="today-hero-cta-badge">${isResuming?"Resume →":"Start →"}</div>`;
+  heroCta.innerHTML=`<div class="today-hero-cta-icon">${primaryLesson.icon||"🎓"}</div><div class="today-hero-cta-copy"><span class="today-hero-cta-kicker">${isResuming?`▶️ CONTINUE · STEP ${(resume.step|0)+1}`:(done===0?"🚀 START HERE · LESSON 1":`🎓 NEXT LESSON${focusTag?" · "+focusTag:""}`)}</span><strong>${escapeVocabHtml(primaryLesson.title)}</strong><small>${escapeVocabHtml(primaryLesson.sub)}</small></div><div class="today-hero-cta-badge">${isResuming?"Resume →":"Start →"}</div>`;
   heroCta.onclick=()=>{if(isResuming)openLessonAt(resLesson,resume.step,resume.qi,resume.score);else openLesson(primaryLesson);};
   hero.appendChild(heroCta);
+
+  if(lvlMode==="starter"&&done<3){
+    const soundBtn=document.createElement("button");soundBtn.type="button";soundBtn.className="starter-sound-btn";
+    soundBtn.innerHTML=`<span>🔤 <strong>2-Min Sound Basics</strong> <small>A·E·I·O·U · Silent H · Ñ · RR</small></span><span>Start →</span>`;
+    soundBtn.onclick=()=>{showPage("phonetics");showPhonetic("letras");};
+    hero.appendChild(soundBtn);
+  }
 
   root.appendChild(hero);
 
@@ -3210,45 +3447,88 @@ function renderLessons(){
     tile.onclick=fn;
     quickGrid.appendChild(tile);
   });
-  root.appendChild(quickGrid);
 
   /* 3b. Smart Coach Focus Strip ("Enfoque de Hoy · 60s Warm-Up") */
   const focusStrip=document.createElement("section");focusStrip.className="coach-focus-strip";focusStrip.dataset.lessonView="today";
   const savedEntries=Object.values(speakingErrors||{}).sort((a,b)=>((b.starred?1:0)-(a.starred?1:0))||((b.last||0)-(a.last||0)));
-  const fallbackCoach=[
-    {text:"Veci, ¿me regala un pandebono calientico y un perico?",source:"🥐 Panadería"},
-    {text:"Queda en la carrera séptima con calle setenta y dos.",source:"🧭 Direcciones"},
-    {text:"¡No me digas! ¡Uy, qué embarrada contigo!",source:"💛 Empatía"},
-    {text:"Con tarjeta de crédito, a una sola cuota, por favor.",source:"💳 Pagos"},
-    {text:"¿El jugo de lulo me lo da en agua y bajito de azúcar?",source:"🍹 Jugos"}
-  ];
-  const dayOff=frameDayNumber()%fallbackCoach.length;
-  const focusPicks=savedEntries.slice(0,3);
-  for(let i=0;focusPicks.length<3&&i<fallbackCoach.length;i++){
-    const cand=fallbackCoach[(dayOff+i)%fallbackCoach.length];
+  const coachPools={
+    starter:[
+      {text:"Mucho gusto, me llamo Seth.",en:"Nice to meet you, my name is Seth.",source:"👋 First Greeting"},
+      {text:"Buenos días, ¿cómo está?",en:"Good morning, how are you?",source:"☀️ Polite Hello"},
+      {text:"¿Me regala un tinto, por favor?",en:"Could I have a black coffee, please?",source:"☕ Ordering"},
+      {text:"Más despacio, por favor.",en:"Slower, please.",source:"🛟 Survival"},
+      {text:"¿Cuánto cuesta esto?",en:"How much does this cost?",source:"💵 Shopping"}
+    ],
+    sanjuan:[
+      {text:"¡Ajá primo! ¿Todo bien por San Juan?",en:"Hey cousin! All good in San Juan?",source:"🪗 San Juan"},
+      {text:"Hoy hace un calor sabroso, vamos por una fría.",en:"Great warm day today, let's grab a cold beer.",source:"🌴 La Guajira"},
+      {text:"¿Qué hubo compa, cómo amaneció la familia?",en:"What's up buddy, how's the family this morning?",source:"👨‍👩‍👧 Familia"},
+      {text:"¡Qué nota ese vallenato de Diomedes!",en:"That Diomedes vallenato song is awesome!",source:"🎶 Vallenato"}
+    ],
+    travel:[
+      {text:"Con tarjeta de crédito, a una sola cuota, por favor.",en:"By credit card, single payment, please.",source:"💳 Pagos"},
+      {text:"¿El jugo de lulo me lo da en agua y bajito de azúcar?",en:"Lulo juice in water, light on sugar please?",source:"🍹 Jugos"},
+      {text:"¿Me deja en la carrera séptima con calle setenta y dos?",en:"Drop me at Carrera 7 with Calle 72?",source:"🚕 Uber/Taxi"},
+      {text:"Veci, ¿me regala un pandebono calientico y un perico?",en:"Neighbor, a warm pandebono and milk coffee please?",source:"🥐 Panadería"}
+    ],
+    daily:[
+      {text:"Buenas, en portería dejaron un domicilio para el 402.",en:"Hi, delivery was left at front desk for apt 402.",source:"🏢 Portería"},
+      {text:"Hágale pues, ahorita le mando un audio por WhatsApp.",en:"For sure, I'll send you a WhatsApp voice note soon.",source:"📱 WhatsApp"},
+      {text:"¿Me hace un degradado bajito a los lados, por favor?",en:"Low fade on the sides, please?",source:"💈 Barbería"},
+      {text:"¡No me digas! ¡Uy, qué embarrada contigo!",en:"No way! Oh man, I'm so sorry about that!",source:"💛 Empatía"}
+    ]
+  };
+  const activePool=(lvlMode==="starter"&&userPrefs.focus==="all")?coachPools.starter:(coachPools[userPrefs.focus]||coachPools.travel);
+  const dayOff=frameDayNumber()%activePool.length;
+  const focusPicks=lvlMode==="starter"?[]:savedEntries.slice(0,2);
+  for(let i=0;focusPicks.length<3&&i<activePool.length;i++){
+    const cand=activePool[(dayOff+i)%activePool.length];
     if(!focusPicks.some(x=>x.text===cand.text))focusPicks.push(cand);
   }
+  const blindEarOn=isBlindEarActive();
+  const blindRevealed=new Set();
   let coachPlayIdx=0;
-  focusStrip.innerHTML=`<div class="coach-focus-head"><div><span class="coach-focus-kicker">🎯 ENFOQUE DE HOY · 60s WARM-UP</span><strong>Say these 3 expressions out loud right now</strong></div><button type="button" class="coach-focus-playall">🔊 Play 1/3</button></div><div class="coach-focus-chips"></div>`;
+  focusStrip.innerHTML=`<div class="coach-focus-head"><div><span class="coach-focus-kicker">🎯 ENFOQUE DE HOY · ${blindEarOn?"BLIND-EAR WARM-UP":"60s WARM-UP"}</span><strong>${blindEarOn?"Listen first — tap each card to hear & reveal":"Say these 3 expressions out loud right now"}</strong></div><button type="button" class="coach-focus-playall">🔊 Play 1/3</button></div><div class="coach-focus-chips"></div>`;
   const playAllBtn=focusStrip.querySelector(".coach-focus-playall");
+  const chipsWrap=focusStrip.querySelector(".coach-focus-chips");
+  const renderFocusChips=()=>{
+    chipsWrap.innerHTML="";
+    focusPicks.forEach((item,idx)=>{
+      const hiddenNow=blindEarOn&&!blindRevealed.has(item.text);
+      const chip=document.createElement("button");chip.type="button";chip.className="coach-focus-chip"+(hiddenNow?" blind-masked":"");
+      const subEn=(lvlMode==="starter"&&item.en&&!hiddenNow)?`<small class="coach-chip-en">${escapeVocabHtml(item.en)}</small>`:"";
+      chip.innerHTML=`<span class="coach-chip-tag">${item.starred?"⭐ Pinned":escapeVocabHtml(item.source||"Coach pick")}</span><strong>${hiddenNow?`🎧 Listen #${idx+1} (tap to hear & reveal)`:escapeVocabHtml(item.text)}</strong>${subEn}<span class="coach-chip-spk">🔊</span>`;
+      chip.onclick=()=>{
+        markPractice("phrases",item.text);
+        speak(item.text,lvlMode==="starter"?0.65:0.78);
+        if(blindEarOn&&!blindRevealed.has(item.text)){blindRevealed.add(item.text);renderFocusChips();}
+      };
+      chipsWrap.appendChild(chip);
+    });
+  };
+  renderFocusChips();
   playAllBtn.onclick=()=>{
     const cur=focusPicks[coachPlayIdx%focusPicks.length];
-    speak(cur.text,0.75);
+    speak(cur.text,lvlMode==="starter"?0.65:0.78);
+    if(blindEarOn){blindRevealed.add(cur.text);renderFocusChips();}
     coachPlayIdx=(coachPlayIdx+1)%focusPicks.length;
     playAllBtn.textContent=`🔊 Next (${coachPlayIdx+1}/${focusPicks.length})`;
   };
-  const chipsWrap=focusStrip.querySelector(".coach-focus-chips");
-  focusPicks.forEach(item=>{
-    const chip=document.createElement("button");chip.type="button";chip.className="coach-focus-chip";
-    chip.innerHTML=`<span class="coach-chip-tag">${item.starred?"⭐ Pinned":escapeVocabHtml(item.source||"Coach pick")}</span><strong>${escapeVocabHtml(item.text)}</strong><span class="coach-chip-spk">🔊</span>`;
-    chip.onclick=()=>{markPractice("phrases",item.text);speak(item.text,0.75);};
-    chipsWrap.appendChild(chip);
-  });
   root.appendChild(focusStrip);
 
-  /* 4. Compact Stats + Collapsible Practice List */
-  renderProgressDashboard(root,done);
-  renderSpeakingErrorJournal(root);
+  /* 4. Compact Stats + Secondary Practice Grid (collapsed for brand-new Starter learners) */
+  if(lvlMode==="starter"&&done<3){
+    const moreWrap=document.createElement("details");moreWrap.className="starter-more-tools";moreWrap.dataset.lessonView="today";
+    moreWrap.innerHTML="<summary><span>🧰 More drills, stats &amp; error journal</span><small>Slot-Swapper · Review Cards</small></summary>";
+    moreWrap.appendChild(quickGrid);
+    renderProgressDashboard(moreWrap,done);
+    renderSpeakingErrorJournal(moreWrap);
+    root.appendChild(moreWrap);
+  }else{
+    root.appendChild(quickGrid);
+    renderProgressDashboard(root,done);
+    renderSpeakingErrorJournal(root);
+  }
   /* Daily practice — one compact row (v22) */
   const daily=document.createElement("div");daily.className="daily-row";daily.dataset.lessonView="practice";
   const dr1=document.createElement("button");dr1.type="button";dr1.className="daily-card";
@@ -3321,7 +3601,14 @@ function renderLessons(){
     if(isCurrentStage||(!nextLesson&&stageIndex===0))stageWrap.open=true;
     const sh=document.createElement("summary");sh.className="stage-label";
     sh.innerHTML=`<div class="stage-label-main"><span>${stage.name}</span><span class="stage-count">${sDone}/${stageLessons.length}</span></div><div class="stage-sub">${stage.sub}</div><div class="stage-progress"><span style="width:${Math.round((sDone/Math.max(stageLessons.length,1))*100)}%"></span></div>`;
-    stageWrap.appendChild(sh);root.appendChild(stageWrap);
+    stageWrap.appendChild(sh);
+    if((stageIndex===0||stageIndex===1)&&sDone<stageLessons.length){
+      const testBar=document.createElement("div");testBar.className="stage-testout-bar";
+      testBar.innerHTML=`<span>Know the basics in this stage?</span><button type="button" class="stage-testout-btn">⚡ Test out (5Q)</button>`;
+      testBar.querySelector("button").onclick=()=>openStageTestOut(stage,stageLessons);
+      stageWrap.appendChild(testBar);
+    }
+    root.appendChild(stageWrap);
     stageLessons.forEach(lesson=>{
       lessonNum++;
       const recommended=nextLesson&&nextLesson.id===lesson.id;
@@ -3472,11 +3759,37 @@ function buildReflexivos(sec){
     sec.appendChild(card);});
 }
 let bridgeDrillIdx=0;
+function applyHablarTab(tabId){
+  userPrefs.hablarTab=tabId||"regions";
+  saveUserPrefs();
+  const sec=document.getElementById("gs-estructura");if(!sec)return;
+  sec.querySelectorAll(".hablar-subtab").forEach(b=>{
+    const on=b.dataset.tab===userPrefs.hablarTab;
+    b.classList.toggle("active",on);
+    b.setAttribute("aria-pressed",on?"true":"false");
+  });
+  sec.querySelectorAll("[data-hablar-group]").forEach(el=>{
+    el.hidden=(userPrefs.hablarTab!=="all"&&el.dataset.hablarGroup!==userPrefs.hablarTab);
+  });
+}
 function buildSpeakingGuide(){
   const sec=document.getElementById("gs-estructura");if(!sec)return;sec.innerHTML="";
-  const intro=document.createElement("div");intro.className="gram-intro";intro.innerHTML="<div class='gram-intro-title'>🧱 Build sentences & link ideas naturally</div><div class='gram-intro-text'>Practice snapping two short thoughts together with Colombian connectors and time-buyers, then review the core patterns below.</div>";sec.appendChild(intro);
+  const intro=document.createElement("div");intro.className="gram-intro";intro.innerHTML="<div class='gram-intro-title'>🇨🇴 Guías &amp; Hablar Naturalmente</div><div class='gram-intro-text'>Switch between Colombian regions, illustrated guides, street-speed contractions, and false-friend traps without scrolling through one giant wall.</div>";sec.appendChild(intro);
+  const subBar=document.createElement("div");subBar.className="hablar-subtabs";subBar.setAttribute("role","tablist");subBar.setAttribute("aria-label","Guías categories");
+  [
+    ["regions","🗺️ Regions & Switcher"],
+    ["visual","🖼️ Visual Guides"],
+    ["ear","🎧 Street Ear"],
+    ["trampas","🪤 Bridges & Trampas"],
+    ["all","📋 All"]
+  ].forEach(([id,lbl])=>{
+    const b=document.createElement("button");b.type="button";b.className="hablar-subtab";b.dataset.tab=id;b.textContent=lbl;
+    b.onclick=()=>applyHablarTab(id);
+    subBar.appendChild(b);
+  });
+  sec.appendChild(subBar);
   if(typeof CONNECTOR_BRIDGE_DRILLS!=="undefined"&&CONNECTOR_BRIDGE_DRILLS.length){
-    const trainer=document.createElement("section");trainer.className="bridge-trainer-card";
+    const trainer=document.createElement("section");trainer.className="bridge-trainer-card";trainer.dataset.hablarGroup="trampas";
     const renderBridge=()=>{
       const d=CONNECTOR_BRIDGE_DRILLS[bridgeDrillIdx%CONNECTOR_BRIDGE_DRILLS.length];
       const fullEs=(d.thoughtA+d.correct+d.thoughtB).replace(/\s+/g," ").trim();
@@ -3526,7 +3839,7 @@ function buildSpeakingGuide(){
   }
   if(typeof REGISTER_SWITCHER!=="undefined"&&REGISTER_SWITCHER.length){
     let regIdx=0,activeReg="ust";
-    const regCard=document.createElement("section");regCard.className="bridge-trainer-card register-switcher-card";
+    const regCard=document.createElement("section");regCard.className="bridge-trainer-card register-switcher-card";regCard.dataset.hablarGroup="regions";
     const regMeta={
       ust:{badge:"🎩 Usted",region:"Bogotá · Formal & Affectionate"},
       tu:{badge:"👋 Tú",region:"Bogotá Peers · Caribbean Coast"},
@@ -3583,7 +3896,7 @@ function buildSpeakingGuide(){
   }
   if(typeof STREET_GRID_DECODER!=="undefined"&&STREET_GRID_DECODER.length){
     let gridIdx=0;
-    const gridCard=document.createElement("section");gridCard.className="bridge-trainer-card street-grid-card";
+    const gridCard=document.createElement("section");gridCard.className="bridge-trainer-card street-grid-card";gridCard.dataset.hablarGroup="visual";
     const renderGrid=()=>{
       const g=STREET_GRID_DECODER[gridIdx%STREET_GRID_DECODER.length];
       gridCard.innerHTML=`<div class="bridge-kicker">🧭 COLOMBIAN STREET GRID & SAFETY DECODER</div>
@@ -3609,7 +3922,7 @@ function buildSpeakingGuide(){
   }
   if(typeof TEXTBOOK_VS_COLOMBIAN!=="undefined"&&TEXTBOOK_VS_COLOMBIAN.length){
     let tvcIdx=0;
-    const tvcCard=document.createElement("section");tvcCard.className="bridge-trainer-card tvc-switcher-card";
+    const tvcCard=document.createElement("section");tvcCard.className="bridge-trainer-card tvc-switcher-card";tvcCard.dataset.hablarGroup="ear";
     const renderTvc=()=>{
       const item=TEXTBOOK_VS_COLOMBIAN[tvcIdx%TEXTBOOK_VS_COLOMBIAN.length];
       tvcCard.innerHTML=`<div class="bridge-kicker">🆚 TEXTBOOK SPANISH VS. NATURAL COLOMBIAN · ${tvcIdx+1} OF ${TEXTBOOK_VS_COLOMBIAN.length}</div>
@@ -3645,7 +3958,7 @@ function buildSpeakingGuide(){
     let regAtlasIdx=0;
     const sjIdx=REGIONAL_ATLAS.findIndex(r=>r.id==="sanjuan-guajira");
     if(sjIdx>=0)regAtlasIdx=sjIdx;
-    const atlasCard=document.createElement("section");atlasCard.className="bridge-trainer-card regional-atlas-card";
+    const atlasCard=document.createElement("section");atlasCard.className="bridge-trainer-card regional-atlas-card";atlasCard.dataset.hablarGroup="regions";
     const renderAtlas=()=>{
       const reg=REGIONAL_ATLAS[regAtlasIdx%REGIONAL_ATLAS.length];
       const regHero=(typeof REGION_IMAGES!=="undefined"&&REGION_IMAGES[reg.id])?`<div class="region-hero-banner"><img src="${REGION_IMAGES[reg.id]}" alt="${escapeVocabHtml(reg.title)}"/><span class="region-hero-badge">${escapeVocabHtml(reg.tab)}</span></div>`:"";
@@ -3688,7 +4001,7 @@ function buildSpeakingGuide(){
   }
   if(typeof REGIONAL_SWITCHER!=="undefined"&&REGIONAL_SWITCHER.length){
     let swIdx=0;
-    const swCard=document.createElement("section");swCard.className="bridge-trainer-card regional-switcher-card";
+    const swCard=document.createElement("section");swCard.className="bridge-trainer-card regional-switcher-card";swCard.dataset.hablarGroup="regions";
     swCard.setAttribute("aria-label","Regional and pronoun switcher across San Juan del Cesar, Bogotá, Medellín, and Cali");
     const renderSwitcher=()=>{
       const cur=REGIONAL_SWITCHER[swIdx%REGIONAL_SWITCHER.length];
@@ -3725,7 +4038,7 @@ function buildSpeakingGuide(){
     sec.appendChild(swCard);
   }
   if(typeof VISUAL_GUIDES!=="undefined"&&VISUAL_GUIDES.length){
-    const vgCard=document.createElement("section");vgCard.className="bridge-trainer-card visual-guides-card";
+    const vgCard=document.createElement("section");vgCard.className="bridge-trainer-card visual-guides-card";vgCard.dataset.hablarGroup="visual";
     vgCard.setAttribute("aria-label","Visual Colombian guides and illustrated phrase posters");
     vgCard.innerHTML=`<div class="bridge-kicker">🖼️ GUÍAS VISUALES DE COLOMBIA · ILLUSTRATED CULTURAL POSTERS</div>
       <div class="bridge-context">Tap any poster to zoom in full-screen, or tap the phrase below each poster to hear &amp; practice it:</div>
@@ -3781,11 +4094,12 @@ function buildSpeakingGuide(){
   }
   if(typeof STREET_EAR_LINKER!=="undefined"&&STREET_EAR_LINKER.length){
     let earIdx=0,earGuess=null;
-    const earCard=document.createElement("section");earCard.className="bridge-trainer-card street-ear-card";
+    const earCard=document.createElement("section");earCard.className="bridge-trainer-card street-ear-card";earCard.dataset.hablarGroup="ear";
     earCard.setAttribute("aria-label","Street-speed contractions and ear comprehension trainer");
     const renderEar=()=>{
       const len=STREET_EAR_LINKER.length;
       const item=STREET_EAR_LINKER[earIdx%len];
+      const earBlind=isBlindEarActive()&&earGuess===null;
       const d1=STREET_EAR_LINKER[(earIdx+3)%len];
       const d2=STREET_EAR_LINKER[(earIdx+7)%len];
       const rawChoices=[
@@ -3796,7 +4110,7 @@ function buildSpeakingGuide(){
       const shift=earIdx%3;
       const choices=rawChoices.slice(shift).concat(rawChoices.slice(0,shift));
       earCard.innerHTML=`<div class="bridge-kicker">🎧 CÓMO SUENA EN LA CALLE · STREET-SPEED CONTRACTIONS (${earIdx+1}/${len})</div>
-        <div class="bridge-context">${escapeVocabHtml(item.context)} — Listen first, then test your ear below:</div>
+        <div class="bridge-context">${escapeVocabHtml(item.context)} — ${earBlind?"Blind-Ear active: tap street speech first, then pick the matching meaning:":"Listen first, then test your ear below:"}</div>
         <div class="tvc-compare-pair">
           <button type="button" class="tvc-box ear-careful" title="Tap to hear careful speed">
             <span class="tvc-tag">🐢 Careful / Written Spanish (0.65x)</span>
@@ -3804,12 +4118,12 @@ function buildSpeakingGuide(){
           </button>
           <button type="button" class="tvc-box tvc-colombian ear-street" title="Tap to hear natural street speed">
             <span class="tvc-tag">⚡ How It Sounds on the Street (0.85x) 🔊</span>
-            <strong>${escapeVocabHtml(item.streetEs)}</strong>
-            <small class="ear-phonetic">🎵 Rhythm: ${escapeVocabHtml(item.phoneticHint||"")}</small>
+            <strong>${escapeVocabHtml(earBlind?"🎧 Tap here to listen to street speed":item.streetEs)}</strong>
+            <small class="ear-phonetic">${earBlind?"(Hidden in Blind-Ear until you answer)":"🎵 Rhythm: "+escapeVocabHtml(item.phoneticHint||"")}</small>
           </button>
         </div>
         <div class="ear-check-box" role="group" aria-label="Street ear comprehension check">
-          <div class="rp-options-label">🎯 Quick Ear Check: What does <strong>"${escapeVocabHtml(item.streetEs)}"</strong> mean?</div>
+          <div class="rp-options-label">${earBlind?"🎯 Quick Ear Check: Listen above, then pick the real meaning:":"🎯 Quick Ear Check: What does <strong>\""+escapeVocabHtml(item.streetEs)+"\"</strong> mean?"}</div>
           <div class="ear-check-options"></div>
           <div class="ear-check-feedback" role="region" aria-live="polite"></div>
         </div>
@@ -3857,7 +4171,7 @@ function buildSpeakingGuide(){
   }
   if(typeof TRAMPAS_COLOMBIANAS!=="undefined"&&TRAMPAS_COLOMBIANAS.length){
     let trIdx=0,trPredicted=null;
-    const trCard=document.createElement("section");trCard.className="bridge-trainer-card trampas-decoder-card";
+    const trCard=document.createElement("section");trCard.className="bridge-trainer-card trampas-decoder-card";trCard.dataset.hablarGroup="trampas";
     trCard.setAttribute("aria-label","Colombian false friends prediction and decoder trainer");
     const renderTrap=()=>{
       const t=TRAMPAS_COLOMBIANAS[trIdx%TRAMPAS_COLOMBIANAS.length];
@@ -3939,11 +4253,12 @@ function buildSpeakingGuide(){
     sec.appendChild(trCard);
   }
   SPEAKING_GUIDE.forEach((g,i)=>{
-    const card=document.createElement("article");card.className="speaking-guide-card";
+    const card=document.createElement("article");card.className="speaking-guide-card";card.dataset.hablarGroup="trampas";
     card.innerHTML=`<div class='speaking-guide-number'>${i+1}</div><div class='speaking-guide-copy'><h3>${escapeVocabHtml(g.title)}</h3><div class='speaking-guide-formula'>${escapeVocabHtml(g.formula)}</div><p>${escapeVocabHtml(g.explain)}</p><div class='speaking-guide-mistake'>⚠️ ${escapeVocabHtml(g.mistake)}</div></div>`;
     (g.examples||[]).forEach(ex=>{const row=document.createElement("button");row.type="button";row.className="speaking-guide-example";row.innerHTML=`<strong>${escapeVocabHtml(ex.es)}</strong><small>${escapeVocabHtml(ex.en)}</small><span>🔊</span>`;row.onclick=()=>speak(ex.tts||ex.es,0.75);card.appendChild(row);});
     const drill=document.createElement("div");drill.className="speaking-guide-drill";drill.textContent="🗣️ Try it: "+g.exercise;card.appendChild(drill);sec.appendChild(card);
   });
+  applyHablarTab(userPrefs.hablarTab||"regions");
 }
 ["presente","pasado","pasado-contraste","futuro","perfecto","condicional","pasado-perfecto","futuro-perfecto","subjuntivo","trucos"].forEach(id=>buildGram(id,GRAMMAR[id]));
 buildGram("pronombres");buildGram("reflexivos");
@@ -4539,9 +4854,14 @@ function nQ(){
     return;
   }
   /* Listening questions must not show the Spanish text — hide it and auto-play */
+  qBlindPeek=false;
   document.getElementById("qc-word").textContent=qMode==="listening"||cQ.kind==="listening"?"🎧":cQ.prompt;
+  renderQuizPromptAndBlind();
   document.querySelector(".qc-label").textContent=qMode==="en-es"?"Translate to Spanish":qMode==="listening"?"Listen and recognize":qMode==="blank"?"Complete the sentence":qMode==="conversation"?(cQ.kind==="reply"?"Choose the natural reply":cQ.kind==="meaning"?"Choose the English meaning":cQ.kind==="listening"?"Listen and recognize":cQ.kind==="tense"?"Choose the matching tense":"Choose the best answer"):qMode==="es-en"?"Translate to English":cQ.kind==="reply"?"Choose the correct reply":cQ.kind==="listening"?"Listen and recognize":cQ.kind==="tense"?"Which tense is it?":cQ.kind==="blank"?"Complete the sentence":"Choose the correct answer";
-  if((qMode==="listening"||cQ.kind==="listening")&&document.getElementById("page-quiz")?.classList.contains("active"))speak(cQ.tts,0.7);
+  if(document.getElementById("page-quiz")?.classList.contains("active")){
+    if(qMode==="listening"||cQ.kind==="listening")speak(cQ.tts,0.7);
+    else if(isBlindEarActive()&&qMode!=="en-es"&&cQ.kind!=="blank")speak(cQ.tts||cQ.es,0.78);
+  }
   const seen=new Set(quizAcceptedAnswers(cQ).map(normalizeQuizText));const wrong=[];
   /* Mixed mode contains several question families.  Do not use a Spanish
      blank answer as a distractor for an English meaning question (or vice
@@ -4555,6 +4875,7 @@ function nQ(){
   const ow=document.getElementById("quiz-opts");ow.innerHTML="";
   opts.forEach(opt=>{const b=document.createElement("button");b.className="qopt";b.textContent=opt.answer;
     b.onclick=()=>{if(an)return;an=true;qT++;document.getElementById("q-total").textContent=qT;
+      renderQuizPromptAndBlind();
       const fb=document.getElementById("quiz-fb"),quizReveal=document.getElementById("quiz-reveal");
       const mk=cQ.es+"|"+cQ.answer,missKey=missedQuizKey(cQ);
         if(quizAnswerMatches(cQ,opt.answer)){b.classList.add("correct");qC++;qS++;recordSrs(mk,true);clearSpeakingError(cQ.tts||cQ.es);document.getElementById("q-correct").textContent=qC;document.getElementById("q-streak").textContent="🔥 "+qS;fb.innerHTML=`✅ ¡Correcto! <small class="srs-next">Next review: ${srsNextLabel(srsStore[mk])}</small>`;fb.style.color="var(--teal)";fb.classList.add("visible");speak(cQ.tts,0.75);
@@ -4564,6 +4885,41 @@ function nQ(){
       if(quizReveal){quizReveal.innerHTML=`<div>🇨🇴 <strong>${spanishAnswer(cQ)}</strong></div><div>🇺🇸 ${englishAnswer(cQ)}</div>`;attachMic(quizReveal,spanishAnswer(cQ));fb.appendChild(quizReveal);}
       qStore.c=qC;qStore.t=qT;qStore.s=qS;saveQ();syncMissedQueueLauncher();
       document.getElementById("quiz-next").style.display="block";};ow.appendChild(b);});
+}
+let qBlindPeek=false;
+function renderQuizPromptAndBlind(){
+  const wordEl=document.getElementById("qc-word");
+  const tog=document.getElementById("quiz-blind-toggle");
+  const peek=document.getElementById("quiz-blind-peek");
+  const earOn=isBlindEarActive();
+  if(tog){
+    tog.textContent=earOn?"🎧 Blind-Ear: ON":"🎧 Blind-Ear: OFF";
+    tog.classList.toggle("active",earOn);
+    tog.setAttribute("aria-pressed",earOn?"true":"false");
+  }
+  if(!cQ){if(peek)peek.hidden=true;return;}
+  const spanishPrompt=!["en-es","listening","dictation"].includes(qMode)&&cQ.kind!=="listening"&&cQ.prompt&&normalizeQuizText(cQ.prompt)!==normalizeQuizText(cQ.en||"");
+  const mask=earOn&&spanishPrompt&&!qBlindPeek&&!an;
+  if(qMode==="listening"||cQ.kind==="listening"||qMode==="dictation"){
+    if(wordEl)wordEl.textContent="🎧";
+    if(peek)peek.hidden=true;
+  }else{
+    if(wordEl)wordEl.textContent=mask?"🎧 Listen first — tap Peek to read":cQ.prompt;
+    if(peek){
+      peek.hidden=!(earOn&&spanishPrompt&&!an);
+      peek.textContent=qBlindPeek?"🙈 Hide Spanish":"👁️ Peek Spanish";
+      peek.onclick=()=>{qBlindPeek=!qBlindPeek;renderQuizPromptAndBlind();};
+    }
+  }
+}
+function toggleQuizBlindEar(){
+  const earOn=isBlindEarActive();
+  if(effectiveLevel()==="fluent"&&earOn){userPrefs.level="explorer";userPrefs.blindEar=false;}
+  else{userPrefs.blindEar=!earOn;}
+  saveUserPrefs();
+  renderQuizPromptAndBlind();
+  if(isBlindEarActive()&&cQ&&!an&&qMode!=="en-es")quizHear();
+  if(typeof buildSpeakingGuide==="function")buildSpeakingGuide();
 }
 function quizHear(){
   if(!cQ)return;
