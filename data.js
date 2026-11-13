@@ -6794,8 +6794,315 @@ const PICTURE_MATCH_BANK = [
   { id: "pm-sombrilla", set: "gear", setLabel: "🎒 Daily Gear & Weather", word: "La sombrilla", tts: "la sombrilla", img: "pm-sombrilla.webp", en: "Umbrella", hint: "Don't leave your apartment in Bogotá without one" },
   { id: "pm-abanico", set: "gear", setLabel: "🎒 Daily Gear & Weather", word: "El abanico", tts: "prende el abanico", img: "pm-abanico.webp", en: "Electric fan (San Juan / Coast)", hint: "On Colombia's Caribbean coast & San Juan, 'abanico' means fan (not 'ventilador')" },
   { id: "pm-morral", set: "gear", setLabel: "🎒 Daily Gear & Weather", word: "El morral", tts: "el morral", img: "pm-morral.webp", en: "Backpack / daypack", hint: "Colombians almost always call a backpack 'el morral'" },
-  { id: "pm-sencillo", set: "gear", setLabel: "🎒 Daily Gear & Weather", word: "El sencillo", tts: "tengo sencillo", img: "pm-sencillo.webp", en: "Small bills & coins (change)", hint: "Shopkeepers ask '¿Tiene sencillo?' when you hand them a 50 mil bill" }
+  { id: "pm-sencillo", set: "gear", setLabel: "🎒 Daily Gear & Weather", word: "El sencillo", tts: "tengo sencillo", img: "pm-sencillo.webp", en: "Small bills & coins (change)", hint: "Shopkeepers ask '¿Tiene sencillo?' when you hand them a 50 mil bill" },
+
+  { id: "pm-panela", set: "food", setLabel: "☕ Café & Street Food", word: "Aguapanela con queso", tts: "aguapanela caliente con queso", img: "pm-panela.webp", en: "Hot sugarcane drink with fresh cheese", hint: "Drop cubes of salty white campesino cheese right inside the hot mug" },
+  { id: "pm-chicharron", set: "food", setLabel: "☕ Café & Street Food", word: "La bandeja paisa", tts: "una bandeja paisa con chicharrón", img: "pm-chicharron.webp", en: "Colombian platter with chicharrón, beans & avocado", hint: "Tip: ask for 'media bandeja' if you want a normal-sized plate" },
+  { id: "pm-datafono", set: "city", setLabel: "🚕 City & Neighborhood", word: "El datáfono", tts: "con datáfono, por favor", img: "pm-datafono.webp", en: "Card payment reader terminal", hint: "Waiters ask '¿En efectivo o con datáfono?' (usually contactless Apple Pay works!)" },
+  { id: "pm-cajero", set: "city", setLabel: "🚕 City & Neighborhood", word: "El cajero", tts: "voy al cajero automático", img: "pm-cajero.webp", en: "ATM cash machine", hint: "Choose 'Ahorros' or 'Corriente' (avoid dynamic currency conversion!)" },
+  { id: "pm-aguacero", set: "city", setLabel: "🚕 City & Neighborhood", word: "El aguacero", tts: "cayó un aguacero fuerte", img: "pm-aguacero.webp", en: "Sudden tropical downpour", hint: "Bogotá and Medellín afternoon storms roll in fast — wait 15 minutes with a tinto" },
+  { id: "pm-recibo", set: "gear", setLabel: "🎒 Daily Gear & Weather", word: "La factura / el recibo", tts: "me regala la factura, por favor", img: "pm-recibo.webp", en: "Printed receipt / bill", hint: "Cashiers ask '¿Factura electrónica o consumidor final?'" },
+  { id: "pm-llaves", set: "gear", setLabel: "🎒 Daily Gear & Weather", word: "Las llaves", tts: "coge las llaves del apartamento", img: "pm-llaves.webp", en: "Keys", hint: "'¿Cogiste las llaves?' is heard at every doorway in Colombia" },
+  { id: "pm-pasaporte", set: "gear", setLabel: "🎒 Daily Gear & Weather", word: "El pasaporte", tts: "aquí está mi pasaporte", img: "pm-pasaporte.webp", en: "Passport", hint: "Show passport (or cédula) for SIM cards, hotels, and domestic flights" }
 ];
+
+const COLOMBIA_CHATS = [
+  {
+    id: "chat-panaderia",
+    title: "La Panadería",
+    emoji: "🥐",
+    place: "Neighborhood bakery · 7:30 AM",
+    partner: "Doña Marta",
+    turns: [
+      {
+        botEs: "¡Buenos días, vecino! A la orden, ¿qué le provoca desayunar hoy?",
+        botEn: "Good morning neighbor! At your service, what sounds good for breakfast today?",
+        tts: "Buenos días, vecino. A la orden, ¿qué le provoca desayunar hoy?",
+        options: [
+          { es: "Buenos días, doña Marta. ¿Me regala dos pandebonos y un tinto, por favor?", en: "Good morning Doña Marta. Could I get two pandebonos and a black coffee, please?", quality: "natural", tag: "✅ Natural", note: "'¿Me regala...?' is the warmest everyday way to order food in Colombia." },
+          { es: "Quiero comprar dos panes de queso y un café negro pequeño ahora.", en: "I want to buy two cheese breads and a small black coffee now.", quality: "stiff", tag: "⚠️ Textbook", note: "Understandable, though saying 'un tinto' and softening with '¿me regala...?' sounds 10x friendlier." },
+          { es: "Sí, necesito dos cuotas en el cajero automático.", en: "Yes, I need two installments at the ATM.", quality: "wrong", tag: "❌ Off-topic", note: "She asked what you want for breakfast at the bakery." }
+        ]
+      },
+      {
+        botEs: "Claro que sí, están recién salidos del horno. ¿Para comer acá o para llevar?",
+        botEn: "Of course, they just came out of the oven. For here or to go?",
+        tts: "Claro que sí, están recién salidos del horno. ¿Para comer acá o para llevar?",
+        options: [
+          { es: "Para llevar, por favor, si es tan amable.", en: "To go please, if you'd be so kind.", quality: "natural", tag: "✅ Natural", note: "Short, polite, and matches everyday counter rhythm." },
+          { es: "Voy a transportar la comida hacia mi casa caminando.", en: "I am going to transport the food toward my house walking.", quality: "stiff", tag: "⚠️ Textbook", note: "Way too literal! Simply say 'Para llevar, por favor' (or 'Pa' llevar')." },
+          { es: "Con sopa y principio de frijoles.", en: "With soup and beans as the side.", quality: "wrong", tag: "❌ Wrong spot", note: "That's for a corrientazo lunch, not a bakery bag." }
+        ]
+      },
+      {
+        botEs: "Listo, ahí se los empaco en bolsita de papel. Son siete mil pesos. ¿Efectivo o datáfono?",
+        botEn: "All set, wrapping them in a paper bag. That's 7,000 pesos. Cash or card?",
+        tts: "Listo, ahí se los empaco en bolsita de papel. Son siete mil pesos. ¿Efectivo o datáfono?",
+        options: [
+          { es: "Con datáfono a una cuota, por favor.", en: "By card terminal in one payment, please.", quality: "natural", tag: "✅ Natural", note: "Colombian terminals ask '¿Cuántas cuotas?' — saying 'a una cuota' upfront saves a step!" },
+          { es: "Pago con mi tarjeta de crédito de banco extranjero en máquina.", en: "I pay with my foreign bank credit card in machine.", quality: "stiff", tag: "⚠️ Wordy", note: "Just say 'Con tarjeta / con datáfono a una cuota, por favor'." },
+          { es: "Prende el abanico por la esquina.", en: "Turn on the fan around the corner.", quality: "wrong", tag: "❌ Unrelated", note: "She asked how you'd like to pay the 7,000 pesos." }
+        ]
+      },
+      {
+        botEs: "Aprobado, vecino. ¿Necesita copia del recibo?",
+        botEn: "Approved, neighbor. Do you need a copy of the receipt?",
+        tts: "Aprobado, vecino. ¿Necesita copia del recibo?",
+        options: [
+          { es: "No, así está perfecto. ¡Muchísimas gracias, feliz día!", en: "No, that's fine. Thank you so much, have a great day!", quality: "natural", tag: "✅ Natural", note: "Colombian bakery exchanges almost always close with '¡Que tenga feliz día!' or 'Hasta luego'." },
+          { es: "Negativo, no requiero papel impreso de la transacción.", en: "Negative, I do not require printed transaction paper.", quality: "stiff", tag: "⚠️ Robotic", note: "'Sin copia está bien, gracias' or 'No, así está perfecto' sounds relaxed and human." },
+          { es: "¿Cuánto cuesta el aguacero?", en: "How much does the downpour cost?", quality: "wrong", tag: "❌ Off-topic", note: "She's handing over your bag and offering the receipt." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "chat-corrientazo",
+    title: "El Corrientazo",
+    emoji: "🍲",
+    place: "Lunch spot · 12:30 PM",
+    partner: "Carlos (Mesero)",
+    turns: [
+      {
+        botEs: "Buenas tardes, bienvenido. Hoy de almuerzo hay sopita de verduras o bandeja de fruta. ¿Cómo prefiere empezar?",
+        botEn: "Good afternoon, welcome. Today's lunch includes veggie soup or a fruit plate. How do you prefer to start?",
+        tts: "Buenas tardes, bienvenido. Hoy de almuerzo hay sopita de verduras o fruta. ¿Cómo prefiere empezar?",
+        options: [
+          { es: "Buenas tardes. Con sopita, por favor.", en: "Good afternoon. With soup, please.", quality: "natural", tag: "✅ Natural", note: "Polite greeting first + short clear choice." },
+          { es: "Yo quiero que me traigas el plato líquido de vegetales.", en: "I want you to bring me the liquid vegetable dish.", quality: "stiff", tag: "⚠️ Stiff", note: "Colombians love the diminutive 'sopita, por favor' instead of commanding 'tráigame'." },
+          { es: "Vengo por medicina prepagada.", en: "I'm here through private health insurance.", quality: "wrong", tag: "❌ Wrong place", note: "That's a clinic counter, not a lunch table." }
+        ]
+      },
+      {
+        botEs: "Súper. ¿Y de principio le pongo frijoles rojos o lentejas? Viene con arroz y pechuga.",
+        botEn: "Super. And for your side ('principio'), red beans or lentils? It comes with rice and grilled chicken breast.",
+        tts: "Y de principio le pongo frijoles o lentejas. Viene con arroz y pechuga.",
+        options: [
+          { es: "De principio frijoles con tajadas de maduro, por favor.", en: "Beans with sweet plantain slices for the side, please.", quality: "natural", tag: "✅ Natural", note: "'Principio' is the signature Colombian word for the daily stewed side dish (beans/lentils/chickpeas)." },
+          { es: "El acompañamiento secundario serán las semillas rojas.", en: "The secondary accompaniment will be the red seeds.", quality: "stiff", tag: "⚠️ Robotic", note: "Learn 'de principio frijoles / lentejas' — you'll hear it at every lunch spot!" },
+          { es: "Me bajé en el morral.", en: "I got off in the backpack.", quality: "wrong", tag: "❌ Nonsense", note: "He is asking your lunch side preference." }
+        ]
+      },
+      {
+        botEs: "Perfecto. Hoy hay jugo de lulo. ¿Lo prefiere en agua o en leche?",
+        botEn: "Perfect. Today we have lulo juice. Do you prefer it blended with water or milk?",
+        tts: "Hoy hay jugo de lulo. ¿Lo prefiere en agua o en leche?",
+        options: [
+          { es: "En agua y bajito de azúcar, por favor.", en: "In water and low on sugar, please.", quality: "natural", tag: "✅ Natural", note: "'Bajito de azúcar' keeps Colombian restaurant juices from tasting overly sweet!" },
+          { es: "Deseo la mezcla con líquido transparente H2O sin dulzor.", en: "I desire the blend with clear liquid without sweetness.", quality: "stiff", tag: "⚠️ Weirdly formal", note: "'En agua, sin azúcar / bajito de azúcar' is crystal clear everywhere in Colombia." },
+          { es: "A una cuota por Nequi.", en: "One installment by Nequi.", quality: "wrong", tag: "❌ Too early", note: "He's taking your juice order, not ringing you up yet." }
+        ]
+      },
+      {
+        botEs: "¡Que lo disfrute! Cuando termine, puede cancelar allá en la caja.",
+        botEn: "Enjoy! Whenever you finish, you can pay over at the register.",
+        tts: "Que lo disfrute. Cuando termine, puede cancelar allá en la caja.",
+        options: [
+          { es: "¡Muchas gracias! Estuvo delicioso, ya paso a cancelar.", en: "Thank you very much! It was delicious, I'll head over to pay.", quality: "natural", tag: "✅ Natural", note: "Remember: in Colombian shops/restaurants, 'cancelar' means paying/settling the bill!" },
+          { es: "¡No cancele mi almuerzo, yo ya me lo comí!", en: "Don't cancel my lunch, I already ate it!", quality: "stiff", tag: "⚠️ False Friend", note: "Classic trap! 'Cancelar la cuenta' means 'pay the check', NOT cancel!" },
+          { es: "No tengo pasaporte.", en: "I don't have a passport.", quality: "wrong", tag: "❌ Unrelated", note: "You're just paying for lunch at the register." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "chat-taxi",
+    title: "En el Taxi / Uber",
+    emoji: "🚕",
+    place: "Medellín / Bogotá street",
+    partner: "Julián (Conductor)",
+    turns: [
+      {
+        botEs: "¡Buenas! ¿Usted es Seth? ¿Para qué dirección vamos hoy?",
+        botEn: "Hi! Are you Seth? What address are we heading to today?",
+        tts: "Buenas. ¿Usted es Seth? ¿Para qué dirección vamos hoy?",
+        options: [
+          { es: "Sí señor, buenas. Vamos para la calle diez con carrera treinta y ocho, por favor.", en: "Yes sir, hi. Let's go to Calle 10 with Carrera 38, please.", quality: "natural", tag: "✅ Natural", note: "Colombian addresses always pair 'Calle X con Carrera Y' (corners make landmarks super easy)." },
+          { es: "Soy el pasajero y mi destino geográfico está en la avenida.", en: "I am the passenger and my geographical destination is on the avenue.", quality: "stiff", tag: "⚠️ Textbook", note: "Drivers love quick cross-streets like 'Calle diez con treinta y ocho, en Provenza'." },
+          { es: "Con queso en la aguapanela.", en: "With cheese in the panela water.", quality: "wrong", tag: "❌ Wrong topic", note: "He's confirming the passenger name and address." }
+        ]
+      },
+      {
+        botEs: "Listo, de una. ¿Cómo prefiere irnos, por la avenida principal o por arriba que hay menos trancón?",
+        botEn: "Got it, let's roll. How do you prefer we go — main avenue or the upper road with less traffic?",
+        tts: "Listo, de una. ¿Nos vamos por la avenida o por arriba que hay menos trancón?",
+        options: [
+          { es: "Hágale por arriba para evitar el trancón, tranquilo.", en: "Go ahead via the upper route to dodge the traffic jam, all good.", quality: "natural", tag: "✅ Natural", note: "'Trancón' = traffic jam, and 'hágale' tells your driver 'go for it / sounds good'." },
+          { es: "Elija la carretera con menor congestión vehicular.", en: "Choose the roadway with lower vehicular congestion.", quality: "stiff", tag: "⚠️ Stiff", note: "'Por donde haya menos trancón está bien' sounds natural and relaxed." },
+          { es: "Lo quiero para llevar.", en: "I want it to go.", quality: "wrong", tag: "❌ Off-topic", note: "He's asking which route you prefer around traffic." }
+        ]
+      },
+      {
+        botEs: "Ya casi llegamos a la esquina de la calle diez. ¿Lo dejo acá en la esquinita o doy la vuelta?",
+        botEn: "Almost at the Calle 10 corner. Shall I drop you right at the corner or loop around?",
+        tts: "Ya casi llegamos a la esquina. ¿Lo dejo acá en la esquinita o doy la vuelta?",
+        options: [
+          { es: "Acá en la esquinita está súper bien, muchas gracias.", en: "Right here at the corner is super good, thank you very much.", quality: "natural", tag: "✅ Natural", note: "Notice how Colombians use '-ita' ('la esquinita') to keep drop-off requests friendly!" },
+          { es: "Detenga el vehículo inmediatamente frente a la intersección.", en: "Halt the vehicle immediately in front of the intersection.", quality: "stiff", tag: "⚠️ Harsh", note: "Drivers react much better to 'Acá en la esquinita está perfecto, gracias'." },
+          { es: "Hoy juega la Selección.", en: "Today the National Team plays.", quality: "wrong", tag: "❌ Random", note: "You're telling him where to pull over." }
+        ]
+      },
+      {
+        botEs: "Con mucho gusto, mi hermano. ¡Que esté muy bien por acá!",
+        botEn: "My pleasure, brother. Have a great time around here!",
+        tts: "Con mucho gusto, mi hermano. Que esté muy bien.",
+        options: [
+          { es: "¡Igual usted, qué amable! Buena tarde.", en: "Same to you, how kind! Good afternoon.", quality: "natural", tag: "✅ Natural", note: "Warm closing that matches Colombian street courtesy." },
+          { es: "El servicio fue completado satisfactoriamente.", en: "The service was completed satisfactorily.", quality: "stiff", tag: "⚠️ Robotic", note: "Just a warm '¡Gracias, que le vaya súper bien!' beats formal phrasing." },
+          { es: "¿Con bolsa o sin bolsa?", en: "With or without a bag?", quality: "wrong", tag: "❌ Wrong role", note: "That's the cashier line, not a taxi goodbye!" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "chat-tienda",
+    title: "La Tienda de Barrio",
+    emoji: "🛒",
+    place: "Corner store · Afternoon",
+    partner: "Don Héctor",
+    turns: [
+      {
+        botEs: "¡Buenas tardes, veci! ¿Qué se le ofrece hoy en la tienda?",
+        botEn: "Good afternoon neighbor! What can I get for you today at the store?",
+        tts: "Buenas tardes, veci. ¿Qué se le ofrece hoy en la tienda?",
+        options: [
+          { es: "¡Hola don Héctor! ¿Me regala seis huevos y una bolsa de aguapanela, por favor?", en: "Hi Don Héctor! Could I get six eggs and a bag of panela, please?", quality: "natural", tag: "✅ Natural", note: "Calling a neighborhood shopkeeper 'Veci' or 'Don + first name' builds instant warmth." },
+          { es: "Necesito adquirir seis unidades de huevo en este momento.", en: "I need to acquire six units of egg at this moment.", quality: "stiff", tag: "⚠️ Formal", note: "Say '¿Tiene huevos?' or '¿Me da media docena de huevos, por favor?'." },
+          { es: "¿Por cuál plataforma sale el bus?", en: "Which platform does the bus leave from?", quality: "wrong", tag: "❌ Wrong place", note: "You're at a corner shop buying groceries." }
+        ]
+      },
+      {
+        botEs: "Claro que sí. Todo son nueve mil quinientos pesos. ¿Necesita bolsita?",
+        botEn: "Of course. Everything comes to 9,500 pesos. Do you need a small bag?",
+        tts: "Todo son nueve mil quinientos pesos. ¿Necesita bolsita?",
+        options: [
+          { es: "No gracias, traje mi morral.", en: "No thanks, I brought my backpack.", quality: "natural", tag: "✅ Natural", note: "Bonus: Colombians say 'el morral' for backpack (and shops charge a tiny tax for plastic bags)." },
+          { es: "No deseo bolsa porque tengo saco en mi espalda.", en: "I don't wish a bag because I carry a sack on my back.", quality: "stiff", tag: "⚠️ Off word", note: "Use 'morral' (or 'maleta pequeña'), not 'saco' (which usually means sweater/jacket in Colombia!)." },
+          { es: "En agua, por favor.", en: "In water, please.", quality: "wrong", tag: "❌ Wrong question", note: "He asked if you want a grocery bag!" }
+        ]
+      },
+      {
+        botEs: "¿Tiene el valor exacto o paga con billete grande?",
+        botEn: "Do you have exact change or are you paying with a large bill?",
+        tts: "¿Tiene sencillo o paga con billete grande?",
+        options: [
+          { es: "Qué pena, solo tengo este billete de cincuenta mil. ¿Tiene sencillo para las vueltas?", en: "Sorry, I only have this 50,000 bill. Do you have change?", quality: "natural", tag: "✅ Natural", note: "'Sencillo' (small bills/coins) and 'las vueltas' (your change back) are essential Colombian shop words." },
+          { es: "Mi dinero posee denominación alta, necesito retorno.", en: "My money holds high denomination, I need return.", quality: "stiff", tag: "⚠️ Overly stiff", note: "'Solo tengo de cincuenta, ¿sí tiene vueltas?' is short and natural." },
+          { es: "Las llaves están en la mesa.", en: "The keys are on the table.", quality: "wrong", tag: "❌ Off-topic", note: "He's asking about small change ('sencillo')." }
+        ]
+      },
+      {
+        botEs: "Sí claro, sin problema. Aquí tiene sus cuarenta mil quinientos de vueltas.",
+        botEn: "Yes of course, no problem. Here is your 40,500 change back.",
+        tts: "Sin problema, aquí tiene sus vueltas.",
+        options: [
+          { es: "¡Súper, mil gracias don Héctor! Nos vemos luego.", en: "Awesome, a thousand thanks Don Héctor! See you later.", quality: "natural", tag: "✅ Natural", note: "'Mil gracias' + 'nos vemos luego' makes you sound like a true neighborhood regular." },
+          { es: "He recibido la diferencia monetaria exacta.", en: "I have received the exact monetary difference.", quality: "stiff", tag: "⚠️ Robotic", note: "Simple '¡Muchas gracias, feliz tarde!' works everywhere." },
+          { es: "Tengo alergia a ningún alimento.", en: "I have allergy to no food.", quality: "wrong", tag: "❌ Unrelated", note: "You're taking your change and leaving the shop." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "chat-drogueria",
+    title: "La Droguería",
+    emoji: "💊",
+    place: "Pharmacy · Quick errand",
+    partner: "Dra. Valeria",
+    turns: [
+      {
+        botEs: "Buenas tardes, bienvenido a la droguería. ¿Qué molestia tiene hoy?",
+        botEn: "Good afternoon, welcome to the pharmacy. What symptom/discomfort do you have today?",
+        tts: "Buenas tardes, bienvenido a la droguería. ¿Qué molestia tiene hoy?",
+        options: [
+          { es: "Buenas tardes. Me duele mucho la cabeza desde esta mañana; ¿qué me recomienda?", en: "Good afternoon. I've had a bad headache since this morning; what do you recommend?", quality: "natural", tag: "✅ Natural", note: "In Colombia people say 'droguería' and 'me duele la cabeza / el estómago'." },
+          { es: "Mi cráneo experimenta un dolor severo temporalmente.", en: "My cranium experiences severe pain temporarily.", quality: "stiff", tag: "⚠️ Medical jargon", note: "'Me duele mucho la cabeza' is what everybody says." },
+          { es: "¿Me regala un tintico caliente?", en: "Can I have a hot black coffee?", quality: "wrong", tag: "❌ Wrong store", note: "That's the café — here you're talking to the pharmacist." }
+        ]
+      },
+      {
+        botEs: "Claro. ¿Es alérgico a algún medicamento como el ibuprofeno?",
+        botEn: "Of course. Are you allergic to any medication such as ibuprofen?",
+        tts: "¿Es alérgico a algún medicamento como el ibuprofeno?",
+        options: [
+          { es: "No señora, no soy alérgico a nada.", en: "No ma'am, I'm not allergic to anything.", quality: "natural", tag: "✅ Natural", note: "'No señor / No señora' stays polite without sounding stiff in Colombian service." },
+          { es: "Mi cuerpo no presenta reacciones adversas farmacéuticas.", en: "My body does not present adverse pharmaceutical reactions.", quality: "stiff", tag: "⚠️ Textbook", note: "Simply say 'No, no soy alérgico a ningún medicamento'." },
+          { es: "Con datáfono a seis cuotas.", en: "By card reader in six installments.", quality: "wrong", tag: "❌ Too fast", note: "Wait until she checks allergies and brings the medicine!" }
+        ]
+      },
+      {
+        botEs: "Listo, tómese una pastilla cada ocho horas después de comer algo. ¿Se lleva la cajita completa o solo un blíster?",
+        botEn: "Great, take one pill every 8 hours after eating. Will you take the whole box or just one blister pack?",
+        tts: "Tómese una pastilla cada ocho horas después de comer. ¿Lleva la caja o solo un blíster?",
+        options: [
+          { es: "Solo un blíster está bien, gracias. ¿Aquí puedo cancelar con tarjeta?", en: "Just one blister strip is fine, thanks. Can I pay by card here?", quality: "natural", tag: "✅ Natural", note: "Great Colombia tip: pharmacies sell single blister strips ('un blíster') so you don't need a huge box!" },
+          { es: "Adquiero solamente una lámina plástica de dosis.", en: "I acquire solely one plastic sheet of doses.", quality: "stiff", tag: "⚠️ Awkward", note: "'Solo un blíster / solo una tirita' is exact everyday Colombian Spanish." },
+          { es: "Es estrato cuatro.", en: "It's socioeconomic tier 4.", quality: "wrong", tag: "❌ Off-topic", note: "Wrong context — she's asking box vs blister strip." }
+        ]
+      },
+      {
+        botEs: "Sí señor, pase por el datáfono. ¡Que se mejore pronto!",
+        botEn: "Yes sir, tap on the card reader. Hope you feel better soon!",
+        tts: "Sí señor, pase por el datáfono. Que se mejore pronto.",
+        options: [
+          { es: "¡Muchísimas gracias por la ayuda! Hasta luego.", en: "Thank you so much for the help! See you later.", quality: "natural", tag: "✅ Natural", note: "'¡Que se mejore!' is the warm standard response when buying medicine." },
+          { es: "Agradezco la dispensación del fármaco.", en: "I appreciate the dispensing of the pharmaceutical.", quality: "stiff", tag: "⚠️ Too stiff", note: "'¡Gracias muy amable!' feels way warmer." },
+          { es: "Cayó un aguacero ayer.", en: "A heavy downpour fell yesterday.", quality: "wrong", tag: "❌ Unrelated", note: "Say thanks for the help!" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "chat-sanjuan",
+    title: "En San Juan (La Guajira)",
+    emoji: "🪗",
+    place: "Family porch · Weekend visit",
+    partner: "Tía Luz / Primo Mateo",
+    turns: [
+      {
+        botEs: "¡Ajá, compa! ¡Qué alegría verte por San Juan! Pasa a la terraza y siéntate debajo del abanico.",
+        botEn: "Hey buddy! What a joy seeing you in San Juan! Come onto the porch and sit under the fan.",
+        tts: "Ajá compa. Qué alegría verte por San Juan. Pasa a la terraza y siéntate debajo del abanico.",
+        options: [
+          { es: "¡Hola a todos! Qué calorcito tan sabroso hace hoy. ¡Mil gracias por recibirme!", en: "Hi everyone! What lovely warm weather today. Thank you so much for welcoming me!", quality: "natural", tag: "✅ Natural", note: "Notice 'abanico' (fan) and '¡Ajá!' — hallmark warm Caribbean/Guajira porch hospitality." },
+          { es: "Estoy muy excitado por estar caliente en su ventilador.", en: "I am aroused from being hot on your fan.", quality: "stiff", tag: "⚠️ Double Gringo Trap!", note: "Watch out! Never say 'estoy excitado' (means aroused) or 'estoy caliente'! Use 'Qué emoción' + 'tengo calor'." },
+          { es: "Necesito cancelar la cuenta.", en: "I need to pay the check.", quality: "wrong", tag: "❌ Family home!", note: "It's a family visit — no check to pay!" }
+        ]
+      },
+      {
+        botEs: "Mira, ¿te provoca un jugo de corozo bien frío o prefieres agua?",
+        botEn: "Look, do you feel like an ice-cold corozo fruit juice or do you prefer water?",
+        tts: "Mira, ¿te provoca un jugo de corozo bien frío o prefieres agua?",
+        options: [
+          { es: "¡De una! Un juguito de corozo bien frío sería buenísimo, gracias.", en: "For sure! A nice cold corozo juice would be awesome, thanks.", quality: "natural", tag: "✅ Natural", note: "'¡De una!' ('heck yes / right away') + 'juguito' matches Colombian warmth immediately." },
+          { es: "Sí, me daría gusto probar esa bebida frutal morada.", en: "Yes, it would please me to sample that purple fruit beverage.", quality: "stiff", tag: "⚠️ Too stiff", note: "Keep it easy: '¡Sí claro, qué rico un jugo frío!'" },
+          { es: "A una cuota, por favor.", en: "One installment, please.", quality: "wrong", tag: "❌ Card script", note: "Your cousin/aunt is offering you a cold drink!" }
+        ]
+      },
+      {
+        botEs: "Hoy la pasamos buenísimo tocando acordeón y hablando. ¿Te quedas al sancocho con toda la familia?",
+        botEn: "Today we'll have a blast playing accordion and chatting. Are you staying for sancocho stew with the whole family?",
+        tts: "Hoy la pasamos buenísimo. ¿Te quedas al sancocho con toda la familia?",
+        options: [
+          { es: "¡Claro que sí, compa! No me lo pierdo por nada.", en: "Of course, buddy! I wouldn't miss it for anything.", quality: "natural", tag: "✅ Natural", note: "In La Guajira/Cesar, turning down food or music too fast feels rushed — leaning in builds family rapport." },
+          { es: "Permaneceré aquí para ingerir la sopa tradicional.", en: "I shall remain here to ingest the traditional soup.", quality: "stiff", tag: "⚠️ Formal", note: "'¡Con muchísimo gusto me quedo!' sounds warm and real." },
+          { es: "¿Me confirma su número de cédula?", en: "Can you confirm your ID number?", quality: "wrong", tag: "❌ Off-topic", note: "Save that for bank/SIM counters!" }
+        ]
+      },
+      {
+        botEs: "¡Esoooo! Esta es tu casa cuando quieras volver a La Guajira.",
+        botEn: "That's it! This is your home whenever you want to come back to La Guajira.",
+        tts: "Eso. Esta es tu casa cuando quieras volver a La Guajira.",
+        options: [
+          { es: "¡Qué casa tan acogedora, de verdad mil gracias familia!", en: "What a welcoming home, truly thank you all so much!", quality: "natural", tag: "✅ Natural", note: "Warm appreciation ('acogedora' = cozy/welcoming) resonates deeply across Colombia." },
+          { es: "Les agradezco la hospitalidad residencial temporal.", en: "I thank you for the temporary residential hospitality.", quality: "stiff", tag: "⚠️ Robotic", note: "'¡Muchas gracias por todo, me sentí como en casa!' sounds natural." },
+          { es: "Deme solo una pastilla.", en: "Give me just one pill.", quality: "wrong", tag: "❌ Wrong scenario", note: "Thank the family warmly!" }
+        ]
+      }
+    ]
+  }
+];
+
 
 const GRINGO_TRAPS = [
   { id: "gt-calor", intent: "Say you feel hot (weather)", trap: "Estoy caliente", local: "Tengo calor / Qué calor", tts: "Qué calor tan bravo hace hoy.", why: "'Estoy caliente' carries sexual slang meaning in Spanish; always use 'tener calor' for temperature." },

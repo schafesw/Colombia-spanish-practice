@@ -72,7 +72,7 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v105.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v106.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);const themeBtn=document.createElement("button");themeBtn.type="button";themeBtn.id="theme-toggle-btn";themeBtn.className="profile-reset";themeBtn.textContent=(localStorage.getItem("esco-theme-v101")==="light"?"🌙 Dark":"☀️ Sun");themeBtn.title="Switch dark / sunlight theme";themeBtn.onclick=()=>toggleAppTheme();
   bar.append(label,select,reset,ver,themeBtn);utilityBody.appendChild(bar);if(typeof attachProfileBackupControls==="function")attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -1466,7 +1466,7 @@ function renderFraseMenu(){
     renderStory();
     conversationGroup.appendChild(stCard);
   }
-  if(typeof mountNaturalEarLab==="function")mountNaturalEarLab(conversationGroup);
+  if(typeof mountColombiaChatsLab==="function")mountColombiaChatsLab(conversationGroup);if(typeof mountNaturalEarLab==="function")mountNaturalEarLab(conversationGroup);
   if(typeof mountGringoTrapLab==="function")mountGringoTrapLab(conversationGroup);
   conversationGroup.append(h1,g1);
   const h2=document.createElement("div");h2.className="fr-home-label";h2.textContent="📋 Phrase collections · tap to open";
@@ -3574,7 +3574,7 @@ function renderLessons(){
   const heroCta=document.createElement("button");heroCta.type="button";heroCta.className="today-hero-cta";
   heroCta.innerHTML=`<div class="today-hero-cta-icon">${primaryLesson.icon||"🎓"}</div><div class="today-hero-cta-copy"><span class="today-hero-cta-kicker">${isResuming?`▶️ CONTINUE · STEP ${(resume.step|0)+1}`:(done===0?"🚀 START HERE · LESSON 1":`🎓 NEXT LESSON${focusTag?" · "+focusTag:""}`)}</span><strong>${escapeVocabHtml(primaryLesson.title)}</strong><small>${escapeVocabHtml(primaryLesson.sub)}</small></div><div class="today-hero-cta-badge">${isResuming?"Resume →":"Start →"}</div>`;
   heroCta.onclick=()=>{if(isResuming)openLessonAt(resLesson,resume.step,resume.qi,resume.score);else openLesson(primaryLesson);};
-  hero.appendChild(heroCta);
+  hero.appendChild(heroCta);const flowBtn=document.createElement("button");flowBtn.type="button";flowBtn.className="daily-flow-cta";flowBtn.innerHTML=`<span class="df-cta-icon">⚡</span><span class="df-cta-copy"><strong>Today’s 5-Min Mixed Flow</strong><small>Due SRS · Pictures · Local Fixes · Street Ear (8 cards)</small></span><span class="df-cta-badge">Mix →</span>`;flowBtn.onclick=()=>{if(typeof openDailyFlowSession==="function")openDailyFlowSession();};hero.appendChild(flowBtn);
 
   if(lvlMode==="starter"&&done<3){
     const soundBtn=document.createElement("button");soundBtn.type="button";soundBtn.className="starter-sound-btn";
@@ -3590,12 +3590,12 @@ function renderLessons(){
     stShortcut.innerHTML=`<span>📖 <strong>Story Builder</strong> <small>Chain 3 real turns</small></span><span>Build →</span>`;
     stShortcut.onclick=()=>{showPage("frases");if(typeof renderFraseMenu==="function")renderFraseMenu();const card=document.querySelector(".story-builder-card");if(card)card.scrollIntoView({behavior:"smooth",block:"start"});};
     const pmShortcut=document.createElement("button");pmShortcut.type="button";pmShortcut.className="starter-sound-btn explorer-pm-btn";
-    pmShortcut.innerHTML=`<span>🖼️ <strong>Picture Match</strong> <small>Audio → photo</small></span><span>Play →</span>`;
-    pmShortcut.onclick=()=>{showPage("vocab");if(typeof openVocabPictureMatch==="function")openVocabPictureMatch();};
+    pmShortcut.innerHTML=`<span>🖼️ <strong>Picture Match (${typeof PICTURE_MATCH_BANK!=="undefined"?PICTURE_MATCH_BANK.length:20})</strong> <small>Word &amp; audio → photo</small></span><span>Play →</span>`;
+    pmShortcut.onclick=()=>{showPage("quiz");if(typeof openQuizV102Tab==="function")openQuizV102Tab("picture");};
     const spShortcut=document.createElement("button");spShortcut.type="button";spShortcut.className="starter-sound-btn explorer-sp-btn";
     spShortcut.innerHTML=`<span>⏱️ <strong>60s Sprint</strong> <small>Fast recall mix</small></span><span>Go →</span>`;
     spShortcut.onclick=()=>{showPage("quiz");if(typeof openQuizV102Tab==="function")openQuizV102Tab("sprint");};
-    expRow.append(vvShortcut,stShortcut,pmShortcut,spShortcut);
+    const chatShortcut=document.createElement("button");chatShortcut.type="button";chatShortcut.className="starter-sound-btn explorer-chats-btn";chatShortcut.innerHTML=`<span>💬 <strong>Colombia Chats (${typeof COLOMBIA_CHATS!=="undefined"?COLOMBIA_CHATS.length:6})</strong> <small>4-turn WhatsApp-style roleplays · Natural vs. stiff</small></span><span>Chat →</span>`;chatShortcut.onclick=()=>{showPage("frases");if(typeof renderFraseMenu==="function")renderFraseMenu();const card=document.querySelector(".colombia-chats-card");if(card)card.scrollIntoView({behavior:"smooth",block:"start"});};expRow.append(vvShortcut,stShortcut,pmShortcut,spShortcut,chatShortcut);
     hero.appendChild(expRow);
   }
 
@@ -5315,6 +5315,13 @@ function runDataValidator(){
       if(!st.id||!st.title||!Array.isArray(st.parts)||st.parts.length!==3)issues.push('Story "'+(st.id||"?")+'": must have 3 parts');
       else st.parts.forEach((pt,pi)=>{if(!Array.isArray(pt.options)||pt.options.length<3)issues.push('Story "'+st.id+'" part '+(pi+1)+' needs >=3 options');});
     });
+    if(typeof COLOMBIA_CHATS!=="undefined")COLOMBIA_CHATS.forEach(c=>{
+      if(!c.id||!c.title||!c.partner||!Array.isArray(c.turns)||c.turns.length!==4)issues.push('Colombia chat "'+(c.id||"?")+'": must have 4 turns');
+      else c.turns.forEach((t,ti)=>{
+        if(!t.botEs||!t.tts||!Array.isArray(t.options)||t.options.length<3)issues.push('Chat "'+c.id+'" turn '+(ti+1)+' incomplete');
+        else if(!t.options.some(o=>o.quality==="natural"))issues.push('Chat "'+c.id+'" turn '+(ti+1)+' missing natural option');
+      });
+    });
     if(typeof ROLEPLAY_IMAGES!=="undefined")Object.entries(ROLEPLAY_IMAGES).forEach(([k,fn])=>{if(!fn||!String(fn).endsWith(".webp"))issues.push('ROLEPLAY_IMAGES "'+k+'": expected .webp asset');});
   }catch(e){issues.push("Validator crashed: "+e.message);}
   if(issues.length){
@@ -5348,7 +5355,7 @@ function attachProfileBackupControls(utilityBody){
         const k=nativeStorage.key(i);
         if(k&&k.startsWith(prefix))data[k.slice(prefix.length)]=nativeStorage.getItem(k);
       }
-      const payload=JSON.stringify({app:"espanol-colombia",version:"v105.0",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
+      const payload=JSON.stringify({app:"espanol-colombia",version:"v106.0",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
       const blob=new Blob([payload],{type:"application/json"});
       const url=URL.createObjectURL(blob);
       const a=document.createElement("a");
@@ -5385,11 +5392,22 @@ buildProfileBar();
    v102.0: Picture-to-Word Match, 60s Fluency Sprint, Natural-Speed Ear,
    and Gringo-Trap Fixer (audio/TTS block lines 80-190 untouched)
    ═══════════════════════════════════════════════════════════════════════════ */
-var pmOpenInVocab=false,pmSetFilter="all",pmDirection="word2pic",pmTargetIdx=0,pmPickedId=null;
+var pmOpenInVocab=false,pmSetFilter="all",pmDirection="word2pic",pmTargetIdx=0,pmPickedId=null,pmScore=0,pmAttempts=0,pmStreak=0,pmPoolOrder=null,pmPoolKey="";
+function pmSrsRank(x){
+  const card=(typeof srsStore!=="undefined"&&srsStore["pm|"+x.id])||null;
+  if(!card)return 10;
+  const due=(typeof srsDue==="function"&&srsDue("pm|"+x.id))?-20:0;
+  return due-(card.lapses||0)*4+(card.reps||0)*2;
+}
 function pmFilteredPool(){
   if(typeof PICTURE_MATCH_BANK==="undefined"||!PICTURE_MATCH_BANK.length)return[];
   const sub=pmSetFilter==="all"?PICTURE_MATCH_BANK:PICTURE_MATCH_BANK.filter(x=>x.set===pmSetFilter);
-  return sub.length>=4?sub:PICTURE_MATCH_BANK;
+  const base=sub.length>=4?sub:PICTURE_MATCH_BANK;
+  if(!pmPoolOrder||pmPoolKey!==pmSetFilter||pmPoolOrder.length!==base.length){
+    pmPoolKey=pmSetFilter;
+    pmPoolOrder=base.slice().sort((a,b)=>pmSrsRank(a)-pmSrsRank(b));
+  }
+  return pmPoolOrder;
 }
 function pmChoicesFor(target,pool){
   const others=PICTURE_MATCH_BANK.filter(x=>x.id!==target.id);
@@ -5408,6 +5426,9 @@ function renderPictureMatchDeck(host){
   const target=pool[pmTargetIdx%pool.length];
   const choices=pmChoicesFor(target,pool);
   const isPicChoice=pmDirection!=="pic2word";
+  const cFood=PICTURE_MATCH_BANK.filter(x=>x.set==="food").length;
+  const cCity=PICTURE_MATCH_BANK.filter(x=>x.set==="city").length;
+  const cGear=PICTURE_MATCH_BANK.filter(x=>x.set==="gear").length;
   const box=document.createElement("div");box.className="pm-deck";
   box.innerHTML=`<div class="pm-controls">
     <div class="pm-set-row"></div>
@@ -5422,11 +5443,14 @@ function renderPictureMatchDeck(host){
   <div class="pm-feedback" aria-live="polite"></div>
   <div class="bridge-actions pm-actions"></div>`;
   const sRow=box.querySelector(".pm-set-row");
-  [["all","All (12)"],["food","☕ Food"],["city","🚕 City"],["gear","🎒 Gear"]].forEach(([sid,lbl])=>{
+  [["all",`All (${PICTURE_MATCH_BANK.length})`],["food",`☕ Food (${cFood})`],["city",`🚕 City (${cCity})`],["gear",`🎒 Gear (${cGear})`]].forEach(([sid,lbl])=>{
     const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(pmSetFilter===sid?" active":"");
-    b.textContent=lbl;b.onclick=()=>{pmSetFilter=sid;pmTargetIdx=0;pmPickedId=null;renderPictureMatchDeck(host);};
+    b.textContent=lbl;b.onclick=()=>{pmSetFilter=sid;pmTargetIdx=0;pmPickedId=null;pmPoolOrder=null;renderPictureMatchDeck(host);};
     sRow.appendChild(b);
   });
+  const statChip=document.createElement("span");statChip.className="pm-mini-stat";
+  statChip.textContent=`⭐ ${pmScore}/${pmAttempts}${pmStreak>1?" · 🔥"+pmStreak:""}`;
+  sRow.appendChild(statChip);
   box.querySelectorAll(".pm-dir-row button").forEach(b=>{
     b.onclick=()=>{pmDirection=b.dataset.dir;pmPickedId=null;renderPictureMatchDeck(host);if(pmDirection==="audio2pic")speak(target.tts,0.82);};
   });
@@ -5455,8 +5479,14 @@ function renderPictureMatchDeck(host){
     }
     btn.onclick=()=>{
       if(pmPickedId===target.id)return;
+      const firstTry=!pmPickedId;
       pmPickedId=item.id;
       const ok=item.id===target.id;
+      if(firstTry){
+        pmAttempts++;
+        if(ok){pmScore++;pmStreak++;}
+        else{pmStreak=0;}
+      }
       if(ok){
         markPractice("vocab",target.tts);
         if(typeof recordSrs==="function")recordSrs("pm|"+target.id,true);
@@ -5615,7 +5645,8 @@ function renderQuizV102Hub(){
   if(pq)pq.classList.toggle("v102-solo",qV102Tab!=="off");
   host.innerHTML="";
   const bar=document.createElement("div");bar.className="qv102-bar";
-  [["off","📝 Standard Quiz"],["picture","🖼️ Picture Match (12)"],["sprint","⏱️ 60s Fluency Sprint"]].forEach(([tid,lbl])=>{
+  const pmCount=typeof PICTURE_MATCH_BANK!=="undefined"?PICTURE_MATCH_BANK.length:20;
+  [["off","📝 Standard Quiz"],["picture",`🖼️ Picture Match (${pmCount})`],["sprint","⏱️ 60s Fluency Sprint"]].forEach(([tid,lbl])=>{
     const b=document.createElement("button");b.type="button";b.className="mf-chip"+(qV102Tab===tid?" active":"");
     b.textContent=lbl;
     b.onclick=()=>{
@@ -5718,3 +5749,257 @@ function openQuizV102Tab(tab){
     renderQuizV102Hub();
   }
 })();
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v106.0: Colombia Chats (4-Turn Roleplay Simulator) & Today's 5-Min Daily Flow
+   ═══════════════════════════════════════════════════════════════════════════ */
+var chatIdx=0,chatTurn=0,chatSolved=false,chatWrongIds=[],chatCoachMsg="",chatFirstTryOk=0,chatShowEn=false;
+function mountColombiaChatsLab(parent){
+  if(!parent||typeof COLOMBIA_CHATS==="undefined"||!COLOMBIA_CHATS.length)return;
+  chatIdx=Number(chatIdx)||0;chatTurn=Number(chatTurn)||0;chatFirstTryOk=Number(chatFirstTryOk)||0;
+  if(!Array.isArray(chatWrongIds))chatWrongIds=[];
+  chatSolved=!!chatSolved;chatShowEn=!!chatShowEn;chatCoachMsg=chatCoachMsg||"";
+  const sec=document.createElement("section");sec.className="bridge-trainer-card colombia-chats-card";
+  const render=()=>{
+    const ch=COLOMBIA_CHATS[chatIdx%COLOMBIA_CHATS.length];
+    sec.innerHTML=`<div class="bridge-kicker">💬 COLOMBIA CHATS · REAL 4-TURN ROLEPLAY</div>
+      <div class="chat-tabs" role="tablist" aria-label="Colombia chat scenarios"></div>
+      <div class="chat-header">
+        <div class="chat-partner"><span class="chat-partner-ico">${escapeVocabHtml(ch.emoji)}</span><div><strong>${escapeVocabHtml(ch.partner)} · ${escapeVocabHtml(ch.title)}</strong><small>${escapeVocabHtml(ch.place)}</small></div></div>
+        <span class="chat-turn-pill">${chatTurn>=ch.turns.length?"4/4 ✓":`Turn ${chatTurn+1}/${ch.turns.length}`}</span>
+      </div>
+      <div class="chat-thread"></div>
+      <div class="chat-reply-zone"></div>`;
+    const tabRow=sec.querySelector(".chat-tabs");
+    COLOMBIA_CHATS.forEach((item,i)=>{
+      const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(i===chatIdx?" active":"");
+      b.setAttribute("role","tab");b.setAttribute("aria-selected",i===chatIdx?"true":"false");
+      b.textContent=`${item.emoji} ${item.title}`;
+      b.onclick=()=>{chatIdx=i;chatTurn=0;chatSolved=false;chatWrongIds=[];chatCoachMsg="";chatFirstTryOk=0;chatShowEn=false;render();};
+      tabRow.appendChild(b);
+    });
+    const thread=sec.querySelector(".chat-thread");
+    const rZone=sec.querySelector(".chat-reply-zone");
+    const limit=Math.min(chatTurn,ch.turns.length);
+    for(let ti=0;ti<limit;ti++){
+      const pastT=ch.turns[ti];
+      const nat=pastT.options.find(o=>o.quality==="natural")||pastT.options[0];
+      const bb=document.createElement("div");bb.className="chat-bubble bot past";
+      bb.innerHTML=`<div class="chat-bubble-meta"><span>${escapeVocabHtml(ch.partner)}</span></div><div>${escapeVocabHtml(pastT.botEs)}</div>`;
+      const ub=document.createElement("div");ub.className="chat-bubble user past";
+      ub.innerHTML=`<div class="chat-bubble-meta"><span>Tú</span></div><div>${escapeVocabHtml(nat.es)}</div>`;
+      thread.append(bb,ub);
+    }
+    if(chatTurn>=ch.turns.length){
+      const done=document.createElement("div");done.className="chat-done-box";
+      done.innerHTML=`<strong>🎉 ¡Conversación completa!</strong><div>First-try natural replies: <strong>${chatFirstTryOk} / ${ch.turns.length}</strong></div><div class="bridge-actions"><button type="button" class="lp-nav-btn chat-replay-btn">↻ Replay</button><button type="button" class="lp-nav-btn primary chat-next-btn">Next Chat →</button></div>`;
+      done.querySelector(".chat-replay-btn").onclick=()=>{chatTurn=0;chatSolved=false;chatWrongIds=[];chatCoachMsg="";chatFirstTryOk=0;render();};
+      done.querySelector(".chat-next-btn").onclick=()=>{chatIdx=(chatIdx+1)%COLOMBIA_CHATS.length;chatTurn=0;chatSolved=false;chatWrongIds=[];chatCoachMsg="";chatFirstTryOk=0;render();};
+      thread.appendChild(done);
+      return;
+    }
+    const t=ch.turns[chatTurn];
+    const botB=document.createElement("div");botB.className="chat-bubble bot";
+    botB.innerHTML=`<div class="chat-bubble-meta"><span>${escapeVocabHtml(ch.partner)}</span></div>
+      <div><strong>${escapeVocabHtml(t.botEs)}</strong></div>
+      ${chatShowEn?`<div class="chat-en-line">${escapeVocabHtml(t.botEn)}</div>`:""}
+      <div class="chat-bubble-tools"><button type="button" class="chat-mini-btn chat-hear-btn">🔊 Hear</button><button type="button" class="chat-mini-btn chat-en-btn">${chatShowEn?"🙈 Hide EN":"👁️ EN"}</button></div>`;
+    botB.querySelector(".chat-hear-btn").onclick=()=>speak(t.tts,0.82);
+    botB.querySelector(".chat-en-btn").onclick=()=>{chatShowEn=!chatShowEn;render();};
+    thread.appendChild(botB);
+
+    const natOpt=t.options.find(o=>o.quality==="natural")||t.options[0];
+    if(chatSolved){
+      const uB=document.createElement("div");uB.className="chat-bubble user";
+      uB.innerHTML=`<div class="chat-bubble-meta"><span>Tú · ✅ Natural</span></div><div><strong>${escapeVocabHtml(natOpt.es)}</strong></div>`;
+      thread.appendChild(uB);
+      const fb=document.createElement("div");fb.className="chat-coach-fb ok";
+      fb.innerHTML=`<strong>✅ Natural:</strong> ${escapeVocabHtml(natOpt.note)}`;
+      const acts=document.createElement("div");acts.className="bridge-actions";acts.style.marginTop="8px";
+      const nxt=document.createElement("button");nxt.type="button";nxt.className="lp-nav-btn primary";
+      nxt.textContent=chatTurn+1>=ch.turns.length?"Finish Chat →":"Next Turn →";
+      nxt.onclick=()=>{
+        chatTurn++;chatSolved=false;chatWrongIds=[];chatCoachMsg="";
+        render();
+        if(chatTurn<ch.turns.length)speak(ch.turns[chatTurn].tts,0.82);
+      };
+      acts.appendChild(nxt);
+      attachMic(acts,natOpt.es,"phrases");
+      rZone.append(fb,acts);
+    }else{
+      const optsWrap=document.createElement("div");optsWrap.className="chat-opts";
+      const ordered=t.options.map((o,oi)=>({o,oi})).sort((a,b)=>((a.oi*3+chatIdx+chatTurn)%5)-((b.oi*3+chatIdx+chatTurn)%5));
+      ordered.forEach(({o,oi})=>{
+        const b=document.createElement("button");b.type="button";
+        const tried=chatWrongIds.includes(oi);
+        b.className="chat-opt-btn"+(tried?(o.quality==="stiff"?" is-stiff":" is-wrong"):"");
+        b.innerHTML=`<strong>${escapeVocabHtml(o.es)}</strong><small>${escapeVocabHtml(o.en)}</small>`;
+        b.onclick=()=>{
+          if(o.quality==="natural"){
+            chatSolved=true;
+            if(chatWrongIds.length===0)chatFirstTryOk++;
+            markPractice("phrases",o.es);
+            if(typeof recordSrs==="function")recordSrs("chat|"+ch.id+"|"+chatTurn,true);
+            speak(o.es,0.84);
+            render();
+          }else{
+            if(!chatWrongIds.includes(oi))chatWrongIds.push(oi);
+            chatCoachMsg=`${o.tag}: ${o.note}`;
+            if(typeof recordSrs==="function")recordSrs("chat|"+ch.id+"|"+chatTurn,false);
+            render();
+          }
+        };
+        optsWrap.appendChild(b);
+      });
+      rZone.appendChild(optsWrap);
+      if(chatCoachMsg){
+        const cFb=document.createElement("div");cFb.className="chat-coach-fb";
+        cFb.textContent=chatCoachMsg;
+        rZone.appendChild(cFb);
+      }
+    }
+  };
+  render();
+  parent.appendChild(sec);
+}
+
+var dfCards=[],dfIdx=0,dfPicked=null,dfScore=0,dfStreak=0;
+function buildDailyFlowDeck(){
+  const cards=[];
+  if(typeof PICTURE_MATCH_BANK!=="undefined"&&PICTURE_MATCH_BANK.length){
+    const ranked=PICTURE_MATCH_BANK.slice().sort((a,b)=>pmSrsRank(a)-pmSrsRank(b));
+    ranked.slice(0,3).forEach(target=>{
+      const choices=pmChoicesFor(target,PICTURE_MATCH_BANK);
+      cards.push({kind:"pm",kicker:"🖼️ Picture Match",prompt:target.word,tts:target.tts,ans:target.id,ansLabel:target.word+" — "+target.en,hint:target.hint,srsKey:"pm|"+target.id,choices});
+    });
+  }
+  if(typeof GRINGO_TRAPS!=="undefined"&&GRINGO_TRAPS.length){
+    const locals=GRINGO_TRAPS.map(x=>x.local);
+    GRINGO_TRAPS.slice().sort(()=>Math.random()-0.5).slice(0,2).forEach(g=>{
+      const opts=[g.local];
+      for(const c of locals.slice().sort(()=>Math.random()-0.5)){if(opts.length>=4)break;if(!opts.includes(c))opts.push(c);}
+      cards.push({kind:"quiz",kicker:"🚫 Local Fix",prompt:`Replace "${g.trap}" (${g.intent})`,tts:g.tts,ans:g.local,hint:g.why,srsKey:"gt|"+g.id,opts:opts.sort(()=>Math.random()-0.5)});
+    });
+  }
+  if(typeof RR_BANK!=="undefined"){
+    const rrOk=RR_BANK.filter(r=>r&&r.qEn&&r.aEs).slice().sort(()=>Math.random()-0.5);
+    const rrPool=rrOk.map(r=>r.aEs);
+    rrOk.slice(0,2).forEach((r,idx)=>{
+      const opts=[r.aEs];
+      for(const c of rrPool){if(opts.length>=4)break;if(!opts.includes(c))opts.push(c);}
+      while(opts.length<4)opts.push(["¡De una!","Con mucho gusto","A la orden"][opts.length%3]);
+      cards.push({kind:"quiz",kicker:"⚡ Reflex Response",prompt:r.qEn,sub:r.qEs,subTts:r.q||r.qEs,tts:r.aTts||r.aEs,ans:r.aEs,hint:r.aEn||r.qEs,srsKey:"rr|"+idx,opts:opts.sort(()=>Math.random()-0.5)});
+    });
+  }
+  if(typeof NATURAL_EAR_CLIPS!=="undefined"&&NATURAL_EAR_CLIPS.length){
+    const ne=NATURAL_EAR_CLIPS[Math.floor(Math.random()*NATURAL_EAR_CLIPS.length)];
+    cards.push({kind:"ear",kicker:"🎧 Street Speed Ear",prompt:ne.fast,clear:ne.clear,tts:ne.fast,ans:ne.answer,hint:ne.tip,srsKey:"ne|"+ne.id,opts:ne.choices.slice()});
+  }
+  return cards;
+}
+function renderDailyFlowSession(){
+  const root=document.getElementById("lesson-list");if(!root)return;
+  if(typeof setLeccionesFocusMode==="function")setLeccionesFocusMode(true);
+  root.innerHTML="";
+  const wrap=document.createElement("div");wrap.className="df-wrap";
+  const head=document.createElement("div");head.className="df-head-bar";
+  const back=document.createElement("button");back.type="button";back.className="phrase-back";back.style.marginBottom="0";
+  back.innerHTML="<span>‹</span><span>Back to Hoy</span>";
+  back.onclick=()=>{if(typeof setLeccionesFocusMode==="function")setLeccionesFocusMode(false);if(typeof renderLessons==="function")renderLessons();};
+  head.appendChild(back);
+  wrap.appendChild(head);
+
+  if(!dfCards.length||dfIdx>=dfCards.length){
+    const pct=dfCards.length?Math.round((dfScore/dfCards.length)*100):100;
+    const sum=document.createElement("div");sum.className="quiz-card sprint-intro-card";
+    sum.innerHTML=`<div class="qc-label">🎉 5-Min Daily Flow Complete!</div>
+      <div class="qc-word sprint-cue-word">${dfScore} / ${dfCards.length} (${pct}%)</div>
+      <div class="sprint-intro-desc">Your SRS schedule, weak spots, and daily streak are updated.</div>
+      <div class="bridge-actions"><button type="button" class="lp-nav-btn primary df-again-btn">↻ Another 8-Card Mix</button><button type="button" class="lp-nav-btn df-home-btn">‹ Back to Hoy</button></div>`;
+    sum.querySelector(".df-again-btn").onclick=()=>openDailyFlowSession();
+    sum.querySelector(".df-home-btn").onclick=back.onclick;
+    wrap.appendChild(sum);
+    root.appendChild(wrap);
+    return;
+  }
+
+  const c=dfCards[dfIdx];
+  const bar=document.createElement("div");bar.className="quiz-score-bar sprint-score-bar";
+  bar.innerHTML=`<div class="qs-item"><div class="qs-num" style="color:var(--teal)">${dfIdx+1}/${dfCards.length}</div><div class="qs-label">Card</div></div>
+    <div class="qs-item"><div class="qs-num" style="color:var(--gold)">${dfScore}</div><div class="qs-label">Correct</div></div>
+    <div class="qs-item"><div class="qs-num" style="color:var(--pink)">🔥 ${dfStreak}</div><div class="qs-label">Streak</div></div>`;
+  wrap.appendChild(bar);
+
+  const card=document.createElement("div");card.className="quiz-card sprint-quiz-card";
+  if(c.kind==="ear"){
+    card.innerHTML=`<div class="qc-label">${escapeVocabHtml(c.kicker)}</div>
+      <div class="qc-word sprint-cue-word">What does this mean at street speed?</div>
+      <div class="bridge-actions"><button type="button" class="qc-hear df-fast-btn">🐇 Street Speed</button><button type="button" class="qc-hear df-clear-btn">🐢 Slow &amp; Clear</button></div>`;
+    card.querySelector(".df-fast-btn").onclick=()=>speak(c.tts,1.0);
+    card.querySelector(".df-clear-btn").onclick=()=>speak(c.clear||c.tts,0.72);
+  }else{
+    card.innerHTML=`<div class="qc-label">${escapeVocabHtml(c.kicker)}</div>
+      <div class="qc-word sprint-cue-word">${escapeVocabHtml(c.prompt)}</div>
+      ${c.sub?`<div class="sprint-subcue">Asked: «${escapeVocabHtml(c.sub)}»</div>`:""}
+      <button type="button" class="qc-hear df-hear-btn">🔊 Hear</button>`;
+    card.querySelector(".df-hear-btn").onclick=()=>speak(c.subTts||c.tts,0.82);
+  }
+  wrap.appendChild(card);
+
+  if(c.kind==="pm"){
+    const grid=document.createElement("div");grid.className="pm-grid";
+    c.choices.forEach(item=>{
+      const btn=document.createElement("button");btn.type="button";
+      btn.className="pm-choice-card photo-only"+(dfPicked?(item.id===c.ans?" is-right":(dfPicked===item.id?" is-wrong":"")):"");
+      btn.innerHTML=`<img src="${item.img}" alt="${dfPicked?escapeVocabHtml(item.word):"Photo option"}"/>${dfPicked?`<span class="pm-cap">${escapeVocabHtml(item.word)}</span>`:""}`;
+      btn.onclick=()=>{
+        if(dfPicked)return;
+        dfPicked=item.id;
+        const ok=item.id===c.ans;
+        if(ok){dfScore++;dfStreak++;}else{dfStreak=0;}
+        markPractice("vocab",c.tts);
+        if(typeof recordSrs==="function")recordSrs(c.srsKey,ok);
+        speak(c.tts,0.82);
+        renderDailyFlowSession();
+      };
+      grid.appendChild(btn);
+    });
+    wrap.appendChild(grid);
+  }else{
+    const grid=document.createElement("div");grid.className="quiz-opts sprint-opts";
+    c.opts.forEach(opt=>{
+      const btn=document.createElement("button");btn.type="button";
+      btn.className="qopt"+(dfPicked?(opt===c.ans?" correct":(dfPicked===opt?" wrong":"")):"");
+      btn.textContent=opt;
+      btn.onclick=()=>{
+        if(dfPicked)return;
+        dfPicked=opt;
+        const ok=opt===c.ans;
+        if(ok){dfScore++;dfStreak++;}else{dfStreak=0;}
+        markPractice("phrases",c.tts);
+        if(typeof recordSrs==="function")recordSrs(c.srsKey,ok);
+        speak(c.tts,0.85);
+        renderDailyFlowSession();
+      };
+      grid.appendChild(btn);
+    });
+    wrap.appendChild(grid);
+  }
+
+  if(dfPicked){
+    const ok=dfPicked===c.ans;
+    const fb=document.createElement("div");fb.className="pm-feedback "+(ok?"ok":"warn");fb.style.display="block";
+    fb.innerHTML=`${ok?"✅ <strong>¡Exacto!</strong>":"❌ <strong>Local answer:</strong>"} <strong>${escapeVocabHtml(c.ansLabel||c.ans)}</strong><small>${escapeVocabHtml(c.hint||"")}</small>`;
+    const nxt=document.createElement("button");nxt.type="button";nxt.className="quiz-next";nxt.style.display="block";
+    nxt.textContent=dfIdx+1>=dfCards.length?"Finish 5-Min Flow →":`Next Card (${dfIdx+2}/${dfCards.length}) →`;
+    nxt.onclick=()=>{dfIdx++;dfPicked=null;renderDailyFlowSession();};
+    wrap.append(fb,nxt);
+  }
+  root.appendChild(wrap);
+}
+function openDailyFlowSession(){
+  dfCards=buildDailyFlowDeck();dfIdx=0;dfPicked=null;dfScore=0;dfStreak=0;
+  showPage("lecciones");
+  renderDailyFlowSession();
+}
