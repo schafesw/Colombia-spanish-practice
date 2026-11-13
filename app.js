@@ -72,7 +72,7 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v104.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v104.1 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);const themeBtn=document.createElement("button");themeBtn.type="button";themeBtn.id="theme-toggle-btn";themeBtn.className="profile-reset";themeBtn.textContent=(localStorage.getItem("esco-theme-v101")==="light"?"🌙 Dark":"☀️ Sun");themeBtn.title="Switch dark / sunlight theme";themeBtn.onclick=()=>toggleAppTheme();
   bar.append(label,select,reset,ver,themeBtn);utilityBody.appendChild(bar);if(typeof attachProfileBackupControls==="function")attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -5348,7 +5348,7 @@ function attachProfileBackupControls(utilityBody){
         const k=nativeStorage.key(i);
         if(k&&k.startsWith(prefix))data[k.slice(prefix.length)]=nativeStorage.getItem(k);
       }
-      const payload=JSON.stringify({app:"espanol-colombia",version:"v104.0",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
+      const payload=JSON.stringify({app:"espanol-colombia",version:"v104.1",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
       const blob=new Blob([payload],{type:"application/json"});
       const url=URL.createObjectURL(blob);
       const a=document.createElement("a");
@@ -5432,16 +5432,16 @@ function renderPictureMatchDeck(host){
   });
   const pBox=box.querySelector(".pm-prompt-box");
   if(pmDirection==="word2pic"){
-    pBox.innerHTML=`<div class="pm-word-prompt-row"><span class="pm-word-badge">${escapeVocabHtml(target.word)}</span><button type="button" class="lp-nav-btn pm-hear-mini">🔊 Hear</button></div>
-      <div class="pm-prompt-hint">Tap the photo that matches this Colombian Spanish word (audio optional)</div>`;
+    pBox.innerHTML=`<div class="pm-word-prompt-row"><span class="pm-word-badge">${escapeVocabHtml(target.word)}</span><button type="button" class="lp-nav-btn pm-hear-mini">🔊 Hear</button></div>`
+      +(pmPickedId?"":`<div class="pm-prompt-hint">Tap the matching photo (audio optional)</div>`);
     pBox.querySelector(".pm-hear-mini").onclick=()=>speak(target.tts,0.82);
   }else if(pmDirection==="audio2pic"){
-    pBox.innerHTML=`<button type="button" class="lp-nav-btn primary pm-hear-btn">🔊 Tap to Hear Colombian Phrase</button>
-      <div class="pm-prompt-hint">No English shown — match what you hear directly to the photo!</div>`;
+    pBox.innerHTML=`<button type="button" class="lp-nav-btn primary pm-hear-btn">🔊 Tap to Hear Colombian Phrase</button>`
+      +(pmPickedId?"":`<div class="pm-prompt-hint">Match what you hear to the photo</div>`);
     pBox.querySelector(".pm-hear-btn").onclick=()=>speak(target.tts,0.82);
   }else{
-    pBox.innerHTML=`<div class="pm-solo-img-wrap"><img class="pm-solo-img" src="${target.img}" alt="${escapeVocabHtml(target.en)}"/></div>
-      <div class="pm-prompt-hint">Which Colombian Spanish phrase matches this picture?</div>`;
+    pBox.innerHTML=`<div class="pm-solo-img-wrap"><img class="pm-solo-img" src="${target.img}" alt="${escapeVocabHtml(target.en)}"/></div>`
+      +(pmPickedId?"":`<div class="pm-prompt-hint">Which Colombian phrase matches this photo?</div>`);
   }
   const grid=box.querySelector(".pm-grid");
   const fb=box.querySelector(".pm-feedback");
@@ -5470,8 +5470,9 @@ function renderPictureMatchDeck(host){
   });
   if(pmPickedId){
     const ok=pmPickedId===target.id;
+    const wrongLbl=pmDirection==="audio2pic"?"🔁 <strong>Keep listening:</strong>":"❌ <strong>Not quite — it's:</strong>";
     fb.className="pm-feedback "+(ok?"ok":"warn");
-    fb.innerHTML=`${ok?"✅ <strong>¡Exacto!</strong>":"🔁 <strong>Keep listening:</strong>"} <strong>${escapeVocabHtml(target.word)}</strong> — <em>${escapeVocabHtml(target.en)}</em><small>${escapeVocabHtml(target.hint)}</small>`;
+    fb.innerHTML=`${ok?"✅ <strong>¡Exacto!</strong>":wrongLbl} <strong>${escapeVocabHtml(target.word)}</strong> — <em>${escapeVocabHtml(target.en)}</em><small>${escapeVocabHtml(target.hint)}</small>`;
   }
   const acts=box.querySelector(".pm-actions");
   const nextB=document.createElement("button");nextB.type="button";nextB.className="lp-nav-btn primary";
