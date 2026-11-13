@@ -1,5 +1,5 @@
-/* Network-first Service Worker with offline fallback for Español · Colombia PWA (v104.0) */
-const CACHE_NAME = "esco-pwa-v104.1";
+/* Navigation network-first + stale-while-revalidate asset Service Worker for Español · Colombia PWA (v105.0) */
+const CACHE_NAME = "esco-pwa-v105.0";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -8,6 +8,8 @@ const CORE_ASSETS = [
   "./data.js",
   "./manifest.json",
   "./icon-512.png",
+  "./icon-192.png",
+  "./apple-touch-icon.png",
   "./hero-colombia.webp",
   "./region-sanjuan.webp",
   "./region-bogota.webp",
@@ -58,19 +60,54 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
-  if (event.request.method !== "GET") return;
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        if (response && response.status === 200 && response.type === "basic") {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(() => {});
+  const req = event.request;
+  if (req.method !== "GET") return;
+  const url = new URL(req.url);
+  const sameOrigin = url.origin === self.location.origin;
+  const isNav = req.mode === "navigate" || ((req.headers.get("accept") || "").includes("text/html"));
+
+  if (isNav) {
+    event.respondWith(
+      fetch(req)
+        .then(res => {
+          if (res && res.status === 200 && res.type === "basic") {
+            const copy = res.clone();
+            caches.open(CACHE_NAME).then(c => c.put(req, copy)).catch(() => {});
+          }
+          return res;
+        })
+        .catch(() =>
+          caches.match(req, { ignoreSearch: true })
+            .then(cached => cached || caches.match("./index.html", { ignoreSearch: true }))
+            .then(res => res || Response.error())
+        )
+    );
+    return;
+  }
+
+  if (sameOrigin) {
+    event.respondWith(
+      caches.match(req, { ignoreSearch: true }).then(cached => {
+        const netFetch = fetch(req)
+          .then(res => {
+            if (res && res.status === 200 && res.type === "basic") {
+              const copy = res.clone();
+              caches.open(CACHE_NAME).then(c => c.put(req, copy)).catch(() => {});
+            }
+            return res;
+          })
+          .catch(() => null);
+        if (cached) {
+          event.waitUntil(netFetch);
+          return cached;
         }
-        return response;
+        return netFetch.then(res => res || Response.error());
       })
-      .catch(() =>
-        caches.match(event.request, { ignoreSearch: true })
-          .then(cached => cached || caches.match("./index.html", { ignoreSearch: true }))
-      )
+    );
+    return;
+  }
+
+  event.respondWith(
+    fetch(req).catch(() => caches.match(req).then(cached => cached || Response.error()))
   );
 });

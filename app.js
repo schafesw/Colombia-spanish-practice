@@ -43,7 +43,7 @@ try{
 }catch(e){}
 const profileStorage={
   getItem:key=>nativeStorage.getItem("esco-profile-"+activeProfileId+"-"+key),
-  setItem:(key,value)=>nativeStorage.setItem("esco-profile-"+activeProfileId+"-"+key,value),
+  setItem:(key,value)=>{try{nativeStorage.setItem("esco-profile-"+activeProfileId+"-"+key,value);}catch(err){if(typeof window!=="undefined"&&!window.__escoStorageWarned){window.__escoStorageWarned=true;console.warn("[Storage] Write failed:",err);}}},
   removeItem:key=>nativeStorage.removeItem("esco-profile-"+activeProfileId+"-"+key),
   key:index=>{const prefix="esco-profile-"+activeProfileId+"-";const keys=[];for(let i=0;i<nativeStorage.length;i++){const k=nativeStorage.key(i);if(k&&k.startsWith(prefix))keys.push(k.slice(prefix.length));}return keys[index]||null;},
   get length(){const prefix="esco-profile-"+activeProfileId+"-";let n=0;for(let i=0;i<nativeStorage.length;i++){const k=nativeStorage.key(i);if(k&&k.startsWith(prefix))n++;}return n;}
@@ -72,7 +72,7 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v104.1 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v105.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);const themeBtn=document.createElement("button");themeBtn.type="button";themeBtn.id="theme-toggle-btn";themeBtn.className="profile-reset";themeBtn.textContent=(localStorage.getItem("esco-theme-v101")==="light"?"🌙 Dark":"☀️ Sun");themeBtn.title="Switch dark / sunlight theme";themeBtn.onclick=()=>toggleAppTheme();
   bar.append(label,select,reset,ver,themeBtn);utilityBody.appendChild(bar);if(typeof attachProfileBackupControls==="function")attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -4045,7 +4045,7 @@ function applyHablarTab(tabId){
   sec.querySelectorAll(".hablar-subtab").forEach(b=>{
     const on=b.dataset.tab===userPrefs.hablarTab;
     b.classList.toggle("active",on);
-    b.setAttribute("aria-pressed",on?"true":"false");
+    b.setAttribute("aria-selected",on?"true":"false");b.tabIndex=on?0:-1;
   });
   sec.querySelectorAll("[data-hablar-group]").forEach(el=>{
     el.hidden=(userPrefs.hablarTab!=="all"&&el.dataset.hablarGroup!==userPrefs.hablarTab);
@@ -4062,11 +4062,11 @@ function buildSpeakingGuide(){
     ["trampas","🪤 Bridges & Trampas"],
     ["all","📋 All"]
   ].forEach(([id,lbl])=>{
-    const b=document.createElement("button");b.type="button";b.className="hablar-subtab";b.dataset.tab=id;b.textContent=lbl;
+    const b=document.createElement("button");b.type="button";b.className="hablar-subtab";b.dataset.tab=id;b.setAttribute("role","tab");b.textContent=lbl;
     b.onclick=()=>applyHablarTab(id);
     subBar.appendChild(b);
   });
-  sec.appendChild(subBar);
+  subBar.onkeydown=e=>{if(!["ArrowLeft","ArrowRight","Home","End"].includes(e.key))return;const tabs=Array.from(subBar.querySelectorAll('[role="tab"]'));const i=tabs.indexOf(document.activeElement);if(i<0)return;e.preventDefault();const nxt=e.key==="Home"?0:e.key==="End"?tabs.length-1:(i+(e.key==="ArrowRight"?1:-1)+tabs.length)%tabs.length;applyHablarTab(tabs[nxt].dataset.tab);tabs[nxt].focus();};sec.appendChild(subBar);
   if(typeof CONNECTOR_BRIDGE_DRILLS!=="undefined"&&CONNECTOR_BRIDGE_DRILLS.length){
     const trainer=document.createElement("section");trainer.className="bridge-trainer-card";trainer.dataset.hablarGroup="trampas";
     const renderBridge=()=>{
@@ -4326,11 +4326,11 @@ function buildSpeakingGuide(){
     if(!lb){
       lb=document.createElement("div");lb.id="vg-lightbox";lb.className="vg-lightbox";lb.hidden=true;
       lb.setAttribute("role","dialog");lb.setAttribute("aria-modal","true");lb.setAttribute("aria-labelledby","vg-lb-title");
-      lb.innerHTML=`<div class="vg-lightbox-panel"><div class="vg-lightbox-head"><div class="vg-lightbox-title" id="vg-lb-title"></div><button type="button" class="vg-lightbox-close" id="vg-lb-close" aria-label="Close visual guide">✕ Close</button></div><img id="vg-lb-img" src="" alt=""/><div class="vg-lightbox-cap" id="vg-lb-cap"></div></div>`;
+      lb.innerHTML=`<div class="vg-lightbox-panel"><div class="vg-lightbox-head"><div class="vg-lightbox-title" id="vg-lb-title"></div><button type="button" class="vg-lightbox-close" id="vg-lb-close" aria-label="Close visual guide">✕ Close</button></div><img id="vg-lb-img" alt=""/><div class="vg-lightbox-cap" id="vg-lb-cap"></div></div>`;
       document.body.appendChild(lb);
       const closeLb=()=>{
         lb.hidden=true;
-        if(lb._opener&&typeof lb._opener.focus==="function"){lb._opener.focus();lb._opener=null;}
+        const im=lb.querySelector("#vg-lb-img");if(im){im.removeAttribute("src");im.alt="";}if(lb._opener&&typeof lb._opener.focus==="function"){lb._opener.focus();lb._opener=null;}
       };
       lb.querySelector("#vg-lb-close").onclick=closeLb;
       lb.onclick=e=>{if(e.target===lb)closeLb();};
@@ -5348,7 +5348,7 @@ function attachProfileBackupControls(utilityBody){
         const k=nativeStorage.key(i);
         if(k&&k.startsWith(prefix))data[k.slice(prefix.length)]=nativeStorage.getItem(k);
       }
-      const payload=JSON.stringify({app:"espanol-colombia",version:"v104.1",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
+      const payload=JSON.stringify({app:"espanol-colombia",version:"v105.0",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
       const blob=new Blob([payload],{type:"application/json"});
       const url=URL.createObjectURL(blob);
       const a=document.createElement("a");
