@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Español CO"/>
+<meta name="referrer" content="no-referrer"/>
+<title>Español · Colombia</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="manifest" href="manifest.json?v=100.0"/>
+  <link rel="icon" type="image/svg+xml" href="icon.svg"/>
+  <link rel="apple-touch-icon" href="icon-512.png"/>
+  <link rel="stylesheet" href="styles.css?v=100.0"/>
+</head>
+<body>
+<div id="app">
+<div class="scroll">
+
+<!-- FONÉTICA: letras + sílabas, with the existing syllable layout preserved -->
+<div class="page" id="page-fonetica">
+  <div class="ph"><div class="ph-label">Español Colombiano</div>
+    <div class="ph-title" style="color:var(--teal)">Fonética</div>
+    <div class="ph-sub">Listen, watch, and practice the sounds</div></div>
+  <div class="phonetic-tabs">
+    <button class="phonetic-tab active" id="pt-letters" onclick="showPhonetic('letters')">🔤 Letras</button>
+    <button class="phonetic-tab" id="pt-syllables" onclick="showPhonetic('syllables')">🔡 Sílabas</button>
+  </div>
+  <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-fonetica"></div></details>
+  <div class="phonetic-panel active" id="phonetic-letters">
+    <div class="sl" style="color:var(--pink)">Vocales</div>
+    <div class="g5" id="vowel-grid"></div>
+    <div class="sl" style="color:var(--teal)">Consonantes</div>
+    <div class="g7" id="cons-grid"></div>
+    <div id="detail-card"></div>
+  </div>
+  <div class="phonetic-panel" id="phonetic-syllables">
+    <div class="vbar">
+      <div class="vbi"><div class="vbl">A</div><div class="vbs">ah</div></div>
+      <div class="vbi"><div class="vbl">E</div><div class="vbs">eh</div></div>
+      <div class="vbi"><div class="vbl">I</div><div class="vbs">ee</div></div>
+      <div class="vbi"><div class="vbl">O</div><div class="vbs">oh</div></div>
+      <div class="vbi"><div class="vbl">U</div><div class="vbs">oo</div></div>
+    </div>
+    <div class="phonetic-jump-row">
+      <label for="phonetic-jump">Quick jump / Ir a una sección</label>
+      <select id="phonetic-jump" aria-label="Jump to a pronunciation section">
+        <option value="">Choose a section…</option>
+        <option value="phonetic-start">🎯 Start / Warm-up</option>
+        <option value="phonetic-english">🚧 English habits to replace</option>
+        <option value="phonetic-rules">⚡ Special rules / Reglas</option>
+        <option value="phonetic-minimal">👂 Minimal pairs</option>
+        <option value="phonetic-special">🧩 Special sounds</option>
+        <option value="phonetic-twisters">🗣️ Tongue twisters / Traba-lenguas</option>
+      </select>
+    </div>
+    <section class="phonetic-start-card" id="phonetic-start">
+      <div class="warmup-nav"><button type="button" class="warmup-back" onclick="routineBack()">‹ Back to daily path</button><span>Step 1 of 4</span></div>
+      <div class="phonetic-start-kicker">🎯 START HERE · 3-MINUTE WARM-UP</div>
+      <div class="phonetic-start-title">Train your mouth before the hard drills</div>
+      <div class="phonetic-start-sub">Listen once, say it twice, then record yourself if you want feedback from your own ear.</div>
+      <details class="phonetic-reminder-fold" id="phonetic-english-reminders">
+        <summary><span>🌎 Spanish vs. English reminders</span><small>Review before sounds</small></summary>
+        <div class="phonetic-reminder-list">
+          <div><strong>A · E · I · O · U</strong><span>Use short, steady sounds: <b>ah · eh · ee · oh · oo</b>. Do not turn them into English diphthongs.</span></div>
+          <div><strong>H</strong><span>H is silent: <b>hola</b> sounds like <b>ola</b>, not “ho-la” with an English H.</span></div>
+          <div><strong>R / RR</strong><span>Spanish R is a quick tap. RR vibrates. Do not curl your tongue back like the English R.</span></div>
+          <div><strong>Ñ</strong><span>Ñ is one smooth “ny” sound, like the middle of <b>canyon</b>: <b>niño</b>.</span></div>
+          <div><strong>B / V</strong><span>Both use the Spanish B sound. Avoid the English V sound in words like <b>vivir</b>.</span></div>
+        </div>
+      </details>
+      <div class="phonetic-guide-label">1. Listen · repeat twice · then continue</div>
+      <div id="phonetic-warmup"></div>
+      <details class="thinking-mini">
+        <summary><span>💭 Think in Spanish</span><small>Try first · reveal later</small></summary>
+        <div id="spanish-thinking"></div>
+      </details>
+      <div class="warmup-finish">
+        <div><strong>Finished the warm-up?</strong><span>Return to Lecciones and continue with focused tongue-twister practice.</span></div>
+        <button type="button" class="warmup-continue" onclick="routineFinishWarmup()">Done — continue →</button>
+      </div>
+    </section>
+    <div class="sl" style="color:var(--muted)">Filter by consonant</div>
+    <div class="fw" id="filter-wrap"></div>
+    <div id="combo-groups"></div>
+    <div class="phonetic-practice-map">
+      <div class="phonetic-map-kicker">🧭 GO DEEPER WHEN READY</div>
+      <div class="phonetic-map-title">Your pronunciation toolkit</div>
+      <div class="phonetic-map-sub">The quick warm-up comes first. These sections keep the detailed coaching available without putting everything on screen at once.</div>
+      <nav class="phonetic-map-links" aria-label="Pronunciation practice sections">
+        <a href="#phonetic-english">🚧 English habits</a>
+        <a href="#phonetic-rules">⚡ Rules</a>
+        <a href="#phonetic-minimal">👂 Compare</a>
+        <a href="#phonetic-special">🧩 Sounds</a>
+        <a href="#phonetic-twisters">🗣️ Twisters</a>
+      </nav>
+    </div>
+    <details class="phonetic-fold" id="phonetic-english">
+      <summary><span>🚧 English habits to replace</span><small>Common interference</small></summary>
+      <div class="phonetic-fold-body"><div class="interference-grid" id="english-interference-list"></div></div>
+    </details>
+    <details class="phonetic-fold" id="phonetic-rules">
+      <summary><span>⚡ Reglas especiales</span><small>Quick reference</small></summary>
+      <div class="phonetic-fold-body">
+        <div class="rb">
+          <div class="rt">Colombian pronunciation rules</div>
+          <div class="rr"><span class="rtag">C+e/i</span><span class="rdesc">Suena 's'. Ej: cena, ciudad</span></div>
+          <div class="rr"><span class="rtag">G+e/i</span><span class="rdesc">Suena 'j'. Ej: gente, girasol</span></div>
+          <div class="rr"><span class="rtag">H</span><span class="rdesc">Siempre muda. Ej: hola, huevo</span></div>
+          <div class="rr"><span class="rtag">Ñ</span><span class="rdesc">Sonido 'ny'. Ej: niño, mañana</span></div>
+          <div class="rr"><span class="rtag">V = B</span><span class="rdesc">V suena como B. Ej: vo = "bo", vaca = "baca"</span></div>
+          <div class="rr"><span class="rtag">Z</span><span class="rdesc">Suena 's'. Ej: zapato</span></div>
+        </div>
+      </div>
+    </details>
+    <details class="phonetic-fold" id="phonetic-minimal">
+      <summary><span>👂 Minimal pairs</span><small>Hear the difference</small></summary>
+      <div class="phonetic-fold-body"><div class="minimal-pairs-list" id="minimal-pairs-list"></div></div>
+    </details>
+    <details class="phonetic-fold" id="phonetic-special">
+      <summary><span>🧩 Sonidos especiales</span><small>GUA · GUE · GUI · Ü</small></summary>
+      <div class="phonetic-fold-body"><div class="special-sound-lab" id="special-sound-lab"></div></div>
+    </details>
+    <details class="phonetic-fold" id="phonetic-twisters">
+      <summary><span>🗣️ Traba-lenguas</span><small>RR · Ñ · J · B/V</small></summary>
+      <div class="phonetic-fold-body"><div class="tongue-twister-lab" id="tongue-twister-lab"></div></div>
+    </details>
+  </div>
+</div>
+
+<!-- LECCIONES -->
+<div class="page active" id="page-lecciones">
+  <div class="ph"><div class="ph-label">Your path</div>
+    <div class="ph-title" style="color:var(--gold)">Lecciones</div>
+    <div class="ph-sub">One short step toward a real conversation</div></div>
+  <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-lecciones"></div></details>
+  <div id="profile-host"></div>
+  <div id="lesson-list"></div>
+</div>
+
+<!-- VOCAB -->
+<div class="page" id="page-vocab">
+  <div class="ph"><div class="ph-label">Español Colombiano</div>
+    <div class="ph-title" style="color:var(--teal)">Vocabulario</div>
+    <div class="ph-sub">Tap any word to hear it</div></div>
+  <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-vocab"></div></details>
+  <input class="content-search" id="vocab-search" type="search" placeholder="🔎 Search words, phrases, San Juan, trampas, lessons…" aria-label="Search vocabulary"/>
+  <div class="vocab-home-jump" id="vocab-home-jump">
+    <div class="vocab-home-jump-label">Jump directly · Ir a una categoría</div>
+    <select class="voice-select vocab-home-jump-select" id="vocab-jump-home" aria-label="Jump directly to a vocabulary category"></select>
+  </div>
+  <div id="vocab-search-view" hidden></div>
+  <div id="vocab-home"></div>
+  <div id="vocab-category-view" hidden>
+    <button class="vocab-home-back" id="vocab-home-back" type="button">‹ All vocabulary topics</button>
+    <div class="vocab-nav">
+      <select class="voice-select vocab-jump" id="vocab-jump" aria-label="Jump to category"></select>
+      <div class="vocab-nav-row">
+        <button class="vocab-nav-btn" id="vocab-prev" type="button">‹ Prev</button>
+        <span class="vocab-position" id="vocab-position"></span>
+        <button class="vocab-nav-btn" id="vocab-next" type="button">Next ›</button>
+      </div>
+    </div>
+    <div class="cat-wrap" id="cat-wrap"></div>
+    <div id="vocab-list"></div>
+    <div class="verb-detail" id="verb-detail"></div>
+  </div>
+</div>
+
+<!-- FRASES -->
+<div class="page" id="page-frases">
+  <div class="ph"><div class="ph-label">Español Colombiano</div>
+    <div class="ph-title" style="color:var(--pink)">Frases</div>
+    <div class="ph-sub">Daily conversation · Tap to listen</div></div>
+  <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-frases"></div></details>
+  <div id="frases-list"></div>
+</div>
+
+<!-- GRAMÁTICA -->
+<div class="page" id="page-gram">
+  <div class="ph"><div class="ph-label">Español Colombiano</div>
+    <div class="ph-title" style="color:var(--purple)">Guías &amp; Gramática</div>
+    <div class="ph-sub">Regions · Visual posters · Patterns</div></div>
+  <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-gram"></div></details>
+  <div class="gram-groups">
+    <button class="ggroup active" data-g="tiempos" onclick="showGramGroup('tiempos')">⏱️ Tiempos</button>
+    <button class="ggroup" data-g="pronombres" onclick="showGramGroup('pronombres')">👤 Pronombres</button>
+    <button class="ggroup" data-g="patrones" onclick="showGramGroup('patrones')">🧩 Patrones</button>
+    <button class="ggroup" data-g="estructura" onclick="showGramGroup('estructura')">🧱 Hablar</button>
+  </div>
+  <div class="gram-tabs" id="gram-sub"></div>
+  <div class="gram-section active" id="gs-presente"></div>
+  <div class="gram-section" id="gs-pasado"></div>
+  <div class="gram-section" id="gs-futuro"></div>
+  <div class="gram-section" id="gs-perfecto"></div>
+  <div class="gram-section" id="gs-condicional"></div>
+  <div class="gram-section" id="gs-pasado-perfecto"></div>
+  <div class="gram-section" id="gs-futuro-perfecto"></div>
+  <div class="gram-section" id="gs-pasado-contraste"></div>
+  <div class="gram-section" id="gs-subjuntivo"></div>
+  <div class="gram-section" id="gs-pronombres"></div>
+  <div class="gram-section" id="gs-reflexivos"></div>
+  <div class="gram-section" id="gs-trucos"></div>
+  <div class="gram-section" id="gs-estructura"></div>
+</div>
+
+<!-- QUIZ -->
+<div class="page" id="page-quiz">
+  <div class="ph"><div class="ph-label">Practice</div>
+    <div class="ph-title"><span style="color:var(--gold)">Quiz</span></div>
+    <div class="ph-sub">How much do you remember?</div></div>
+  <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-quiz"></div></details>
+  <div class="quiz-score-bar">
+    <div class="qs-item"><div class="qs-num" id="q-correct" style="color:var(--teal)">0</div><div class="qs-label">Correct</div></div>
+    <div class="qs-item"><div class="qs-num" id="q-streak" style="color:var(--gold)">🔥 0</div><div class="qs-label">Streak</div></div>
+    <div class="qs-item"><div class="qs-num" id="q-total" style="color:var(--muted)">0</div><div class="qs-label">Total</div></div>
+  </div>
+  <div class="quiz-mode-wrap">
+    <div class="quiz-control-label">Practice mode</div>
+    <div class="quiz-mode-row" id="qmode-wrap"></div>
+  </div>
+  <details class="quiz-customize" id="quiz-customize">
+    <summary><span>⚙️ Customize quiz</span><small>Topic + grammar</small></summary>
+    <div class="quiz-customize-body">
+      <div class="quiz-focus-wrap">
+        <label class="quiz-control-label" for="qfocus-select">Grammar focus</label>
+        <select id="qfocus-select" aria-label="Choose a grammar focus">
+          <option value="all">All patterns</option>
+          <option value="present">⚡ Presente</option>
+          <option value="past">⏮️ Pasado</option>
+          <option value="future">⏭️ Futuro · voy a...</option>
+          <option value="perfecto">✅ He hecho · Present perfect</option>
+          <option value="condicional">🙏 Condicional</option>
+          <option value="pasado-perfecto">⏪ Había hecho</option>
+          <option value="futuro-perfecto">⏩ Habré hecho</option>
+          <option value="pronombres">👤 Pronombres · lo/la/le</option>
+          <option value="subjuntivo">🌱 Subjuntivo</option>
+        </select>
+        <div class="quiz-focus-note" id="qfocus-note">Focus works with Mixed, Fill blank, and Conversation.</div>
+      </div>
+      <div class="quiz-cat-wrap" id="qcat-wrap"></div>
+    </div>
+  </details>
+  <div class="quiz-card">
+    <div class="qc-label">Translate to English</div>
+    <div class="qc-word" id="qc-word">—</div>
+    <button class="qc-hear" onclick="quizHear()">🔊 Listen</button>
+    <div class="quiz-blind-row" id="quiz-blind-row">
+      <button type="button" class="blind-ear-chip" id="quiz-blind-toggle" onclick="toggleQuizBlindEar()">🎧 Blind-Ear: OFF</button>
+      <button type="button" class="quiz-blind-peek-btn" id="quiz-blind-peek" hidden>👁️ Peek Spanish</button>
+    </div>
+    <div class="quiz-help-row" id="quiz-help-row" hidden>
+      <button type="button" class="quiz-help-btn" id="quiz-help">💡 Show English help</button>
+      <div class="quiz-help-text" id="quiz-help-text" hidden></div>
+    </div>
+  </div>
+  <div class="quiz-review-banner" id="quiz-review-banner" hidden></div>
+  <div class="quiz-review-launch" id="quiz-review-launch" hidden></div>
+  <div class="quiz-feedback feedback-tray" id="quiz-fb"></div>
+  <div class="quiz-reveal" id="quiz-reveal"></div>
+  <div class="quiz-opts" id="quiz-opts"></div>
+  <button class="quiz-next" id="quiz-next" onclick="nQ()">Next →</button>
+</div>
+
+</div>
+
+<!-- 6-Tab Bar -->
+<div class="tab-bar">
+  <button class="tab-item" id="tb-fonetica" onclick="showPage('fonetica')"><span class="ti">🔤</span><span>Fonética</span></button>
+  <button class="tab-item active" id="tb-lecciones" onclick="showPage('lecciones')"><span class="ti">🎓</span><span>Lecciones</span></button>
+  <button class="tab-item" id="tb-vocab" onclick="showPage('vocab')"><span class="ti">📚</span><span>Vocab</span></button>
+  <button class="tab-item tfrases" id="tb-frases" onclick="showPage('frases')"><span class="ti">💬</span><span>Frases</span></button>
+  <button class="tab-item tgram" id="tb-gram" onclick="showPage('gram')"><span class="ti">🇨🇴</span><span>Guías</span></button>
+  <button class="tab-item tquiz" id="tb-quiz" onclick="showPage('quiz')"><span class="ti">🧪</span><span>Quiz</span></button>
+</div>
+</div>
+
+  <script src="data.js?v=100.0"></script><script src="app.js?v=100.0"></script>
+  <script>if('serviceWorker' in navigator && /^https?:$/i.test(location.protocol)){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js?v=100.0').catch(()=>{});});}</script>
+</body>
+</html>
