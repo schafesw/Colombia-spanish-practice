@@ -1,5 +1,5 @@
 /* Network-first Service Worker with offline fallback for Español · Colombia PWA (v98.0) */
-const CACHE_NAME = "esco-pwa-v98.0";
+const CACHE_NAME = "esco-pwa-v98.1";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -9,15 +9,15 @@ const CORE_ASSETS = [
   "./manifest.json",
   "./icon.svg",
   "./icon-512.png",
-  "./assets/region-sanjuan.webp",
-  "./assets/region-bogota.webp",
-  "./assets/region-medellin.webp",
-  "./assets/region-costa.webp",
-  "./assets/region-cali.webp",
-  "./assets/guide-grid.webp",
-  "./assets/guide-corrientazo.webp",
-  "./assets/guide-trampas.webp",
-  "./assets/guide-sanjuan.webp"
+  "./region-sanjuan.webp",
+  "./region-bogota.webp",
+  "./region-medellin.webp",
+  "./region-costa.webp",
+  "./region-cali.webp",
+  "./guide-grid.webp",
+  "./guide-corrientazo.webp",
+  "./guide-trampas.webp",
+  "./guide-sanjuan.webp"
 ];
 
 self.addEventListener("install", event => {

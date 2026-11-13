@@ -5843,23 +5843,23 @@ V60_FILL_BLANK_QUIZ.push(
 
 // ── V98.0 GE API VISUAL GUIDES, ILLUSTRATED REGIONS & EXTRA NT-HEAVY ROLEPLAYS / SWITCHER ──
 const REGION_IMAGES = {
-  "sanjuan-guajira": "assets/region-sanjuan.webp",
-  "bogota": "assets/region-bogota.webp",
-  "medellin": "assets/region-medellin.webp",
-  "costa": "assets/region-costa.webp",
-  "cali": "assets/region-cali.webp"
+  "sanjuan-guajira": "region-sanjuan.webp",
+  "bogota": "region-bogota.webp",
+  "medellin": "region-medellin.webp",
+  "costa": "region-costa.webp",
+  "cali": "region-cali.webp"
 };
 
 const ROLEPLAY_IMAGES = {
-  "rp-tienda-napa": "assets/guide-trampas.webp",
-  "rp-sanjuan-familia": "assets/region-sanjuan.webp",
-  "rp-sanjuan-parranda": "assets/guide-sanjuan.webp",
-  "rp-corrientazo": "assets/guide-corrientazo.webp",
-  "rp-taxi": "assets/guide-grid.webp",
-  "rp-uber": "assets/region-bogota.webp",
-  "rp-panaderia": "assets/guide-trampas.webp",
-  "rp-drogueria": "assets/region-medellin.webp",
-  "rp-cita": "assets/region-cali.webp"
+  "rp-tienda-napa": "guide-trampas.webp",
+  "rp-sanjuan-familia": "region-sanjuan.webp",
+  "rp-sanjuan-parranda": "guide-sanjuan.webp",
+  "rp-corrientazo": "guide-corrientazo.webp",
+  "rp-taxi": "guide-grid.webp",
+  "rp-uber": "region-bogota.webp",
+  "rp-panaderia": "guide-trampas.webp",
+  "rp-drogueria": "region-medellin.webp",
+  "rp-cita": "region-cali.webp"
 };
 
 const VISUAL_GUIDES = [
@@ -5867,7 +5867,7 @@ const VISUAL_GUIDES = [
     id: "vg-grid",
     title: "🧭 Calle vs. Carrera (City Grid)",
     sub: "How Colombian street numbers like Cra 7 # 72-41 actually work",
-    img: "assets/guide-grid.webp",
+    img: "guide-grid.webp",
     alt: "Colombian city street grid infographic showing Calle 72, Carrera 7, pin Cra 7 # 72-41, and compass Norte and Cerros",
     caption: "In Bogotá and most Colombian cities, Calles run crosswise (East–West toward the Cerros), Carreras run parallel (North–South), and '# 72-41' means on Carrera 7 about 41 meters past Calle 72.",
     es: "Disculpe, ¿la Carrera Séptima con Calle Setenta y Dos queda hacia los cerros?",
@@ -5878,7 +5878,7 @@ const VISUAL_GUIDES = [
     id: "vg-corrientazo",
     title: "🍽️ El Corrientazo (Daily Lunch)",
     sub: "Sopa · Principio · Proteína · Tajadas · Sobremesa",
-    img: "assets/guide-corrientazo.webp",
+    img: "guide-corrientazo.webp",
     alt: "Overhead educational plate diagram of a Colombian corrientazo daily lunch labeled Sopa, Principio, Proteina, Tajadas, and Sobremesa",
     caption: "Colombia's everyday budget lunch follows five classic parts: Sopa (starter soup), Principio (beans, lentils, or rice side), Proteína (chicken, beef, or pork), Tajadas (sweet fried plantain), and Sobremesa (fresh fruit juice or mazamorra).",
     es: "Buenas tardes, ¿qué tiene de principio y de sobremesa con el corrientazo de hoy?",
@@ -5889,7 +5889,7 @@ const VISUAL_GUIDES = [
     id: "vg-trampas",
     title: "🪤 Trampas de Colombia (Bakery Sign)",
     sub: "Cancelar · ¿Qué te provoca? · ¿Me regala…?",
-    img: "assets/guide-trampas.webp",
+    img: "guide-trampas.webp",
     alt: "Colombian neighborhood bakery chalkboard guide listing cancelar = pay the bill, que te provoca = what do you crave, me regala = can I order",
     caption: "Three daily phrases that fool textbook learners: 'cancelar' usually means to pay (not cancel!), '¿qué te provoca?' asks what food or plan sounds tempting, and '¿me regala…?' politely asks to order and pay for something.",
     es: "Veci, ¿me regala un pandebono calientico y un tinto? Ya mismo le cancelo.",
@@ -5900,7 +5900,7 @@ const VISUAL_GUIDES = [
     id: "vg-sanjuan",
     title: "🪗 San Juan del Cesar (Guajira)",
     sub: "La Terraza · El Abanico · El Acordeón · El Friche",
-    img: "assets/guide-sanjuan.webp",
+    img: "guide-sanjuan.webp",
     alt: "Cultural postcard infographic of San Juan del Cesar, La Guajira showing La Terraza porch, El Abanico fan, El Acordeon, and El Friche",
     caption: "Four essentials in your wife's hometown ('Tierra de Compositores'): La Terraza (covered street-level front porch), El Abanico (standing/ceiling fan), El Acordeón (vallenato parranda instrument), and El Friche (traditional seasoned fried goat dish).",
     es: "¡Ajá, primo! Pasa adelante a la terraza, prende el abanico y probemos este friche.",
