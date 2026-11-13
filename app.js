@@ -72,7 +72,7 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v99.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v100.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);
   bar.append(label,select,reset,ver);utilityBody.appendChild(bar);if(typeof attachProfileBackupControls==="function")attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -2452,7 +2452,17 @@ const RR_SERVICE_REFLEXES=[
   {q:"¡Ajá, primo! Bienvenido a San Juan del Cesar; pasa a la terraza y siéntate en la mecedora.",qEs:"¡Ajá, primo! Bienvenido a San Juan del Cesar; pasa a la terraza y siéntate en la mecedora.",qEn:"Hey cousin! Welcome to San Juan del Cesar; come onto the front porch and sit in the rocking chair.",aEs:"¡Muchas gracias! Qué alegría estar aquí en La Guajira con toda la familia.",aTts:"¡Muchas gracias! Qué alegría estar aquí en La Guajira con toda la familia.",aEn:"Thank you so much! What a joy to be here in La Guajira with the whole family.",level:"easy",service:true},
   {q:"Se fue la luz en la cocina después del aguacero; ¿qué revisamos primero?",qEs:"Se fue la luz en la cocina después del aguacero; ¿qué revisamos primero?",qEn:"The power went out in the kitchen after the downpour; what do we check first?",aEs:"Revisemos la caja de tacos porque seguro se saltó un taco de la luz.",aTts:"Revisemos la caja de tacos porque seguro se saltó un taco de la luz.",aEn:"Let's check the breaker box because a circuit breaker probably tripped.",level:"moderate",service:true},
   {q:"¡Hoy juega la Selección Colombia! ¿Cómo hacemos para pedir las picadas?",qEs:"¡Hoy juega la Selección Colombia! ¿Cómo hacemos para pedir las picadas?",qEn:"Today the Colombian National Team plays! How should we order the shared platters?",aEs:"Hagamos vaca entre todos por Nequi y pedimos a domicilio.",aTts:"Hagamos vaca entre todos por Nequi y pedimos a domicilio.",aEn:"Let's all pitch in via Nequi and order delivery.",level:"easy",service:true},
-  {q:"Disculpe, agente, se me extravió el pasaporte; ¿dónde pongo el reporte?",qEs:"Disculpe, agente, se me extravió el pasaporte; ¿dónde pongo el reporte?",qEn:"Excuse me, officer, my passport was lost; where do I file the report?",aEs:"Puede registrar la constancia en el portal de la Policía Nacional o en el CAI.",aTts:"Puede registrar la constancia en el portal de la Policía Nacional o en el CAI.",aEn:"You can file the report on the National Police portal or at the CAI post.",level:"moderate",service:true}
+  {q:"Disculpe, agente, se me extravió el pasaporte; ¿dónde pongo el reporte?",qEs:"Disculpe, agente, se me extravió el pasaporte; ¿dónde pongo el reporte?",qEn:"Excuse me, officer, my passport was lost; where do I file the report?",aEs:"Puede registrar la constancia en el portal de la Policía Nacional o en el CAI.",aTts:"Puede registrar la constancia en el portal de la Policía Nacional o en el CAI.",aEn:"You can file the report on the National Police portal or at the CAI post.",level:"moderate",service:true},
+  {q:"¡Uy, y ese milagro que vino por acá!",qEs:"¡Uy, y ese milagro que vino por acá!",qEn:"Oh, what a pleasant surprise seeing you around here!",aEs:"¡Cómo estás! Tenía muchas ganas de saludarlos.",aTts:"¡Cómo estás! Tenía muchas ganas de saludarlos.",aEn:"How are you! I really wanted to come say hi.",level:"easy",service:true},
+  {q:"¿Cómo así? ¿Ya se acabó el partido?",qEs:"¿Cómo así? ¿Ya se acabó el partido?",qEn:"Wait what? Is the game already over?",aEs:"Sí, terminó hace cinco minutos; quedamos dos a uno.",aTts:"Sí, terminó hace cinco minutos; quedamos dos a uno.",aEn:"Yes, it ended five minutes ago; final score was two to one.",level:"easy",service:true},
+  {q:"A la orden, mi vecino, ¿qué se le ofrece?",qEs:"A la orden, mi vecino, ¿qué se le ofrece?",qEn:"At your service, neighbor, what can I get for you?",aEs:"Buenas, ¿me regala dos empanadas y un ají por aparte?",aTts:"Buenas, ¿me regala dos empanadas y un ají por aparte?",aEn:"Hi, could I get two empanadas and hot sauce on the side?",level:"easy",service:true},
+  {q:"¿De parte de quién digo que lo buscan?",qEs:"¿De parte de quién digo que lo buscan?",qEn:"Who shall I say is calling / looking for them?",aEs:"De parte de Seth; ya me estaban esperando.",aTts:"De parte de Seth; ya me estaban esperando.",aEn:"On behalf of Seth; they were already expecting me.",level:"moderate",service:true},
+  {q:"¿Tiene el valor exacto o necesita vueltas?",qEs:"¿Tiene el valor exacto o necesita vueltas?",qEn:"Do you have exact change or do you need change back?",aEs:"Le pago con este billete de veinte mil, por favor.",aTts:"Le pago con este billete de veinte mil, por favor.",aEn:"I'll pay with this twenty-thousand bill, please.",level:"moderate",service:true},
+  {q:"¿Qué más pues? ¿Cómo va todo en la casa?",qEs:"¿Qué más pues? ¿Cómo va todo en la casa?",qEn:"What's up then? How's everything at home?",aEs:"Todo súper bien, gracias a Dios, trabajando juiciosos.",aTts:"Todo súper bien, gracias a Dios, trabajando juiciosos.",aEn:"Everything's super good, thank God, staying busy with work.",level:"easy",service:true},
+  {q:"¿Me regalas un segundito mientras cuadro la caja?",qEs:"¿Me regalas un segundito mientras cuadro la caja?",qEn:"Can you give me a quick second while I settle the register?",aEs:"Claro, tranquilo, tómate tu tiempo sin afán.",aTts:"Claro, tranquilo, tómate tu tiempo sin afán.",aEn:"Sure, no worries, take your time without rushing.",level:"moderate",service:true},
+  {q:"¿Sí me hice entender con la dirección?",qEs:"¿Sí me hice entender con la dirección?",qEn:"Did I make myself clear with the directions?",aEs:"Sí, clarísimo: dos cuadras derecho y giro a la izquierda.",aTts:"Sí, clarísimo: dos cuadras derecho y giro a la izquierda.",aEn:"Yes, super clear: two blocks straight and turn left.",level:"moderate",service:true},
+  {q:"¿Vas saliendo ya o te demoras un ratico?",qEs:"¿Vas saliendo ya o te demoras un ratico?",qEn:"Are you heading out now or taking a little longer?",aEs:"Ya salgo en cinco minuticos; voy bajando al lobby.",aTts:"Ya salgo en cinco minuticos; voy bajando al lobby.",aEn:"Leaving in five quick minutes; heading down to the lobby.",level:"easy",service:true},
+  {q:"¿El café lo prefiere bien cargado o clarito?",qEs:"¿El café lo prefiere bien cargado o clarito?",qEn:"Do you prefer the coffee strong or mild?",aEs:"Término medio está perfecto, sin azúcar por favor.",aTts:"Término medio está perfecto, sin azúcar por favor.",aEn:"Medium strength is perfect, no sugar please.",level:"easy",service:true}
 ];
 RR_BANK.push(...RR_SERVICE_REFLEXES);
 let rrTimer=null,rrCurrent=null,rrSession=0,rrPromptToken=0;
@@ -3262,6 +3272,7 @@ function renderModeFocusBar(root){
       else if(id==="starter"&&userPrefs.blindEar)userPrefs.blindEar=false;
       saveUserPrefs();renderLessons();
       if(typeof buildSpeakingGuide==="function")buildSpeakingGuide();
+      if(typeof buildGram==="function"&&typeof GRAMMAR!=="undefined")buildGram("presente",GRAMMAR.presente);
     };
     lvlRow.appendChild(b);
   });
@@ -3282,6 +3293,7 @@ function renderModeFocusBar(root){
     else{userPrefs.blindEar=!earOn;}
     saveUserPrefs();renderLessons();
     if(typeof buildSpeakingGuide==="function")buildSpeakingGuide();
+    if(typeof buildGram==="function"&&typeof GRAMMAR!=="undefined")buildGram("presente",GRAMMAR.presente);
   };
   focRow.appendChild(earBtn);
   bar.append(lvlRow,focRow);root.appendChild(bar);
@@ -3391,6 +3403,7 @@ function openStageTestOut(stage,stageLessons){
   renderTest();
 }
 
+const WELCOME_DISMISS_KEY="esco-v100-welcome-dismissed";
 function renderLessons(){
   const root=document.getElementById("lesson-list");if(!root)return;
   if(lpLesson){renderLessonStep();return;}
@@ -3401,6 +3414,26 @@ function renderLessons(){
   const done=LESSONS.filter(x=>lessonProgress[x.id]).length;
   const percent=LESSONS.length?done/LESSONS.length:0;
   const lvlMode=effectiveLevel();
+  let welcomeDismissed=false;
+  try{welcomeDismissed=localStorage.getItem(WELCOME_DISMISS_KEY)==="1";}catch(e){}
+  if(!welcomeDismissed){
+    const wCard=document.createElement("section");wCard.className="welcome-lane-card";wCard.dataset.lessonView="today";
+    wCard.innerHTML=`<div class="welcome-lane-head"><span>🧭 <strong>Pick your starting lane</strong> <small>(you can switch anytime above)</small></span><button type="button" class="welcome-lane-close" aria-label="Dismiss welcome card">×</button></div><div class="welcome-lane-btns"></div>`;
+    const wClose=wCard.querySelector(".welcome-lane-close");
+    const dismissWelcome=()=>{try{localStorage.setItem(WELCOME_DISMISS_KEY,"1");}catch(e){}};
+    wClose.onclick=()=>{dismissWelcome();renderLessons();};
+    const wBtns=wCard.querySelector(".welcome-lane-btns");
+    [
+      ["🌱 Brand new (A0)","Show Sound Basics & keep extra tools tucked away",()=>{userPrefs.level="starter";userPrefs.blindEar=false;saveUserPrefs();dismissWelcome();renderLessons();}],
+      ["🚀 Know basics (A1–A2)","Keep all drills open & unlock 5Q Stage Test-Outs",()=>{userPrefs.level="explorer";saveUserPrefs();dismissWelcome();renderLessons();setLessonView("path");}],
+      ["🔥 Wanna flow (B1+)","Turn on Blind-Ear listening challenge right away",()=>{userPrefs.level="fluent";userPrefs.blindEar=true;saveUserPrefs();dismissWelcome();renderLessons();}]
+    ].forEach(([title,sub,fn])=>{
+      const b=document.createElement("button");b.type="button";b.className="welcome-lane-btn";
+      b.innerHTML=`<strong>${title}</strong><small>${sub}</small>`;
+      b.onclick=fn;wBtns.appendChild(b);
+    });
+    root.appendChild(wCard);
+  }
   const pathLevel=percent<0.16?"A0 · Foundations":percent<0.38?"A1 · Everyday basics":percent<0.68?"A2 · Connected speech":"B1 · Conversational";
   const resume=loadResume();
   const resLesson=resume&&LESSONS.find(l=>l.id===resume.id);
@@ -3425,6 +3458,11 @@ function renderLessons(){
     soundBtn.innerHTML=`<span>🔤 <strong>2-Min Sound Basics</strong> <small>A·E·I·O·U · Silent H · Ñ · RR</small></span><span>Start →</span>`;
     soundBtn.onclick=()=>{showPage("phonetics");showPhonetic("letras");};
     hero.appendChild(soundBtn);
+  }else{
+    const vvShortcut=document.createElement("button");vvShortcut.type="button";vvShortcut.className="starter-sound-btn explorer-vv-btn";
+    vvShortcut.innerHTML=`<span>⚡ <strong>1-Verb → 5 Timeframes Lab</strong> <small>Bend hacer, tener, ir, poder &amp; dar across past, now &amp; polite</small></span><span>Practice →</span>`;
+    vvShortcut.onclick=()=>{showPage("gram");showGramGroup("tiempos");};
+    hero.appendChild(vvShortcut);
   }
 
   root.appendChild(hero);
@@ -3602,7 +3640,7 @@ function renderLessons(){
     const sh=document.createElement("summary");sh.className="stage-label";
     sh.innerHTML=`<div class="stage-label-main"><span>${stage.name}</span><span class="stage-count">${sDone}/${stageLessons.length}</span></div><div class="stage-sub">${stage.sub}</div><div class="stage-progress"><span style="width:${Math.round((sDone/Math.max(stageLessons.length,1))*100)}%"></span></div>`;
     stageWrap.appendChild(sh);
-    if((stageIndex===0||stageIndex===1)&&sDone<stageLessons.length){
+    if(stageIndex>=0&&stageIndex<=3&&sDone<stageLessons.length){
       const testBar=document.createElement("div");testBar.className="stage-testout-bar";
       testBar.innerHTML=`<span>Know the basics in this stage?</span><button type="button" class="stage-testout-btn">⚡ Test out (5Q)</button>`;
       testBar.querySelector("button").onclick=()=>openStageTestOut(stage,stageLessons);
@@ -3672,6 +3710,61 @@ function renderLessons(){
 renderLessons();
 
 // ── Build Grammar ─────────────────────────────────────────────────────────────
+function buildVerbVersatilityLab(sec){
+  if(typeof VERB_VERSATILITY_ENGINE==="undefined"||!VERB_VERSATILITY_ENGINE.length)return;
+  let vvIdx=0,vvPerson="yo",vvRevealSet=new Set();
+  const lab=document.createElement("section");lab.className="bridge-trainer-card vv-lab-card";
+  const personsMeta=[["yo","🙋 Yo"],["tu","👋 Tú"],["vos","🌸 Vos"],["usted","🎩 Usted"],["nosotros","👥 Nosotros"]];
+  const frameMeta=[
+    ["past","⏮️ Past","Ya pasó"],
+    ["just","🔄 Just Did","Acabo de…"],
+    ["now","⚡ Right Now","En este momento"],
+    ["future","⏭️ Going To","Voy a…"],
+    ["polite","🙏 Polite Ask","Cortesía CO"]
+  ];
+  const renderLab=()=>{
+    const item=VERB_VERSATILITY_ENGINE[vvIdx%VERB_VERSATILITY_ENGINE.length];
+    const pForms=(item.forms&&item.forms[vvPerson])||{};
+    const blind=isBlindEarActive();
+    lab.innerHTML=`<div class="bridge-kicker">⚡ 1-VERB → 5-TIMEFRAME VERSATILITY LAB (${vvIdx+1}/${VERB_VERSATILITY_ENGINE.length})</div>
+      <div class="bridge-context">Pick an everyday verb &amp; person — hear how one root bends into past, just-did, right-now, future &amp; polite Colombian Spanish:</div>
+      <div class="vv-verb-tabs" role="tablist" aria-label="Choose verb"></div>
+      <div class="vv-person-tabs" role="tablist" aria-label="Choose person or register"></div>
+      <div class="vv-tense-list"></div>
+      <div class="tvc-why">💡 <strong>Colombian Shortcut:</strong> ${escapeVocabHtml(item.tip)}</div>`;
+    const vWrap=lab.querySelector(".vv-verb-tabs");
+    VERB_VERSATILITY_ENGINE.forEach((v,i)=>{
+      const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(i===vvIdx?" active":"");
+      b.textContent=v.label;
+      b.onclick=()=>{vvIdx=i;vvRevealSet.clear();renderLab();};
+      vWrap.appendChild(b);
+    });
+    const pWrap=lab.querySelector(".vv-person-tabs");
+    personsMeta.forEach(([pk,plbl])=>{
+      const b=document.createElement("button");b.type="button";b.className="mf-chip"+(pk===vvPerson?" active":"");
+      b.textContent=plbl;
+      b.onclick=()=>{vvPerson=pk;vvRevealSet.clear();renderLab();const first=item.forms&&item.forms[pk]&&item.forms[pk].now;if(first)speak(first.es,0.78);};
+      pWrap.appendChild(b);
+    });
+    const listWrap=lab.querySelector(".vv-tense-list");
+    frameMeta.forEach(([fk,flbl,fsub])=>{
+      const rowData=pForms[fk];
+      if(!rowData)return;
+      const rKey=`${item.id}|${vvPerson}|${fk}`;
+      const masked=blind&&!vvRevealSet.has(rKey);
+      const row=document.createElement("button");row.type="button";row.className="vv-tense-row"+(masked?" blind-masked":"");
+      row.innerHTML=`<div class="vv-row-meta"><span class="vv-row-tag">${flbl}</span><small>${fsub}</small></div><div class="vv-row-copy"><strong>${masked?"🎧 Tap to hear &amp; reveal":escapeVocabHtml(rowData.es)}</strong><small>${masked?"Blind-Ear active — listen first":escapeVocabHtml(rowData.en)}</small></div><span class="vv-row-spk">🔊</span>`;
+      row.onclick=()=>{
+        markPractice("phrases",rowData.es);
+        speak(rowData.es,0.78);
+        if(masked){vvRevealSet.add(rKey);renderLab();}
+      };
+      listWrap.appendChild(row);
+    });
+  };
+  renderLab();
+  sec.appendChild(lab);
+}
 function buildGram(id,data){
   const sec=document.getElementById("gs-"+id);sec.innerHTML="";
   if(id==="trucos"){
@@ -3687,6 +3780,7 @@ function buildGram(id,data){
   }
   if(id==="pronombres"){buildPronombres(sec);return;}
   if(id==="reflexivos"){buildReflexivos(sec);return;}
+  if(id==="presente"){buildVerbVersatilityLab(sec);}
   const intro=document.createElement("div");intro.className="gram-intro";
   const grammarMeta={perfecto:["✅","Present perfect"],condicional:["🙏","Conditional"],"pasado-perfecto":["⏪","Past perfect"],"futuro-perfecto":["⏩","Future perfect"]}[id];
   const grammarIcon=grammarMeta?grammarMeta[0]:(id==="presente"?"⚡":id==="pasado"?"⏮️":"⏭️");
@@ -4920,6 +5014,7 @@ function toggleQuizBlindEar(){
   renderQuizPromptAndBlind();
   if(isBlindEarActive()&&cQ&&!an&&qMode!=="en-es")quizHear();
   if(typeof buildSpeakingGuide==="function")buildSpeakingGuide();
+  if(typeof buildGram==="function"&&typeof GRAMMAR!=="undefined")buildGram("presente",GRAMMAR.presente);
 }
 function quizHear(){
   if(!cQ)return;

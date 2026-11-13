@@ -8,6 +8,9 @@
   - Uses `VOICE_KEY = "esco-selected-voice-v45"`.
   - Calls `speechSynthesis.speak(u)` synchronously inside the user tap gesture (never wrapped in `setTimeout`).
 
+## 🖼️ Image Generation Rule
+- **ALWAYS use the GE API (`https://api.norvi.tech/image-gen/v1/generate`) to generate images** (e.g., `schnell` for illustrated scenes and `qwen21` for text-labeled diagrams/signage), saved as compressed static `.webp` files at the app root (alongside `index.html`, so GitHub browser uploads work flat without subfolder issues) for GitHub Pages and offline PWA caching. Never use built-in non-API image generators or SVG placeholders for artwork.
+
 ## 📦 Deployment & Sync Locations
 Whenever content, lessons, vocabulary, or UI changes are made (while keeping the audio block untouched):
 1. Update the workspace at `c:\Users\schaf\Documents\antigravity\modest-maxwell`.

@@ -5906,6 +5906,28 @@ const VISUAL_GUIDES = [
     es: "¡Ajá, primo! Pasa adelante a la terraza, prende el abanico y probemos este friche.",
     en: "Hey, cousin! Come out to the front porch, turn on the fan, and let's try this friche.",
     region: "San Juan del Cesar & Guajira"
+  },
+  {
+    id: "vg-panaderia",
+    title: "🥐 Panadería & Tinto (Bakery Counter)",
+    sub: "Tinto · Perico · Pandebono · Almojábana · Arepa con queso",
+    img: "guide-panaderia.webp",
+    alt: "Colombian neighborhood panaderia chalkboard poster labeling tinto, perico, pandebono, almojabana, and arepa con queso",
+    caption: "Morning staples across Colombia: tinto (small black coffee), perico (coffee with warm milk — note: in breakfast eggs, huevos pericos means scrambled eggs with tomato and green onion), pandebono & almojábana (warm cheese breads), and arepa con queso.",
+    es: "Buenos veci, ¿me regala dos pandebonos calienticos y un perico para acá, por favor?",
+    en: "Morning neighbor, could I have two warm pandebonos and a coffee with milk for here, please?",
+    region: "Nacional · Mañanas"
+  },
+  {
+    id: "vg-conectores",
+    title: "🔗 Puentes para Hablar (Sentence Connectors)",
+    sub: "Pero · Aunque · Entonces · Pues · De todas formas",
+    img: "guide-conectores.webp",
+    alt: "Educational poster showing Colombian sentence connectors Pero, Aunque, Entonces, Pues, and De todas formas",
+    caption: "Glue short thoughts into natural Colombian flow: use pero (but) to pivot, aunque (even though) to add nuance, entonces (so/then) to connect outcomes, pues (well/then) to buy thinking time, and de todas formas (anyway) to wrap up politely.",
+    es: "Quería salir temprano, pero estaba lloviendo; entonces pedí un Uber de todas formas.",
+    en: "I wanted to leave early, but it was raining; so I ordered an Uber anyway.",
+    region: "Fluidez · Conversación"
   }
 ];
 
@@ -6152,3 +6174,264 @@ REGIONAL_SWITCHER.push(
     ]
   }
 );
+
+const VERB_VERSATILITY_ENGINE = [
+  {
+    id: "vv-hacer",
+    verb: "hacer",
+    label: "🛠️ Hacer (to do / make)",
+    tip: "With 'acabar de + infinitive' Colombians express something that just happened seconds ago without needing complex past conjugations.",
+    forms: {
+      yo: {
+        past: { es: "Ya hice el pedido por Nequi.", en: "I already placed the order via Nequi." },
+        just: { es: "Acabo de hacer un tinto bien cargado.", en: "I just made a strong black coffee." },
+        now: { es: "Estoy haciendo la fila en la caja.", en: "I am waiting in line at the register." },
+        future: { es: "Voy a hacer el mercado ahorita.", en: "I am going to do the grocery shopping soon." },
+        polite: { es: "¿Me podría hacer el favor de cambiar esto?", en: "Could you do me the favor of breaking this bill?" }
+      },
+      tu: {
+        past: { es: "¿Ya hiciste la vuelta del banco?", en: "Did you already run the bank errand?" },
+        just: { es: "Acabas de hacer una buena elección.", en: "You just made a great choice." },
+        now: { es: "¿Qué haces hoy por la tarde, primo?", en: "What are you doing this afternoon, cousin?" },
+        future: { es: "¿Vas a hacer comida en la casa hoy?", en: "Are you going to cook at home today?" },
+        polite: { es: "¿Me haces un favor y me pasas la ubicación?", en: "Could you do me a favor and send me the pin?" }
+      },
+      vos: {
+        past: { es: "¿Qué hiciste ayer en Medellín?", en: "What did you do yesterday in Medellín?" },
+        just: { es: "Acabás de hacer justo lo que tocaba.", en: "You just did exactly what was needed." },
+        now: { es: "¿Vos qué estás haciendo por acá?", en: "What are you up to around here?" },
+        future: { es: "¿Vas a hacer el asado el domingo?", en: "Are you going to do the barbecue on Sunday?" },
+        polite: { es: "¿Me hacés el favor de parar en la esquina?", en: "Could you please stop at the corner?" }
+      },
+      usted: {
+        past: { es: "¿Usted ya hizo el registro en portería?", en: "Did you already sign in at the front desk?" },
+        just: { es: "Usted acaba de hacer la diferencia.", en: "You just made all the difference." },
+        now: { es: "¿Qué está haciendo en este momento?", en: "What are you doing right now?" },
+        future: { es: "¿Va a hacer algún trámite hoy?", en: "Are you going to run an errand today?" },
+        polite: { es: "¿Usted me hace el favor de llamarme cuando llegue?", en: "Would you please call me when you arrive?" }
+      },
+      nosotros: {
+        past: { es: "Ayer hicimos una vaca para las empanadas.", en: "Yesterday we all chipped in for empanadas." },
+        just: { es: "Acabamos de hacer el check-in en el hotel.", en: "We just checked in at the hotel." },
+        now: { es: "Estamos haciendo planes para el puente.", en: "We are making plans for the long weekend." },
+        future: { es: "Mañana vamos a hacer un paseo a la finca.", en: "Tomorrow we are going to take a trip to the country house." },
+        polite: { es: "¿Podemos hacer el pago en una sola cuota?", en: "Can we pay in a single installment?" }
+      }
+    }
+  },
+  {
+    id: "vv-tener",
+    verb: "tener",
+    label: "🎒 Tener (to have)",
+    tip: "Note 'tener que + verb' means 'to have to', and shops ask '¿Tiene sencillo?' for small bills.",
+    forms: {
+      yo: {
+        past: { es: "Ayer tuve que ir hasta Migración.", en: "Yesterday I had to go all the way to Immigration." },
+        just: { es: "Acabo de tener una idea buenísima.", en: "I just had a great idea." },
+        now: { es: "Tengo ganas de un jugo de lulo en agua.", en: "I feel like having a lulo juice in water." },
+        future: { es: "Voy a tener que salir más temprano.", en: "I am going to have to leave earlier." },
+        polite: { es: "Disculpe, ¿será que tengo que firmar acá?", en: "Excuse me, do I happen to need to sign here?" }
+      },
+      tu: {
+        past: { es: "¿Tuviste tiempo de hablar con la familia?", en: "Did you have time to talk with the family?" },
+        just: { es: "Acabas de tener mucha suerte con el tráfico.", en: "You just got very lucky with traffic." },
+        now: { es: "¿Tienes el número del domiciliario?", en: "Do you have the delivery driver's number?" },
+        future: { es: "Vas a tener un día bien movido.", en: "You are going to have a very busy day." },
+        polite: { es: "¿Tienes sencillo para un billete de cincuenta?", en: "Do you have change for a fifty-thousand bill?" }
+      },
+      vos: {
+        past: { es: "¿Tuviste algún problema con el Uber?", en: "Did you have any trouble with the Uber?" },
+        just: { es: "Acabás de tener el mismo pensamiento que yo.", en: "You just had the exact same thought as me." },
+        now: { es: "¿Vos tenés carga en el celular?", en: "Do you have battery on your phone?" },
+        future: { es: "Vas a tener que madrugar mañana.", en: "You are going to have to wake up early tomorrow." },
+        polite: { es: "¿Tenés un momentico para explicarme?", en: "Do you have a quick second to explain to me?" }
+      },
+      usted: {
+        past: { es: "¿Usted tuvo que esperar mucho en la caja?", en: "Did you have to wait long at the register?" },
+        just: { es: "Usted acaba de tener un detalle muy bonito.", en: "You just did something very thoughtful." },
+        now: { es: "¿Usted tiene pandebono calientico todavía?", en: "Do you still have warm pandebono?" },
+        future: { es: "Va a tener que girar a la derecha en la setenta.", en: "You are going to have to turn right on 70th." },
+        polite: { es: "¿Tiene bolsa, por favor, o me regala una?", en: "Do you have a bag, please, or could I get one?" }
+      },
+      nosotros: {
+        past: { es: "Tuvimos una parranda buenísima en San Juan.", en: "We had an awesome parranda in San Juan." },
+        just: { es: "Acabamos de tener noticias del vuelo.", en: "We just got news about the flight." },
+        now: { es: "Tenemos reserva para cuatro personas a las ocho.", en: "We have a reservation for four people at eight." },
+        future: { es: "Vamos a tener que pedir dos taxis.", en: "We are going to have to call two taxis." },
+        polite: { es: "¿Tenemos que cancelar antes de sentarnos?", en: "Do we need to pay before sitting down?" }
+      }
+    }
+  },
+  {
+    id: "vv-ir",
+    verb: "ir",
+    label: "🚕 Ir (to go / 'Voy a…')",
+    tip: "Your #1 future shortcut in Colombia: '[ir in present] + a + infinitive verb' covers 90% of everyday future plans.",
+    forms: {
+      yo: {
+        past: { es: "Ayer fui a la farmacia de la esquina.", en: "Yesterday I went to the corner pharmacy." },
+        just: { es: "Acabo de ir a recoger el domicilio.", en: "I just went to pick up the delivery." },
+        now: { es: "Voy para el apartamento quinientos dos.", en: "I am heading to apartment 502." },
+        future: { es: "Voy a ir al mercado mañana temprano.", en: "I am going to go to the market early tomorrow." },
+        polite: { es: "Con permiso, voy pasando por aquí.", en: "Excuse me, just squeezing right past here." }
+      },
+      tu: {
+        past: { es: "¿Fuiste a la terraza ayer en la noche?", en: "Did you go out to the front porch last night?" },
+        just: { es: "Acabas de ir por el camino más rápido.", en: "You just took the fastest route." },
+        now: { es: "¿Cómo vas con el español colombiano?", en: "How is your Colombian Spanish going?" },
+        future: { es: "¿Vas a ir a la playa este puente?", en: "Are you going to go to the beach this holiday weekend?" },
+        polite: { es: "Cuando vayas saliendo, me avisas por WhatsApp.", en: "When you head out, let me know on WhatsApp." }
+      },
+      vos: {
+        past: { es: "¿Adónde fuiste a comer corrientazo?", en: "Where did you go eat a daily lunch?" },
+        just: { es: "Acabás de ir hasta allá de balde.", en: "You just went all the way there for nothing." },
+        now: { es: "¿Para dónde vas con tanto afán, parce?", en: "Where are you rushing off to, buddy?" },
+        future: { es: "¿Vas a ir al partido con nosotros?", en: "Are you going to go to the game with us?" },
+        polite: { es: "Andá tranquilo, nos vemos ahorita.", en: "Go easy, see you in a bit." }
+      },
+      usted: {
+        past: { es: "¿Usted ya fue a sacar la cédula?", en: "Did you already go get your ID card?" },
+        just: { es: "Usted acaba de ir directo al punto.", en: "You just got straight to the point." },
+        now: { es: "¿Hacia qué dirección va ahorita?", en: "Which direction are you heading right now?" },
+        future: { es: "¿Va a ir por la autopista o por la séptima?", en: "Are you going to take the highway or Carrera 7?" },
+        polite: { es: "¿Cómo le ha ido hoy, vecino?", en: "How has your day been going, neighbor?" }
+      },
+      nosotros: {
+        past: { es: "El domingo fuimos a almorzar friche.", en: "On Sunday we went out to eat friche for lunch." },
+        just: { es: "Acabamos de ir a pagar los servicios.", en: "We just went to pay the utility bills." },
+        now: { es: "Vamos llegando en diez minutos.", en: "We are arriving in ten minutes." },
+        future: { es: "Vamos a ir a caminar por la ciclovía.", en: "We are going to go walk on the Sunday car-free streets." },
+        polite: { es: "Nos vamos yendo, muchas gracias por todo.", en: "We are heading out, thank you so much for everything." }
+      }
+    }
+  },
+  {
+    id: "vv-poder",
+    verb: "poder",
+    label: "🤝 Poder (can / could)",
+    tip: "In Colombia, softening requests with '¿Será que puedo…?' or '¿Podría…?' earns instant warmth and cooperation.",
+    forms: {
+      yo: {
+        past: { es: "Por el trancón no pude llegar a tiempo.", en: "Because of traffic I could not arrive on time." },
+        just: { es: "Por fin pude registrar mi línea celular.", en: "I was finally able to register my phone line." },
+        now: { es: "Puedo pagar por Nequi o con tarjeta.", en: "I can pay via Nequi or by card." },
+        future: { es: "Voy a poder hablar mejor cada semana.", en: "I am going to be able to speak better every week." },
+        polite: { es: "¿Será que puedo pasar a ver el apartamento?", en: "Could I possibly stop by to see the apartment?" }
+      },
+      tu: {
+        past: { es: "¿Pudiste descansar bien anoche?", en: "Were you able to rest well last night?" },
+        just: { es: "Acabas de poder resolverlo en un minuto.", en: "You just managed to solve it in one minute." },
+        now: { es: "¿Puedes repetir eso más despacio, porfa?", en: "Can you repeat that slower, please?" },
+        future: { es: "¿Vas a poder venir al almuerzo?", en: "Are you going to be able to make it to lunch?" },
+        polite: { es: "¿Me podrías recomendar un buen café?", en: "Could you recommend a good coffee shop?" }
+      },
+      vos: {
+        past: { es: "¿Pudiste hablar con el portero?", en: "Were you able to talk with the doorman?" },
+        just: { es: "Ya pudiste cuadrar la cita médica.", en: "You just managed to set up the medical appointment." },
+        now: { es: "¿Vos podés venir hoy por la tarde?", en: "Can you come by this afternoon?" },
+        future: { es: "¿Vas a poder acompañarnos a San Juan?", en: "Are you going to be able to join us in San Juan?" },
+        polite: { es: "¿Me podés confirmar por WhatsApp?", en: "Can you confirm with me on WhatsApp?" }
+      },
+      usted: {
+        past: { es: "¿Pudo encontrar la dirección sin problema?", en: "Were you able to find the address with no problem?" },
+        just: { es: "¿Ya pudo revisar la caja de tacos?", en: "Were you already able to check the breaker box?" },
+        now: { es: "¿Puede ponerlo a una sola cuota, por favor?", en: "Can you put it as a single installment, please?" },
+        future: { es: "¿Va a poder pasar antes del mediodía?", en: "Are you going to be able to stop by before noon?" },
+        polite: { es: "Disculpe, ¿podría hablar un poquito más despacio?", en: "Excuse me, could you speak a tiny bit slower?" }
+      },
+      nosotros: {
+        past: { es: "No pudimos salir porque cayó un aguacero.", en: "We could not go out because it poured rain." },
+        just: { es: "Acabamos de poder conectarnos al Wi-Fi.", en: "We just got connected to the Wi-Fi." },
+        now: { es: "Podemos pedir el corrientazo para llevar.", en: "We can order the daily lunch to go." },
+        future: { es: "Vamos a poder practicar todos los días.", en: "We are going to be able to practice every day." },
+        polite: { es: "¿Podemos sentarnos en esa mesa de allá?", en: "Can we sit at that table over there?" }
+      }
+    }
+  },
+  {
+    id: "vv-dar-regalar",
+    verb: "regalar / dar",
+    label: "☕ Regalar / Dar (Colombian ordering)",
+    tip: "In Colombia, '¿Me regala…?' at counters never means free—it's the standard polite way to order food, drinks, or help!",
+    forms: {
+      yo: {
+        past: { es: "Le di mi pasaporte al recepcionista.", en: "I gave my passport to the receptionist." },
+        just: { es: "Le acabo de dar la propina al domiciliario.", en: "I just gave the tip to the delivery driver." },
+        now: { es: "Le doy mil gracias por la paciencia.", en: "Thank you so much for your patience." },
+        future: { es: "Le voy a dar un abrazo a toda la familia.", en: "I am going to give the whole family a hug." },
+        polite: { es: "Veci, ¿me regala la cuenta cuando pueda?", en: "Neighbor, could I have the check when you can?" }
+      },
+      tu: {
+        past: { es: "Me diste una muy buena recomendación.", en: "You gave me a really good recommendation." },
+        just: { es: "Me acabas de dar justo lo que necesitaba.", en: "You just gave me exactly what I needed." },
+        now: { es: "¿Me das un poquito más de ají, porfa?", en: "Can you give me a little more salsa/ají, please?" },
+        future: { es: "Me vas a dar tu receta del jugo de corozo.", en: "You are going to give me your corozo juice recipe." },
+        polite: { es: "¿Me regalas tu número para guardarlo?", en: "Could you share your number so I save it?" }
+      },
+      vos: {
+        past: { es: "Vos me diste la dirección exacta.", en: "You gave me the exact address." },
+        just: { es: "Me acabás de dar tremendo consejo.", en: "You just gave me awesome advice." },
+        now: { es: "¿Me regalás un vaso con agua?", en: "Could I get a glass of water?" },
+        future: { es: "Nos vas a dar una vuelta por el barrio.", en: "You are going to show us around the neighborhood." },
+        polite: { es: "¿Me das una ñapa en esa bolsa, porfa?", en: "Could you toss a tiny extra bit in that bag, please?" }
+      },
+      usted: {
+        past: { es: "Usted me dio las vueltas exactas, gracias.", en: "You gave me the exact change, thank you." },
+        just: { es: "Usted me acaba de dar una gran mano.", en: "You just gave me a huge hand." },
+        now: { es: "¿Me regala un tinto y un pandebono?", en: "Could I order a black coffee and a pandebono?" },
+        future: { es: "¿Me va a dar copia del recibo o sin copia?", en: "Are you giving me a receipt copy or without?" },
+        polite: { es: "¿Sumercé me regala un momentico, por favor?", en: "Could you kindly give me a quick second, please?" }
+      },
+      nosotros: {
+        past: { es: "Dimos una vuelta por el centro histórico.", en: "We took a walk around the historic center." },
+        just: { es: "Acabamos de darle la autorización al portero.", en: "We just gave permission to the doorman." },
+        now: { es: "No damos papaya con el celular en la calle.", en: "We stay alert with our phone on the street." },
+        future: { es: "Vamos a darnos una escapada al pueblito.", en: "We are going to take a quick getaway to the town." },
+        polite: { es: "¿Nos regala dos cucharitas y servilletas?", en: "Could we get two little spoons and napkins?" }
+      }
+    }
+  },
+  {
+    id: "vv-decir",
+    verb: "decir",
+    label: "💬 Decir (to say / tell)",
+    tip: "'¡No me digas!' is the classic Colombian warm reaction showing surprise ('No way!').",
+    forms: {
+      yo: {
+        past: { es: "Ya le dije al conductor que pare acá.", en: "I already told the driver to stop here." },
+        just: { es: "Acabo de decir que voy aprendiendo poco a poco.", en: "I just said that I am learning little by little." },
+        now: { es: "¿Cómo se dice esto en colombiano?", en: "How do you say this in Colombian Spanish?" },
+        future: { es: "Te voy a decir la verdad: me encantó.", en: "I am going to tell you the truth: I loved it." },
+        polite: { es: "Disculpe, ¿me puede decir qué significa eso?", en: "Excuse me, can you tell me what that means?" }
+      },
+      tu: {
+        past: { es: "Me dijiste que el almuerzo estaba buenísimo.", en: "You told me the lunch was delicious." },
+        just: { es: "Acabas de decir una palabra nueva para mí.", en: "You just said a brand-new word for me." },
+        now: { es: "¿Por qué dices eso, primo?", en: "Why do you say that, cousin?" },
+        future: { es: "Me vas a decir a qué hora salimos.", en: "You are going to tell me what time we leave." },
+        polite: { es: "¿Me dices cómo llegar a la terminal?", en: "Can you tell me how to get to the bus terminal?" }
+      },
+      vos: {
+        past: { es: "Vos me dijiste que nos viéramos acá.", en: "You told me to meet up here." },
+        just: { es: "Acabás de decir algo muy cierto.", en: "You just said something very true." },
+        now: { es: "¿Qué decís vos? ¿Nos vamos de una?", en: "What do you say? Shall we go right away?" },
+        future: { es: "¿Nos vas a decir dónde queda la tienda?", en: "Are you going to tell us where the store is?" },
+        polite: { es: "Decime con confianza si hablo muy rápido.", en: "Tell me openly if I speak too fast." }
+      },
+      usted: {
+        past: { es: "Usted me dijo que quedaba a dos cuadras.", en: "You told me it was two blocks away." },
+        just: { es: "Usted acaba de decir lo más importante.", en: "You just said the most important part." },
+        now: { es: "¿Qué me dice de ese clima tan sabroso?", en: "What do you think of this awesome weather?" },
+        future: { es: "¿Me va a decir en qué plataforma sale?", en: "Are you going to tell me which platform it leaves from?" },
+        polite: { es: "¿Me podría decir a qué hora cierran hoy?", en: "Could you tell me what time you close today?" }
+      },
+      nosotros: {
+        past: { es: "Siempre decimos 'con mucho gusto' al ayudar.", en: "We always say 'my pleasure' when helping." },
+        just: { es: "Acabamos de decir que vamos por el café.", en: "We just said we are going for coffee." },
+        now: { es: "Aquí en la costa decimos 'ajá' para saludar.", en: "Here on the coast we say 'ajá' to greet." },
+        future: { es: "Te vamos a decir cuando llegue el paquete.", en: "We are going to tell you when the package arrives." },
+        polite: { es: "Como decimos por acá: ¡hágale sin pena!", en: "As we say around here: go right ahead, no shyness!" }
+      }
+    }
+  }
+];
