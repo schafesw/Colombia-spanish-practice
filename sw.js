@@ -1,5 +1,5 @@
 /* Navigation network-first + stale-while-revalidate asset Service Worker for Español · Colombia PWA (v105.0) */
-const CACHE_NAME = "esco-pwa-v105.0";
+const CACHE_NAME = "esco-pwa-v106.0";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -40,6 +40,14 @@ const CORE_ASSETS = [
   "./pm-sombrilla.webp",
   "./pm-abanico.webp",
   "./pm-morral.webp",
+  "./pm-aguacero.webp",
+  "./pm-pasaporte.webp",
+  "./pm-recibo.webp",
+  "./pm-llaves.webp",
+  "./pm-datafono.webp",
+  "./pm-cajero.webp",
+  "./pm-panela.webp",
+  "./pm-chicharron.webp",
   "./pm-sencillo.webp"
 ];
 
