@@ -3404,3 +3404,38 @@ body.lesson-focus-active .scroll{padding-bottom:calc(var(--safe-bottom) + 118px)
 :root[data-theme="light"] .sprint-head,
 :root[data-theme="light"] .sprint-cue strong{color:#18202c;}
 :root[data-theme="light"] .ne-clear{color:#475569;}
+
+
+/* ── v104.0: Clean Quiz Solo Mode, Quiz-Native Sprint, Guías Tabs & Word-to-Picture Prompt ── */
+#page-quiz.v102-solo > .quiz-score-bar,
+#page-quiz.v102-solo > .quiz-blitz-wrap,
+#page-quiz.v102-solo > .quiz-mode-wrap,
+#page-quiz.v102-solo > .quiz-customize,
+#page-quiz.v102-solo > .quiz-card,
+#page-quiz.v102-solo > .quiz-review-banner,
+#page-quiz.v102-solo > .quiz-review-launch,
+#page-quiz.v102-solo > .quiz-feedback,
+#page-quiz.v102-solo > .quiz-reveal,
+#page-quiz.v102-solo > .quiz-opts,
+#page-quiz.v102-solo > .quiz-next{
+  display:none !important;
+}
+.gram-groups{flex-wrap:wrap;}
+.pm-word-prompt-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
+.pm-word-badge{font-size:24px;font-weight:900;color:var(--text);letter-spacing:-0.3px;}
+.pm-hear-mini{padding:7px 12px !important;font-size:13px !important;}
+.sprint-score-bar{gap:10px;margin-bottom:14px;}
+.sprint-score-bar .qs-item{flex:1;min-width:60px;}
+.sprint-urgent{color:var(--pink) !important;}
+.sprint-stop-pill{flex-shrink:0;border:1px solid var(--border);background:var(--surface2);color:var(--muted);border-radius:10px;padding:7px 11px;font-size:0.74rem;font-weight:800;cursor:pointer;}
+.sprint-quiz-card,.sprint-intro-card{gap:10px;padding:24px 18px;}
+.sprint-cue-word{font-size:clamp(1.2rem,3.6vw,1.6rem);line-height:1.25;max-width:440px;}
+.sprint-subcue{font-size:0.86rem;color:var(--muted);font-weight:600;max-width:420px;line-height:1.4;}
+.sprint-intro-desc{font-size:0.86rem;color:var(--muted);max-width:390px;line-height:1.45;margin:2px 0 6px;}
+.sprint-thumb{width:128px;height:128px;border-radius:16px;object-fit:cover;border:1px solid var(--border);box-shadow:0 6px 18px rgba(0,0,0,0.22);}
+.sprint-start-btn,.sprint-again-btn{display:inline-flex;align-items:center;justify-content:center;width:auto;min-width:210px;padding:13px 22px;min-height:46px;margin-top:4px;cursor:pointer;}
+.sprint-opts .qopt{padding:14px 12px;font-size:0.9rem;min-height:66px;cursor:pointer;}
+.sprint-fb{height:auto;min-height:24px;margin:4px 0 10px;}
+:root[data-theme="light"] .sprint-cue-word{color:#18202c;}
+:root[data-theme="light"] .sprint-stop-pill{background:#f1ede4;color:#334155;border-color:rgba(24,32,44,0.18);}
+.gram-groups{flex-wrap:wrap;}

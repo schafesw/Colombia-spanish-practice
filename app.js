@@ -72,7 +72,7 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v103.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v104.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);const themeBtn=document.createElement("button");themeBtn.type="button";themeBtn.id="theme-toggle-btn";themeBtn.className="profile-reset";themeBtn.textContent=(localStorage.getItem("esco-theme-v101")==="light"?"🌙 Dark":"☀️ Sun");themeBtn.title="Switch dark / sunlight theme";themeBtn.onclick=()=>toggleAppTheme();
   bar.append(label,select,reset,ver,themeBtn);utilityBody.appendChild(bar);if(typeof attachProfileBackupControls==="function")attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -4544,16 +4544,16 @@ buildGram("pronombres");buildGram("reflexivos");
 buildSpeakingGuide();
 
 /* Grouped grammar navigation (v23): Tiempos / Pronombres / Patrones */
-const GRAM_GROUPS={
+const GRAM_GROUPS={regiones:{label:"🗺️ Regiones",items:[["estructura","🗺️ Regiones"]]},posters:{label:"🖼️ Posters",items:[["estructura","🖼️ Posters"]]},
   tiempos:{label:"⏱️ Tiempos",items:[["presente","⚡ Presente"],["pasado","⏮️ Pasado"],["pasado-contraste","🎞️ Evento vs. contexto"],["futuro","⏭️ Futuro"],["perfecto","✅ He hecho"],["condicional","🙏 Haría / podría"],["pasado-perfecto","⏪ Había hecho"],["futuro-perfecto","⏩ Habré hecho"]]},
   pronombres:{label:"👤 Pronombres",items:[["pronombres","Lo / La / Le"]]},
   patrones:{label:"🧩 Patrones",items:[["reflexivos","🔄 Reflexivos"],["subjuntivo","🌱 Subjuntivo"],["trucos","🧠 Trucos"]]},
   estructura:{label:"🧱 Hablar",items:[["estructura","🧱 Estructura"]]}
 };
-let gramGroup="tiempos",gramSection="presente";
+let gramGroup="regiones",gramSection="estructura";
 function showGramGroup(g){
   gramGroup=g;
-  document.querySelectorAll(".ggroup").forEach(b=>b.classList.toggle("active",b.dataset.g===g));
+  document.querySelectorAll(".ggroup").forEach(b=>b.classList.toggle("active",b.dataset.g===g));if(typeof applyHablarTab==="function"){if(g==="regiones")applyHablarTab("regions");else if(g==="posters")applyHablarTab("visual");else if(g==="estructura"&&(userPrefs.hablarTab==="regions"||userPrefs.hablarTab==="visual"))applyHablarTab("ear");}
   const sub=document.getElementById("gram-sub");
   const items=GRAM_GROUPS[g].items;
   sub.innerHTML="";
@@ -4576,7 +4576,7 @@ function showGram(id){
     Array.from(sub.children).forEach((b,i)=>b.classList.toggle("active",items[i]&&items[i][0]===id));
   }
 }
-showGramGroup("tiempos");
+showGramGroup("regiones");
 
 // ── Quiz ──────────────────────────────────────────────────────────────────────
 const CONVERSATION_QUIZ=[
@@ -5348,7 +5348,7 @@ function attachProfileBackupControls(utilityBody){
         const k=nativeStorage.key(i);
         if(k&&k.startsWith(prefix))data[k.slice(prefix.length)]=nativeStorage.getItem(k);
       }
-      const payload=JSON.stringify({app:"espanol-colombia",version:"v103.0",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
+      const payload=JSON.stringify({app:"espanol-colombia",version:"v104.0",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
       const blob=new Blob([payload],{type:"application/json"});
       const url=URL.createObjectURL(blob);
       const a=document.createElement("a");
@@ -5385,7 +5385,7 @@ buildProfileBar();
    v102.0: Picture-to-Word Match, 60s Fluency Sprint, Natural-Speed Ear,
    and Gringo-Trap Fixer (audio/TTS block lines 80-190 untouched)
    ═══════════════════════════════════════════════════════════════════════════ */
-var pmOpenInVocab=false,pmSetFilter="all",pmDirection="audio2pic",pmTargetIdx=0,pmPickedId=null;
+var pmOpenInVocab=false,pmSetFilter="all",pmDirection="word2pic",pmTargetIdx=0,pmPickedId=null;
 function pmFilteredPool(){
   if(typeof PICTURE_MATCH_BANK==="undefined"||!PICTURE_MATCH_BANK.length)return[];
   const sub=pmSetFilter==="all"?PICTURE_MATCH_BANK:PICTURE_MATCH_BANK.filter(x=>x.set===pmSetFilter);
@@ -5407,13 +5407,14 @@ function renderPictureMatchDeck(host){
   const pool=pmFilteredPool();
   const target=pool[pmTargetIdx%pool.length];
   const choices=pmChoicesFor(target,pool);
-  const isAudio=pmDirection==="audio2pic";
+  const isPicChoice=pmDirection!=="pic2word";
   const box=document.createElement("div");box.className="pm-deck";
   box.innerHTML=`<div class="pm-controls">
     <div class="pm-set-row"></div>
     <div class="pm-dir-row">
-      <button type="button" class="mf-chip${isAudio?" active":""}" data-dir="audio2pic">🔊 Hear → Tap Photo</button>
-      <button type="button" class="mf-chip${!isAudio?" active":""}" data-dir="pic2word">👁️ Photo → Pick Word</button>
+      <button type="button" class="mf-chip${pmDirection==="word2pic"?" active":""}" data-dir="word2pic">📖 Word → Photo</button>
+      <button type="button" class="mf-chip${pmDirection==="audio2pic"?" active":""}" data-dir="audio2pic">🔊 Hear → Photo</button>
+      <button type="button" class="mf-chip${pmDirection==="pic2word"?" active":""}" data-dir="pic2word">👁️ Photo → Word</button>
     </div>
   </div>
   <div class="pm-prompt-box"></div>
@@ -5430,7 +5431,11 @@ function renderPictureMatchDeck(host){
     b.onclick=()=>{pmDirection=b.dataset.dir;pmPickedId=null;renderPictureMatchDeck(host);if(pmDirection==="audio2pic")speak(target.tts,0.82);};
   });
   const pBox=box.querySelector(".pm-prompt-box");
-  if(isAudio){
+  if(pmDirection==="word2pic"){
+    pBox.innerHTML=`<div class="pm-word-prompt-row"><span class="pm-word-badge">${escapeVocabHtml(target.word)}</span><button type="button" class="lp-nav-btn pm-hear-mini">🔊 Hear</button></div>
+      <div class="pm-prompt-hint">Tap the photo that matches this Colombian Spanish word (audio optional)</div>`;
+    pBox.querySelector(".pm-hear-mini").onclick=()=>speak(target.tts,0.82);
+  }else if(pmDirection==="audio2pic"){
     pBox.innerHTML=`<button type="button" class="lp-nav-btn primary pm-hear-btn">🔊 Tap to Hear Colombian Phrase</button>
       <div class="pm-prompt-hint">No English shown — match what you hear directly to the photo!</div>`;
     pBox.querySelector(".pm-hear-btn").onclick=()=>speak(target.tts,0.82);
@@ -5442,8 +5447,8 @@ function renderPictureMatchDeck(host){
   const fb=box.querySelector(".pm-feedback");
   choices.forEach(item=>{
     const btn=document.createElement("button");btn.type="button";
-    btn.className="pm-choice-card"+(isAudio?" photo-only":" word-only")+(pmPickedId===item.id?(item.id===target.id?" is-right":" is-wrong"):(pmPickedId&&item.id===target.id?" is-right":""));
-    if(isAudio){
+    btn.className="pm-choice-card"+(isPicChoice?" photo-only":" word-only")+(pmPickedId===item.id?(item.id===target.id?" is-right":" is-wrong"):(pmPickedId&&item.id===target.id?" is-right":""));
+    if(isPicChoice){
       btn.innerHTML=`<img src="${item.img}" alt="${pmPickedId?escapeVocabHtml(item.word):"Photo option"}"/>${pmPickedId?`<span class="pm-cap">${escapeVocabHtml(item.word)}</span>`:""}`;
     }else{
       btn.innerHTML=`<strong>${escapeVocabHtml(item.word)}</strong><small>${escapeVocabHtml(item.tts)}</small>`;
@@ -5583,21 +5588,30 @@ var qV102Tab="off",spRunning=false,spTimer=null,spLeft=60,spScore=0,spTotal=0,sp
 const SPRINT_BEST_KEY="esco-sprint-best-v102";
 function nextSprintQuestion(){
   const pool=[];
-  if(typeof PICTURE_MATCH_BANK!=="undefined")PICTURE_MATCH_BANK.forEach(p=>pool.push({kind:"Pic Match",cue:p.en,tts:p.tts,img:p.img,ans:p.word,pool:PICTURE_MATCH_BANK.map(x=>x.word)}));
-  if(typeof GRINGO_TRAPS!=="undefined")GRINGO_TRAPS.forEach(g=>pool.push({kind:"Local Fix",cue:"Replace '"+g.trap+"' ("+g.intent+")",tts:g.tts,ans:g.local,pool:GRINGO_TRAPS.map(x=>x.local)}));
-  if(typeof RR_BANK!=="undefined")RR_BANK.slice(0,20).forEach(r=>pool.push({kind:"Reflex",cue:r.promptEn||r.sayEn||r.prompt,tts:r.tts||r.bestEs,ans:r.bestEs,pool:RR_BANK.slice(0,20).map(x=>x.bestEs)}));
-  const pick=pool[Math.floor(Math.random()*pool.length)]||{kind:"Reflex",cue:"I'll take a black coffee",tts:"Me regala un tinto",ans:"¿Me regala un tinto?",pool:["¿Me regala un tinto?","Estoy caliente","Hasta luego"]};
+  if(typeof PICTURE_MATCH_BANK!=="undefined")PICTURE_MATCH_BANK.forEach(p=>pool.push({kind:"🖼️ Picture",cue:p.en,tts:p.tts,img:p.img,ans:p.word,pool:PICTURE_MATCH_BANK.map(x=>x.word)}));
+  if(typeof GRINGO_TRAPS!=="undefined")GRINGO_TRAPS.forEach(g=>pool.push({kind:"🚫 Local Fix",cue:"Replace \""+g.trap+"\" ("+g.intent+")",tts:g.tts,ans:g.local,pool:GRINGO_TRAPS.map(x=>x.local)}));
+  if(typeof RR_BANK!=="undefined"){
+    const rrOk=RR_BANK.filter(r=>r&&r.qEn&&r.aEs).slice(0,24);
+    const rrAnsPool=rrOk.map(x=>x.aEs);
+    rrOk.forEach(r=>pool.push({kind:"⚡ Reflex",cue:r.qEn,subCue:r.qEs,subTts:r.q||r.qEs,tts:r.aTts||r.aEs,ans:r.aEs,pool:rrAnsPool}));
+  }
+  const pick=pool[Math.floor(Math.random()*pool.length)]||{kind:"⚡ Reflex",cue:"I'll take a black coffee",tts:"Me regala un tinto",ans:"¿Me regala un tinto?",pool:["¿Me regala un tinto?","Con mucho gusto","A la orden","¡De una!"]};
   const alts=[pick.ans];
   for(const cand of pick.pool.slice().sort(()=>Math.random()-0.5)){
-    if(alts.length>=3)break;
+    if(alts.length>=4)break;
     if(cand&&!alts.includes(cand))alts.push(cand);
   }
-  while(alts.length<3)alts.push("¡De una!");
+  for(const fb of ["¡De una!","Con mucho gusto","A la orden","¿Me regala un tinto?"]){
+    if(alts.length>=4)break;
+    if(!alts.includes(fb))alts.push(fb);
+  }
   pick.opts=alts.sort(()=>Math.random()-0.5);
   return pick;
 }
 function renderQuizV102Hub(){
   const host=document.getElementById("quiz-v102-hub");if(!host)return;
+  const pq=document.getElementById("page-quiz");
+  if(pq)pq.classList.toggle("v102-solo",qV102Tab!=="off");
   host.innerHTML="";
   const bar=document.createElement("div");bar.className="qv102-bar";
   [["off","📝 Standard Quiz"],["picture","🖼️ Picture Match (12)"],["sprint","⏱️ 60s Fluency Sprint"]].forEach(([tid,lbl])=>{
@@ -5615,13 +5629,21 @@ function renderQuizV102Hub(){
     renderPictureMatchDeck(pmSlot);
     host.appendChild(pmSlot);
   }else if(qV102Tab==="sprint"){
-    const spBox=document.createElement("section");spBox.className="bridge-trainer-card sprint-card";
+    const spWrap=document.createElement("div");spWrap.className="qv102-panel sprint-panel";
     const best=Number(localStorage.getItem(SPRINT_BEST_KEY)||0);
     if(!spRunning&&spLeft===60){
-      spBox.innerHTML=`<div class="bridge-kicker">⏱️ 60-SECOND COLOMBIAN FLUENCY SPRINT</div>
-        <div class="bridge-context">Mixes Picture Match, Gringo-Trap swaps &amp; Reacción Rápida against a 60s clock. Best score: <strong>${best}</strong></div>
-        <button type="button" class="lp-nav-btn primary sprint-start-btn">▶ Start 60s Sprint</button>`;
-      spBox.querySelector(".sprint-start-btn").onclick=()=>{
+      spWrap.innerHTML=`<div class="quiz-score-bar sprint-score-bar">
+          <div class="qs-item"><div class="qs-num" style="color:var(--teal)">60s</div><div class="qs-label">Clock</div></div>
+          <div class="qs-item"><div class="qs-num" style="color:var(--gold)">🏆 ${best}</div><div class="qs-label">Best</div></div>
+          <div class="qs-item"><div class="qs-num" style="color:var(--muted)">4</div><div class="qs-label">Choices</div></div>
+        </div>
+        <div class="quiz-card sprint-intro-card">
+          <div class="qc-label">⏱️ 60-Second Colombian Fluency Sprint</div>
+          <div class="qc-word sprint-cue-word">Rapid Mixed Blitz</div>
+          <div class="sprint-intro-desc">Mixes Picture Match, Gringo-Trap swaps &amp; Reacción Rápida against the 60s clock.</div>
+          <button type="button" class="quiz-next sprint-start-btn">▶ Start 60s Sprint</button>
+        </div>`;
+      spWrap.querySelector(".sprint-start-btn").onclick=()=>{
         spRunning=true;spLeft=60;spScore=0;spTotal=0;spFb="";spItem=nextSprintQuestion();
         if(spTimer)clearInterval(spTimer);
         spTimer=setInterval(()=>{
@@ -5633,20 +5655,41 @@ function renderQuizV102Hub(){
       };
     }else if(!spRunning&&spLeft<=0){
       const updatedBest=Math.max(best,spScore);
-      spBox.innerHTML=`<div class="bridge-kicker">🏁 SPRINT COMPLETE!</div>
-        <div class="sprint-done-score">Score: <strong>${spScore}</strong> / ${spTotal} · 🏆 Best: <strong>${updatedBest}</strong></div>
-        <button type="button" class="lp-nav-btn primary sprint-again-btn">↻ Sprint Again (60s)</button>`;
-      spBox.querySelector(".sprint-again-btn").onclick=()=>{spLeft=60;spScore=0;spTotal=0;spFb="";renderQuizV102Hub();};
+      spWrap.innerHTML=`<div class="quiz-score-bar sprint-score-bar">
+          <div class="qs-item"><div class="qs-num" style="color:var(--teal)">${spScore}</div><div class="qs-label">Correct</div></div>
+          <div class="qs-item"><div class="qs-num" style="color:var(--gold)">🏆 ${updatedBest}</div><div class="qs-label">Best</div></div>
+          <div class="qs-item"><div class="qs-num" style="color:var(--muted)">${spTotal}</div><div class="qs-label">Answered</div></div>
+        </div>
+        <div class="quiz-card sprint-intro-card">
+          <div class="qc-label">🏁 Sprint Complete!</div>
+          <div class="qc-word sprint-cue-word">${spScore} / ${spTotal} Correct</div>
+          <div class="sprint-intro-desc">Personal best: ${updatedBest}. Jump right back in to beat your speed!</div>
+          <button type="button" class="quiz-next sprint-again-btn">↻ Sprint Again (60s)</button>
+        </div>`;
+      spWrap.querySelector(".sprint-again-btn").onclick=()=>{spLeft=60;spScore=0;spTotal=0;spFb="";renderQuizV102Hub();};
     }else{
       const q=spItem||(spItem=nextSprintQuestion());
-      spBox.innerHTML=`<div class="sprint-head"><span>⏱️ <strong>${spLeft}s</strong> left</span><span>✅ Score: <strong>${spScore}</strong>/${spTotal}</span><span>🏆 Best: ${best}</span><button type="button" class="profile-reset sprint-stop-btn">⏹ Stop</button></div>
-        <div class="sprint-cue"><span class="vv-row-tag">${escapeVocabHtml(q.kind)}</span>${q.img?`<img class="sprint-thumb" src="${q.img}" alt="${escapeVocabHtml(q.cue)}"/>`:""}<strong>${escapeVocabHtml(q.cue)}</strong></div>
-        <div class="vv-quiz-opts sprint-opts"></div>
-        <div class="vv-quiz-fb">${escapeVocabHtml(spFb)}</div>`;
-      spBox.querySelector(".sprint-stop-btn").onclick=()=>{if(spTimer){clearInterval(spTimer);spTimer=null;}spRunning=false;spLeft=60;renderQuizV102Hub();};
-      const oWrap=spBox.querySelector(".sprint-opts");
+      const fbTone=spFb.startsWith("✅")?"var(--teal)":(spFb?"var(--pink)":"var(--muted)");
+      spWrap.innerHTML=`<div class="quiz-score-bar sprint-score-bar">
+          <div class="qs-item"><div class="qs-num${spLeft<=10?" sprint-urgent":""}" style="color:var(--gold)">${spLeft}s</div><div class="qs-label">Time Left</div></div>
+          <div class="qs-item"><div class="qs-num" style="color:var(--teal)">${spScore}/${spTotal}</div><div class="qs-label">Score</div></div>
+          <div class="qs-item"><div class="qs-num" style="color:var(--muted)">🏆 ${Math.max(best,spScore)}</div><div class="qs-label">Best</div></div>
+          <button type="button" class="sprint-stop-pill" aria-label="Stop 60s sprint">⏹ Stop</button>
+        </div>
+        <div class="quiz-card sprint-quiz-card">
+          <div class="qc-label">${escapeVocabHtml(q.kind)}</div>
+          ${q.img?`<img class="sprint-thumb" src="${q.img}" alt="${escapeVocabHtml(q.cue)}"/>`:""}
+          <div class="qc-word sprint-cue-word">${escapeVocabHtml(q.cue)}</div>
+          ${q.subCue?`<div class="sprint-subcue">Asked: «${escapeVocabHtml(q.subCue)}»</div>`:""}
+          <button type="button" class="qc-hear sprint-hear-btn">🔊 Hear</button>
+        </div>
+        <div class="quiz-opts sprint-opts"></div>
+        <div class="quiz-feedback sprint-fb" style="color:${fbTone}">${escapeVocabHtml(spFb)}</div>`;
+      spWrap.querySelector(".sprint-stop-pill").onclick=()=>{if(spTimer){clearInterval(spTimer);spTimer=null;}spRunning=false;spLeft=60;spFb="";renderQuizV102Hub();};
+      spWrap.querySelector(".sprint-hear-btn").onclick=()=>speak(q.subTts||q.tts,0.85);
+      const oWrap=spWrap.querySelector(".sprint-opts");
       q.opts.forEach(opt=>{
-        const b=document.createElement("button");b.type="button";b.className="vv-quiz-opt";b.textContent=opt;
+        const b=document.createElement("button");b.type="button";b.className="qopt";b.textContent=opt;
         b.onclick=()=>{
           spTotal++;
           if(opt===q.ans){spScore++;spFb="✅ +1 · "+q.ans;speak(q.tts,0.9);}
@@ -5656,7 +5699,7 @@ function renderQuizV102Hub(){
         oWrap.appendChild(b);
       });
     }
-    host.appendChild(spBox);
+    host.appendChild(spWrap);
   }
 }
 function openQuizV102Tab(tab){
