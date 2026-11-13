@@ -3502,8 +3502,14 @@ body.lesson-focus-active .scroll{padding-bottom:calc(var(--safe-bottom) + 118px)
 .chat-coach-fb{padding:9px 11px;border-radius:11px;font-size:0.8rem;line-height:1.4;margin-top:6px;border:1px solid rgba(232,180,74,0.45);background:rgba(232,180,74,0.12);}
 .chat-coach-fb.ok{border-color:rgba(46,196,182,0.5);background:rgba(46,196,182,0.13);}
 .chat-done-box{text-align:center;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;}
-.df-head-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;}
-.df-wrap{display:flex;flex-direction:column;gap:10px;}
+.df-head-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;}
+.df-wrap{display:flex;flex-direction:column;gap:8px;}
+.df-wrap .sprint-score-bar{margin-bottom:2px;padding:9px 14px;}
+.df-wrap .sprint-quiz-card{min-height:84px;padding:12px 14px;gap:5px;margin-bottom:2px;}
+.df-wrap .quiz-opts{gap:8px;margin-bottom:2px;}
+.df-wrap .qopt{min-height:50px;padding:9px 8px;font-size:0.86rem;}
+.df-wrap .pm-feedback{margin-top:0;padding:7px 10px;}
+.df-wrap .quiz-next{min-height:44px;padding:10px;}
 :root[data-theme="light"] .daily-flow-cta{color:#18202c;}
 :root[data-theme="light"] .chat-thread{background:#efeae0;}
 :root[data-theme="light"] .chat-bubble.bot{background:#ffffff;color:#18202c;}

@@ -72,7 +72,7 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v106.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v106.1 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);const themeBtn=document.createElement("button");themeBtn.type="button";themeBtn.id="theme-toggle-btn";themeBtn.className="profile-reset";themeBtn.textContent=(localStorage.getItem("esco-theme-v101")==="light"?"🌙 Dark":"☀️ Sun");themeBtn.title="Switch dark / sunlight theme";themeBtn.onclick=()=>toggleAppTheme();
   bar.append(label,select,reset,ver,themeBtn);utilityBody.appendChild(bar);if(typeof attachProfileBackupControls==="function")attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -1339,7 +1339,7 @@ function renderFraseMenu(){
         const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(idx===rpScenarioIdx?" active":"");
         b.setAttribute("role","tab");
         b.setAttribute("aria-selected",idx===rpScenarioIdx?"true":"false");
-        b.setAttribute("aria-pressed",idx===rpScenarioIdx?"true":"false");
+        b.tabIndex=idx===rpScenarioIdx?0:-1;
         b.textContent=sc.title;
         b.onclick=()=>{
           rpScenarioIdx=idx;rpTurnIdx=0;rpPickedOpt=null;
@@ -3881,14 +3881,14 @@ function buildVerbVersatilityLab(sec){
     });
     const vWrap=lab.querySelector(".vv-verb-tabs");
     VERB_VERSATILITY_ENGINE.forEach((v,i)=>{
-      const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(i===vvIdx?" active":"");
+      const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(i===vvIdx?" active":"");b.setAttribute("role","tab");b.setAttribute("aria-selected",i===vvIdx?"true":"false");b.tabIndex=i===vvIdx?0:-1;
       b.textContent=v.label;
       b.onclick=()=>{vvIdx=i;vvRevealSet.clear();if(vvMode==="quiz")pickQuizTarget();renderLab();};
       vWrap.appendChild(b);
     });
     const pWrap=lab.querySelector(".vv-person-tabs");
     personsMeta.forEach(([pk,plbl])=>{
-      const b=document.createElement("button");b.type="button";b.className="mf-chip"+(pk===vvPerson?" active":"");
+      const b=document.createElement("button");b.type="button";b.className="mf-chip"+(pk===vvPerson?" active":"");b.setAttribute("role","tab");b.setAttribute("aria-selected",pk===vvPerson?"true":"false");b.tabIndex=pk===vvPerson?0:-1;
       b.textContent=plbl;
       b.onclick=()=>{
         vvPerson=pk;vvRevealSet.clear();
@@ -5355,7 +5355,7 @@ function attachProfileBackupControls(utilityBody){
         const k=nativeStorage.key(i);
         if(k&&k.startsWith(prefix))data[k.slice(prefix.length)]=nativeStorage.getItem(k);
       }
-      const payload=JSON.stringify({app:"espanol-colombia",version:"v106.0",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
+      const payload=JSON.stringify({app:"espanol-colombia",version:"v106.1",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
       const blob=new Blob([payload],{type:"application/json"});
       const url=URL.createObjectURL(blob);
       const a=document.createElement("a");
@@ -5774,11 +5774,12 @@ function mountColombiaChatsLab(parent){
     const tabRow=sec.querySelector(".chat-tabs");
     COLOMBIA_CHATS.forEach((item,i)=>{
       const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(i===chatIdx?" active":"");
-      b.setAttribute("role","tab");b.setAttribute("aria-selected",i===chatIdx?"true":"false");
+      b.setAttribute("role","tab");b.setAttribute("aria-selected",i===chatIdx?"true":"false");b.tabIndex=i===chatIdx?0:-1;
       b.textContent=`${item.emoji} ${item.title}`;
       b.onclick=()=>{chatIdx=i;chatTurn=0;chatSolved=false;chatWrongIds=[];chatCoachMsg="";chatFirstTryOk=0;chatShowEn=false;render();};
       tabRow.appendChild(b);
     });
+    tabRow.onkeydown=e=>{if(!["ArrowLeft","ArrowRight","Home","End"].includes(e.key))return;const tabs=Array.from(tabRow.querySelectorAll('[role="tab"]'));const i=tabs.indexOf(document.activeElement);if(i<0)return;e.preventDefault();const nxt=e.key==="Home"?0:e.key==="End"?tabs.length-1:(i+(e.key==="ArrowRight"?1:-1)+tabs.length)%tabs.length;tabs[nxt].click();sec.querySelectorAll('.chat-tabs [role="tab"]')[nxt]?.focus();};
     const thread=sec.querySelector(".chat-thread");
     const rZone=sec.querySelector(".chat-reply-zone");
     const limit=Math.min(chatTurn,ch.turns.length);
@@ -5885,11 +5886,11 @@ function buildDailyFlowDeck(){
   if(typeof RR_BANK!=="undefined"){
     const rrOk=RR_BANK.filter(r=>r&&r.qEn&&r.aEs).slice().sort(()=>Math.random()-0.5);
     const rrPool=rrOk.map(r=>r.aEs);
-    rrOk.slice(0,2).forEach((r,idx)=>{
+    rrOk.slice(0,2).forEach(r=>{
       const opts=[r.aEs];
       for(const c of rrPool){if(opts.length>=4)break;if(!opts.includes(c))opts.push(c);}
       while(opts.length<4)opts.push(["¡De una!","Con mucho gusto","A la orden"][opts.length%3]);
-      cards.push({kind:"quiz",kicker:"⚡ Reflex Response",prompt:r.qEn,sub:r.qEs,subTts:r.q||r.qEs,tts:r.aTts||r.aEs,ans:r.aEs,hint:r.aEn||r.qEs,srsKey:"rr|"+idx,opts:opts.sort(()=>Math.random()-0.5)});
+      cards.push({kind:"quiz",kicker:"⚡ Reflex Response",prompt:r.qEn,sub:r.qEs,subTts:r.q||r.qEs,tts:r.aTts||r.aEs,ans:r.aEs,hint:r.aEn||r.qEs,srsKey:"rr|"+(r.qEs||r.aEs).slice(0,32),opts:opts.sort(()=>Math.random()-0.5)});
     });
   }
   if(typeof NATURAL_EAR_CLIPS!=="undefined"&&NATURAL_EAR_CLIPS.length){
