@@ -3329,3 +3329,62 @@ body.lesson-focus-active .scroll{padding-bottom:calc(var(--safe-bottom) + 118px)
 :root[data-theme="light"] .vv-row-copy small,
 :root[data-theme="light"] .vg-lightbox-cap{color:#475569;}
 :root[data-theme="light"] .flash-es{color:#0f766e;}
+
+
+/* ── v102.0: Picture-to-Word Match, Natural-Speed Ear, Gringo Traps & 60s Sprint ── */
+.explorer-shortcut-row{grid-template-columns:1fr 1fr;gap:8px;}
+.pm-card-shell{margin:0 0 14px;}
+.pm-deck-host{margin-top:8px;}
+.pm-deck{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:14px;}
+.pm-controls{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.pm-set-row,.pm-dir-row{display:flex;flex-wrap:wrap;gap:6px;}
+.pm-prompt-box{text-align:center;margin:8px 0 12px;}
+.pm-prompt-hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.4;}
+.pm-solo-img-wrap{display:inline-flex;border-radius:16px;overflow:hidden;border:2px solid var(--border);background:var(--surface2);max-width:190px;}
+.pm-solo-img{display:block;width:180px;height:180px;object-fit:cover;}
+.pm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pm-choice-card{position:relative;border:2px solid var(--border);border-radius:14px;background:var(--surface2);color:var(--text);padding:6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;overflow:hidden;min-height:110px;transition:border-color .15s,transform .12s;}
+.pm-choice-card.photo-only{padding:0;aspect-ratio:1/1;}
+.pm-choice-card.photo-only img{width:100%;height:100%;object-fit:cover;display:block;}
+.pm-choice-card.word-only{min-height:76px;padding:12px 10px;text-align:center;}
+.pm-choice-card.word-only strong{font-size:14px;font-weight:800;}
+.pm-choice-card.word-only small{font-size:11px;color:var(--muted);}
+.pm-choice-card .pm-cap{position:absolute;left:0;right:0;bottom:0;padding:4px 6px;font-size:12px;font-weight:800;color:#fff;background:rgba(12,17,24,0.82);}
+.pm-choice-card.is-right{border-color:#2ec4b6;box-shadow:0 0 0 2px rgba(46,196,182,0.28);}
+.pm-choice-card.is-wrong{border-color:#ef4444;opacity:0.75;}
+.pm-feedback{margin-top:10px;padding:10px 12px;border-radius:12px;font-size:13px;line-height:1.45;display:none;}
+.pm-feedback.ok{display:block;background:rgba(46,196,182,0.14);border:1px solid rgba(46,196,182,0.4);}
+.pm-feedback.warn{display:block;background:rgba(244,185,66,0.14);border:1px solid rgba(244,185,66,0.45);}
+.pm-feedback small{display:block;color:var(--muted);margin-top:3px;}
+.pm-actions{margin-top:10px;}
+
+.ne-audio-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.ne-choices{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.ne-reveal-box{padding:10px 12px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);margin-bottom:10px;font-size:13px;line-height:1.5;}
+.ne-phon{color:var(--teal);font-weight:800;font-size:12px;margin-left:4px;}
+.ne-clear{color:var(--muted);margin-top:3px;}
+
+.gt-compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 10px;}
+@media (max-width:480px){.gt-compare-grid{grid-template-columns:1fr;}}
+.gt-box{border-radius:12px;padding:10px 12px;border:1px solid var(--border);display:flex;flex-direction:column;gap:4px;}
+.gt-box span{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;}
+.gt-box strong{font-size:15px;line-height:1.35;}
+.gt-avoid{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.35);}
+.gt-avoid span{color:#f87171;}
+.gt-local{background:rgba(46,196,182,0.12);border-color:rgba(46,196,182,0.45);cursor:pointer;}
+.gt-local span{color:var(--teal);}
+
+.qv102-bar{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px;}
+.qv102-panel{margin:0 0 14px;}
+.sprint-card{margin-bottom:14px;}
+.sprint-head{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:800;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.sprint-cue{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:10px;}
+.sprint-cue strong{font-size:16px;line-height:1.35;}
+.sprint-thumb{width:96px;height:96px;border-radius:12px;object-fit:cover;border:1px solid var(--border);}
+.sprint-done-score{font-size:16px;margin:8px 0 12px;}
+
+:root[data-theme="light"] .pm-deck,
+:root[data-theme="light"] .ne-reveal-box{background:#ffffff;color:#18202c;border-color:rgba(24,32,44,0.18);}
+:root[data-theme="light"] .pm-choice-card{background:#f1ede4;color:#18202c;border-color:rgba(24,32,44,0.18);}
+:root[data-theme="light"] .gt-local span{color:#0f766e;}
+:root[data-theme="light"] .gt-avoid span{color:#b91c1c;}

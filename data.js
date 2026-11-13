@@ -5851,13 +5851,13 @@ const REGION_IMAGES = {
 };
 
 const ROLEPLAY_IMAGES = {
-  "rp-tienda-napa": "guide-trampas.webp",
+  "rp-tienda-napa": "scene-tienda.webp",
   "rp-sanjuan-familia": "region-sanjuan.webp",
   "rp-sanjuan-parranda": "guide-sanjuan.webp",
   "rp-corrientazo": "guide-corrientazo.webp",
-  "rp-taxi": "guide-grid.webp",
-  "rp-uber": "region-bogota.webp",
-  "rp-panaderia": "guide-trampas.webp",
+  "rp-taxi": "scene-bogota-noche.webp",
+  "rp-uber": "scene-bogota-noche.webp",
+  "rp-panaderia": "scene-panaderia.webp",
   "rp-drogueria": "region-medellin.webp",
   "rp-cita": "region-cali.webp"
 };
@@ -5950,6 +5950,28 @@ const VISUAL_GUIDES = [
     es: "¿Te provoca un tinto? Así quedamos entonces: nos vemos allá y sin dar papaya.",
     en: "Feel like a coffee? It's a plan then: see you there and stay alert.",
     region: "Español Diario"
+  },
+  {
+    id: "vg-comida",
+    title: "🥐 Comida Callejera (Café & Street Bites)",
+    sub: "Tinto · Arepa · Empanada · Jugo de Lulo",
+    img: "guide-comida.webp",
+    alt: "Colombian street food and cafe poster featuring Tinto, Arepa, Empanada, and Jugo de Lulo",
+    caption: "Four Colombian counter classics you can point to or order anywhere: tinto (black coffee), arepa con queso (grilled white corn cake), empanada con ají (crispy corn pastry with mild herb salsa), and jugo de lulo en agua (tangy emerald citrus juice).",
+    es: "Veci, ¿me regala una empanada con ají y un jugo de lulo en agua?",
+    en: "Neighbor, could I have an empanada with ají and a lulo juice in water?",
+    region: "Todo Colombia"
+  },
+  {
+    id: "vg-modismos",
+    title: "⚡ Frases Cortas (Instant Native Reactions)",
+    sub: "¡De una! · ¡Con gusto! · ¡Qué pena! · ¡Hágale!",
+    img: "guide-modismos.webp",
+    alt: "Colombian short reaction phrases poster featuring ¡De una!, ¡Con gusto!, ¡Qué pena!, and ¡Hágale!",
+    caption: "Colombians answer fast with 2-word reflexes: '¡De una!' (I'm in / right away), '¡Con gusto!' (you're welcome), '¡Qué pena!' (excuse me / sorry), and '¡Hágale!' (go ahead / do it).",
+    es: "¿Nos vemos a las cuatro? — ¡De una, hágale pues!",
+    en: "Meet at four? — You got it, let's do it!",
+    region: "Conversación Rápida"
   }
 ];
 
@@ -6755,4 +6777,46 @@ const COLOMBIAN_STORIES = [
       }
     ]
   }
+];
+
+
+const PICTURE_MATCH_BANK = [
+  { id: "pm-tinto", set: "food", setLabel: "☕ Café & Street Food", word: "El tinto", tts: "un tinto caliente, por favor", img: "pm-tinto.webp", en: "Small black coffee", hint: "Ordered at any bakery or street cart across Colombia" },
+  { id: "pm-arepa", set: "food", setLabel: "☕ Café & Street Food", word: "La arepa con queso", tts: "una arepa con queso", img: "pm-arepa.webp", en: "Grilled corn cake with cheese", hint: "Breakfast & street classic all over Colombia" },
+  { id: "pm-empanada", set: "food", setLabel: "☕ Café & Street Food", word: "La empanada con ají", tts: "una empanada con ají", img: "pm-empanada.webp", en: "Fried corn turnover with mild salsa", hint: "Crisp street snack served with lime and ají" },
+  { id: "pm-lulo", set: "food", setLabel: "☕ Café & Street Food", word: "El jugo de lulo", tts: "un jugo de lulo en agua", img: "pm-lulo.webp", en: "Fresh green lulo fruit juice", hint: "Order 'en agua' (light) or 'en leche' (creamy)" },
+
+  { id: "pm-buseta", set: "city", setLabel: "🚕 City & Neighborhood", word: "La buseta", tts: "la buseta", img: "pm-buseta.webp", en: "City neighborhood bus", hint: "Raise your hand at the corner or say '¡En la esquina, por favor!'" },
+  { id: "pm-drogueria", set: "city", setLabel: "🚕 City & Neighborhood", word: "La droguería", tts: "la droguería", img: "pm-drogueria.webp", en: "Pharmacy / drugstore", hint: "Colombians usually say 'droguería' more than 'farmacia'" },
+  { id: "pm-tienda", set: "city", setLabel: "🚕 City & Neighborhood", word: "La tienda de barrio", tts: "la tienda de barrio", img: "pm-tienda.webp", en: "Neighborhood corner shop", hint: "Where you greet 'Veci' for eggs, snacks, and cold drinks" },
+  { id: "pm-esquina", set: "city", setLabel: "🚕 City & Neighborhood", word: "La esquina", tts: "en la esquina", img: "pm-esquina.webp", en: "The street corner", hint: "Essential landmark for Uber pickups and directions" },
+
+  { id: "pm-sombrilla", set: "gear", setLabel: "🎒 Daily Gear & Weather", word: "La sombrilla", tts: "la sombrilla", img: "pm-sombrilla.webp", en: "Umbrella", hint: "Don't leave your apartment in Bogotá without one" },
+  { id: "pm-abanico", set: "gear", setLabel: "🎒 Daily Gear & Weather", word: "El abanico", tts: "prende el abanico", img: "pm-abanico.webp", en: "Electric fan (San Juan / Coast)", hint: "On Colombia's Caribbean coast & San Juan, 'abanico' means fan (not 'ventilador')" },
+  { id: "pm-morral", set: "gear", setLabel: "🎒 Daily Gear & Weather", word: "El morral", tts: "el morral", img: "pm-morral.webp", en: "Backpack / daypack", hint: "Colombians almost always call a backpack 'el morral'" },
+  { id: "pm-sencillo", set: "gear", setLabel: "🎒 Daily Gear & Weather", word: "El sencillo", tts: "tengo sencillo", img: "pm-sencillo.webp", en: "Small bills & coins (change)", hint: "Shopkeepers ask '¿Tiene sencillo?' when you hand them a 50 mil bill" }
+];
+
+const GRINGO_TRAPS = [
+  { id: "gt-calor", intent: "Say you feel hot (weather)", trap: "Estoy caliente", local: "Tengo calor / Qué calor", tts: "Qué calor tan bravo hace hoy.", why: "'Estoy caliente' carries sexual slang meaning in Spanish; always use 'tener calor' for temperature." },
+  { id: "gt-tinto", intent: "Polite coffee order at a counter", trap: "¿Puedo tener un café?", local: "¿Me regala un tinto, por favor?", tts: "¿Me regala un tinto calientico, por favor?", why: "Direct 'Can I have…' sounds robotic; Colombians naturally use '¿Me regala…?' or '¿Me da…?' when paying." },
+  { id: "gt-emocionado", intent: "Say you're excited for a trip", trap: "Estoy muy excitado", local: "Estoy súper emocionado / qué emoción", tts: "Estoy súper emocionado por el viaje.", why: "'Excitado' means sexually aroused; use 'emocionado' (or 'qué emoción') for excitement." },
+  { id: "gt-sentido", intent: "Say 'That makes sense'", trap: "Eso hace sentido", local: "Tiene mucho sentido / Claro, tiene lógica", tts: "Sí, eso tiene todo el sentido.", why: "Spanish doesn't pair 'hacer' with sense; use 'tener sentido'." },
+  { id: "gt-pasarla", intent: "Say 'Have a good time!'", trap: "¡Ten un buen tiempo!", local: "¡Que la pases súper bien / buenísima!", tts: "¡Pásenla súper bueno hoy en la fiesta!", why: "'Tiempo' alone means weather or clock time; 'pasarla bien/bueno' is how Colombians say have fun." },
+  { id: "gt-buscar", intent: "Say 'I'm looking for my keys'", trap: "Estoy buscando por mis llaves", local: "Estoy buscando las llaves", tts: "Ay, estoy buscando mis llaves por toda la casa.", why: "'Buscar' already includes 'for' — never add 'por' after buscar." },
+  { id: "gt-devolver", intent: "Say 'I'll call you back'", trap: "Te llamo para atrás", local: "Te devuelvo la llamada", tts: "Dame cinco minuticos y ya te devuelvo la llamada.", why: "'Para atrás' is a Spanglish calque; 'devolver la llamada' is crisp natural Colombian Spanish." },
+  { id: "gt-pena", intent: "Say 'I'm embarrassed / excuse me'", trap: "Estoy embarazado", local: "Qué pena / Me da pena", tts: "Qué pena con usted, me equivoqué de puerta.", why: "'Embarazada' means pregnant! Colombians use 'qué pena' or 'me da pena' for shyness/sorry." },
+  { id: "gt-esperar", intent: "Say 'Wait for me a second'", trap: "Espérame por mí un segundo", local: "Espérame un momentico", tts: "Espérame un momentico que ya bajo.", why: "'Esperar' already includes 'for'; add '-tico' ('momentico') to sound warm instead of blunt." },
+  { id: "gt-cancelar", intent: "Say 'I'd like to pay the bill now'", trap: "Quiero pagar y no cancelar", local: "Quiero cancelar la cuenta, por favor", tts: "Veci, ¿me permite cancelar de una vez con tarjeta?", why: "At Colombian counters, 'cancelar' usually means to settle/pay the bill — not cancel an order!" }
+];
+
+const NATURAL_EAR_CLIPS = [
+  { id: "ne-paonde", fast: "¿Pa'ónde vas pues?", clear: "¿Para dónde vas pues?", phonetic: "pa-ON-de bas pwes", en: "Where are you heading then?", choices: ["Where are you heading then?", "When did you arrive?", "What did you eat today?"], answer: "Where are you heading then?", tip: "In spoken Colombian Spanish, 'para dónde' routinely blends into 'pa'ónde'." },
+  { id: "ne-quemas", fast: "Quiubo, ¿qué más pues?", clear: "¿Qué hubo, qué más pues?", phonetic: "KYOO-bo · ke-mas-PWES", en: "Hey, what's new / how's it going?", choices: ["Hey, what's new?", "Who called earlier?", "How much is that?"], answer: "Hey, what's new?", tip: "'¿Qué hubo?' merges into one smooth sound 'quiubo', especially in Medellín and everyday greetings." },
+  { id: "ne-meregalas", fast: "¿Me regalás un tintico pa' llevar?", clear: "¿Me regalas un café negro pequeño para llevar?", phonetic: "me-re-ga-LAS un tin-TEE-ko pa ye-BAR", en: "Could I get a small black coffee to go?", choices: ["Could I get a small black coffee to go?", "Do you have a free sample?", "Is the coffee cold?"], answer: "Could I get a small black coffee to go?", tip: "Colombians almost always shorten 'para llevar' to 'pa' llevar' at speed." },
+  { id: "ne-toobien", fast: "¿Todo bien o qué, compa?", clear: "¿Todo bien o qué, compañero?", phonetic: "TO-o byehn o KE, KOM-pa", en: "Everything good or what, buddy?", choices: ["Everything good or what, buddy?", "Is the store still open?", "Do you live near here?"], answer: "Everything good or what, buddy?", tip: "Soft D between vowels fades slightly in casual speech ('todo' sounds close to 'to'o'), especially on the Coast." },
+  { id: "ne-ahorita", fast: "Ya mismo le caigo, espérame ahí.", clear: "En un momento voy hacia allá, espérame allí.", phonetic: "ya MEES-mo le KAI-go", en: "I'm heading right over, wait for me there.", choices: ["I'm heading right over, wait for me there.", "I tripped walking outside.", "I already paid earlier."], answer: "I'm heading right over, wait for me there.", tip: "'Caer' ('le caigo') is everyday Colombian slang for dropping by / coming over." },
+  { id: "ne-una-cuota", fast: "Sí señor, a una sola cuotica, gracias.", clear: "Sí señor, en un solo pago sin cuotas, gracias.", phonetic: "a-OO-na SO-la kwo-TEE-ka", en: "Yes sir, in a single payment, thank you.", choices: ["Yes sir, in a single payment, thank you.", "Yes, split into four payments.", "Yes, cash only today."], answer: "Yes sir, in a single payment, thank you.", tip: "Adding '-ica' ('cuotica') softens 'una cuota' politely at card terminals." },
+  { id: "ne-quedamos", fast: "Listo, así quedamos entonces, ¿sí o qué?", clear: "De acuerdo, quedamos en ese plan, ¿cierto?", phonetic: "a-SEE ke-DA-mos en-TON-ses · SYO-ke", en: "All set, that's the plan then, right?", choices: ["All set, that's the plan then, right?", "Sorry, we ran out of food.", "Where did we stay last night?"], answer: "All set, that's the plan then, right?", tip: "'¿Sí o qué?' at the end is a fast Colombian tag meaning 'right? / deal?'." },
+  { id: "ne-sinpapaya", fast: "Pilas pues, no dé papaya por la noche.", clear: "Tenga cuidado, no deje cosas de valor a la vista por la noche.", phonetic: "PEE-las pwes · no de pa-PA-ya", en: "Stay sharp, don't make yourself an easy target at night.", choices: ["Stay sharp, don't make yourself an easy target at night.", "Don't buy fruit at night.", "Hurry up or the bus leaves."], answer: "Stay sharp, don't make yourself an easy target at night.", tip: "'Pilas' means 'stay alert / heads up', and 'no dar papaya' means stay street-smart." }
 ];
