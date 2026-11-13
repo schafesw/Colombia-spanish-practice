@@ -1,5 +1,5 @@
-/* Network-first Service Worker with offline fallback for Español · Colombia PWA (v100.0) */
-const CACHE_NAME = "esco-pwa-v100.0";
+/* Network-first Service Worker with offline fallback for Español · Colombia PWA (v101.0) */
+const CACHE_NAME = "esco-pwa-v101.0";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -9,6 +9,7 @@ const CORE_ASSETS = [
   "./manifest.json",
   "./icon.svg",
   "./icon-512.png",
+  "./hero-colombia.webp",
   "./region-sanjuan.webp",
   "./region-bogota.webp",
   "./region-medellin.webp",
@@ -19,7 +20,9 @@ const CORE_ASSETS = [
   "./guide-trampas.webp",
   "./guide-sanjuan.webp",
   "./guide-panaderia.webp",
-  "./guide-conectores.webp"
+  "./guide-conectores.webp",
+  "./guide-pagos.webp",
+  "./guide-comodines.webp"
 ];
 
 self.addEventListener("install", event => {
