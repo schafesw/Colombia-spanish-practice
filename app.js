@@ -72,7 +72,7 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v102.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v103.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);const themeBtn=document.createElement("button");themeBtn.type="button";themeBtn.id="theme-toggle-btn";themeBtn.className="profile-reset";themeBtn.textContent=(localStorage.getItem("esco-theme-v101")==="light"?"🌙 Dark":"☀️ Sun");themeBtn.title="Switch dark / sunlight theme";themeBtn.onclick=()=>toggleAppTheme();
   bar.append(label,select,reset,ver,themeBtn);utilityBody.appendChild(bar);if(typeof attachProfileBackupControls==="function")attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -3588,7 +3588,7 @@ function renderLessons(){
     vvShortcut.onclick=()=>{showPage("gram");showGramGroup("tiempos");};
     const stShortcut=document.createElement("button");stShortcut.type="button";stShortcut.className="starter-sound-btn explorer-story-btn";
     stShortcut.innerHTML=`<span>📖 <strong>Story Builder</strong> <small>Chain 3 real turns</small></span><span>Build →</span>`;
-    stShortcut.onclick=()=>{showPage("frases");const card=document.querySelector(".story-builder-card");if(card)card.scrollIntoView({behavior:"smooth",block:"start"});};
+    stShortcut.onclick=()=>{showPage("frases");if(typeof renderFraseMenu==="function")renderFraseMenu();const card=document.querySelector(".story-builder-card");if(card)card.scrollIntoView({behavior:"smooth",block:"start"});};
     const pmShortcut=document.createElement("button");pmShortcut.type="button";pmShortcut.className="starter-sound-btn explorer-pm-btn";
     pmShortcut.innerHTML=`<span>🖼️ <strong>Picture Match</strong> <small>Audio → photo</small></span><span>Play →</span>`;
     pmShortcut.onclick=()=>{showPage("vocab");if(typeof openVocabPictureMatch==="function")openVocabPictureMatch();};
@@ -5218,6 +5218,7 @@ function showPhonetic(id){
 }
 const PG=["fonetica","lecciones","vocab","frases","gram","quiz"];
 function showPage(id){
+  if(id!=="quiz"&&typeof spTimer!=="undefined"&&spTimer){clearInterval(spTimer);spTimer=null;spRunning=false;spLeft=60;if(typeof renderQuizV102Hub==="function")renderQuizV102Hub();}
   if(id!=="lecciones"&&typeof setLeccionesFocusMode==="function")setLeccionesFocusMode(false);
   PG.forEach(p=>{document.getElementById("page-"+p).classList.toggle("active",p===id);document.getElementById("tb-"+p).classList.toggle("active",p===id);});
   document.querySelector(".scroll").scrollTop=0;
@@ -5302,6 +5303,19 @@ function runDataValidator(){
     if(typeof PICTURE_MATCH_BANK!=="undefined")PICTURE_MATCH_BANK.forEach(p=>{if(!p.id||!p.word||!p.img||!p.tts||!p.en)issues.push('Picture match "'+(p.id||"?")+'": missing required field');});
     if(typeof GRINGO_TRAPS!=="undefined")GRINGO_TRAPS.forEach(g=>{if(!g.id||!g.trap||!g.local||!g.tts||!g.why)issues.push('Gringo trap "'+(g.id||"?")+'": missing required field');});
     if(typeof NATURAL_EAR_CLIPS!=="undefined")NATURAL_EAR_CLIPS.forEach(n=>{if(!n.id||!n.fast||!n.clear||!Array.isArray(n.choices)||n.choices.length<3||!n.answer)issues.push('Natural ear clip "'+(n.id||"?")+'": incomplete clip');});
+    if(typeof VISUAL_GUIDES!=="undefined")VISUAL_GUIDES.forEach(v=>{if(!v.id||!v.title||!v.img||!v.es||!v.en)issues.push('Visual guide "'+(v.id||"?")+'": missing required field');});
+    if(typeof VERB_VERSATILITY_ENGINE!=="undefined")VERB_VERSATILITY_ENGINE.forEach(v=>{
+      if(!v.id||!v.verb||!v.forms)issues.push('Verb Lab "'+(v.id||"?")+'": incomplete');
+      else ["yo","tu","vos","usted","nosotros"].forEach(p=>{
+        if(!v.forms[p])issues.push('Verb Lab "'+v.id+'": missing person '+p);
+        else ["past","just","now","future","polite"].forEach(t=>{if(!v.forms[p][t]||!v.forms[p][t].es||!v.forms[p][t].en)issues.push('Verb Lab "'+v.id+'" '+p+'.'+t+' incomplete');});
+      });
+    });
+    if(typeof COLOMBIAN_STORIES!=="undefined")COLOMBIAN_STORIES.forEach(st=>{
+      if(!st.id||!st.title||!Array.isArray(st.parts)||st.parts.length!==3)issues.push('Story "'+(st.id||"?")+'": must have 3 parts');
+      else st.parts.forEach((pt,pi)=>{if(!Array.isArray(pt.options)||pt.options.length<3)issues.push('Story "'+st.id+'" part '+(pi+1)+' needs >=3 options');});
+    });
+    if(typeof ROLEPLAY_IMAGES!=="undefined")Object.entries(ROLEPLAY_IMAGES).forEach(([k,fn])=>{if(!fn||!String(fn).endsWith(".webp"))issues.push('ROLEPLAY_IMAGES "'+k+'": expected .webp asset');});
   }catch(e){issues.push("Validator crashed: "+e.message);}
   if(issues.length){
     const b=document.createElement("div");b.className="data-warning";
@@ -5334,7 +5348,7 @@ function attachProfileBackupControls(utilityBody){
         const k=nativeStorage.key(i);
         if(k&&k.startsWith(prefix))data[k.slice(prefix.length)]=nativeStorage.getItem(k);
       }
-      const payload=JSON.stringify({app:"espanol-colombia",version:"v97.0",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
+      const payload=JSON.stringify({app:"espanol-colombia",version:"v103.0",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
       const blob=new Blob([payload],{type:"application/json"});
       const url=URL.createObjectURL(blob);
       const a=document.createElement("a");
@@ -5430,7 +5444,7 @@ function renderPictureMatchDeck(host){
     const btn=document.createElement("button");btn.type="button";
     btn.className="pm-choice-card"+(isAudio?" photo-only":" word-only")+(pmPickedId===item.id?(item.id===target.id?" is-right":" is-wrong"):(pmPickedId&&item.id===target.id?" is-right":""));
     if(isAudio){
-      btn.innerHTML=`<img src="${item.img}" alt="${escapeVocabHtml(item.word)}"/>${pmPickedId?`<span class="pm-cap">${escapeVocabHtml(item.word)}</span>`:""}`;
+      btn.innerHTML=`<img src="${item.img}" alt="${pmPickedId?escapeVocabHtml(item.word):"Photo option"}"/>${pmPickedId?`<span class="pm-cap">${escapeVocabHtml(item.word)}</span>`:""}`;
     }else{
       btn.innerHTML=`<strong>${escapeVocabHtml(item.word)}</strong><small>${escapeVocabHtml(item.tts)}</small>`;
     }
@@ -5456,9 +5470,11 @@ function renderPictureMatchDeck(host){
   }
   const acts=box.querySelector(".pm-actions");
   const nextB=document.createElement("button");nextB.type="button";nextB.className="lp-nav-btn primary";
-  nextB.textContent="Next Picture →";
+  nextB.textContent=`Next (${(pmTargetIdx%pool.length)+1}/${pool.length}) →`;
   nextB.onclick=()=>{pmTargetIdx=(pmTargetIdx+1)%pool.length;pmPickedId=null;renderPictureMatchDeck(host);if(pmDirection==="audio2pic"){const nx=pmFilteredPool()[pmTargetIdx%pmFilteredPool().length];if(nx)speak(nx.tts,0.82);}};
-  acts.appendChild(nextB);
+  const shufB=document.createElement("button");shufB.type="button";shufB.className="lp-nav-btn";shufB.textContent="🔀 Random";
+  shufB.onclick=()=>{const nxt=Math.floor(Math.random()*pool.length);pmTargetIdx=(nxt===pmTargetIdx&&pool.length>1)?(nxt+1)%pool.length:nxt;pmPickedId=null;renderPictureMatchDeck(host);if(pmDirection==="audio2pic"){const nx=pmFilteredPool()[pmTargetIdx%pmFilteredPool().length];if(nx)speak(nx.tts,0.82);}};
+  acts.append(nextB,shufB);
   attachMic(acts,target.tts,"vocab");
   host.appendChild(box);
 }
@@ -5543,15 +5559,20 @@ function mountGringoTrapLab(parent){
       </div>
       <div class="tvc-why">💡 ${escapeVocabHtml(g.why)}</div>
       <div class="bridge-actions gt-foot"></div>`;
-    card.querySelector(".gt-local").onclick=()=>{markPractice("phrases",g.tts);speak(g.tts,0.8);};
+    const gtLocalEl=card.querySelector(".gt-local");
+    const playGt=()=>{markPractice("phrases",g.tts);speak(g.tts,0.8);};
+    gtLocalEl.onclick=playGt;
+    gtLocalEl.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();playGt();}};
     const foot=card.querySelector(".gt-foot");
     const hear=document.createElement("button");hear.type="button";hear.className="lp-nav-btn primary";hear.textContent="🔊 Hear Local Example";
-    hear.onclick=()=>{markPractice("phrases",g.tts);speak(g.tts,0.8);};
+    hear.onclick=playGt;
     const prev=document.createElement("button");prev.type="button";prev.className="lp-nav-btn";prev.textContent="‹ Prev";
     prev.onclick=()=>{gtIdx=(gtIdx-1+GRINGO_TRAPS.length)%GRINGO_TRAPS.length;renderGt();};
     const next=document.createElement("button");next.type="button";next.className="lp-nav-btn";next.textContent=`Next (${(gtIdx%GRINGO_TRAPS.length)+1}/${GRINGO_TRAPS.length}) ›`;
     next.onclick=()=>{gtIdx=(gtIdx+1)%GRINGO_TRAPS.length;renderGt();};
-    foot.append(hear,prev,next);
+    const rand=document.createElement("button");rand.type="button";rand.className="lp-nav-btn";rand.textContent="🎲 Random";
+    rand.onclick=()=>{const r=Math.floor(Math.random()*GRINGO_TRAPS.length);gtIdx=(r===gtIdx&&GRINGO_TRAPS.length>1)?(r+1)%GRINGO_TRAPS.length:r;renderGt();};
+    foot.append(hear,prev,next,rand);
     attachMic(foot,g.tts,"phrases");
   };
   renderGt();
@@ -5618,10 +5639,11 @@ function renderQuizV102Hub(){
       spBox.querySelector(".sprint-again-btn").onclick=()=>{spLeft=60;spScore=0;spTotal=0;spFb="";renderQuizV102Hub();};
     }else{
       const q=spItem||(spItem=nextSprintQuestion());
-      spBox.innerHTML=`<div class="sprint-head"><span>⏱️ <strong>${spLeft}s</strong> left</span><span>✅ Score: <strong>${spScore}</strong>/${spTotal}</span><span>🏆 Best: ${best}</span></div>
+      spBox.innerHTML=`<div class="sprint-head"><span>⏱️ <strong>${spLeft}s</strong> left</span><span>✅ Score: <strong>${spScore}</strong>/${spTotal}</span><span>🏆 Best: ${best}</span><button type="button" class="profile-reset sprint-stop-btn">⏹ Stop</button></div>
         <div class="sprint-cue"><span class="vv-row-tag">${escapeVocabHtml(q.kind)}</span>${q.img?`<img class="sprint-thumb" src="${q.img}" alt="${escapeVocabHtml(q.cue)}"/>`:""}<strong>${escapeVocabHtml(q.cue)}</strong></div>
         <div class="vv-quiz-opts sprint-opts"></div>
         <div class="vv-quiz-fb">${escapeVocabHtml(spFb)}</div>`;
+      spBox.querySelector(".sprint-stop-btn").onclick=()=>{if(spTimer){clearInterval(spTimer);spTimer=null;}spRunning=false;spLeft=60;renderQuizV102Hub();};
       const oWrap=spBox.querySelector(".sprint-opts");
       q.opts.forEach(opt=>{
         const b=document.createElement("button");b.type="button";b.className="vv-quiz-opt";b.textContent=opt;

@@ -3388,3 +3388,19 @@ body.lesson-focus-active .scroll{padding-bottom:calc(var(--safe-bottom) + 118px)
 :root[data-theme="light"] .pm-choice-card{background:#f1ede4;color:#18202c;border-color:rgba(24,32,44,0.18);}
 :root[data-theme="light"] .gt-local span{color:#0f766e;}
 :root[data-theme="light"] .gt-avoid span{color:#b91c1c;}
+
+
+/* ── v103.0: Accessibility Focus Rings & Light-Mode Contrast Polish ── */
+.pm-choice-card:focus-visible,
+.gt-local:focus-visible,
+.story-chip:focus-visible,
+.vv-quiz-opt:focus-visible,
+.mf-chip:focus-visible,
+.reg-tab-btn:focus-visible{
+  outline:2px solid var(--teal);
+  outline-offset:2px;
+}
+:root[data-theme="light"] .gt-box strong,
+:root[data-theme="light"] .sprint-head,
+:root[data-theme="light"] .sprint-cue strong{color:#18202c;}
+:root[data-theme="light"] .ne-clear{color:#475569;}
