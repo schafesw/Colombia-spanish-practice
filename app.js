@@ -72,9 +72,9 @@ function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v100.0 🔊";ver.title="Tap to test iPhone/computer audio";
-  ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);
-  bar.append(label,select,reset,ver);utilityBody.appendChild(bar);if(typeof attachProfileBackupControls==="function")attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v101.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  ver.onclick=()=>speak("Hola, buenos días Colombia",0.82);const themeBtn=document.createElement("button");themeBtn.type="button";themeBtn.id="theme-toggle-btn";themeBtn.className="profile-reset";themeBtn.textContent=(localStorage.getItem("esco-theme-v101")==="light"?"🌙 Dark":"☀️ Sun");themeBtn.title="Switch dark / sunlight theme";themeBtn.onclick=()=>toggleAppTheme();
+  bar.append(label,select,reset,ver,themeBtn);utilityBody.appendChild(bar);if(typeof attachProfileBackupControls==="function")attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
 buildProfileBar();
 let voices=[],selV=null;
@@ -189,7 +189,20 @@ if(window.speechSynthesis){
   setTimeout(loadV,500);
 }
 
-// ── v99.0 Adaptive Mode, Life Focus & Blind-Ear Preferences ───────────────────
+// ── v99.0 Adaptive Mode, Life Focus & Blind-Ear Preferences + v101.0 Theme ────
+const THEME_KEY="esco-theme-v101";
+function applyAppTheme(t){
+  const isLight=t==="light";
+  document.documentElement.setAttribute("data-theme",isLight?"light":"dark");
+  const btn=document.getElementById("theme-toggle-btn");
+  if(btn)btn.textContent=isLight?"🌙 Dark":"☀️ Sun";
+}
+function toggleAppTheme(){
+  const next=document.documentElement.getAttribute("data-theme")==="light"?"dark":"light";
+  try{localStorage.setItem(THEME_KEY,next);}catch(e){}
+  applyAppTheme(next);
+}
+try{applyAppTheme(localStorage.getItem(THEME_KEY)||"dark");}catch(e){}
 const USER_PREFS_KEY="esco-user-prefs-v99";
 let userPrefs={level:"auto",focus:"all",blindEar:false,hablarTab:"regions"};
 try{
@@ -728,9 +741,53 @@ function attachMic(container,target,practiceType){
   container.appendChild(b);
 }
 
+let vocabFlashMode=false,vocabFlashIdx=0,vocabFlashFlipped=false;
+function getVocabFlashItems(cat){
+  if(!cat)return[];
+  if(cat.type==="basic")return(cat.items||[]).map(it=>({es:it.word,en:it.en,ph:it.ph||"",tts:it.tts||it.word}));
+  if(cat.type==="colombianismos")return COLOMBIANISMOS.map(it=>({es:it.word,en:it.en,ph:it.register||it.usage||"",tts:it.tts||it.word}));
+  if(cat.type==="preguntas")return PREGUNTAS.map(it=>({es:it.word,en:it.en,ph:it.ph||"",tts:it.tts||it.word}));
+  if(cat.type==="verbos")return Object.entries(VERBS).map(([w,v])=>({es:w,en:v.en,ph:v.type||"",tts:w}));
+  return[];
+}
 function rV(){
   const cat=VC.find(c=>c.id===aC);const list=document.getElementById("vocab-list");list.innerHTML="";
   const keys=vocabKeys(cat);if(keys.length){const done=practicedCount("vocab",keys);const p=document.createElement("div");p.className="vocab-progress";p.innerHTML=`<strong>${done} of ${keys.length} practiced</strong> · Tap a word, hear its example, or record yourself to count it.<div class="vocab-progress-track"><div class="vocab-progress-fill" style="width:${Math.round(done/keys.length*100)}%"></div></div>`;list.appendChild(p);}
+  const flashItems=getVocabFlashItems(cat);
+  if(flashItems.length>=3){
+    const mBar=document.createElement("div");mBar.className="vocab-mode-toggle";
+    const listB=document.createElement("button");listB.type="button";listB.className="mf-chip"+(!vocabFlashMode?" active":"");listB.textContent="📋 Word List";
+    listB.onclick=()=>{vocabFlashMode=false;rV();};
+    const flB=document.createElement("button");flB.type="button";flB.className="mf-chip"+(vocabFlashMode?" active":"");flB.textContent=`🃏 Flashcards (${flashItems.length})`;
+    flB.onclick=()=>{vocabFlashMode=true;vocabFlashIdx=0;vocabFlashFlipped=false;rV();};
+    mBar.append(listB,flB);list.appendChild(mBar);
+    if(vocabFlashMode){
+      const cur=flashItems[vocabFlashIdx%flashItems.length];
+      const fc=document.createElement("section");fc.className="flash-card";
+      fc.innerHTML=`<div class="flash-head"><span>🃏 Card ${(vocabFlashIdx%flashItems.length)+1} of ${flashItems.length}</span><small>${escapeVocabHtml(cat.label)}</small></div>
+        <div class="flash-prompt-label">How do you say this in Colombia?</div>
+        <div class="flash-en">${escapeVocabHtml(cur.en)}</div>
+        ${cur.ph?`<div class="flash-hint">Hint: ${escapeVocabHtml(cur.ph)}</div>`:""}
+        ${vocabFlashFlipped?`<div class="flash-answer-box"><div class="flash-es">${escapeVocabHtml(cur.es)}</div></div>`:""}
+        <div class="flash-acts"></div>`;
+      const fActs=fc.querySelector(".flash-acts");
+      if(!vocabFlashFlipped){
+        const rev=document.createElement("button");rev.type="button";rev.className="lp-nav-btn primary";rev.textContent="👁️ Reveal & Hear 🔊";
+        rev.onclick=()=>{vocabFlashFlipped=true;markPractice("vocab",cur.tts);speak(cur.tts,0.78);rV();};
+        fActs.appendChild(rev);
+      }else{
+        const hear=document.createElement("button");hear.type="button";hear.className="lp-nav-btn";hear.textContent="🔊 Hear again";
+        hear.onclick=()=>speak(cur.tts,0.78);
+        const again=document.createElement("button");again.type="button";again.className="lp-nav-btn";again.textContent="↻ Practice again";
+        again.onclick=()=>{if(typeof recordSrs==="function")recordSrs("vf|"+cur.tts,false);vocabFlashIdx=(vocabFlashIdx+1)%flashItems.length;vocabFlashFlipped=false;rV();};
+        const got=document.createElement("button");got.type="button";got.className="lp-nav-btn primary";got.textContent="✓ Got it →";
+        got.onclick=()=>{if(typeof recordSrs==="function")recordSrs("vf|"+cur.tts,true);markPractice("vocab",cur.tts);vocabFlashIdx=(vocabFlashIdx+1)%flashItems.length;vocabFlashFlipped=false;rV();};
+        fActs.append(hear,again,got);
+        attachMic(fActs,cur.tts,"vocab");
+      }
+      list.appendChild(fc);return;
+    }
+  }
   if(cat.type==="vocales"){rVocales(list);return;}
   if(cat.type==="numeros"){rN(list);return;}
   if(cat.type==="preguntas"){rP(list);return;}
@@ -1344,6 +1401,69 @@ function renderFraseMenu(){
     };
     renderRp();
     conversationGroup.appendChild(rpCard);
+  }
+  if(typeof COLOMBIAN_STORIES!=="undefined"&&COLOMBIAN_STORIES.length){
+    let stIdx=0,stPick=[0,0,0],stBlindPeek=false;
+    const stCard=document.createElement("section");stCard.className="bridge-trainer-card story-builder-card";
+    const renderStory=()=>{
+      const st=COLOMBIAN_STORIES[stIdx%COLOMBIAN_STORIES.length];
+      const blind=isBlindEarActive()&&!stBlindPeek;
+      const chosenParts=st.parts.map((pt,pi)=>pt.options[stPick[pi]%pt.options.length]||pt.options[0]);
+      const fullEs=chosenParts.map(o=>o.es).join(" ").replace(/\s+/g," ").trim();
+      const fullEn=chosenParts.map(o=>o.en).join(" ").replace(/\s+/g," ").trim();
+      stCard.innerHTML=`<div class="bridge-kicker">📖 3-PART COLOMBIAN STORY BUILDER · CONNECT PAST, BRIDGE &amp; OUTCOME</div>
+        <div class="bridge-context">${escapeVocabHtml(st.sub)}</div>
+        <div class="reg-tabs-row story-tabs"></div>
+        <div class="story-parts"></div>
+        <div class="story-assembled-box${blind?" blind-masked":""}">
+          <div class="story-assembled-kicker">🗣️ Your Connected Story ${blind?"(🎧 Blind-Ear: listen first!)":""}</div>
+          <div class="story-assembled-es">${blind?"🎧 Tap Hear Full Story below, then Peek to check your story text":escapeVocabHtml(fullEs)}</div>
+          <div class="story-assembled-en">${escapeVocabHtml(fullEn)}</div>
+          <div class="bridge-actions story-actions"></div>
+        </div>`;
+      const tabsRow=stCard.querySelector(".story-tabs");
+      COLOMBIAN_STORIES.forEach((s,i)=>{
+        const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(i===stIdx?" active":"");
+        b.textContent=s.title;
+        b.onclick=()=>{stIdx=i;stPick=[0,0,0];stBlindPeek=false;renderStory();};
+        tabsRow.appendChild(b);
+      });
+      const partsWrap=stCard.querySelector(".story-parts");
+      st.parts.forEach((pt,pi)=>{
+        const pRow=document.createElement("div");pRow.className="story-part-row";
+        pRow.innerHTML=`<div class="story-part-label">${escapeVocabHtml(pt.label)}</div><div class="story-part-chips"></div>`;
+        const cWrap=pRow.querySelector(".story-part-chips");
+        pt.options.forEach((opt,oi)=>{
+          const b=document.createElement("button");b.type="button";b.className="story-chip"+(stPick[pi]===oi?" active":"");
+          b.innerHTML=`<strong>${escapeVocabHtml(opt.es)}</strong><small>${escapeVocabHtml(opt.en)}</small>`;
+          b.onclick=()=>{stPick[pi]=oi;renderStory();speak(opt.es,0.78);};
+          cWrap.appendChild(b);
+        });
+        partsWrap.appendChild(pRow);
+      });
+      const sActs=stCard.querySelector(".story-actions");
+      const hearStory=document.createElement("button");hearStory.type="button";hearStory.className="lp-nav-btn primary";hearStory.textContent="🔊 Hear Full Story";
+      hearStory.onclick=()=>{markPractice("phrases",fullEs);speak(fullEs,0.78);};
+      const slowStory=document.createElement("button");slowStory.type="button";slowStory.className="lp-nav-btn";slowStory.textContent="🐢 Slow (0.62x)";
+      slowStory.onclick=()=>speak(fullEs,0.62);
+      const remixStory=document.createElement("button");remixStory.type="button";remixStory.className="lp-nav-btn";remixStory.textContent="🎲 Remix Story";
+      remixStory.onclick=()=>{
+        stPick=st.parts.map(p=>Math.floor(Math.random()*p.options.length));
+        stBlindPeek=false;
+        const nextFull=st.parts.map((p,pi)=>p.options[stPick[pi]].es).join(" ");
+        renderStory();speak(nextFull,0.78);
+      };
+      sActs.append(hearStory,slowStory,remixStory);
+      if(isBlindEarActive()){
+        const peekB=document.createElement("button");peekB.type="button";peekB.className="rp-peek-btn";
+        peekB.textContent=stBlindPeek?"🙈 Hide Text":"👁️ Peek Story";
+        peekB.onclick=()=>{stBlindPeek=!stBlindPeek;renderStory();};
+        sActs.appendChild(peekB);
+      }
+      attachMic(sActs,fullEs,"phrases");
+    };
+    renderStory();
+    conversationGroup.appendChild(stCard);
   }
   conversationGroup.append(h1,g1);
   const h2=document.createElement("div");h2.className="fr-home-label";h2.textContent="📋 Phrase collections · tap to open";
@@ -3459,10 +3579,15 @@ function renderLessons(){
     soundBtn.onclick=()=>{showPage("phonetics");showPhonetic("letras");};
     hero.appendChild(soundBtn);
   }else{
+    const expRow=document.createElement("div");expRow.className="explorer-shortcut-row";
     const vvShortcut=document.createElement("button");vvShortcut.type="button";vvShortcut.className="starter-sound-btn explorer-vv-btn";
-    vvShortcut.innerHTML=`<span>⚡ <strong>1-Verb → 5 Timeframes Lab</strong> <small>Bend hacer, tener, ir, poder &amp; dar across past, now &amp; polite</small></span><span>Practice →</span>`;
+    vvShortcut.innerHTML=`<span>⚡ <strong>1-Verb → 5 Times</strong> <small>${typeof VERB_VERSATILITY_ENGINE!=="undefined"?VERB_VERSATILITY_ENGINE.length:10} verbs × 5 frames</small></span><span>Go →</span>`;
     vvShortcut.onclick=()=>{showPage("gram");showGramGroup("tiempos");};
-    hero.appendChild(vvShortcut);
+    const stShortcut=document.createElement("button");stShortcut.type="button";stShortcut.className="starter-sound-btn explorer-story-btn";
+    stShortcut.innerHTML=`<span>📖 <strong>Story Builder</strong> <small>Chain 3 real turns</small></span><span>Build →</span>`;
+    stShortcut.onclick=()=>{showPage("frases");const card=document.querySelector(".story-builder-card");if(card)card.scrollIntoView({behavior:"smooth",block:"start"});};
+    expRow.append(vvShortcut,stShortcut);
+    hero.appendChild(expRow);
   }
 
   root.appendChild(hero);
@@ -3712,7 +3837,7 @@ renderLessons();
 // ── Build Grammar ─────────────────────────────────────────────────────────────
 function buildVerbVersatilityLab(sec){
   if(typeof VERB_VERSATILITY_ENGINE==="undefined"||!VERB_VERSATILITY_ENGINE.length)return;
-  let vvIdx=0,vvPerson="yo",vvRevealSet=new Set();
+  let vvIdx=0,vvPerson="yo",vvMode="explore",vvQuizKey="just",vvQuizPicked=null,vvRevealSet=new Set();
   const lab=document.createElement("section");lab.className="bridge-trainer-card vv-lab-card";
   const personsMeta=[["yo","🙋 Yo"],["tu","👋 Tú"],["vos","🌸 Vos"],["usted","🎩 Usted"],["nosotros","👥 Nosotros"]];
   const frameMeta=[
@@ -3722,31 +3847,81 @@ function buildVerbVersatilityLab(sec){
     ["future","⏭️ Going To","Voy a…"],
     ["polite","🙏 Polite Ask","Cortesía CO"]
   ];
+  const pickQuizTarget=()=>{
+    const keys=frameMeta.map(f=>f[0]);
+    vvQuizKey=keys[Math.floor(Math.random()*keys.length)];
+    vvQuizPicked=null;
+  };
   const renderLab=()=>{
     const item=VERB_VERSATILITY_ENGINE[vvIdx%VERB_VERSATILITY_ENGINE.length];
     const pForms=(item.forms&&item.forms[vvPerson])||{};
     const blind=isBlindEarActive();
     lab.innerHTML=`<div class="bridge-kicker">⚡ 1-VERB → 5-TIMEFRAME VERSATILITY LAB (${vvIdx+1}/${VERB_VERSATILITY_ENGINE.length})</div>
-      <div class="bridge-context">Pick an everyday verb &amp; person — hear how one root bends into past, just-did, right-now, future &amp; polite Colombian Spanish:</div>
+      <div class="bridge-context">Pick an everyday verb &amp; person — switch between browsing all 5 timeframes or quizzing your timeframe reflexes:</div>
+      <div class="vv-mode-row"></div>
       <div class="vv-verb-tabs" role="tablist" aria-label="Choose verb"></div>
       <div class="vv-person-tabs" role="tablist" aria-label="Choose person or register"></div>
-      <div class="vv-tense-list"></div>
+      <div class="vv-body-slot"></div>
       <div class="tvc-why">💡 <strong>Colombian Shortcut:</strong> ${escapeVocabHtml(item.tip)}</div>`;
+    const mWrap=lab.querySelector(".vv-mode-row");
+    [["explore","📋 Explore 5 Timeframes"],["quiz","🎯 Quick Timeframe Quiz"]].forEach(([mk,mlbl])=>{
+      const b=document.createElement("button");b.type="button";b.className="mf-chip"+(vvMode===mk?" active":"");
+      b.textContent=mlbl;
+      b.onclick=()=>{vvMode=mk;if(mk==="quiz")pickQuizTarget();renderLab();};
+      mWrap.appendChild(b);
+    });
     const vWrap=lab.querySelector(".vv-verb-tabs");
     VERB_VERSATILITY_ENGINE.forEach((v,i)=>{
       const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(i===vvIdx?" active":"");
       b.textContent=v.label;
-      b.onclick=()=>{vvIdx=i;vvRevealSet.clear();renderLab();};
+      b.onclick=()=>{vvIdx=i;vvRevealSet.clear();if(vvMode==="quiz")pickQuizTarget();renderLab();};
       vWrap.appendChild(b);
     });
     const pWrap=lab.querySelector(".vv-person-tabs");
     personsMeta.forEach(([pk,plbl])=>{
       const b=document.createElement("button");b.type="button";b.className="mf-chip"+(pk===vvPerson?" active":"");
       b.textContent=plbl;
-      b.onclick=()=>{vvPerson=pk;vvRevealSet.clear();renderLab();const first=item.forms&&item.forms[pk]&&item.forms[pk].now;if(first)speak(first.es,0.78);};
+      b.onclick=()=>{
+        vvPerson=pk;vvRevealSet.clear();
+        if(vvMode==="quiz")pickQuizTarget();
+        renderLab();
+        if(vvMode==="explore"){const first=item.forms&&item.forms[pk]&&item.forms[pk].now;if(first)speak(first.es,0.78);}
+      };
       pWrap.appendChild(b);
     });
-    const listWrap=lab.querySelector(".vv-tense-list");
+    const slot=lab.querySelector(".vv-body-slot");
+    if(vvMode==="quiz"){
+      const targetMeta=frameMeta.find(f=>f[0]===vvQuizKey)||frameMeta[1];
+      const correctObj=pForms[vvQuizKey];
+      const distractors=frameMeta.filter(f=>f[0]!==vvQuizKey&&pForms[f[0]]).map(f=>({key:f[0],lbl:f[1],...pForms[f[0]]}));
+      const pool=[{key:vvQuizKey,lbl:targetMeta[1],...correctObj},...distractors.slice(0,2)].sort((a,b)=>a.es.localeCompare(b.es));
+      const qBox=document.createElement("div");qBox.className="vv-quiz-box";
+      qBox.innerHTML=`<div class="vv-quiz-cue"><span class="vv-row-tag">${targetMeta[1]} · ${targetMeta[2]}</span><strong>Which Colombian phrase expresses: "${escapeVocabHtml(correctObj?correctObj.en:"")}"?</strong></div><div class="vv-quiz-opts"></div><div class="vv-quiz-fb"></div><div class="bridge-actions vv-quiz-acts"></div>`;
+      const qOpts=qBox.querySelector(".vv-quiz-opts"),qFb=qBox.querySelector(".vv-quiz-fb"),qActs=qBox.querySelector(".vv-quiz-acts");
+      pool.forEach(opt=>{
+        const b=document.createElement("button");b.type="button";
+        const isPick=vvQuizPicked===opt.key,isOk=opt.key===vvQuizKey;
+        b.className="ear-check-btn"+(isPick?(isOk?" correct":" wrong"):"")+(vvQuizPicked&&isOk?" correct-hint":"");
+        b.textContent=opt.es;
+        b.onclick=()=>{
+          vvQuizPicked=opt.key;
+          speak(opt.es,0.78);
+          renderLab();
+        };
+        qOpts.appendChild(b);
+      });
+      if(vvQuizPicked){
+        qFb.innerHTML=vvQuizPicked===vvQuizKey
+          ?`<div class="trampas-feedback-banner ok">✅ <strong>¡Exacto!</strong> "${escapeVocabHtml(correctObj.es)}"</div>`
+          :`<div class="trampas-feedback-banner warn">💡 Look for <strong>${targetMeta[1]}</strong>: "${escapeVocabHtml(correctObj.es)}"</div>`;
+        const nxt=document.createElement("button");nxt.type="button";nxt.className="lp-nav-btn primary";nxt.textContent="Next Timeframe Check →";
+        nxt.onclick=()=>{vvIdx=(vvIdx+1)%VERB_VERSATILITY_ENGINE.length;pickQuizTarget();renderLab();};
+        qActs.appendChild(nxt);
+      }
+      slot.appendChild(qBox);
+      return;
+    }
+    const listWrap=document.createElement("div");listWrap.className="vv-tense-list";
     frameMeta.forEach(([fk,flbl,fsub])=>{
       const rowData=pForms[fk];
       if(!rowData)return;
@@ -3761,6 +3936,7 @@ function buildVerbVersatilityLab(sec){
       };
       listWrap.appendChild(row);
     });
+    slot.appendChild(listWrap);
   };
   renderLab();
   sec.appendChild(lab);

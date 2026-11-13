@@ -1,14 +1,14 @@
 
 html{font-size:18px;width:100%;height:100%;-webkit-text-size-adjust:none;text-size-adjust:none;}
 :root{
-  --teal:#4aa8a0;--pink:#e85d75;--gold:#e8b44a;--purple:#a78bfa;--green:#34d399;--blue:#60a5fa;
-  --bg:#0a0f14;--card:rgba(255,255,255,0.06);--border:rgba(255,255,255,0.1);
-  --text:rgba(255,255,255,0.92);--muted:rgba(255,255,255,0.56);
+  --teal:#2dd4bf;--pink:#fb7185;--gold:#f3c158;--purple:#a78bfa;--green:#34d399;--blue:#60a5fa;
+  --bg:#0c1118;--card:rgba(255,255,255,0.07);--border:rgba(255,255,255,0.12);
+  --text:rgba(255,255,255,0.94);--muted:rgba(255,255,255,0.62);
   --safe-top:env(safe-area-inset-top,54px);--safe-bottom:env(safe-area-inset-bottom,34px);--tab-h:80px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Nunito',sans-serif;background:var(--bg);color:#fff;position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;
-  background-image:radial-gradient(ellipse at 10% 15%,rgba(74,168,160,0.14) 0%,transparent 55%),radial-gradient(ellipse at 90% 85%,rgba(232,93,117,0.1) 0%,transparent 50%);}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);position:fixed;top:0;left:0;right:0;bottom:0;overflow:hidden;
+  background-image:radial-gradient(ellipse at 12% 10%,rgba(243,193,88,0.13) 0%,transparent 50%),radial-gradient(ellipse at 88% 82%,rgba(45,212,191,0.12) 0%,transparent 52%),radial-gradient(ellipse at 50% 45%,rgba(251,113,133,0.06) 0%,transparent 60%);}
 button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 #app{display:flex;flex-direction:column;width:100%;height:100%;}
 .scroll{flex:1;overflow-y:scroll;overflow-x:hidden;-webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior-x:none;padding:calc(var(--safe-top) + 14px) 16px calc(var(--tab-h) + var(--safe-bottom) + 20px);}
@@ -1490,11 +1490,11 @@ body.lesson-focus-active .scroll{padding-bottom:calc(var(--safe-bottom) + 118px)
 /* Unified Hero Card on Today / Hoy */
 .today-hero-card{
   margin:0 0 12px;
-  padding:14px;
+  padding:15px 14px 14px;
   border-radius:18px;
-  border:1px solid rgba(232,180,74,.28);
-  background:linear-gradient(155deg,rgba(232,180,74,.11),rgba(74,168,160,.08) 60%,rgba(255,255,255,.02));
-  box-shadow:0 10px 28px rgba(0,0,0,.22);
+  border:1px solid rgba(243,193,88,.34);
+  background:linear-gradient(180deg,rgba(12,17,24,0.48) 0%,rgba(12,17,24,0.86) 52%,rgba(12,17,24,0.96) 100%),url('hero-colombia.webp') center top/cover no-repeat;
+  box-shadow:0 12px 30px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.12);
 }
 .today-hero-status{
   display:flex;
@@ -3232,3 +3232,100 @@ body.lesson-focus-active .scroll{padding-bottom:calc(var(--safe-bottom) + 118px)
 .vv-row-copy strong{font-size:0.86rem;line-height:1.3;}
 .vv-row-copy small{font-size:0.72rem;color:#cbd5e1;}
 .vv-row-spk{font-size:0.95rem;flex-shrink:0;}
+
+/* ══ v101.0 Story Builder, Flashcards, Timeframe Quiz & Sunlight Theme ═══════ */
+.explorer-shortcut-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px;}
+.explorer-shortcut-row .starter-sound-btn{margin-top:0;padding:9px 11px;}
+@media (max-width:460px){.explorer-shortcut-row{grid-template-columns:1fr;}}
+.explorer-story-btn{border-color:rgba(45,212,191,0.42);background:rgba(45,212,191,0.1);color:#ccfbf1;}
+.explorer-story-btn small{color:#99f6e4;}
+
+.vocab-mode-toggle{display:flex;gap:8px;margin:8px 0 12px;}
+.flash-card{background:var(--card);border:1px solid rgba(243,193,88,0.3);border-radius:16px;padding:18px 15px;text-align:center;display:flex;flex-direction:column;gap:10px;}
+.flash-head{display:flex;justify-content:space-between;align-items:center;font-size:0.74rem;font-weight:800;color:var(--gold);}
+.flash-head small{color:var(--muted);}
+.flash-prompt-label{font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);font-weight:800;}
+.flash-en{font-size:1.25rem;font-weight:900;color:var(--text);}
+.flash-hint{font-size:0.76rem;color:var(--muted);font-style:italic;}
+.flash-answer-box{padding:12px;border-radius:12px;background:rgba(45,212,191,0.12);border:1px solid rgba(45,212,191,0.35);}
+.flash-es{font-size:1.18rem;font-weight:900;color:#2dd4bf;}
+.flash-acts{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:4px;}
+
+.story-parts{display:flex;flex-direction:column;gap:10px;margin:10px 0;}
+.story-part-label{font-size:0.72rem;font-weight:900;color:var(--gold);margin-bottom:5px;}
+.story-part-chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:7px;}
+.story-chip{display:flex;flex-direction:column;gap:3px;text-align:left;padding:9px 10px;border-radius:11px;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.04);color:var(--text);cursor:pointer;transition:all 0.15s;}
+.story-chip.active{border-color:var(--teal);background:rgba(45,212,191,0.14);}
+.story-chip strong{font-size:0.78rem;line-height:1.3;}
+.story-chip small{font-size:0.68rem;color:var(--muted);}
+.story-assembled-box{margin-top:10px;padding:13px;border-radius:14px;border:1px solid rgba(243,193,88,0.35);background:rgba(243,193,88,0.08);}
+.story-assembled-box.blind-masked{border-style:dashed;border-color:rgba(167,139,250,0.55);background:rgba(167,139,250,0.08);}
+.story-assembled-kicker{font-size:0.7rem;font-weight:900;letter-spacing:0.06em;color:var(--gold);margin-bottom:5px;}
+.story-assembled-es{font-size:0.96rem;font-weight:900;line-height:1.45;color:var(--text);}
+.story-assembled-en{font-size:0.76rem;color:var(--muted);margin-top:5px;}
+
+.vv-mode-row{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0 8px;}
+.vv-quiz-box{display:flex;flex-direction:column;gap:10px;margin:10px 0;}
+.vv-quiz-cue{padding:11px 12px;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);display:flex;flex-direction:column;gap:4px;}
+.vv-quiz-opts{display:flex;flex-direction:column;gap:7px;}
+
+/* Sunlight High-Contrast Light Theme */
+:root[data-theme="light"]{
+  --bg:#f6f2ea;
+  --card:#ffffff;
+  --border:rgba(24,32,44,0.13);
+  --text:#18202c;
+  --muted:#516072;
+  --teal:#0f766e;
+  --pink:#be123c;
+  --gold:#b45309;
+  --purple:#6d28d9;
+  --green:#047857;
+  --blue:#1d4ed8;
+}
+:root[data-theme="light"] body{
+  background-color:#f6f2ea;
+  color:#18202c;
+  background-image:radial-gradient(ellipse at 12% 8%,rgba(243,193,88,0.22) 0%,transparent 52%),radial-gradient(ellipse at 88% 85%,rgba(15,118,110,0.1) 0%,transparent 50%);
+}
+:root[data-theme="light"] .tab-bar{
+  background:rgba(255,255,255,0.96);
+  border-top:1px solid rgba(24,32,44,0.12);
+}
+:root[data-theme="light"] .tab-item{color:rgba(24,32,44,0.48);}
+:root[data-theme="light"] .today-hero-card{
+  background:linear-gradient(180deg,rgba(255,251,244,0.62) 0%,rgba(255,251,244,0.92) 55%,rgba(255,255,255,0.98) 100%),url('hero-colombia.webp') center top/cover no-repeat;
+  border-color:rgba(180,83,9,0.28);
+  box-shadow:0 8px 24px rgba(24,32,44,0.08);
+}
+:root[data-theme="light"] .today-hero-cta,
+:root[data-theme="light"] .bridge-trainer-card,
+:root[data-theme="light"] .lesson-card,
+:root[data-theme="light"] .vc,
+:root[data-theme="light"] .quiz-card,
+:root[data-theme="light"] .qopt,
+:root[data-theme="light"] .fr-home-card,
+:root[data-theme="light"] .lp-card,
+:root[data-theme="light"] .today-quick-tile,
+:root[data-theme="light"] .coach-focus-strip{
+  background:#ffffff;
+  color:#18202c;
+  border-color:rgba(24,32,44,0.14);
+}
+:root[data-theme="light"] .voice-select,
+:root[data-theme="light"] .content-search,
+:root[data-theme="light"] .mf-pill,
+:root[data-theme="light"] .mf-chip,
+:root[data-theme="light"] .reg-tab-btn,
+:root[data-theme="light"] .hablar-subtab,
+:root[data-theme="light"] .story-chip,
+:root[data-theme="light"] .vv-tense-row{
+  background:#f1ede4;
+  color:#18202c;
+  border-color:rgba(24,32,44,0.18);
+}
+:root[data-theme="light"] .welcome-lane-btn{background:#f8fafc;color:#18202c;border-color:rgba(24,32,44,0.18);}
+:root[data-theme="light"] .welcome-lane-btn small,
+:root[data-theme="light"] .vv-row-copy small,
+:root[data-theme="light"] .vg-lightbox-cap{color:#475569;}
+:root[data-theme="light"] .flash-es{color:#0f766e;}

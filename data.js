@@ -5928,6 +5928,28 @@ const VISUAL_GUIDES = [
     es: "Quería salir temprano, pero estaba lloviendo; entonces pedí un Uber de todas formas.",
     en: "I wanted to leave early, but it was raining; so I ordered an Uber anyway.",
     region: "Fluidez · Conversación"
+  },
+  {
+    id: "vg-pagos",
+    title: "💳 Pagos en Colombia (How Paying Works)",
+    sub: "Efectivo · Datáfono · A una cuota · Nequi QR · Cancelar = Pay",
+    img: "guide-pagos.webp",
+    alt: "Colombian payments visual poster showing Efectivo, Datafono, A una cuota, Nequi QR, and Cancelar = Pay",
+    caption: "In Colombia, paying by credit card always prompts '¿A cuántas cuotas?' — answer 'A una cuota, por favor' (single payment, no interest). Small shops love cash with exact change ('sencillo') or Nequi QR, and 'cancelar' means to pay the bill.",
+    es: "Con tarjeta en el datáfono y a una sola cuota, por favor. ¿Dónde puedo cancelar?",
+    en: "By card on the terminal in a single installment, please. Where can I pay?",
+    region: "Todo Colombia"
+  },
+  {
+    id: "vg-comodines",
+    title: "🔑 4 Verbos Comodín (Swiss-Army Verbs)",
+    sub: "Quedar · Regalar · Provocar · Dar papaya",
+    img: "guide-comodines.webp",
+    alt: "Colombian wildcard verbs poster explaining Quedar, Regalar, Provocar, and Dar papaya",
+    caption: "Four essentials you hear every single day: quedar (location, agreeing on plans '¿así quedamos?', fit), regalar (polite ordering '¿me regala…?'), provocar (craving '¿qué te provoca?'), and no dar papaya (don't leave valuables exposed).",
+    es: "¿Te provoca un tinto? Así quedamos entonces: nos vemos allá y sin dar papaya.",
+    en: "Feel like a coffee? It's a plan then: see you there and stay alert.",
+    region: "Español Diario"
   }
 ];
 
@@ -6433,5 +6455,304 @@ const VERB_VERSATILITY_ENGINE = [
         polite: { es: "Como decimos por acá: ¡hágale sin pena!", en: "As we say around here: go right ahead, no shyness!" }
       }
     }
+  },
+  {
+    id: "vv-quedar",
+    verb: "quedar",
+    label: "📍 Quedar (location / agree / fit)",
+    tip: "Colombia's #1 Swiss-Army verb: location ('¿Dónde queda?'), confirming plans ('¿Así quedamos?'), how clothes fit, and leftovers.",
+    forms: {
+      yo: {
+        past: { es: "Ayer quedé muy lleno con ese corrientazo.", en: "Yesterday I ended up super full from that daily lunch." },
+        just: { es: "Acabo de quedar con mi primo a las cinco.", en: "I just made plans with my cousin for five." },
+        now: { es: "Me quedo dos semanas más en Colombia.", en: "I am staying two more weeks in Colombia." },
+        future: { es: "Voy a quedar pendiente de tu mensaje.", en: "I am going to stay on the lookout for your message." },
+        polite: { es: "¿Le quedó claro o prefiere que repita?", en: "Was that clear or do you prefer I repeat?" }
+      },
+      tu: {
+        past: { es: "Qué bien te quedó esa camisa nueva.", en: "That new shirt looks great on you." },
+        just: { es: "Acabas de quedar en un restaurante buenísimo.", en: "You just agreed to meet at an awesome restaurant." },
+        now: { es: "¿Te queda bien si pasamos a las tres?", en: "Does it work well for you if we stop by at three?" },
+        future: { es: "Vas a quedar encantado con San Juan.", en: "You are going to be thrilled with San Juan." },
+        polite: { es: "¿Te queda algún pandebono calientico?", en: "Do you have any warm pandebonos left?" }
+      },
+      vos: {
+        past: { es: "¿En qué quedaste con el dueño del Airbnb?", en: "What did you end up agreeing on with the Airbnb host?" },
+        just: { es: "Acabás de quedar súper bien con la familia.", en: "You just made a great impression on the family." },
+        now: { es: "¿Vos te quedás en Medellín este puente?", en: "Are you staying in Medellín this long weekend?" },
+        future: { es: "Te vas a quedar sorprendido con la vista.", en: "You are going to be amazed by the view." },
+        polite: { es: "Decime dónde queda la panadería más cercana.", en: "Tell me where the nearest bakery is located." }
+      },
+      usted: {
+        past: { es: "Quedó perfecto el corte, muchas gracias.", en: "The haircut turned out perfect, thank you very much." },
+        just: { es: "Usted acaba de quedar en enviarme el recibo.", en: "You just agreed to send me the receipt." },
+        now: { es: "Disculpe, ¿dónde queda el cajero más cercano?", en: "Excuse me, where is the nearest ATM located?" },
+        future: { es: "¿El parque va a quedar a mano derecha?", en: "Will the park be on the right-hand side?" },
+        polite: { es: "¿Así quedamos entonces? ¡Muchísimas gracias!", en: "Is that our plan then? Thank you so much!" }
+      },
+      nosotros: {
+        past: { es: "Quedamos de vernos en la plaza principal.", en: "We agreed to meet at the main square." },
+        just: { es: "Acabamos de quedar listos para salir.", en: "We just got all ready to head out." },
+        now: { es: "Nos quedan solo diez minuticos para abordar.", en: "We only have ten quick minutes left to board." },
+        future: { es: "Vamos a quedar cerca de la estación.", en: "We are going to stay near the station." },
+        polite: { es: "¡De una, así quedamos para mañana!", en: "Sounds great, it's a plan for tomorrow!" }
+      }
+    }
+  },
+  {
+    id: "vv-estar",
+    verb: "estar",
+    label: "☀️ Estar (location / mood / ready)",
+    tip: "Use ESTAR for where places/people are right now, how food tastes in the moment ('¡Está delicioso!'), and feelings.",
+    forms: {
+      yo: {
+        past: { es: "Ayer estuve todo el día en La Guajira.", en: "Yesterday I spent all day in La Guajira." },
+        just: { es: "Acabo de estar hablando con el portero.", en: "I was just talking with the doorman." },
+        now: { es: "Estoy muy contento de estar por acá.", en: "I am very happy to be around here." },
+        future: { es: "Mañana voy a estar en Bogotá temprano.", en: "Tomorrow I am going to be in Bogotá early." },
+        polite: { es: "¿Está bien si cancelo en la caja?", en: "Is it okay if I pay at the register?" }
+      },
+      tu: {
+        past: { es: "¿Dónde estuviste anoche, primo?", en: "Where were you last night, cousin?" },
+        just: { es: "Acabas de estar pasando justo por mi cuadra.", en: "You were just passing right by my block." },
+        now: { es: "¿Cómo estás? ¿Todo bien en la casa?", en: "How are you? Everything good at home?" },
+        future: { es: "Vas a estar súper cómodo en la terraza.", en: "You are going to be super comfortable on the porch." },
+        polite: { es: "Avísame cuando estés listo para pedir.", en: "Let me know when you are ready to order." }
+      },
+      vos: {
+        past: { es: "¿Estuviste en la fiesta del sábado?", en: "Were you at Saturday's party?" },
+        just: { es: "Acabás de estar en el centro comercial.", en: "You were just at the shopping mall." },
+        now: { es: "¿Cómo estás vos? ¿Todo tranquilo?", en: "How are you doing? All chill?" },
+        future: { es: "¿Vas a estar por el barrio esta tarde?", en: "Are you going to be around the neighborhood this afternoon?" },
+        polite: { es: "Contame si estás ocupado en este momento.", en: "Tell me if you are busy right now." }
+      },
+      usted: {
+        past: { es: "¡El almuerzo estuvo buenísimo, gracias!", en: "The lunch was delicious, thank you!" },
+        just: { es: "Usted acaba de estar muy amable conmigo.", en: "You were just very kind to me." },
+        now: { es: "Buenas tardes, ¿cómo está usted hoy?", en: "Good afternoon, how are you today?" },
+        future: { es: "¿El domicilio va a estar listo en diez minutos?", en: "Will the delivery be ready in ten minutes?" },
+        polite: { es: "Disculpe, ¿está ocupado este asiento?", en: "Excuse me, is this seat taken?" }
+      },
+      nosotros: {
+        past: { es: "Estuvimos caminando por toda la ciclovía.", en: "We were walking all along the car-free street." },
+        just: { es: "Acabamos de estar en la panadería.", en: "We were just at the bakery." },
+        now: { es: "Estamos aprendiendo español colombiano.", en: "We are learning Colombian Spanish." },
+        future: { es: "Vamos a estar en San Juan el próximo mes.", en: "We are going to be in San Juan next month." },
+        polite: { es: "¡Con mucho gusto, para eso estamos!", en: "My pleasure, that is what we are here for!" }
+      }
+    }
+  },
+  {
+    id: "vv-ser",
+    verb: "ser",
+    label: "🇨🇴 Ser (identity / price / time)",
+    tip: "Use SER for identity, jobs, prices ('¿Cuánto es?'), time, and permanent traits ('Es muy acogedor').",
+    forms: {
+      yo: {
+        past: { es: "Fui ingeniero antes de mudarme.", en: "I was an engineer before moving." },
+        just: { es: "Acabo de ser atendido súper rápido.", en: "I was just helped super fast." },
+        now: { es: "Soy de Estados Unidos, pero vivo aquí.", en: "I am from the US, but I live here." },
+        future: { es: "Voy a ser más constante practicando.", en: "I am going to be more consistent practicing." },
+        polite: { es: "¿Será que me puede ayudar con una pregunta?", en: "Might you be able to help me with a question?" }
+      },
+      tu: {
+        past: { es: "¡Fuiste muy amable con mi esposa!", en: "You were very kind to my wife!" },
+        just: { es: "Acabas de ser el primero en responder.", en: "You were just the first to reply." },
+        now: { es: "¿Tú eres de San Juan del Cesar?", en: "Are you from San Juan del Cesar?" },
+        future: { es: "Vas a ser un crack hablando español.", en: "You are going to be a pro speaking Spanish." },
+        polite: { es: "¿Eso es aquí nomás a la vuelta?", en: "Is that right just around the corner?" }
+      },
+      vos: {
+        past: { es: "Vos fuiste quien recomendó ese café.", en: "You were the one who recommended that cafe." },
+        just: { es: "Acabás de ser súper claro conmigo.", en: "You were just super clear with me." },
+        now: { es: "¿Vos sos paisa o de Cali?", en: "Are you Paisa or from Cali?" },
+        future: { es: "Va a ser un día sabroso para pasear.", en: "It is going to be a great day to stroll around." },
+        polite: { es: "¿Es verdad que allá cierran temprano?", en: "Is it true they close early over there?" }
+      },
+      usted: {
+        past: { es: "Fue un gusto conocerlo hoy.", en: "It was a pleasure meeting you today." },
+        just: { es: "Eso acaba de ser una gran ayuda.", en: "That was just a huge help." },
+        now: { es: "¿Cuánto es por todo, por favor?", en: "How much is it for everything, please?" },
+        future: { es: "¿Será por tarjeta o por transferencia?", en: "Would that be by card or transfer?" },
+        polite: { es: "Disculpe, ¿es esta la fila para pagar?", en: "Excuse me, is this the line to pay?" }
+      },
+      nosotros: {
+        past: { es: "Fuimos los únicos extranjeros en el bus.", en: "We were the only foreigners on the bus." },
+        just: { es: "Acabamos de ser invitados a un asado.", en: "We were just invited to a barbecue." },
+        now: { es: "Somos familia de por aquí en el barrio.", en: "We are family from around this neighborhood." },
+        future: { es: "Va a ser una experiencia inolvidable.", en: "It is going to be an unforgettable experience." },
+        polite: { es: "¿Es necesario mostrar la cédula o el pasaporte?", en: "Is it necessary to show Colombian ID or passport?" }
+      }
+    }
+  },
+  {
+    id: "vv-querer",
+    verb: "querer",
+    label: "❤️ Querer (want / 'Me gustaría')",
+    tip: "Saying direct 'Quiero…' works with friends, while Colombians soften restaurant/shop orders with '¿Me regala…?' or 'Quisiera…'.",
+    forms: {
+      yo: {
+        past: { es: "Ayer quise probar el friche tradicional.", en: "Yesterday I wanted to try traditional friche." },
+        just: { es: "Acabo de querer cambiar el pedido a tiempo.", en: "I just wanted to update the order in time." },
+        now: { es: "Quiero practicar diez minutos todos los días.", en: "I want to practice ten minutes every day." },
+        future: { es: "Voy a querer volver a Cartagena pronto.", en: "I am going to want to return to Cartagena soon." },
+        polite: { es: "Quisiera un jugo de lulo en agua, por favor.", en: "I would like a lulo juice in water, please." }
+      },
+      tu: {
+        past: { es: "¿Quisiste salir aunque estaba lloviendo?", en: "Did you still want to go out even though it rained?" },
+        just: { es: "Justo ahora querías escuchar un vallenato.", en: "Just now you wanted to listen to a vallenato." },
+        now: { es: "¿Qué quieres tomar ahorita? ¿Un café?", en: "What do you want to drink right now? A coffee?" },
+        future: { es: "¿Vas a querer llevar algo para la casa?", en: "Are you going to want to take something home?" },
+        polite: { es: "Si quieres, te mando la dirección por acá.", en: "If you want, I'll send you the address right here." }
+      },
+      vos: {
+        past: { es: "¿No quisiste pedir postre después del plato?", en: "Didn't you want to order dessert after the dish?" },
+        just: { es: "Acabás de decir que querías caminar.", en: "You just said you wanted to walk." },
+        now: { es: "¿Querés que pidamos un Uber de una vez?", en: "Do you want us to call an Uber right now?" },
+        future: { es: "¿Vas a querer ir a la ciclovía el domingo?", en: "Are you going to want to go to ciclovía Sunday?" },
+        polite: { es: "Cuando querás, nos tomamos un tinto.", en: "Whenever you want, let's grab a black coffee." }
+      },
+      usted: {
+        past: { es: "¿Usted quiso decir con o sin azúcar?", en: "Did you mean with or without sugar?" },
+        just: { es: "Perdón, ¿quería factura electrónica?", en: "Sorry, did you want an electronic invoice?" },
+        now: { es: "¿Lo quiere para comer acá o para llevar?", en: "Do you want it for here or to go?" },
+        future: { es: "¿Va a querer copia del recibo?", en: "Are you going to want a copy of the receipt?" },
+        polite: { es: "Si usted quiere, lo puedo cancelar por Nequi.", en: "If you'd like, I can pay it via Nequi." }
+      },
+      nosotros: {
+        past: { es: "Quisimos conocer el centro histórico temprano.", en: "We wanted to visit the historic center early." },
+        just: { es: "Acabamos de pedir lo que queríamos.", en: "We just ordered what we wanted." },
+        now: { es: "Queremos una mesa tranquila cerca de la ventana.", en: "We want a quiet table near the window." },
+        future: { es: "Vamos a querer otro tinto en la tarde.", en: "We are going to want another black coffee later." },
+        polite: { es: "Quisiéramos ver el menú del día, por favor.", en: "We would like to see the daily menu, please." }
+      }
+    }
+  }
+];
+
+const COLOMBIAN_STORIES = [
+  {
+    id: "st-sanjuan",
+    title: "🪗 Fin de semana en San Juan",
+    sub: "Connect yesterday's trip, a warm bridge, and what's happening today.",
+    parts: [
+      {
+        label: "1️⃣ Setup / What Happened",
+        options: [
+          { es: "Ayer llegamos a San Juan del Cesar por la tarde.", en: "Yesterday we arrived in San Juan del Cesar in the afternoon." },
+          { es: "El sábado salimos temprano para visitar a la familia.", en: "On Saturday we left early to visit family." },
+          { es: "Anoche estuvimos escuchando vallenato en la terraza.", en: "Last night we were listening to vallenato on the porch." }
+        ]
+      },
+      {
+        label: "2️⃣ Connector Bridge",
+        options: [
+          { es: "Hacía muchísimo calor, entonces", en: "It was super hot, so" },
+          { es: "Aunque el viaje fue largo,", en: "Even though the trip was long," },
+          { es: "De todas formas teníamos hambre, así que", en: "Anyway we were hungry, so" }
+        ]
+      },
+      {
+        label: "3️⃣ Outcome / Next Step",
+        options: [
+          { es: "prendimos el abanico y probamos el friche.", en: "we turned on the fan and tried friche." },
+          { es: "hoy vamos a tomar un jugo de corozo bien frío.", en: "today we are going to drink an ice-cold corozo juice." },
+          { es: "nos quedamos hablando con los primos hasta tarde.", en: "we stayed chatting with the cousins until late." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "st-lluvia-uber",
+    title: "🚕 Aguacero y Uber en Bogotá",
+    sub: "Turn a sudden plan change into smooth natural storytelling.",
+    parts: [
+      {
+        label: "1️⃣ Original Plan / Past",
+        options: [
+          { es: "Hoy quería caminar hasta el café de la esquina,", en: "Today I wanted to walk to the corner cafe," },
+          { es: "Esta mañana salí sin sombrilla por el afán,", en: "This morning I went out without an umbrella in a rush," },
+          { es: "Al principio pensé tomar el bus por la séptima,", en: "At first I thought about taking the bus on Carrera 7," }
+        ]
+      },
+      {
+        label: "2️⃣ Connector Bridge",
+        options: [
+          { es: "pero cayó un aguacero fuerte;", en: "but a heavy downpour fell;" },
+          { es: "sin embargo había muchísimo trancón;", en: "however there was awful traffic;" },
+          { es: "y como se puso tarde, entonces", en: "and since it got late, then" }
+        ]
+      },
+      {
+        label: "3️⃣ How You Handled It",
+        options: [
+          { es: "pedí un Uber y llegué justo a tiempo.", en: "I ordered an Uber and arrived right on time." },
+          { es: "entré a una panadería y me pedí un tinto calientico.", en: "I stepped into a bakery and ordered a hot black coffee." },
+          { es: "le mandé un audio por WhatsApp para avisar.", en: "I sent a WhatsApp voice note to let them know." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "st-panaderia",
+    title: "🥐 Pedir y Cancelar en la Panadería",
+    sub: "Practice past-present-polite switches in everyday errands.",
+    parts: [
+      {
+        label: "1️⃣ Entering / Setting Scene",
+        options: [
+          { es: "Ahorita pasé por la panadería del barrio", en: "A bit ago I stopped by the neighborhood bakery" },
+          { es: "Hoy me provocó algo calientico para desayunar,", en: "Today I felt like something warm for breakfast," },
+          { es: "Fui a comprar dos pandebonos antes del trabajo", en: "I went to buy two pandebonos before work" }
+        ]
+      },
+      {
+        label: "2️⃣ Connector Bridge",
+        options: [
+          { es: "y cuando fui a pagar en el datáfono,", en: "and when I went to pay on the card terminal," },
+          { es: "pero no tenía sencillo en efectivo, así que", en: "but I didn't have small cash, so" },
+          { es: "y la señora muy amable me preguntó el pago; entonces", en: "and the kind lady asked about payment; then" }
+        ]
+      },
+      {
+        label: "3️⃣ Smooth Resolution",
+        options: [
+          { es: "dije 'con tarjeta y a una sola cuota, por favor'.", en: "I said 'by card in a single installment, please'." },
+          { es: "lo cancelé por Nequi en dos segundos y salí feliz.", en: "I paid it via Nequi in two seconds and left happy." },
+          { es: "me regaló una servilleta y salí caminando tranquilo.", en: "she handed me a napkin and I walked out relaxed." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "st-almuerzo",
+    title: "🍽️ Almuerzo Corrientazo",
+    sub: "Explain preferences, ask politely, and wrap up naturally.",
+    parts: [
+      {
+        label: "1️⃣ Arriving at Lunch",
+        options: [
+          { es: "Al mediodía entramos a un restaurante súper acogedor", en: "At noon we went into a super cozy restaurant" },
+          { es: "Ayer tenía mucha hambre después de caminar tanto,", en: "Yesterday I was really hungry after walking so much," },
+          { es: "Con mis amigos quisimos probar el menú del día", en: "With my friends we wanted to try today's set lunch" }
+        ]
+      },
+      {
+        label: "2️⃣ Connector Bridge",
+        options: [
+          { es: "y como me encanta el jugo natural,", en: "and since I love fresh fruit juice," },
+          { es: "entonces cuando me preguntaron por el principio,", en: "so when they asked about the side dish," },
+          { es: "pero no quería nada muy dulce, así que", en: "but I didn't want anything too sweet, so" }
+        ]
+      },
+      {
+        label: "3️⃣ Result / Wrap-Up",
+        options: [
+          { es: "pedí frijoles con tajadas y lulo en agua bajito de azúcar.", en: "I ordered beans with plantains and lulo in water light on sugar." },
+          { es: "todo estuvo delicioso y quedamos súper satisfechos.", en: "everything was delicious and we ended up super satisfied." },
+          { es: "vamos a volver mañana porque atienden buenísimo.", en: "we are going to come back tomorrow because service is awesome." }
+        ]
+      }
+    ]
   }
 ];
