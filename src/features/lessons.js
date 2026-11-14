@@ -6,7 +6,7 @@ import {
   SPEAKING_FRAMES, SENTENCE_LADDERS, SLOT_SWAP_MATRICES,
   TONGUE_TWISTERS, SPEAKING_GUIDE, REGIONAL_SWITCHER,
   PICTURE_MATCH_BANK, COLOMBIA_CHATS, GRAMMAR, VERB_VERSATILITY_ENGINE,
-  VC, FRASES, VISUAL_GUIDES, COLOMBIANISMOS,
+  VC, VERBS, FRASES, VISUAL_GUIDES, COLOMBIANISMOS, GRINGO_TRAPS, COLOMBIAN_STORIES,
 } from "../../data/index.js";
 import { appStorage } from "../state/storage.js";
 import { appState } from "../state/app-state.js";
@@ -622,16 +622,42 @@ export function renderLessons(){
         hits.push({kind:"Vocab",ico:"🗂️",title:cat.label,sub:matchItem?`${matchItem.word||matchItem.es} — ${matchItem.en}`:"Vocabulary flashcards",go:()=>{showPage("vocab");actions.sCat(cat.id);}});
       }
     });
+    Object.entries(VERBS||{}).forEach(([k,v])=>{
+      const conj=[...(v.present||[]),...(v.past||[])].map(r=>r.v).join(" ");
+      const fam=(v.family||[]).map(f=>`${f.f} ${f.e}`).join(" ");
+      const kf=foldFinder(k);
+      if(foldFinder(`${k} ${v.en} ${v.type} ${v.example?.es||""} ${v.example?.en||""} ${conj} ${fam}`).includes(q)){
+        const boost=kf===q?100:kf.startsWith(q)?50:0;
+        hits.push({_s:boost,kind:"Verb",ico:v.icon||"⚡",title:`${k} — ${v.en}`,sub:`${v.type} · ${v.example?.es||""}`,go:()=>{showPage("vocab");actions.openVerbByKey(k);}});
+      }
+    });
+    (PHRASE_DIALOGUES||[]).forEach(d=>{
+      const linesText=(d.versions||[]).flatMap(v=>v.lines||[]).map(l=>`${l.es} ${l.en}`).join(" ");
+      if(foldFinder(`${d.title} ${d.sub||""} ${linesText}`).includes(q)){
+        hits.push({_s:foldFinder(d.title).includes(q)?25:0,kind:"Dialogue",ico:d.icon||"🗣️",title:d.title,sub:d.sub||"Interactive roleplay dialogue",go:()=>{showPage("frases");actions.renderFraseDialogue(d);}});
+      }
+    });
+    (GRINGO_TRAPS||[]).forEach((g,gi)=>{
+      if(foldFinder(`${g.intent} ${g.trap} ${g.local} ${g.why||""}`).includes(q)){
+        hits.push({_s:foldFinder(g.trap).includes(q)||foldFinder(g.local).includes(q)?30:0,kind:"Trap Fix",ico:"🚧",title:g.local,sub:`Avoid: ${g.trap} · ${g.intent}`,go:()=>{showPage("frases");const card=document.querySelector(".gringo-trap-card");if(card){card.dispatchEvent(new CustomEvent("gt-jump",{detail:gi}));card.scrollIntoView({behavior:"smooth",block:"start"});}}});
+      }
+    });
+    (COLOMBIAN_STORIES||[]).forEach((st,si)=>{
+      const partsText=(st.parts||[]).flatMap(p=>p.options||[]).map(o=>`${o.es} ${o.en}`).join(" ");
+      if(foldFinder(`${st.title} ${st.sub||""} ${partsText}`).includes(q)){
+        hits.push({_s:foldFinder(st.title).includes(q)?20:0,kind:"Story",ico:"📖",title:st.title,sub:st.sub||"3-part Colombian story",go:()=>{showPage("frases");const tabs=document.querySelectorAll(".story-builder-card .story-tabs .reg-tab-btn");if(tabs[si])tabs[si].click();const card=document.querySelector(".story-builder-card");if(card)card.scrollIntoView({behavior:"smooth",block:"start"});}});
+      }
+    });
     (VISUAL_GUIDES||[]).forEach(vg=>{
       if(foldFinder(`${vg.title} ${vg.sub} ${vg.region||""} ${vg.es||""} ${vg.en||""}`).includes(q)){
         hits.push({kind:"Poster",ico:"🖼️",title:vg.title,sub:vg.sub||vg.en,go:()=>{showPage("gram");actions.showGramGroup("posters");}});
       }
     });
-    return hits.slice(0,8);
+    return hits.sort((a,b)=>(b._s||0)-(a._s||0)).slice(0,10);
   };
   const finderCard=document.createElement("section");finderCard.className="global-finder-card";finderCard.dataset.lessonView="today";
-  finderCard.innerHTML=`<div class="global-finder-head"><strong>🔎 Global Finder</strong><small>Search lessons, phrases, vocab &amp; posters</small></div>
-    <div class="global-finder-bar"><input type="search" class="global-finder-input" placeholder="Try: airport, Nequi, pharmacy, tinto, slang…" aria-label="Search across lessons, phrases, vocabulary, and guides"/></div>
+  finderCard.innerHTML=`<div class="global-finder-head"><strong>🔎 Global Finder</strong><small>Search lessons, verbs, dialogues, traps &amp; posters</small></div>
+    <div class="global-finder-bar"><input type="search" class="global-finder-input" placeholder="Try: airport, Nequi, poner, taxi, trap, slang…" aria-label="Search across lessons, verbs, dialogues, traps, vocabulary, and guides"/></div>
     <div class="global-finder-chips"></div>
     <div class="global-finder-results" aria-live="polite"></div>`;
   const fInput=finderCard.querySelector(".global-finder-input");

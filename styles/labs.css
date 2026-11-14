@@ -644,3 +644,13 @@
 :root[data-theme="light"] .global-finder-hit:hover{background:#e7f3ee;border-color:#0f766e;}
 :root[data-theme="light"] .gf-hit-badge{background:rgba(15,118,110,0.12);color:#0f766e;border-color:rgba(15,118,110,0.3);}
 :root[data-theme="light"] .qv102-missed-btn.active{background:rgba(190,18,60,0.12);border-color:#be123c;color:#9f1239;}
+
+/* ── v113.0: Desktop Quiz keyboard shortcut hints (hidden on mobile) ── */
+.quiz-kbd-hint{display:none;}
+@media (min-width: 760px){
+  .quiz-kbd-hint{display:inline-flex;align-items:center;gap:4px;font-size:0.68rem;font-weight:700;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:3px 9px;}
+  #page-quiz .quiz-opts .qopt[data-kbd],
+  #page-quiz .sprint-opts .qopt{position:relative;}
+  #page-quiz .quiz-opts .qopt[data-kbd]::before{content:attr(data-kbd);display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;margin-right:7px;border-radius:6px;border:1px solid var(--border-strong);background:var(--surface2);color:var(--muted);font-size:0.68rem;font-weight:900;vertical-align:middle;}
+  :root[data-theme="light"] .quiz-kbd-hint{background:#eef2ec;color:#334155;border-color:rgba(20,32,26,0.16);}
+}

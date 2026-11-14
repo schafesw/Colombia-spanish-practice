@@ -9,6 +9,7 @@ export const actions = {
   stopActiveSprint: () => {},
   setLeccionesFocusMode: () => {},
   hideVerbDetail: () => {},
+  openVerbByKey: () => {},
   showVocabHome: () => {},
   renderLessons: () => {},
   routineDockHide: () => {},

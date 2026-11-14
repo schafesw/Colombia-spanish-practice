@@ -250,7 +250,7 @@ let activeComodinIdx=0;
 export function rVerbos(list){
   const note=document.createElement("div");note.className="intro-note";
   note.innerHTML=`<div style="font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--purple);margin-bottom:6px;font-weight:800">🏃 Verbos & Wildcard Chunks — Tap any verb for full conjugation</div>
-    <div style="font-size:0.82rem;color:var(--muted);line-height:1.6">Master the 7 Colombian wildcard verbs ("verbos comodín") below, or tap any of the 25 verbs for full conjugations, word families, and imperatives.</div>`;
+    <div style="font-size:0.82rem;color:var(--muted);line-height:1.6">Master the 7 Colombian wildcard verbs ("verbos comodín") below, or tap any of the ${Object.keys(VERBS).length} verbs for full conjugations, word families, and imperatives.</div>`;
   list.appendChild(note);
   if(typeof VERBOS_COMODIN!=="undefined"&&VERBOS_COMODIN.length){
     const hub=document.createElement("section");hub.className="bridge-trainer-card comodin-hub-card";
@@ -460,9 +460,15 @@ export function showVerbDetail(key,verb){
   // Example sentence
   const ex=document.createElement("div");ex.style.cssText="background:rgba(167,139,250,0.07);border:1px solid rgba(167,139,250,0.18);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;";
   ex.innerHTML=`<div style="font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--purple);margin-bottom:7px;font-weight:800">💬 Ejemplo</div>
-    <div style="font-size:0.95rem;font-weight:800;color:#fff">${verb.example.es}</div>
+    <div style="font-size:0.95rem;font-weight:800;color:var(--text)">${verb.example.es}</div>
     <div style="font-size:0.78rem;color:var(--muted);font-style:italic;margin-top:4px">${verb.example.en} 🔊</div>`;
   ex.onclick=()=>speak(verb.example.es,0.75);vd.appendChild(ex);
+}
+export function openVerbByKey(key){
+  const v=VERBS[key];if(!v)return;
+  sCat("verbos");
+  markPractice("vocab",key);
+  showVerbDetail(key,v);
 }
 export function hideVerbDetail(){
   document.getElementById("vocab-list").style.display="";

@@ -432,6 +432,72 @@ button:active { transform: translateY(1px); }
   color: #14201a;
   border-color: rgba(20, 32, 26, 0.16);
 }
+:root[data-theme="light"] .df-cta-badge {
+  background: #0f766e;
+  color: #ffffff;
+}
+:root[data-theme="light"] .frase-jump,
+:root[data-theme="light"] .vocab-nav {
+  background: linear-gradient(to bottom, rgba(242, 245, 241, 0.98) 75%, rgba(242, 245, 241, 0));
+}
+:root[data-theme="light"] .vocab-nav-btn {
+  background: #ffffff;
+  color: #14201a;
+  border-color: rgba(20, 32, 26, 0.22);
+}
+:root[data-theme="light"] .speaking-guide-mistake {
+  color: #9f1239;
+}
+:root[data-theme="light"] .vc-word {
+  color: #14201a !important;
+}
+:root[data-theme="light"] .vc-ph,
+:root[data-theme="light"] .vc-icon,
+:root[data-theme="light"] .vd-infinitive {
+  color: #0f766e !important;
+}
+:root[data-theme="light"] .vd-imperfect-note {
+  background: rgba(109, 40, 217, 0.08);
+  border-color: rgba(109, 40, 217, 0.24);
+  color: #14201a;
+}
+:root[data-theme="light"] .street-seg-chip.active {
+  background: #9a4706;
+  border-color: #9a4706;
+  color: #ffffff;
+}
+:root[data-theme="light"] .visual-guide-tile {
+  background: #ffffff;
+  border-color: rgba(20, 32, 26, 0.16);
+  color: #14201a;
+}
+:root[data-theme="light"] .visual-guide-title,
+:root[data-theme="light"] .visual-guide-es {
+  color: #14201a;
+}
+:root[data-theme="light"] .visual-guide-cap,
+:root[data-theme="light"] .visual-guide-en {
+  color: #334155;
+}
+:root[data-theme="light"] .comodin-chunk-pill {
+  background: rgba(154, 71, 6, 0.12);
+  border-color: rgba(154, 71, 6, 0.30);
+  color: #92400e;
+}
+:root[data-theme="light"] .pro-hdr-title,
+:root[data-theme="light"] .pro-word {
+  color: #1d4ed8 !important;
+}
+:root[data-theme="light"] .ear-check-box {
+  background: #eef2ec;
+  border-color: rgba(20, 32, 26, 0.16);
+  color: #14201a;
+}
+:root[data-theme="light"] .ear-check-btn {
+  background: #ffffff;
+  border-color: rgba(20, 32, 26, 0.22);
+  color: #14201a;
+}
 
 /* Desktop left navigation rail (>=760px); bottom tab bar stays on phones (<760px) */
 @media (min-width: 760px) {

@@ -1,5 +1,5 @@
-/* Navigation network-first + stale-while-revalidate asset Service Worker for Español · Colombia PWA (v112.0) */
-const CACHE_NAME = "esco-pwa-v112.0";
+/* Navigation network-first + stale-while-revalidate asset Service Worker for Español · Colombia PWA (v113.0) */
+const CACHE_NAME = "esco-pwa-v113.0";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -120,10 +120,12 @@ const CORE_ASSETS = [
   "./assets/region-sanjuan.webp",
   "./assets/scene-aeropuerto.webp",
   "./assets/scene-bogota-noche.webp",
+  "./assets/scene-drogueria.webp",
   "./assets/scene-farmacia.webp",
   "./assets/scene-panaderia.webp",
   "./assets/scene-porteria.webp",
   "./assets/scene-restaurante.webp",
+  "./assets/scene-taxi.webp",
   "./assets/scene-terraza.webp",
   "./assets/scene-tienda.webp",
   "./assets/scene-uber.webp"
