@@ -1,6 +1,6 @@
 import {
   READINGS, CONVERSATION_MISSIONS, LESSON_CONTENT, SPEAKING_FRAMES,
-  SENTENCE_LADDERS, SPEAKING_GUIDE, REGIONAL_SWITCHER,
+  SENTENCE_LADDERS, SPEAKING_GUIDE, REGIONAL_SWITCHER, PICTURE_MATCH_BANK,
 } from "../../data/index.js";
 import { appStorage } from "../state/storage.js";
 import { appState } from "../state/app-state.js";
@@ -19,6 +19,10 @@ import { actions, showPage } from "./navigation.js";
 let lpSteps=[],lpStep=0,lpScore=0,lpQs=[],lpQi=0,lpAnswered=false,lpPracticed=new Set();
 let lpFullMode=false,lpLadderStep=1,lpRoleSim=true,lpRoleTurn=0;
 export function lessonDialogue(lesson){return PHRASE_DIALOGUES.find(x=>x.title===lesson.dialogue);}
+function lessonPictures(lesson){
+  if(typeof PICTURE_MATCH_BANK==="undefined"||!lesson)return[];
+  return PICTURE_MATCH_BANK.filter(p=>Array.isArray(p.lessons)&&p.lessons.includes(lesson.id));
+}
 function lessonResponsePair(lesson,c){
   const d=lessonDialogue(lesson);
   const lines=d&&d.versions&&d.versions[0]&&d.versions[0].lines||[];
@@ -113,6 +117,14 @@ function buildLessonQuiz(lesson,c){
     const L=lines[Math.floor(Math.random()*lines.length)];
     const opts=pad([L.en,...shuffle(lines.filter(x=>x.en!==L.en)).map(x=>x.en).slice(0,3)],globalEn,4);
     lpQs.push({label:"Listen and recognize",prompt:"🎧",answer:L.en,options:shuffle(opts),autoTts:L.tts,afterTts:L.tts,revEs:L.es,revEn:L.en});
+  }
+  const pics=lessonPictures(lesson);
+  if(pics.length&&typeof PICTURE_MATCH_BANK!=="undefined"&&PICTURE_MATCH_BANK.length>=4){
+    const target=shuffle(pics)[0];
+    const sameSet=shuffle(PICTURE_MATCH_BANK.filter(p=>p.id!==target.id&&p.word!==target.word&&p.set===target.set));
+    const otherSet=shuffle(PICTURE_MATCH_BANK.filter(p=>p.id!==target.id&&p.word!==target.word&&p.set!==target.set));
+    const opts=pad([target.word,...sameSet.concat(otherSet).slice(0,3).map(p=>p.word)],PICTURE_MATCH_BANK.map(p=>p.word),4);
+    lpQs.push({label:"Match the Colombian photo",prompt:"¿Qué es esto en Colombia?",img:target.img,answer:target.word,options:shuffle(opts),afterTts:target.tts,revEs:target.word,revEn:target.en});
   }
 }
 export function lpSpeakBtn(text,label){const b=document.createElement("button");b.type="button";b.className="lp-speak";b.textContent=label||"🔊 Escuchar";b.onclick=()=>speak(text,0.75);return b;}
@@ -331,6 +343,20 @@ export function renderLessonStep(){
       grid.appendChild(wc);
     });
     body.appendChild(grid);
+    const pics=lessonPictures(appState.lpLesson);
+    if(pics.length){
+      const vis=lpEl("lp-visual-section");
+      vis.appendChild(lpEl("lp-visual-head",`📸 Colombian visuals for this lesson (${pics.length}) — tap to hear & say`));
+      const vGrid=lpEl("lp-visual-grid");
+      pics.slice(0,6).forEach(pm=>{
+        const vc=lpEl("lp-visual-card",`<img src="${pm.img}" alt="${escapeVocabHtml(pm.en)}" loading="lazy"/><div class="lp-visual-cap"><strong>${escapeVocabHtml(pm.word)}</strong><small>${escapeVocabHtml(pm.en)}</small></div>`);
+        vc.onclick=()=>{markPractice("vocab",pm.tts);speak(pm.tts,0.78);};
+        attachMic(vc,pm.tts,"vocab");
+        vGrid.appendChild(vc);
+      });
+      vis.appendChild(vGrid);
+      body.appendChild(vis);
+    }
     navBtn("‹ Back",prev);navBtn("Next →",next,true);
   }
   else if(step==="frases"){
@@ -504,6 +530,11 @@ export function renderLessonStep(){
     const q=lpQs[lpQi];
     title.textContent="🧪 Mini-quiz "+(lpQi+1)+" of "+lpQs.length+" — "+q.label;
     body.appendChild(lpEl("lp-quiz-prompt",q.prompt));
+    if(q.img){
+      const pWrap=lpEl("lp-quiz-photo-wrap");
+      pWrap.innerHTML=`<img class="lp-quiz-photo" src="${q.img}" alt="${escapeVocabHtml(q.revEn||"Colombian photo")}"/>`;
+      body.appendChild(pWrap);
+    }
     if(q.autoTts)speak(q.autoTts,0.7);
     const fb=lpEl("lp-quiz-fb","");fb.classList.add("feedback-tray");
     const grid=lpEl("lp-grid lp-quiz-grid");

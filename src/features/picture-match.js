@@ -41,6 +41,8 @@ export function renderPictureMatchDeck(host){
   const isPicChoice=pmDirection!=="pic2word";
   const cFood=PICTURE_MATCH_BANK.filter(x=>x.set==="food").length;
   const cCity=PICTURE_MATCH_BANK.filter(x=>x.set==="city").length;
+  const cHome=PICTURE_MATCH_BANK.filter(x=>x.set==="home").length;
+  const cHealth=PICTURE_MATCH_BANK.filter(x=>x.set==="health").length;
   const cGear=PICTURE_MATCH_BANK.filter(x=>x.set==="gear").length;
   const box=document.createElement("div");box.className="pm-deck";
   box.innerHTML=`<div class="pm-controls">
@@ -56,7 +58,7 @@ export function renderPictureMatchDeck(host){
   <div class="pm-feedback" aria-live="polite"></div>
   <div class="bridge-actions pm-actions"></div>`;
   const sRow=box.querySelector(".pm-set-row");
-  [["all",`All (${PICTURE_MATCH_BANK.length})`],["food",`☕ Food (${cFood})`],["city",`🚕 City (${cCity})`],["gear",`🎒 Gear (${cGear})`]].forEach(([sid,lbl])=>{
+  [["all",`All (${PICTURE_MATCH_BANK.length})`],["food",`☕ Food (${cFood})`],["city",`🚕 City (${cCity})`],["home",`🏠 Home (${cHome})`],["health",`💊 Health (${cHealth})`],["gear",`🎒 Gear (${cGear})`]].forEach(([sid,lbl])=>{
     const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(pmSetFilter===sid?" active":"");
     b.textContent=lbl;b.onclick=()=>{pmSetFilter=sid;pmTargetIdx=0;pmPickedId=null;pmPoolOrder=null;renderPictureMatchDeck(host);};
     sRow.appendChild(b);

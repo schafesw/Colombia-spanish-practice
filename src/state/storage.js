@@ -16,17 +16,35 @@ export const nativeStorage=window.localStorage;
 export const PROFILE_LIST_KEY="esco-profiles-v1";
 export const ACTIVE_PROFILE_KEY="esco-active-profile-v1";
 export const PROFILE_MIGRATION_KEY="esco-profile-migrated-v1";
-export const DEFAULT_PROFILES=[{id:"seth",label:"Seth",emoji:"🧑‍🎓"},{id:"guest",label:"Guest",emoji:"👤"}];
+const SETH_PROFILE={id:"seth",label:"Seth",emoji:"🧑‍🎓"};
+const GUEST_PROFILE={id:"guest",label:"Guest",emoji:"👤"};
+export const DEFAULT_PROFILES=[SETH_PROFILE,GUEST_PROFILE];
 export const REMOVED_PROFILE_IDS=new Set(["brad"]);
-export let profileList=DEFAULT_PROFILES.slice();
-export let activeProfileId="seth";
+function hasExistingSethData(){
+  try{
+    for(let i=0;i<nativeStorage.length;i++){
+      const k=nativeStorage.key(i);
+      if(!k)continue;
+      if(k.startsWith("esco-profile-seth-"))return true;
+      if(k.startsWith("esco-")&&!k.startsWith("esco-profile-")&&![PROFILE_LIST_KEY,ACTIVE_PROFILE_KEY,PROFILE_MIGRATION_KEY].includes(k))return true;
+    }
+  }catch(e){}
+  return false;
+}
+const savedActiveBeforeInit=(()=>{try{return nativeStorage.getItem(ACTIVE_PROFILE_KEY);}catch(e){return null;}})();
+const sethDeviceDetected=hasExistingSethData()||savedActiveBeforeInit==="seth";
+const baseDefaultProfiles=sethDeviceDetected?[SETH_PROFILE,GUEST_PROFILE]:[GUEST_PROFILE];
+export let profileList=baseDefaultProfiles.slice();
+export let activeProfileId=sethDeviceDetected?"seth":"guest";
 try{
   const savedProfiles=JSON.parse(nativeStorage.getItem(PROFILE_LIST_KEY)||"null");
   if(Array.isArray(savedProfiles)&&savedProfiles.length){
+    const hasCustomSeth=savedProfiles.some(p=>p&&p.id==="seth");
+    const effectiveBase=(sethDeviceDetected||hasCustomSeth)?[SETH_PROFILE,GUEST_PROFILE]:[GUEST_PROFILE];
     const savedById=new Map(savedProfiles.filter(p=>p&&p.id).map(p=>[p.id,p]));
-    profileList=DEFAULT_PROFILES.map(p=>savedById.get(p.id)||p).concat(savedProfiles.filter(p=>p&&p.id&&!REMOVED_PROFILE_IDS.has(p.id)&&!DEFAULT_PROFILES.some(d=>d.id===p.id)));
+    profileList=effectiveBase.map(p=>savedById.get(p.id)||p).concat(savedProfiles.filter(p=>p&&p.id&&!REMOVED_PROFILE_IDS.has(p.id)&&!effectiveBase.some(d=>d.id===p.id)));
   }
-  const savedActive=nativeStorage.getItem(ACTIVE_PROFILE_KEY);
+  const savedActive=savedActiveBeforeInit;
   if(profileList.some(p=>p.id===savedActive))activeProfileId=savedActive;
 }catch(e){}
 try{
@@ -34,7 +52,7 @@ try{
     const key=nativeStorage.key(i);
     if(key&&key.startsWith("esco-profile-brad-"))nativeStorage.removeItem(key);
   }
-  if(activeProfileId==="brad")activeProfileId="seth";
+  if(activeProfileId==="brad")activeProfileId=(profileList[0]&&profileList[0].id)||"guest";
 }catch(e){}
 /* Preserve the existing single-profile app the first time profiles are used. */
 try{
@@ -73,6 +91,19 @@ export function buildProfileBar(){
   profileList.forEach(p=>{const o=document.createElement("option");o.value=p.id;o.textContent=(p.emoji||"👤")+" "+p.label;select.appendChild(o);});
   select.value=activeProfileId;
   select.onchange=()=>{activeProfileId=select.value;nativeStorage.setItem(ACTIVE_PROFILE_KEY,activeProfileId);location.reload();};
+  const addBtn=document.createElement("button");addBtn.type="button";addBtn.className="profile-reset";addBtn.textContent="+ New";addBtn.title="Create a separate local profile on this device";
+  addBtn.onclick=()=>{
+    const raw=prompt("New local profile name (saved on this device only):","");
+    const label=(raw||"").trim().slice(0,24);
+    if(!label)return;
+    const baseId=label.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"learner";
+    let newId=baseId;let n=2;
+    while(profileList.some(p=>p.id===newId)||REMOVED_PROFILE_IDS.has(newId)){newId=`${baseId}-${n++}`;}
+    const next=[...profileList,{id:newId,label,emoji:"🙂"}];
+    nativeStorage.setItem(PROFILE_LIST_KEY,JSON.stringify(next));
+    nativeStorage.setItem(ACTIVE_PROFILE_KEY,newId);
+    location.reload();
+  };
   const reset=document.createElement("button");reset.type="button";reset.className="profile-reset";reset.textContent=`Reset ${currentProfile.label}`;reset.title=`Clear ${currentProfile.label} progress only`;
   reset.onclick=()=>{
     if(!confirm(`Clear the ${currentProfile.label} profile's saved progress? Other profiles will not change.`))return;
@@ -81,9 +112,9 @@ export function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v107.2 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v108.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>audioTestHook("Hola, buenos días Colombia",0.82);const themeBtn=document.createElement("button");themeBtn.type="button";themeBtn.id="theme-toggle-btn";themeBtn.className="profile-reset";themeBtn.textContent=(appStorage.getItem("esco-theme-v101")==="light"?"🌙 Dark":"☀️ Sun");themeBtn.title="Switch dark / sunlight theme";themeBtn.onclick=()=>themeToggleHook();
-  bar.append(label,select,reset,ver,themeBtn);utilityBody.appendChild(bar);attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
+  bar.append(label,select,addBtn,reset,ver,themeBtn);utilityBody.appendChild(bar);attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
 export const appStorage = profileStorage;
 
@@ -104,7 +135,7 @@ export function attachProfileBackupControls(utilityBody){
         const k=nativeStorage.key(i);
         if(k&&k.startsWith(prefix))data[k.slice(prefix.length)]=nativeStorage.getItem(k);
       }
-      const payload=JSON.stringify({app:"espanol-colombia",version:"v107.2",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
+      const payload=JSON.stringify({app:"espanol-colombia",version:"v108.0",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
       const blob=new Blob([payload],{type:"application/json"});
       const url=URL.createObjectURL(blob);
       const a=document.createElement("a");
