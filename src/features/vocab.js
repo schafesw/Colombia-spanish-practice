@@ -9,7 +9,7 @@ import { escapeVocabHtml, lpEl } from "../core/text-utils.js";
 import { markPractice, practiced, practicedCount, vocabKeys, refreshVocabProgress, setVocabRefreshHook, attachStarBtn } from "../core/stores.js";
 import { attachMic } from "../core/speech-mic.js";
 import { LESSONS } from "./lessons-meta.js";
-import { actions, showPage, ensurePageInitialized } from "./navigation.js";
+import { actions, showPage } from "./navigation.js";
 
 export const VOCAB_CATS=VC.filter(cat=>cat.id!=="vocales");
 const VOCAB_LAST_KEY="esco-vocab-last-v1";

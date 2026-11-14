@@ -1,4 +1,4 @@
-/** Application entrypoint for Español · Colombia (v107.0 ES Module build). */
+/** Application entrypoint for Español · Colombia (v107.1 ES Module build). */
 import { speakSyl } from "../data/index.js";
 import { appState } from "./state/app-state.js";
 import { registerStorageUiHooks, buildProfileBar, attachProfileBackupControls } from "./state/storage.js";
@@ -10,19 +10,20 @@ import { actions, registerPageInit, ensurePageInitialized, showPage, initTabSwip
 import { initPhonetics, showPhonetic, sel, renderTongueTwisters, getDailyTwisterSelection } from "./features/phonetics.js";
 import { initVocab, showVocabHome, hideVerbDetail, sCat, vocabCount, renderVocabHome } from "./features/vocab.js";
 import { initPhrases, renderFraseMenu, renderFraseSection, renderFraseDialogue, returnFromFraseDialogue } from "./features/phrases.js";
-import { initGuides, buildGram, buildSpeakingGuide, showGram, showGramGroup, mountColombiaChatsLab } from "./features/guides.js";
+import { initGuides, buildGram, buildSpeakingGuide, showGram, showGramGroup } from "./features/guides.js";
+import { mountColombiaChatsLab } from "./features/colombia-chats.js";
 import {
-  initLessons, renderLessons, openLesson, setLeccionesFocusMode,
+  initLessons, renderLessons,
   routineToday, routineDockHide, routineBack, routineFinishWarmup, routineFinishTwisters,
-  syncMissedQueueLauncher,
+  routineFinishMission, syncMissedQueueLauncher,
 } from "./features/lessons.js";
+import { openLesson, setLeccionesFocusMode } from "./features/lesson-player.js";
+import { rrStop } from "./features/rapida.js";
+import { renderReading } from "./features/speaking-labs.js";
 import { openDailyFlowSession } from "./features/daily-flow.js";
-import {
-  initQuiz, nQ, quizHear, toggleQuizBlindEar, syncQuizControls, resetQuizRound,
-  openMissedQueue, openReviewSession, openQuizV102Tab, stopActiveSprint, resumeQuizListeningAudio,
-  mountPictureMatchEntry, openVocabPictureMatch, pmSrsRank, pmChoicesFor,
-  mountNaturalEarLab, mountGringoTrapLab,
-} from "./features/quiz.js";
+import { initQuiz, nQ, quizHear, toggleQuizBlindEar, syncQuizControls, resetQuizRound, openMissedQueue, openReviewSession, resumeQuizListeningAudio } from "./features/quiz.js";
+import { mountPictureMatchEntry, openVocabPictureMatch, pmSrsRank, pmChoicesFor } from "./features/picture-match.js";
+import { openQuizV102Tab, stopActiveSprint, mountNaturalEarLab, mountGringoTrapLab } from "./features/quiz-labs.js";
 
 // Wire storage UI hooks without circular module imports
 registerStorageUiHooks({
@@ -72,6 +73,9 @@ Object.assign(actions, {
   resetQuizRound,
   openLesson,
   routineToday,
+  routineFinishMission,
+  renderReading,
+  rrStop,
 });
 
 // Register lazy page initializers (render inactive tabs on first visit)
@@ -102,6 +106,38 @@ Object.assign(window, {
   micStop,
 });
 
+function showPwaUpdateBanner() {
+  if (document.getElementById("pwa-update-toast")) return;
+  const toast = document.createElement("div");
+  toast.id = "pwa-update-toast";
+  toast.className = "pwa-update-toast";
+  toast.setAttribute("role", "status");
+  toast.setAttribute("aria-live", "polite");
+  toast.innerHTML = `<span class="pwa-update-copy">🆕 App updated to v107.1</span><button type="button" class="pwa-update-btn">Refresh</button><button type="button" class="pwa-update-dismiss" aria-label="Dismiss update notification">✕</button>`;
+  toast.querySelector(".pwa-update-btn").onclick = () => location.reload();
+  toast.querySelector(".pwa-update-dismiss").onclick = () => toast.remove();
+  document.body.appendChild(toast);
+}
+
+function initPwaUpdater() {
+  if (!("serviceWorker" in navigator) || !/^https?:$/i.test(location.protocol)) return;
+  window.addEventListener("load", () => {
+    const hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.register("sw.js?v=107.1").then(reg => {
+      if (!reg) return;
+      reg.addEventListener("updatefound", () => {
+        const nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener("statechange", () => {
+          if (nw.state === "activated" && hadController) {
+            showPwaUpdateBanner();
+          }
+        });
+      });
+    }).catch(() => {});
+  });
+}
+
 // Deterministic startup bootstrap
 initTheme();
 buildProfileBar(attachProfileBackupControls);
@@ -109,3 +145,4 @@ initVoiceEngine();
 ensurePageInitialized("lecciones");
 initTabSwipe();
 runDataValidator();
+initPwaUpdater();
