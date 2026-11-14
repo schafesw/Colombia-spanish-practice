@@ -388,6 +388,52 @@ def run_smoke():
             page_iphone.goto(base_url, wait_until="domcontentloaded")
             page_iphone.wait_for_selector(".top-utility-summary")
             assert_quiz_no_scroll(page_iphone, "iPhone 390x844")
+            # Verify Sun Mode (light theme) has zero blank/low-contrast text tiles across all 6 tabs
+            page_iphone.click(".profile-utility-drawer summary")
+            page_iphone.click("#theme-toggle-btn")
+            assert page_iphone.evaluate("document.documentElement.getAttribute('data-theme')") == "light"
+            for tab_id in ("fonetica", "lecciones", "vocab", "frases", "gram", "quiz"):
+                page_iphone.click(f"#tb-{tab_id}")
+                page_iphone.wait_for_timeout(180)
+                if tab_id == "quiz":
+                    page_iphone.locator("#page-quiz .qopt").first.click()
+                    page_iphone.wait_for_timeout(50)
+                low_contrast = page_iphone.evaluate(
+                    """() => {
+                        const parse = s => { const m = s && s.match(/rgba?\\((\\d+),\\s*(\\d+),\\s*(\\d+)(?:,\\s*([\\d.]+))?\\)/); return m ? [+m[1],+m[2],+m[3],m[4]===undefined?1:+m[4]] : null; };
+                        const comp = (fg, bg) => [fg[0]*fg[3]+bg[0]*(1-fg[3]), fg[1]*fg[3]+bg[1]*(1-fg[3]), fg[2]*fg[3]+bg[2]*(1-fg[3]), 1];
+                        const lum = ([r,g,b]) => { const t = [r,g,b].map(v => (v/=255) <= .03928 ? v/12.92 : ((v+.055)/1.055)**2.4); return .2126*t[0]+.7152*t[1]+.0722*t[2]; };
+                        const effBg = el => {
+                            const ls = []; let cur = el;
+                            while (cur && cur.nodeType === 1) { const c = parse(getComputedStyle(cur).backgroundColor); if (c && c[3] > 0) ls.push(c); cur = cur.parentElement; }
+                            let out = parse(getComputedStyle(document.body).backgroundColor) || [242,245,241,1];
+                            for (let i = ls.length - 1; i >= 0; i--) out = comp(ls[i], out);
+                            return out;
+                        };
+                        const bad = [];
+                        const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+                        let n;
+                        while ((n = w.nextNode())) {
+                            const txt = (n.textContent || '').trim();
+                            if (!txt || (!/[A-Za-z0-9]/.test(txt) && /^[\\p{Emoji}\\s]+$/u.test(txt))) continue;
+                            const el = n.parentElement;
+                            if (!el || el.closest('[hidden]')) continue;
+                            const pg = el.closest('.page');
+                            if (pg && !pg.classList.contains('active')) continue;
+                            const st = getComputedStyle(el);
+                            if (st.display === 'none' || st.visibility === 'hidden' || +st.opacity < .05) continue;
+                            const r = el.getBoundingClientRect();
+                            if (!r.width || !r.height) continue;
+                            const fg = parse(st.color); if (!fg) continue;
+                            const bg = effBg(el);
+                            const ef = fg[3] < 1 ? comp(fg, bg) : fg;
+                            const cr = (Math.max(lum(ef), lum(bg)) + .05) / (Math.min(lum(ef), lum(bg)) + .05);
+                            if (cr < 3.2) bad.push({cr: +cr.toFixed(2), sel: el.className || el.tagName, txt: txt.slice(0,24)});
+                        }
+                        return bad;
+                    }"""
+                )
+                assert not low_contrast, f"Sun Mode low-contrast tiles on tab {tab_id}: {low_contrast}"
             ctx_iphone.close()
 
             # 3. Portal sync smoke checks (runs when sync.js is present, e.g. local & GitLab CI)
