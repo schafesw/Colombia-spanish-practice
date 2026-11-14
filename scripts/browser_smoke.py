@@ -16,6 +16,18 @@ class QuietHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(ROOT), **kwargs)
 
+    def do_GET(self):
+        path_only = self.path.split("?", 1)[0]
+        override = getattr(self.server, "override_index_html", None)
+        if override is not None and path_only in ("/", "/index.html"):
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(override)))
+            self.end_headers()
+            self.wfile.write(override)
+            return
+        super().do_GET()
+
     def end_headers(self):
         self.send_header("Cache-Control", "no-store")
         super().end_headers()
@@ -28,6 +40,7 @@ class ReusableTCPServer(http.server.ThreadingHTTPServer):
     allow_reuse_address = True
     daemon_threads = True
     request_queue_size = 128
+    override_index_html = None
 
 
 def wait_images_decoded(page, selector):
@@ -134,6 +147,32 @@ def assert_quiz_no_scroll(page, label):
     assert res["pmOver"] <= 0, f"{label} Picture Match overflows viewport: {res}"
     assert res["spOver"] <= 0, f"{label} 60s Sprint overflows viewport: {res}"
 
+    # Verify answering reveals an unobstructed Next button above/separate from the feedback tray
+    page.evaluate("() => { nQ(); }")
+    page.wait_for_selector("#page-quiz.active .qopt")
+    page.locator("#page-quiz .qopt").first.click()
+    page.wait_for_selector("#quiz-next", state="visible")
+    btn_check = page.evaluate(
+        """() => {
+            const next = document.getElementById('quiz-next');
+            const fb = document.getElementById('quiz-fb');
+            const nr = next.getBoundingClientRect();
+            const fr = fb.getBoundingClientRect();
+            const hit = document.elementFromPoint(nr.left + nr.width / 2, nr.top + nr.height / 2);
+            return {
+                nextTop: Math.round(nr.top),
+                nextBottom: Math.round(nr.bottom),
+                fbTop: Math.round(fr.top),
+                fbBottom: Math.round(fr.bottom),
+                isNextOnTop: hit === next || next.contains(hit),
+            };
+        }"""
+    )
+    assert btn_check["isNextOnTop"] and btn_check["nextTop"] >= btn_check["fbBottom"], (
+        f"{label} quiz Next button is covered by feedback tray: {btn_check}"
+    )
+    page.click("#quiz-next")
+
 
 def run_smoke():
     import re as _re
@@ -155,6 +194,7 @@ def run_smoke():
         .replace('<div id="splash" hidden', '<div id="splash"')
         .replace(f'<script type="module" src="src/main.js?v={ver}"></script>', f'<script src="sync.js?v={ver}"></script>')
     )
+    httpd.override_index_html = static_html.encode("utf-8")
 
     console_errors = []
     page_errors = []
@@ -353,7 +393,8 @@ def run_smoke():
             # 3. Portal sync smoke checks (runs when sync.js is present, e.g. local & GitLab CI)
             if (ROOT / "sync.js").exists():
                 import json as _json
-                ctx_sync = browser.new_context(viewport={"width": 1280, "height": 800})
+                httpd.override_index_html = sync_html.encode("utf-8")
+                ctx_sync = browser.new_context(viewport={"width": 1280, "height": 800}, service_workers="block")
                 ctx_sync.add_init_script("localStorage.setItem('esco-profile-seth-esco-streak-v1', '7');")
                 page_sync = ctx_sync.new_page()
                 attach_listeners(page_sync, use_static_html=False)
@@ -402,7 +443,7 @@ def run_smoke():
                 ctx_sync.close()
 
                 # Fail-closed 401 test
-                ctx_401 = browser.new_context(viewport={"width": 430, "height": 932})
+                ctx_401 = browser.new_context(viewport={"width": 430, "height": 932}, service_workers="block")
                 page_401 = ctx_401.new_page()
                 page_401.route("https://fonts.**", lambda r: r.abort())
                 page_401.route("**/*", lambda r: r.fulfill(status=200, content_type="text/html; charset=utf-8", body=sync_html) if (r.request.url.endswith("/index.html") or r.request.url.endswith("/")) else (r.fulfill(status=401, content_type="application/json", body='{"detail":"unauthenticated"}') if r.request.url.endswith("/api/me") else r.continue_()))

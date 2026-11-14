@@ -259,8 +259,19 @@ html[data-theme="light"] #topbar { background: rgba(242, 245, 241, 0.92); }
   .tab-item:hover .ti { transform: scale(1.18) rotate(-3deg); }
   .tab-item.active { background: var(--card-2); }
   .tab-item.active::before { transform: scaleY(1); }
-  #page-lecciones.lesson-focus-mode .feedback-tray.visible,
-  #page-quiz .feedback-tray.visible { left: 112px; right: 28px; bottom: 20px; }
+  #page-quiz .quiz-next {
+    left: 112px;
+    right: 28px;
+    bottom: 16px;
+    margin-bottom: 0;
+    z-index: 1003;
+  }
+  #page-quiz .feedback-tray.visible { left: 112px; right: 28px; bottom: 68px; }
+  #page-lecciones.lesson-focus-mode .feedback-tray.visible {
+    left: 112px;
+    right: 28px;
+    bottom: calc(var(--safe-bottom) + 84px);
+  }
   body.lesson-focus-active #page-lecciones.lesson-focus-mode .feedback-tray.visible { left: 28px; }
 }
 
