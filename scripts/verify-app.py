@@ -188,6 +188,34 @@ def check_profile_storage_isolation():
     return errors
 
 
+def check_version_parity():
+    errors = []
+    sw_txt = (ROOT / "sw.js").read_text(encoding="utf-8")
+    m = re.search(r'CACHE_NAME\s*=\s*"esco-pwa-(v\d+(?:\.\d+)*)"', sw_txt)
+    if not m:
+        return ['sw.js: could not parse CACHE_NAME ("esco-pwa-v...")']
+    ver = m.group(1)
+    ver_num = ver.lstrip("v")
+
+    idx_txt = (ROOT / "index.html").read_text(encoding="utf-8")
+    for asset in ("manifest.json", "styles/base.css", "styles/polish.css", "styles/labs.css", "src/main.js"):
+        needle = f"{asset}?v={ver_num}"
+        if needle not in idx_txt:
+            errors.append(f"index.html: missing versioned reference `{needle}` (expected {ver})")
+
+    main_txt = (ROOT / "src" / "main.js").read_text(encoding="utf-8")
+    for needle in (f"App updated to {ver}", f"sw.js?v={ver_num}"):
+        if needle not in main_txt:
+            errors.append(f"src/main.js: missing `{needle}` (expected {ver})")
+
+    storage_txt = (ROOT / "src" / "state" / "storage.js").read_text(encoding="utf-8")
+    for needle in (f'"{ver} 🔊"', f'version:"{ver}"'):
+        if needle not in storage_txt:
+            errors.append(f"src/state/storage.js: missing `{needle}` (expected {ver})")
+
+    return errors
+
+
 def check_github_hygiene():
     if os.environ.get("CI") == "true" and (ROOT / "AGENTS.md").exists():
         return ["AGENTS.md must not exist in GitHub repository!"]
@@ -203,6 +231,7 @@ def main():
     errs.extend(sw_errs)
     errs.extend(check_audio_freeze())
     errs.extend(check_profile_storage_isolation())
+    errs.extend(check_version_parity())
     errs.extend(check_github_hygiene())
     if errs:
         print("VERIFICATION FAILED:")
