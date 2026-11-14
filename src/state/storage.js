@@ -31,13 +31,13 @@ function hasExistingSethData(){
   }catch(e){}
   return false;
 }
-export const APP_VERSION = "v111.0";
+export const APP_VERSION = "v111.1";
 const SYNC_EXCLUDED_KEYS = new Set(["esco-selected-voice-v45", "esco-selected-voice-v1", "esco-selected-voice-v3"]);
 const savedActiveBeforeInit=(()=>{try{return nativeStorage.getItem(ACTIVE_PROFILE_KEY);}catch(e){return null;}})();
 const portalPrincipal = (typeof window !== "undefined" && window.__ESCO_ME && window.__ESCO_ME.principal_id) ? window.__ESCO_ME : null;
 const sethDeviceDetected=!portalPrincipal && (hasExistingSethData()||savedActiveBeforeInit==="seth");
 const baseDefaultProfiles=portalPrincipal
-  ? [{id:`principal-${portalPrincipal.principal_id}`,label:(portalPrincipal.display_name||portalPrincipal.username||"Mi cuenta"),emoji:"👤"}]
+  ? [{id:`principal-${portalPrincipal.principal_id}`,label:(portalPrincipal.display_name||portalPrincipal.username||"My account"),emoji:"👤"}]
   : (sethDeviceDetected?[SETH_PROFILE,GUEST_PROFILE]:[GUEST_PROFILE]);
 export let profileList=baseDefaultProfiles.slice();
 export let activeProfileId=portalPrincipal?`principal-${portalPrincipal.principal_id}`:(sethDeviceDetected?"seth":"guest");
@@ -216,7 +216,7 @@ export function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v111.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v111.1 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>audioTestHook("Hola, buenos días Colombia",0.82);const themeBtn=document.createElement("button");themeBtn.type="button";themeBtn.id="theme-toggle-btn";themeBtn.className="profile-reset";themeBtn.textContent=(appStorage.getItem("esco-theme-v101")==="light"?"🌙 Dark":"☀️ Sun");themeBtn.title="Switch dark / sunlight theme";themeBtn.onclick=()=>themeToggleHook();
   bar.append(label,select,addBtn,reset,ver,themeBtn);utilityBody.appendChild(bar);attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -239,7 +239,7 @@ export function attachProfileBackupControls(utilityBody){
         const k=nativeStorage.key(i);
         if(k&&k.startsWith(prefix))data[k.slice(prefix.length)]=nativeStorage.getItem(k);
       }
-      const payload=JSON.stringify({app:"espanol-colombia",version:"v111.0",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
+      const payload=JSON.stringify({app:"espanol-colombia",version:"v111.1",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
       const blob=new Blob([payload],{type:"application/json"});
       const url=URL.createObjectURL(blob);
       const a=document.createElement("a");

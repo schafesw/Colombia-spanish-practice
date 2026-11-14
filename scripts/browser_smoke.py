@@ -42,13 +42,97 @@ def wait_images_decoded(page, selector):
 
 
 def launch_browser(p):
-    # GitHub Actions Linux runners install bundled Chromium; Windows local can reuse Edge.
-    if os.environ.get("CI") == "true" or sys.platform != "win32":
-        return p.chromium.launch(headless=True)
+    # GitHub/GitLab CI Linux Docker runners run as root without a user namespace.
+    if os.environ.get("CI") == "true" or os.environ.get("GITLAB_CI") == "true" or sys.platform != "win32":
+        return p.chromium.launch(headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
     try:
         return p.chromium.launch(channel="msedge", headless=True)
     except Exception:
         return p.chromium.launch(headless=True)
+
+
+def assert_quiz_no_scroll(page, label):
+    """Verify every quiz question + all options fit in 1 viewport without scrolling."""
+    page.evaluate(
+        """() => {
+            if (window.speechSynthesis) window.speechSynthesis.speak = () => {};
+            showPage('quiz');
+        }"""
+    )
+    page.wait_for_selector("#page-quiz.active .qopt")
+    res = page.evaluate(
+        """async () => {
+            const { applyQuizFitClasses } = await import('./src/core/text-utils.js');
+            const scroll = document.querySelector('.scroll');
+            if (scroll) scroll.scrollTop = 0;
+            window.scrollTo(0, 0);
+            const topbar = document.getElementById('topbar')?.getBoundingClientRect();
+            const tabbar = document.querySelector('.tab-bar')?.getBoundingClientRect();
+            const usableTop = topbar ? topbar.bottom : 0;
+            const usableBot = (tabbar && tabbar.height < 120) ? tabbar.top : window.innerHeight;
+            const usableH = usableBot - usableTop;
+            const card = document.querySelector('#page-quiz .quiz-card');
+            const word = document.getElementById('qc-word');
+            const opts = document.getElementById('quiz-opts');
+            const initBot = opts.getBoundingClientRect().bottom;
+            const initNeedScroll = Math.round(initBot - usableBot);
+
+            const qmodes = [...document.querySelectorAll('.qmode')].filter(b => !b.textContent.includes('Dictation'));
+            let maxPairH = 0, worstOverflow = 0, worstInfo = null;
+            for (const btn of qmodes) {
+                btn.click();
+                for (let i = 0; i < 35; i++) {
+                    nQ();
+                    const cr = card.getBoundingClientRect();
+                    const or = opts.getBoundingClientRect();
+                    const pairH = Math.round(or.bottom - cr.top);
+                    if (pairH > maxPairH) maxPairH = pairH;
+                    const over = Math.round(or.bottom - usableBot);
+                    if (over > worstOverflow) {
+                        worstOverflow = over;
+                        worstInfo = {mode: btn.textContent.trim(), over, pairH, qLen: word.textContent.length, oLens: [...opts.querySelectorAll('.qopt')].map(o=>o.textContent.length)};
+                    }
+                }
+            }
+            // Deterministic worst-case test using the longest prompt + longest choices from the bank
+            const qb = await import('./src/core/quiz-bank.js');
+            const allItems = [...(qb.aQ || []), ...(qb.CONVERSATION_QUIZ || []), ...(qb.FILL_BLANK_QUIZ || [])];
+            const longPrompts = allItems.map(x => String(x.quizPrompt || x.es || '')).sort((a,b) => b.length - a.length).slice(0, 3);
+            const longChoices = allItems.map(x => String(x.en || x.answer || x.es || '')).sort((a,b) => b.length - a.length).slice(0, 4);
+            word.textContent = longPrompts[0];
+            opts.innerHTML = '';
+            longChoices.forEach(c => { const b = document.createElement('button'); b.className = 'qopt'; b.textContent = c; opts.appendChild(b); });
+            applyQuizFitClasses(word, opts, word.textContent, longChoices);
+            const synthOr = opts.getBoundingClientRect();
+            const synthCr = card.getBoundingClientRect();
+            const synthOver = Math.round(synthOr.bottom - usableBot);
+            const synthPairH = Math.round(synthOr.bottom - synthCr.top);
+
+            // Picture Match & 60s Sprint single-screen fit
+            const pmBtn = [...document.querySelectorAll('#quiz-v102-hub .mf-chip')].find(x => x.textContent.includes('Picture'));
+            pmBtn?.click();
+            const pmBot = document.querySelector('.pm-grid')?.getBoundingClientRect()?.bottom || 0;
+            const spBtn = [...document.querySelectorAll('#quiz-v102-hub .mf-chip')].find(x => x.textContent.includes('Sprint'));
+            spBtn?.click();
+            document.querySelector('.sprint-start-btn')?.click();
+            const spBot = document.querySelector('.sprint-opts')?.getBoundingClientRect()?.bottom || 0;
+            document.querySelector('.sprint-stop-pill')?.click();
+            document.querySelector('#quiz-v102-hub .mf-chip')?.click();
+
+            return {
+                usableH: Math.round(usableH), usableBot: Math.round(usableBot),
+                initNeedScroll, maxPairH, worstOverflow, worstInfo,
+                synthOver, synthPairH,
+                pmOver: Math.round(pmBot - usableBot),
+                spOver: Math.round(spBot - usableBot),
+            };
+        }"""
+    )
+    assert res["initNeedScroll"] <= 0, f"{label} initial quiz requires scroll: {res}"
+    assert res["worstOverflow"] <= 0, f"{label} sampled quiz question overflows viewport: {res}"
+    assert res["synthOver"] <= 0 and res["synthPairH"] <= res["usableH"], f"{label} longest quiz item overflows viewport: {res}"
+    assert res["pmOver"] <= 0, f"{label} Picture Match overflows viewport: {res}"
+    assert res["spOver"] <= 0, f"{label} 60s Sprint overflows viewport: {res}"
 
 
 def run_smoke():
@@ -254,7 +338,17 @@ def run_smoke():
                 f"Expected fixed topbar + left vertical tab rail on 1280x800, got {desk}"
             )
             assert not desk["overflowX"], f"Desktop layout overflowed horizontally: {desk}"
+            assert_quiz_no_scroll(page_desk, "Desktop 1280x800")
             ctx_desk.close()
+
+            # Verify standard iPhone 390x844 quiz fits 100% without scrolling
+            ctx_iphone = browser.new_context(viewport={"width": 390, "height": 844})
+            page_iphone = ctx_iphone.new_page()
+            attach_listeners(page_iphone)
+            page_iphone.goto(base_url, wait_until="domcontentloaded")
+            page_iphone.wait_for_selector(".top-utility-summary")
+            assert_quiz_no_scroll(page_iphone, "iPhone 390x844")
+            ctx_iphone.close()
 
             # 3. Portal sync smoke checks (runs when sync.js is present, e.g. local & GitLab CI)
             if (ROOT / "sync.js").exists():
@@ -304,6 +398,7 @@ def run_smoke():
                 page_sync.wait_for_timeout(850)
                 assert "esco-streak-v1" in sync_calls["state_puts"], f"Expected streak sync PUT, got {sync_calls['state_puts']}"
                 assert "esco-selected-voice-v45" not in sync_calls["state_puts"], f"Voice key leaked to sync queue: {sync_calls['state_puts']}"
+                assert_quiz_no_scroll(page_sync, "GitLab portal 1280x800")
                 ctx_sync.close()
 
                 # Fail-closed 401 test
