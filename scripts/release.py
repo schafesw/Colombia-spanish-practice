@@ -15,7 +15,7 @@ import urllib.request
 import zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-ONEDRIVE_DIR = pathlib.Path(r"C:\Users\schaf\OneDrive\Documents\Spanish app")
+ONEDRIVE_DIR = pathlib.Path(os.environ.get("ESCO_EXPORT_DIR") or (pathlib.Path.home() / "OneDrive" / "Documents" / "Spanish app"))
 GITHUB_REPO = "schafesw/Colombia-spanish-practice"
 GIT_AUTHOR = {
     "name": "schafesw",
@@ -34,7 +34,7 @@ def current_version():
 def find_github_pat():
     if os.environ.get("GITHUB_PAT"):
         return os.environ["GITHUB_PAT"].strip()
-    matches = sorted(ONEDRIVE_DIR.glob("github_pat_*.txt"))
+    matches = sorted(ONEDRIVE_DIR.glob("*pat_*.txt"))
     if not matches:
         raise RuntimeError(f"Set GITHUB_PAT or place token file in {ONEDRIVE_DIR}")
     return matches[0].read_text(encoding="utf-8").strip().splitlines()[0].strip()

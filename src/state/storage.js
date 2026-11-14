@@ -83,7 +83,9 @@ export function buildProfileBar(){
   const currentProfile=profileList.find(p=>p.id===activeProfileId)||{label:activeProfileId,emoji:"👤"};
   const drawer=document.createElement("details");drawer.className="top-utility-drawer profile-utility-drawer";
   const summary=document.createElement("summary");summary.className="top-utility-summary";
-  summary.innerHTML=`<span>👤 Profile</span><small>${currentProfile.emoji||"👤"} ${currentProfile.label}</small>`;
+  const summaryTitle=document.createElement("span");summaryTitle.textContent="👤 Profile";
+  const summaryName=document.createElement("small");summaryName.textContent=`${currentProfile.emoji||"👤"} ${currentProfile.label}`;
+  summary.append(summaryTitle,summaryName);
   const utilityBody=document.createElement("div");utilityBody.className="top-utility-body";
   const bar=document.createElement("div");bar.className="profile-bar";
   const label=document.createElement("span");label.className="profile-label";label.textContent="Profile";
