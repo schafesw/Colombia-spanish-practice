@@ -488,16 +488,38 @@ def run_smoke():
                 assert_quiz_no_scroll(page_sync, "GitLab portal 1280x800")
                 ctx_sync.close()
 
-                # Fail-closed 401 test
-                ctx_401 = browser.new_context(viewport={"width": 430, "height": 932}, service_workers="block")
-                page_401 = ctx_401.new_page()
-                page_401.route("https://fonts.**", lambda r: r.abort())
-                page_401.route("**/*", lambda r: r.fulfill(status=200, content_type="text/html; charset=utf-8", body=sync_html) if (r.request.url.endswith("/index.html") or r.request.url.endswith("/")) else (r.fulfill(status=401, content_type="application/json", body='{"detail":"unauthenticated"}') if r.request.url.endswith("/api/me") else r.continue_()))
-                page_401.goto(base_url, wait_until="domcontentloaded")
-                page_401.wait_for_timeout(600)
-                auth_state = page_401.evaluate("({ splashHidden: document.getElementById('splash').hidden, html: document.getElementById('splash-status').innerHTML, hasMe: !!window.__ESCO_ME })")
-                assert (not auth_state["splashHidden"]) and (not auth_state["hasMe"]) and ("Sign in again" in auth_state["html"]), f"401 did not fail closed: {auth_state}"
-                ctx_401.close()
+                # Fail-closed 401 + 302 redirect tests
+                for bad_label, bad_status, bad_headers, bad_body in (
+                    ("401", 401, None, '{"detail":"unauthenticated"}'),
+                    ("302", 302, {"Location": "https://auth.globalentry.systems/"}, ""),
+                ):
+                    ctx_auth = browser.new_context(viewport={"width": 430, "height": 932}, service_workers="block")
+                    page_auth = ctx_auth.new_page()
+                    page_auth.route("https://fonts.**", lambda r: r.abort())
+                    def _make_auth_handler(st, hdrs, body):
+                        def _handle_auth(r):
+                            if r.request.url.endswith("/index.html") or r.request.url.endswith("/"):
+                                r.fulfill(status=200, content_type="text/html; charset=utf-8", body=sync_html)
+                            elif r.request.url.endswith("/api/me"):
+                                r.fulfill(status=st, content_type="application/json", headers=hdrs, body=body)
+                            else:
+                                r.continue_()
+                        return _handle_auth
+                    page_auth.route("**/*", _make_auth_handler(bad_status, bad_headers, bad_body))
+                    page_auth.goto(base_url, wait_until="domcontentloaded")
+                    page_auth.wait_for_timeout(600)
+                    auth_state = page_auth.evaluate("({ splashHidden: document.getElementById('splash').hidden, html: document.getElementById('splash-status').innerHTML, hasMe: !!window.__ESCO_ME })")
+                    assert (not auth_state["splashHidden"]) and (not auth_state["hasMe"]) and ("Sign in again" in auth_state["html"]), f"{bad_label} did not fail closed: {auth_state}"
+                    ctx_auth.close()
+
+                # 502 offline fallback test: falls back to local app & removes splash
+                ctx_off = browser.new_context(viewport={"width": 430, "height": 932}, service_workers="block")
+                page_off = ctx_off.new_page()
+                page_off.route("https://fonts.**", lambda r: r.abort())
+                page_off.route("**/*", lambda r: r.fulfill(status=200, content_type="text/html; charset=utf-8", body=sync_html) if (r.request.url.endswith("/index.html") or r.request.url.endswith("/")) else (r.fulfill(status=502, content_type="text/plain", body="bad gateway") if r.request.url.endswith("/api/me") else r.continue_()))
+                page_off.goto(base_url, wait_until="domcontentloaded")
+                page_off.wait_for_function("() => !document.getElementById('splash') && window.__escoSyncState && window.__escoSyncState.online === false", timeout=10000)
+                ctx_off.close()
 
             browser.close()
     finally:
