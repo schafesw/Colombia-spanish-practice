@@ -1,5 +1,5 @@
-/* Navigation network-first + stale-while-revalidate asset Service Worker for Español · Colombia PWA (v107.0) */
-const CACHE_NAME = "esco-pwa-v107.0";
+/* Navigation network-first + stale-while-revalidate asset Service Worker for Español · Colombia PWA (v107.1) */
+const CACHE_NAME = "esco-pwa-v107.1";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -20,14 +20,20 @@ const CORE_ASSETS = [
   "./src/core/stores.js",
   "./src/core/text-utils.js",
   "./src/core/validator.js",
+  "./src/features/colombia-chats.js",
   "./src/features/daily-flow.js",
   "./src/features/guides.js",
+  "./src/features/lesson-player.js",
   "./src/features/lessons-meta.js",
   "./src/features/lessons.js",
   "./src/features/navigation.js",
   "./src/features/phonetics.js",
   "./src/features/phrases.js",
+  "./src/features/picture-match.js",
+  "./src/features/quiz-labs.js",
   "./src/features/quiz.js",
+  "./src/features/rapida.js",
+  "./src/features/speaking-labs.js",
   "./src/features/vocab.js",
   "./src/main.js",
   "./src/state/app-state.js",

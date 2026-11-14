@@ -1210,3 +1210,42 @@
   outline-offset: 2px;
 }
 
+/* PWA background update toast */
+.pwa-update-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 78px;
+  transform: translateX(-50%);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 14px;
+  background: rgba(15, 23, 32, 0.96);
+  border: 1px solid rgba(232, 180, 74, 0.45);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  max-width: min(92vw, 390px);
+}
+.pwa-update-btn {
+  padding: 5px 10px;
+  border-radius: 9px;
+  border: 0;
+  background: var(--gold);
+  color: #141920;
+  font: inherit;
+  font-weight: 850;
+  cursor: pointer;
+}
+.pwa-update-dismiss {
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+

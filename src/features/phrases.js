@@ -10,7 +10,7 @@ import { escapeVocabHtml, lpEl } from "../core/text-utils.js";
 import { markPractice, practiced, phraseProgress, recordSrs, attachStarBtn } from "../core/stores.js";
 import { attachMic, openMicPanel } from "../core/speech-mic.js";
 import { PHRASE_DIALOGUES } from "../core/quiz-bank.js";
-import { actions, showPage, ensurePageInitialized } from "./navigation.js";
+import { actions, showPage } from "./navigation.js";
 
 let fl=null;
 /* Each menu entry keeps its versions separate so Ahora / Planes / Ayer all display */

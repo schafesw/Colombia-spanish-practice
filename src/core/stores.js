@@ -126,3 +126,5 @@ export let qStore={c:0,t:0,s:0,missed:{}};
 try{const raw=appStorage.getItem(QS_KEY);if(raw)qStore=Object.assign(qStore,JSON.parse(raw));}catch(e){}
 if(!Object.keys(srsStore).length&&qStore.missed){Object.keys(qStore.missed).forEach(key=>{srsStore[key]={reps:0,interval:0,lapses:0,due:Date.now()};});saveSrs();}
 export function saveQ(){try{appStorage.setItem(QS_KEY,JSON.stringify(qStore));}catch(e){}}
+
+export function resetQAndSrs(){qStore={c:0,t:0,s:0,missed:{}};srsStore={};saveQ();saveSrs();}
