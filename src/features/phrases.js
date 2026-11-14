@@ -217,9 +217,9 @@ export function renderFraseMenu(){
   fl.appendChild(navNote);
   renderRecentPhrase(fl);
   const viewSwitch=document.createElement("div");viewSwitch.className="frase-view-switch";viewSwitch.setAttribute("aria-label","Filter phrase content");
-  [["all","All / Todo"],["phrases","Useful phrases / Frases"],["conversations","Conversations / Diálogos"]].forEach(([view,label])=>{
+  [["all","All / Todo"],["phrases","Phrases / Frases"],["conversations","Conversations"]].forEach(([view,label])=>{
     const b=document.createElement("button");b.type="button";b.className="fr-view-btn"+(fraseView===view?" active":"");b.textContent=label;
-    b.onclick=()=>{fraseView=view;};viewSwitch.appendChild(b);
+    b.onclick=()=>{fraseView=view;renderFraseMenu();};viewSwitch.appendChild(b);
   });
   fl.appendChild(viewSwitch);
   const search=document.createElement("input");search.type="search";search.className="content-search";search.placeholder="🔎 Search phrases or conversation lines…";search.setAttribute("aria-label","Search phrases");search.value=fraseSearchTerm;
@@ -467,7 +467,7 @@ export function renderFraseMenu(){
     const q=fraseSearchTerm.trim();
     if(q){blocks.forEach(el=>{el.hidden=true;});return;}
     const showConversations=fraseView!=="phrases";const showPhrases=fraseView!=="conversations";
-    conversationGroup.hidden=!showConversations;g2.hidden=!showPhrases;
+    conversationGroup.hidden=!showConversations;phraseCollectionsGroup.hidden=!showPhrases;
   }
   function refreshPhraseSearch(){
     const q=fraseSearchTerm.trim().toLowerCase();const active=!!q;results.innerHTML="";results.hidden=!active;applyFraseView();if(!active)return;
