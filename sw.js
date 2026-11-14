@@ -1,5 +1,5 @@
-/* Navigation network-first + stale-while-revalidate asset Service Worker for Español · Colombia PWA (v109.0) */
-const CACHE_NAME = "esco-pwa-v109.0";
+/* Navigation network-first + stale-while-revalidate asset Service Worker for Español · Colombia PWA (v110.0) */
+const CACHE_NAME = "esco-pwa-v110.0";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -7,6 +7,7 @@ const CORE_ASSETS = [
   "./styles/base.css",
   "./styles/labs.css",
   "./styles/polish.css",
+  "./styles/shell.css",
   "./data/content.js",
   "./data/expansions.js",
   "./data/index.js",
@@ -53,6 +54,7 @@ const CORE_ASSETS = [
   "./assets/hero-colombia.webp",
   "./assets/icon-192.png",
   "./assets/icon-512.png",
+  "./assets/logo.png",
   "./assets/pm-abanico.webp",
   "./assets/pm-aguacate.webp",
   "./assets/pm-aguacero.webp",
@@ -142,9 +144,12 @@ self.addEventListener("fetch", event => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   const sameOrigin = url.origin === self.location.origin;
+  /* Never cache /api/ progress, auth, or avatar responses (review #1). */
+  if (sameOrigin && url.pathname.startsWith("/api/")) return;
   const isNav = req.mode === "navigate" || ((req.headers.get("accept") || "").includes("text/html"));
+  const hasVersionQuery = sameOrigin && url.searchParams.has("v");
 
-  if (isNav) {
+  if (isNav || hasVersionQuery) {
     event.respondWith(
       fetch(req)
         .then(res => {
@@ -155,8 +160,8 @@ self.addEventListener("fetch", event => {
           return res;
         })
         .catch(() =>
-          caches.match(req, { ignoreSearch: true })
-            .then(cached => cached || caches.match("./index.html", { ignoreSearch: true }))
+          caches.match(req, { ignoreSearch: isNav })
+            .then(cached => cached || (isNav ? caches.match("./index.html", { ignoreSearch: true }) : null))
             .then(res => res || Response.error())
         )
     );
