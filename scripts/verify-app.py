@@ -222,10 +222,16 @@ def check_github_hygiene():
         errors.append("AGENTS.md must not exist in GitHub repository!")
     sensitive_pats = [
         (r"norvi\.tech", "private host reference"),
-        (r"github_pat_", "GitHub token literal"),
+        (r"github_pat_[A-Za-z0-9_]{10,}|ghp_[A-Za-z0-9]{10,}", "GitHub token literal"),
         (r"ge-api\.key", "private API key filename"),
+        (r"C:\\\\Users\\\\", "hardcoded Windows user path"),
     ]
-    scan_files = [ROOT / "README.md", ROOT / "index.html", ROOT / "sw.js"] + list((ROOT / "src").rglob("*.js")) + list((ROOT / "data").glob("*.js"))
+    scan_files = (
+        [ROOT / "README.md", ROOT / "index.html", ROOT / "sw.js"]
+        + list((ROOT / "src").rglob("*.js"))
+        + list((ROOT / "data").glob("*.js"))
+        + [p for p in (ROOT / "scripts").glob("*.py") if p.name != "verify-app.py"]
+    )
     for f in scan_files:
         if not f.exists():
             continue
