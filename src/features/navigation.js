@@ -23,6 +23,7 @@ export const actions = {
   buildSpeakingGuide: () => {},
   openMissedQueue: () => {},
   openReviewSession: () => {},
+  openUnifiedSrsReview: () => false,
   openQuizV102Tab: () => {},
   openDailyFlowSession: () => {},
   syncMissedQueueLauncher: () => {},

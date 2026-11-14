@@ -2,10 +2,61 @@ import { PICTURE_MATCH_BANK, GRINGO_TRAPS, NATURAL_EAR_CLIPS } from "../../data/
 import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml } from "../core/text-utils.js";
 import { markPractice, recordSrs, srsDue, srsStore } from "../core/stores.js";
-import { RR_BANK } from "../core/quiz-bank.js";
+import { aQ, RR_BANK } from "../core/quiz-bank.js";
 import { actions, showPage } from "./navigation.js";
 
-var dfCards=[],dfIdx=0,dfPicked=null,dfScore=0,dfStreak=0;
+var dfCards=[],dfIdx=0,dfPicked=null,dfScore=0,dfStreak=0,dfSessionMode="mix";
+function shuffledCopy(list){return list.slice().sort(()=>Math.random()-0.5);}
+export function buildSrsReviewDeck(){
+  if(typeof srsStore!=="object")return[];
+  const dueKeys=Object.keys(srsStore).filter(srsDue).sort((a,b)=>((srsStore[a]&&srsStore[a].due)||0)-((srsStore[b]&&srsStore[b].due)||0));
+  const cards=[];
+  const gtLocals=(typeof GRINGO_TRAPS!=="undefined"?GRINGO_TRAPS.map(x=>x.local):[]);
+  const rrPool=(typeof RR_BANK!=="undefined"?RR_BANK.filter(r=>r&&r.aEs).map(r=>r.aEs):[]);
+  const aqAnsPool=(typeof aQ!=="undefined"?aQ.map(q=>q.en).filter(Boolean):[]);
+  for(const key of dueKeys){
+    if(cards.length>=12)break;
+    if(key.startsWith("pm|")&&typeof PICTURE_MATCH_BANK!=="undefined"){
+      const target=PICTURE_MATCH_BANK.find(x=>x.id===key.slice(3));
+      if(target){
+        cards.push({kind:"pm",kicker:"🖼️ Due · Picture Match",prompt:target.word,tts:target.tts,ans:target.id,ansLabel:target.word+" — "+target.en,hint:target.hint,srsKey:key,choices:actions.pmChoicesFor(target,PICTURE_MATCH_BANK)});
+      }
+    }else if(key.startsWith("gt|")&&typeof GRINGO_TRAPS!=="undefined"){
+      const g=GRINGO_TRAPS.find(x=>x.id===key.slice(3));
+      if(g){
+        const opts=[g.local];
+        for(const c of shuffledCopy(gtLocals)){if(opts.length>=4)break;if(!opts.includes(c))opts.push(c);}
+        cards.push({kind:"quiz",kicker:"🚫 Due · Local Fix",prompt:`Replace "${g.trap}" (${g.intent})`,tts:g.tts,ans:g.local,hint:g.why,srsKey:key,opts:shuffledCopy(opts)});
+      }
+    }else if(key.startsWith("ne|")&&typeof NATURAL_EAR_CLIPS!=="undefined"){
+      const ne=NATURAL_EAR_CLIPS.find(x=>x.id===key.slice(3));
+      if(ne){
+        cards.push({kind:"ear",kicker:"🎧 Due · Street Speed Ear",prompt:ne.fast,clear:ne.clear,tts:ne.fast,ans:ne.answer,hint:ne.tip,srsKey:key,opts:ne.choices.slice()});
+      }
+    }else if(key.startsWith("rr|")&&typeof RR_BANK!=="undefined"){
+      const pref=key.slice(3);
+      const r=RR_BANK.find(x=>x&&((x.qEs||x.aEs||"").slice(0,32)===pref));
+      if(r&&r.aEs){
+        const opts=[r.aEs];
+        for(const c of shuffledCopy(rrPool)){if(opts.length>=4)break;if(!opts.includes(c))opts.push(c);}
+        while(opts.length<4)opts.push(["¡De una!","Con mucho gusto","A la orden"][opts.length%3]);
+        cards.push({kind:"quiz",kicker:"⚡ Due · Reflex",prompt:r.qEn||r.qEs,sub:r.qEs,subTts:r.q||r.qEs,tts:r.aTts||r.aEs,ans:r.aEs,hint:r.aEn||r.qEs,srsKey:key,opts:shuffledCopy(opts)});
+      }
+    }else if(key.includes("|")){
+      const sep=key.indexOf("|");
+      const es=key.slice(0,sep),ans=key.slice(sep+1);
+      if(es&&ans){
+        const match=(typeof aQ!=="undefined"?aQ.find(q=>q.es===es&&(q.en===ans||q.answer===ans)):null);
+        const opts=[ans];
+        const sourceOpts=(match&&Array.isArray(match.choices)&&match.choices.length>=2)?match.choices:aqAnsPool;
+        for(const c of shuffledCopy(sourceOpts)){if(opts.length>=4)break;if(c&&!opts.includes(c))opts.push(c);}
+        while(opts.length<4)opts.push(["Yes, please","Not right now","See you later"][opts.length%3]);
+        cards.push({kind:"quiz",kicker:"🔁 Due · Vocab & Phrases",prompt:match&&(match.quizPrompt||match.es)||es,tts:(match&&match.tts)||es,ans,hint:(match&&match.note)||(es+" → "+ans),srsKey:key,opts:shuffledCopy(opts)});
+      }
+    }
+  }
+  return cards;
+}
 export function buildDailyFlowDeck(){
   const cards=[];
   if(typeof PICTURE_MATCH_BANK!=="undefined"&&PICTURE_MATCH_BANK.length){
@@ -53,12 +104,13 @@ export function renderDailyFlowSession(){
 
   if(!dfCards.length||dfIdx>=dfCards.length){
     const pct=dfCards.length?Math.round((dfScore/dfCards.length)*100):100;
+    const isSrs=dfSessionMode==="srs";
     const sum=document.createElement("div");sum.className="quiz-card sprint-intro-card";
-    sum.innerHTML=`<div class="qc-label">🎉 5-Min Daily Flow Complete!</div>
+    sum.innerHTML=`<div class="qc-label">${isSrs?"🎉 Due Cards Reviewed!":"🎉 5-Min Daily Flow Complete!"}</div>
       <div class="qc-word sprint-cue-word">${dfScore} / ${dfCards.length} (${pct}%)</div>
-      <div class="sprint-intro-desc">Your SRS schedule, weak spots, and daily streak are updated.</div>
-      <div class="bridge-actions"><button type="button" class="lp-nav-btn primary df-again-btn">↻ Another 8-Card Mix</button><button type="button" class="lp-nav-btn df-home-btn">‹ Back to Hoy</button></div>`;
-    sum.querySelector(".df-again-btn").onclick=()=>openDailyFlowSession();
+      <div class="sprint-intro-desc">${isSrs?"Picture Match, Vocab, Local Fix &amp; Phrase intervals updated for today.":"Your SRS schedule, weak spots, and daily streak are updated."}</div>
+      <div class="bridge-actions"><button type="button" class="lp-nav-btn primary df-again-btn">${isSrs?"↻ Next Due Batch":"↻ Another 8-Card Mix"}</button><button type="button" class="lp-nav-btn df-home-btn">‹ Back to Hoy</button></div>`;
+    sum.querySelector(".df-again-btn").onclick=()=>{if(isSrs){if(!openUnifiedSrsReview())back.onclick();}else openDailyFlowSession();};
     sum.querySelector(".df-home-btn").onclick=back.onclick;
     wrap.appendChild(sum);
     root.appendChild(wrap);
@@ -140,7 +192,17 @@ export function renderDailyFlowSession(){
   root.appendChild(wrap);
 }
 export function openDailyFlowSession(){
+  dfSessionMode="mix";
   dfCards=buildDailyFlowDeck();dfIdx=0;dfPicked=null;dfScore=0;dfStreak=0;
   showPage("lecciones");
   renderDailyFlowSession();
+}
+export function openUnifiedSrsReview(){
+  const deck=buildSrsReviewDeck();
+  if(!deck.length)return false;
+  dfSessionMode="srs";
+  dfCards=deck;dfIdx=0;dfPicked=null;dfScore=0;dfStreak=0;
+  showPage("lecciones");
+  renderDailyFlowSession();
+  return true;
 }
