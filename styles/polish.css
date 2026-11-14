@@ -1249,3 +1249,71 @@
   padding: 2px 4px;
 }
 
+/* ── v108.0: Lesson Visual Strip & Photo Quiz Integration ─────────────────── */
+.lp-visual-section {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.lp-visual-head {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.lp-visual-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.lp-visual-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  cursor: pointer;
+}
+.lp-visual-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+.lp-visual-cap {
+  padding: 7px 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.lp-visual-cap strong {
+  font-size: 0.8rem;
+  line-height: 1.25;
+}
+.lp-visual-cap small {
+  font-size: 0.7rem;
+  color: var(--muted);
+  line-height: 1.25;
+}
+.lp-quiz-photo-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 4px 0 12px;
+}
+.lp-quiz-photo {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 2px solid var(--border);
+  background: var(--surface2);
+}
+:root[data-theme="light"] .lp-visual-section {
+  border-top-color: rgba(24, 32, 44, 0.14);
+}
+:root[data-theme="light"] .lp-visual-card {
+  background: #f1ede4;
+  border-color: rgba(24, 32, 44, 0.18);
+}
+
