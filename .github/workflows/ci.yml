@@ -14,5 +14,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Run static ES module, PWA manifest & TTS freeze checks
+      - name: Run static ES module, PWA manifest, version & TTS freeze checks
         run: python scripts/verify-app.py
+      - name: Install Playwright Chromium for browser smoke test
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright
+          playwright install --with-deps chromium
+      - name: Run headless Chromium smoke tests
+        run: python scripts/browser_smoke.py
