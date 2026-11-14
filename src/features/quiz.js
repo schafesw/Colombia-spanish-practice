@@ -264,6 +264,7 @@ export function resumeQuizListeningAudio() {
   }
 }
 export function openReviewSession() {
+  if (typeof actions.openUnifiedSrsReview === "function" && actions.openUnifiedSrsReview()) return;
   appState.qBlitzPack = null;
   appState.qMissedOnly = false;
   showPage("quiz");

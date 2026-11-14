@@ -110,6 +110,7 @@ def run_smoke():
             page.click(".pm-launch-btn")
             set_texts = page.eval_on_selector_all(".pm-set-row button", "els => els.map(e => e.textContent.trim())")
             assert len(set_texts) == 6, f"Expected 6 set filter buttons (All + 5 sets), got {set_texts}"
+            assert "All (58)" in set_texts[0], f"Expected All (58) Picture Match scenes, got {set_texts[0]!r}"
             page.locator(".pm-set-row button", has_text="Home").click()
             wait_images_decoded(page, ".pm-grid img")
 
@@ -175,10 +176,11 @@ def run_smoke():
             assert "seth" not in opt_vals_new, f"Fresh friend device must never expose seth profile, got {opt_vals_new}"
             ctx.close()
 
-            # 2. Pre-seeded Seth device preservation check
+            # 2. Pre-seeded Seth device preservation check + unified Due Today SRS Review check
             ctx2 = browser.new_context(viewport={"width": 430, "height": 932})
             ctx2.add_init_script(
                 "localStorage.setItem('esco-profile-seth-esco-lessons-v1', JSON.stringify({presentate: true}));"
+                "localStorage.setItem('esco-profile-seth-esco-srs-v1', JSON.stringify({'pm|pm-gaseosa':{reps:1,interval:1,lapses:0,due:1}}));"
             )
             page2 = ctx2.new_page()
             attach_listeners(page2)
@@ -187,6 +189,13 @@ def run_smoke():
             summary2 = page2.locator(".top-utility-summary small").inner_text().strip()
             active2 = page2.evaluate("localStorage.getItem('esco-active-profile-v1')")
             assert "Seth" in summary2 and active2 == "seth", f"Expected Seth preserved, got summary={summary2!r}, active={active2!r}"
+            more_summary = page2.locator(".starter-more-tools > summary").first
+            if more_summary.count() > 0:
+                more_summary.click()
+            page2.locator(".today-quick-grid button", has_text="Review Cards").click()
+            page2.wait_for_selector("#lesson-list .df-wrap")
+            due_prompt = page2.locator("#lesson-list .sprint-cue-word").inner_text().strip()
+            assert "gaseosa" in due_prompt.lower(), f"Expected due pm|pm-gaseosa card in unified SRS review, got {due_prompt!r}"
             ctx2.close()
 
             browser.close()

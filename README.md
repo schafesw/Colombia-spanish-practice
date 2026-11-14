@@ -31,6 +31,6 @@ Interactive Colombian Spanish speaking, listening, and everyday-survival trainer
 ## What's Inside
 
 - **🎓 Guided Colombian Lessons:** Short speaking-first paths plus Full Practice mode covering ordering at a panadería, Uber pickups, portería & Rappi deliveries, Nequi/card payments, pharmacies, apartments, and regional slang.
-- **🖼️ Picture-to-Word Match (44 Scenes):** Connect real photos of everyday Colombian items (*tinto, pandebono, corrientazo, citófono, tacos de la luz, datáfono*) straight to natural phrases — plus visual flashcards and photo quizzes integrated right inside lessons.
+- **🖼️ Picture-to-Word Match (58 Scenes):** Connect real photos of everyday Colombian items (*tinto, pandebono, corrientazo, gaseosa, pitillo, caneca, andén, citófono, tacos de la luz, datáfono*) straight to natural phrases — plus visual flashcards and photo quizzes integrated right inside lessons.
 - **🎧 Natural-Speed Listening & Speaking Labs:** Spoken drills, blind-ear listening, "Gringo Traps" false-friend alerts, and voice repetition exercises.
 - **🇨🇴 Regional Switcher:** Tune vocabulary and examples across Bogotá, Medellín, Cali, and the Caribbean Coast.
