@@ -1,0 +1,2249 @@
+import { VERBS, COLOMBIANISMOS } from "./vocab.js";
+
+export const FRASES=[
+  {section:"💬 Saludos — Informal",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[{es:"Hola, ¿cómo estás?",en:"Hi, how are you?"},{es:"¿Cómo te va?",en:"How are you doing?"},{es:"¿Qué más?",en:"What's up? (very Colombian)"},{es:"¿Qué tal?",en:"How are things?"},{es:"Estoy bien, gracias.",en:"I'm fine, thank you."},{es:"Muy bien, ¿y tú?",en:"Very well, and you?"},{es:"Más o menos.",en:"More or less."},{es:"Chao.",en:"Bye! (very Colombian)"}]},
+  {section:"🤝 Saludos — Formal",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[{es:"Buenos días.",en:"Good morning."},{es:"Buenas tardes.",en:"Good afternoon."},{es:"Buenas noches.",en:"Good evening."},{es:"¿Cómo le va a usted?",en:"How are you? (formal)"},{es:"¡Gusto en conocerle!",en:"Nice to meet you! (formal)"},{es:"¡El gusto es mío!",en:"The pleasure is mine!"},{es:"Igualmente.",en:"Likewise."}]},
+  {section:"🛍️ De Compras",cls:"color:var(--pink);background:rgba(232,93,117,0.1);border:1px solid rgba(232,93,117,0.2)",items:[{es:"¿Cuánto cuesta?",en:"How much does it cost?"},{es:"¿Me regala...?",en:"Can I have...? (Colombian!)"},{es:"Es muy caro.",en:"It's very expensive."},{es:"¿Tiene algo más barato?",en:"Do you have something cheaper?"},{es:"¿Puede hacer un descuento?",en:"Can you give me a discount?"},{es:"Solo estoy mirando.",en:"I'm just looking."},{es:"Me llevo este.",en:"I'll take this one."},{es:"¿Aceptan tarjeta?",en:"Do you accept card?"}]},
+  {section:"🍽️ En el Restaurante",cls:"color:var(--green);background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2)",items:[{es:"Una mesa para dos, por favor.",en:"A table for two, please."},{es:"¿Qué recomienda?",en:"What do you recommend?"},{es:"Quisiera pedir...",en:"I would like to order..."},{es:"La cuenta, por favor.",en:"The bill, please."},{es:"Está delicioso.",en:"It's delicious."},{es:"¿Tiene menú del día?",en:"Do you have a daily menu?"},{es:"Sin picante, por favor.",en:"Without spice, please."},{es:"¿Me regala un tinto?",en:"Can I have a black coffee? (Colombian!)"}]},
+  {section:"🆘 Pidiendo Ayuda",cls:"color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)",items:[{es:"No entiendo.",en:"I don't understand."},{es:"¿Puede repetir más despacio?",en:"Can you repeat more slowly?"},{es:"¿Habla inglés?",en:"Do you speak English?"},{es:"No hablo bien español.",en:"I don't speak Spanish well."},{es:"¿Cómo se dice... en español?",en:"How do you say... in Spanish?"},{es:"¿Me puede ayudar?",en:"Can you help me?"},{es:"Estoy perdido/a.",en:"I'm lost."},{es:"¿Dónde está...?",en:"Where is...?"},{es:"No sé.",en:"I don't know."}]},
+  {section:"🚨 Emergencias",cls:"color:var(--pink);background:rgba(232,93,117,0.12);border:1px solid rgba(232,93,117,0.3)",items:[{es:"¡Ayuda!",en:"Help!"},{es:"Llame a la policía.",en:"Call the police."},{es:"Necesito un médico.",en:"I need a doctor."},{es:"Llame a una ambulancia.",en:"Call an ambulance."},{es:"Me robaron.",en:"I was robbed."},{es:"¿Dónde está el hospital?",en:"Where is the hospital?"},{es:"Me siento mal.",en:"I feel sick."}]},
+  {section:"🚕 Transporte",cls:"color:var(--blue);background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2)",items:[{es:"¿Dónde está la parada de bus?",en:"Where is the bus stop?"},{es:"¿Cuánto cuesta el taxi hasta...?",en:"How much is a taxi to...?"},{es:"Lléveme a esta dirección.",en:"Take me to this address."},{es:"Para aquí, por favor.",en:"Stop here, please."},{es:"¿Cuánto tarda hasta...?",en:"How long does it take to...?"},{es:"¿Tiene cambio?",en:"Do you have change?"}]},
+  {section:"☀️ Conversación Diaria",cls:"color:var(--teal);background:rgba(74,168,160,0.08);border:1px solid rgba(74,168,160,0.18)",items:[{es:"¿Cuántos años tiene usted?",en:"How old are you? (formal)"},{es:"Tengo ___ años.",en:"I am ___ years old."},{es:"¿De dónde es usted?",en:"Where are you from?"},{es:"Soy de...",en:"I'm from..."},{es:"¿Qué hora es?",en:"What time is it?"},{es:"Son las tres.",en:"It's three o'clock."},{es:"Por favor.",en:"Please."},{es:"Gracias.",en:"Thank you."},{es:"De nada.",en:"You're welcome."},{es:"Con permiso.",en:"Excuse me (passing)."},{es:"¿Puede escribirlo?",en:"Can you write it down?"},{es:"Entiendo un poco.",en:"I understand a little."}]},
+  {section:"❤️ Gustos y conversación",cls:"color:var(--pink);background:rgba(232,93,117,0.1);border:1px solid rgba(232,93,117,0.2)",items:[{es:"Soy...",en:"I am..."},{es:"Trabajo como...",en:"I work as..."},{es:"Trabajo en...",en:"I work at / in..."},{es:"Estudio...",en:"I study..."},{es:"Me gusta mi trabajo.",en:"I like my job."},{es:"No me gusta mi trabajo.",en:"I don't like my job."},{es:"¿Qué haces?",en:"What do you do?"},{es:"¿En qué trabajas?",en:"What do you do for work?"},{es:"¿Cómo te llamas?",en:"What's your name?"},{es:"Me llamo...",en:"My name is..."},{es:"¿De dónde eres?",en:"Where are you from?"},{es:"¿Dónde vives?",en:"Where do you live?"},{es:"Vivo en...",en:"I live in..."},{es:"Mi ciudad es grande / pequeña.",en:"My city is big / small."},{es:"Me gusta vivir aquí.",en:"I like living here."},{es:"No me gusta vivir aquí.",en:"I don't like living here."},{es:"Tengo ... años.",en:"I am ... years old."},{es:"Mi cumpleaños es...",en:"My birthday is..."},{es:"¿Cuántos años tienes?",en:"How old are you?"},{es:"¿Tienes hermanos?",en:"Do you have siblings?"},{es:"¿Tienes mascotas?",en:"Do you have pets?"},{es:"Mi familia es pequeña / grande.",en:"My family is small / big."},{es:"Los quiero mucho.",en:"I love them very much."},{es:"Me gusta...",en:"I like..."},{es:"No me gusta...",en:"I don't like..."},{es:"Me encanta...",en:"I love..."},{es:"Odio...",en:"I hate..."},{es:"Prefiero...",en:"I prefer..."},{es:"Mi favorito/a es...",en:"My favorite is..."},{es:"Es divertido.",en:"It's fun."},{es:"Es interesante.",en:"It's interesting."},{es:"Es aburrido.",en:"It's boring."},{es:"Es fácil.",en:"It's easy."},{es:"Es difícil.",en:"It's difficult."},{es:"Es delicioso.",en:"It's delicious."},{es:"Es horrible.",en:"It's horrible."}]},
+  {section:"🧱 Frases para contar historias",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[{es:"Fui a...",en:"I went to..."},{es:"Fui al...",en:"I went to the..."},{es:"Estuve en...",en:"I was / stayed in..."},{es:"Estaba en...",en:"I was in / at... (ongoing)"},{es:"Era...",en:"I was... (identity / description)"},{es:"Iba a...",en:"I was going to..."},{es:"Tenía que...",en:"I had to..."},{es:"Tuve que...",en:"I had to... (specific event)"},{es:"Quería...",en:"I wanted..."},{es:"Necesitaba...",en:"I needed..."},{es:"Podía...",en:"I could / was able to..."},{es:"No podía...",en:"I couldn't..."},{es:"Después...",en:"Afterward..."},{es:"Luego...",en:"Then / afterward..."},{es:"Pero...",en:"But..."},{es:"Porque...",en:"Because..."},{es:"Entonces...",en:"So / then..."}]},
+  {section:"🧩 Conectores para sonar natural",cls:"color:var(--teal);background:rgba(74,168,160,0.08);border:1px solid rgba(74,168,160,0.18)",items:[{es:"También...",en:"Also..."},{es:"Ya...",en:"Already / now..."},{es:"Todavía...",en:"Still / yet..."},{es:"La verdad...",en:"The truth is..."},{es:"Pues...",en:"Well / so..."},{es:"O sea...",en:"I mean..."},{es:"De pronto...",en:"Maybe... (Colombian)"},{es:"Por eso...",en:"That's why..."},{es:"Al final...",en:"In the end..."},{es:"En cambio...",en:"On the other hand..."}]},
+  {section:"🧱 Patrones para hablar cada día",cls:"color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)",items:[{es:"Tengo que...",en:"I have to..."},{es:"Voy a...",en:"I am going to..."},{es:"Estoy en...",en:"I am in / at..."},{es:"Acabo de...",en:"I just..."},{es:"Me toca...",en:"I have to... / It's my turn..."},{es:"Se me olvidó...",en:"I forgot..."},{es:"Lo necesito.",en:"I need it. (masculine)"},{es:"La necesito.",en:"I need it. (feminine)"},{es:"Lo tengo.",en:"I have it. (masculine)"},{es:"La tengo.",en:"I have it. (feminine)"},{es:"Le dije...",en:"I told him / her..."},{es:"Se lo mando.",en:"I will send it to him / her."},{es:"No lo sé.",en:"I don't know it / that."},{es:"Ya lo hice.",en:"I already did it."},{es:"Todavía no.",en:"Not yet."},{es:"A ver...",en:"Let's see..."},{es:"Es que...",en:"It's just that..."}]},
+  {section:"⚠️ Groserías colombianas — entender primero",cls:"color:var(--pink);background:rgba(232,93,117,0.12);border:1px solid rgba(232,93,117,0.3)",items:[{es:"¡Juepucha, se me hizo tarde!",en:"Darn, I'm late! (milder euphemism)",register:"Mild · informal"},{es:"¡No joda!",en:"No way! / Come on! (informal)",register:"Strong · informal"},{es:"¡Qué gonorrea de tráfico!",en:"What horrible traffic! (very strong)",register:"Very strong · understand first"},{es:"Ese man es un pirobo.",en:"That guy is a jerk. (strong)",register:"Strong insult"},{es:"No sea güevón.",en:"Don't be an idiot. (vulgar)",register:"Vulgar · strong"},{es:"¡Puta, se dañó el carro!",en:"Fuck, the car broke down. (very strong)",register:"Very strong · understand first"},{es:"Me importa un culo.",en:"I don't give a fuck. (very vulgar)",register:"Very vulgar · understand first"},{es:"¡Qué chimba!",en:"That's awesome! (vulgar/informal)",register:"Vulgar · close friends"},{es:"¡Ay, marica, qué susto!",en:"Dude, what a scare! (context-sensitive)",register:"Context-sensitive"},{es:"¡Qué jartera!",en:"What a drag! (milder)",register:"Mild · informal"},{es:"¡Hijueputa, qué susto!",en:"Holy shit, what a scare! (very strong)",register:"Very strong · understand first"}]},
+  /* ── NEW v13: Haciendo Planes ── */
+  {section:"📆 Haciendo Planes",cls:"color:var(--blue);background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2)",items:[{es:"¿Qué vas a hacer mañana?",en:"What are you going to do tomorrow?"},{es:"¿Nos vemos mañana?",en:"Shall we meet tomorrow?"},{es:"¿A qué hora nos vemos?",en:"What time shall we meet?"},{es:"¿Quieres salir?",en:"Do you want to go out?"},{es:"¡Claro que sí!",en:"Of course!"},{es:"No puedo, tengo planes.",en:"I can't, I have plans."},{es:"¿Qué tal el sábado?",en:"How about Saturday?"},{es:"De pronto voy.",en:"Maybe I'll go. (Colombian: de pronto = maybe)"},{es:"Nos vemos a las siete.",en:"See you at seven."},{es:"¡De una!",en:"I'm in! / Right away! (Colombian!)"},{es:"Te aviso.",en:"I'll let you know."},{es:"¿Dónde nos encontramos?",en:"Where shall we meet?"}]},
+  /* ── NEW v13: Por Teléfono / Mensajes ── */
+  {section:"📱 Por Teléfono / Mensajes",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[{es:"¿Aló?",en:"Hello? (answering the phone — Colombian!)"},{es:"¿Con quién hablo?",en:"Who am I speaking with?"},{es:"¿Me escuchas?",en:"Can you hear me?"},{es:"Te llamo más tarde.",en:"I'll call you later."},{es:"Se cortó la llamada.",en:"The call dropped."},{es:"Te escribo.",en:"I'll text you."},{es:"Mándame la ubicación.",en:"Send me the location."},{es:"¿Me pasas tu número?",en:"Can you give me your number?"},{es:"Estoy sin señal.",en:"I have no signal."},{es:"No tengo minutos.",en:"I don't have phone minutes. (very Colombian)"},{es:"Voy a llamar.",en:"I'm going to call."},{es:"Deja el mensaje.",en:"Leave the message."}]},
+  /* ── NEW v13: ¿Cómo Te Sientes? ── */
+  {section:"🩺 ¿Cómo Te Sientes?",cls:"color:var(--green);background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2)",items:[{es:"¿Cómo te sientes?",en:"How do you feel?"},{es:"Me siento bien.",en:"I feel good."},{es:"Me siento mal.",en:"I feel bad."},{es:"Tengo hambre.",en:"I'm hungry."},{es:"Tengo sed.",en:"I'm thirsty."},{es:"Tengo sueño.",en:"I'm sleepy."},{es:"Tengo frío.",en:"I'm cold."},{es:"Tengo calor.",en:"I'm hot."},{es:"Me duele la cabeza.",en:"My head hurts."},{es:"Me duele el estómago.",en:"My stomach hurts."},{es:"Estoy cansado/a.",en:"I'm tired."},{es:"Estoy enfermo/a.",en:"I'm sick."},{es:"Necesito descansar.",en:"I need to rest."},{es:"¡Que te mejores!",en:"Get well soon!"}]},
+  /* ── NEW v13: Plata y Pagos ── */
+  {section:"💰 Plata y Pagos",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[{es:"¿Cuánto le debo?",en:"How much do I owe you?"},{es:"¿Tiene cambio de cincuenta mil?",en:"Do you have change for fifty thousand?"},{es:"¿Puedo pagar con tarjeta?",en:"Can I pay by card?"},{es:"Pago en efectivo.",en:"I'll pay in cash."},{es:"¿Me hace la transferencia?",en:"Can you send me the transfer? (Nequi-style)"},{es:"Quedamos a mano.",en:"We're even."},{es:"¿Me rebaja algo?",en:"Can you lower the price a bit?"},{es:"Necesito sacar plata.",en:"I need to withdraw money. (Colombian!)"},{es:"¿Dónde hay un cajero?",en:"Where is there an ATM?"},{es:"A la orden.",en:"At your service / You're welcome. (Colombian!)"}]},
+  {section:"👤 Pronombres en acción",cls:"color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)",items:[{es:"¿Me lo puede repetir, por favor?",en:"Can you repeat it for me, please?"},{es:"Sí, se lo repito despacio.",en:"Yes, I'll repeat it slowly."},{es:"¿La dirección la tiene?",en:"Do you have the address?"},{es:"Sí, la tengo aquí.",en:"Yes, I have it here."},{es:"¿Le puedo ayudar?",en:"Can I help you?"},{es:"Sí, necesito ayuda.",en:"Yes, I need help."},{es:"¿Me la puede mandar?",en:"Can you send it to me?"},{es:"Se la mando en un momento.",en:"I'll send it to you in a moment."}]},
+];
+/* v36: high-value language for keeping a real conversation moving.  The
+   quizCat field lets the quiz keep these practical topics separate while the
+   existing Frases menu still treats them like normal phrase collections. */
+FRASES.push(
+  {section:"🧰 Comunicación para aclarar",quizCat:"reparar",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[
+    {es:"No entendí.",en:"I didn't understand."},{es:"¿Puede repetir?",en:"Can you repeat?"},{es:"Más despacio, por favor.",en:"More slowly, please."},{es:"¿Qué quiere decir?",en:"What does that mean?"},{es:"¿Cómo se dice ___?",en:"How do you say ___?"},{es:"¿Me puede mostrar?",en:"Can you show me?"},{es:"Un momento.",en:"One moment."},{es:"Déjeme pensar.",en:"Let me think."},{es:"Hablo poquito español.",en:"I speak a little Spanish."},{es:"No estoy seguro/a.",en:"I'm not sure."},{es:"¿Así está bien?",en:"Is it okay like this?"},{es:"¿Me entiende?",en:"Do you understand me?"},{es:"Perdón, estoy aprendiendo español.",en:"Sorry, I'm learning Spanish."}
+  ]},
+  {section:"🧱 Marcos para construir frases",quizCat:"frases",cls:"color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)",items:[
+    {es:"Quiero...",en:"I want..."},{es:"Necesito...",en:"I need..."},{es:"Puedo...",en:"I can..."},{es:"No puedo...",en:"I can't..."},{es:"Me gustaría...",en:"I would like..."},{es:"Hay que...",en:"We have to / One must..."},{es:"No sé cómo...",en:"I don't know how to..."},{es:"Estoy tratando de...",en:"I'm trying to..."},{es:"Depende.",en:"It depends."},{es:"No importa.",en:"It doesn't matter."},{es:"No pasa nada.",en:"It's okay / No problem."},{es:"Me hace falta...",en:"I am missing / I need..."}
+  ]},
+  {section:"🔗 Conectores y palabras de unión",quizCat:"conectores",cls:"color:var(--teal);background:rgba(74,168,160,0.08);border:1px solid rgba(74,168,160,0.18)",items:[
+    {es:"Si...",en:"If..."},{es:"Sí.",en:"Yes."},{es:"Pero...",en:"But..."},{es:"Porque...",en:"Because..."},{es:"¿Por qué?",en:"Why?"},{es:"Entonces...",en:"So / then..."},{es:"Así que...",en:"So / therefore..."},{es:"Aunque...",en:"Although..."},{es:"Todavía no.",en:"Not yet."},{es:"Primero...",en:"First..."},{es:"Cuando...",en:"When..."},{es:"Mientras...",en:"While..."},{es:"Tampoco.",en:"Neither / not either."},{es:"Como...",en:"Since / as..."},{es:"¿Cómo?",en:"How?"},{es:"Que...",en:"That / which..."},{es:"¿Qué?",en:"What?"},{es:"Luego...",en:"Then / afterward..."},{es:"También.",en:"Also."},{es:"Al final.",en:"In the end."}
+  ]},
+  {section:"🧭 Direcciones y ubicación",quizCat:"direcciones",cls:"color:var(--blue);background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2)",items:[
+    {es:"Siga derecho hasta el fondo.",en:"Go straight to the back / end."},{es:"Sigue derecho hasta la esquina.",en:"Go straight to the corner."},{es:"Gire a la derecha.",en:"Turn right."},{es:"Gire a la izquierda.",en:"Turn left."},{es:"Está al frente.",en:"It is in front / across from you."},{es:"Está al lado de...",en:"It is next to..."},{es:"Queda detrás de...",en:"It is behind..."},{es:"Está en la esquina.",en:"It is on the corner."},{es:"La entrada está por allá.",en:"The entrance is over there."},{es:"Es el edificio de allá.",en:"It's that building over there."},{es:"El edificio está al frente.",en:"The building is across the way."},{es:"Más adelante.",en:"Farther ahead."},{es:"Devuélvase un poquito.",en:"Go back a little."},{es:"Suba al segundo piso.",en:"Go up to the second floor."},{es:"Baje las escaleras.",en:"Go down the stairs."},{es:"¿Me puede indicar?",en:"Can you point it out / give me directions?"}
+  ]},
+  {section:"🚕 Uber y transporte real",quizCat:"uber",cls:"color:var(--blue);background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2)",items:[
+    {es:"Buenas, ¿usted es mi conductor?",en:"Hi, are you my driver?"},{es:"Sí, soy yo.",en:"Yes, that's me."},{es:"Voy para este hotel.",en:"I'm going to this hotel."},{es:"No conozco mucho la ciudad.",en:"I don't know the city very well."},{es:"¿Esta dirección está bien?",en:"Is this address correct?"},{es:"¿Me puede dejar aquí?",en:"Can you drop me off here?"},{es:"¿Cuánto falta?",en:"How much longer?"},{es:"¿Hay mucho trancón?",en:"Is there a lot of traffic?"},{es:"Ya llegamos.",en:"We've arrived."},{es:"Muchas gracias, muy amable.",en:"Thank you very much, that's very kind."}
+  ]},
+  {section:"🇨🇴 Expresiones sociales colombianas",quizCat:"expresiones",cls:"color:var(--pink);background:rgba(232,93,117,0.1);border:1px solid rgba(232,93,117,0.2)",items:[
+    {es:"¿Cómo te ha ido?",en:"How have things been?",register:"Everyday"},{es:"Todo bien.",en:"All good.",register:"Everyday"},{es:"Hágale.",en:"Go ahead / Let's do it.",register:"Colombian · informal"},{es:"Con mucho gusto.",en:"With pleasure / You're welcome.",register:"Everyday"},{es:"No se preocupe.",en:"Don't worry.",register:"Polite"},{es:"Tranquilo/a.",en:"Take it easy / Don't worry.",register:"Everyday"},{es:"¡Qué pena!",en:"Sorry! / What a shame!",register:"Colombian · everyday"},{es:"¡Qué nota!",en:"How cool!",register:"Colombian · informal"},{es:"¡Bacano!",en:"Awesome / cool!",register:"Colombian · informal"},{es:"¡Chévere!",en:"Cool / great!",register:"Everyday"},{es:"Parce.",en:"Buddy / friend.",register:"Colombian · informal"},{es:"Fresco/a.",en:"Relax / no worries.",register:"Colombian · informal"},{es:"De una vez.",en:"Right away / while we're at it.",register:"Everyday"}
+  ]}
+);
+/* v37: more Colombian informal language.  These are deliberately labeled so
+   a learner can recognize them without treating every word as safe to say. */
+COLOMBIANISMOS.push(
+  {word:"Joder",en:"To bother / mess with; damn",usage:"Informal and vulgar. In ¡Deje de joder! it means 'stop bothering me.' Stronger than a neutral complaint; understand the tone first.",example:"¡Deje de joder, estoy trabajando!",tts:"¡Deje de joder, estoy trabajando!",register:"Strong · understand first"},
+  {word:"Mierda",en:"Shit",usage:"Common vulgar exclamation or noun. Recognize it, but avoid it in polite or professional situations.",example:"¡Mierda, olvidé las llaves!",tts:"¡Mierda, olvidé las llaves!",register:"Strong · understand first"},
+  {word:"Carajo",en:"Damn it / hell",usage:"A strong exclamation. It is milder than the strongest personal insults, but still informal and rude.",example:"¡Carajo, se nos hizo tarde!",tts:"¡Carajo, se nos hizo tarde!",register:"Strong · informal"},
+  {word:"Lambón / lambona",en:"Suck-up / brown-noser",usage:"A Colombian insult for someone who flatters people to get an advantage. Informal and insulting.",example:"Ese man es muy lambón con el jefe.",tts:"Ese man es muy lambón con el jefe.",register:"Insult · informal"},
+  {word:"Sapo / sapa",en:"Snitch / busybody",usage:"In Colombia, calling someone sapo can mean they meddle or tell on others. Insulting; do not use casually.",example:"No seas sapo, eso es privado.",tts:"No seas sapo, eso es privado.",register:"Insult · informal"},
+  {word:"Mamado/a",en:"Fed up / sick and tired",usage:"Very common Colombian informal expression. It describes being fed up, not literal tiredness only. Context matters.",example:"Estoy mamado de esperar.",tts:"Estoy mamado de esperar.",register:"Colombian · informal"},
+  {word:"Emberracado/a",en:"Pissed off / furious",usage:"Colombian informal adjective for being very angry. Strong conversational language; understand first.",example:"Estoy emberracado con ese problema.",tts:"Estoy emberracado con ese problema.",register:"Colombian · strong"},
+  {word:"Cansón / cansona",en:"Annoying / tiresome",usage:"A milder everyday way to say someone or something is annoying. Still direct, so use with care.",example:"No seas tan cansón.",tts:"No seas tan cansón.",register:"Informal"}
+);
+FRASES.push(
+  {section:"⚠️ Groserías colombianas — más para entender",quizCat:"groserias",cls:"color:var(--pink);background:rgba(232,93,117,0.12);border:1px solid rgba(232,93,117,0.3)",items:[
+    {es:"¡Deje de joder!",en:"Stop bothering me! / Stop messing around!",register:"Strong · understand first"},
+    {es:"¡No me joda!",en:"Don't mess with me! / No way!",register:"Strong · informal"},
+    {es:"¿Qué carajos?",en:"What the hell?",register:"Strong · understand first"},
+    {es:"¿Qué putas?",en:"What the hell? / What the fuck?",register:"Very strong · understand first"},
+    {es:"¡Mierda, olvidé las llaves!",en:"Shit, I forgot the keys!",register:"Strong · understand first"},
+    {es:"¡Carajo, se nos hizo tarde!",en:"Damn it, we're late!",register:"Strong · informal"},
+    {es:"Ese man es un lambón.",en:"That guy is a suck-up.",register:"Insult · informal"},
+    {es:"No seas sapo.",en:"Don't be a snitch / busybody.",register:"Insult · informal"},
+    {es:"Estoy mamado de esperar.",en:"I'm fed up with waiting.",register:"Colombian · informal"},
+    {es:"Estoy emberracado con ese problema.",en:"I'm pissed off about that problem.",register:"Colombian · strong"},
+    {es:"No seas tan cansón.",en:"Don't be so annoying.",register:"Informal · milder"},
+    {es:"¡Qué mierda de día!",en:"What a shitty day!",register:"Strong · understand first"},
+    {es:"¡Qué hijueputa susto!",en:"What a fucking scare!",register:"Very strong · understand first"},
+    {es:"¡No sea tan güevón!",en:"Don't be such an idiot!",register:"Vulgar · strong"},
+    {es:"¡Qué putas está pasando!",en:"What the hell is going on!",register:"Very strong · understand first"}
+  ]}
+);
+/* v38: high-frequency conversation glue. These are the small words and
+   sentence frames that help a learner connect ideas instead of speaking in
+   isolated textbook fragments. */
+FRASES.push({section:"🗣️ Palabras para conversar — everyday glue",quizCat:"conectores",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[
+  {es:"De hecho...",en:"In fact...",register:"Everyday"},
+  {es:"En realidad...",en:"Actually...",register:"Everyday"},
+  {es:"Lo que pasa es que...",en:"The thing is...",register:"Everyday"},
+  {es:"El problema es que...",en:"The problem is that...",register:"Everyday"},
+  {es:"Ya casi.",en:"Almost / Almost there.",register:"Everyday"},
+  {es:"Por ahora.",en:"For now.",register:"Everyday"},
+  {es:"Al rato.",en:"Later / In a little while.",register:"Everyday · Colombia"},
+  {es:"En cuanto pueda...",en:"As soon as I can...",register:"Everyday"},
+  {es:"Aunque sea...",en:"Even if / At least...",register:"Everyday"},
+  {es:"Más bien...",en:"Rather / Instead...",register:"Everyday"},
+  {es:"Si no...",en:"If not...",register:"Everyday"}
+]});
+/* v39: high-frequency action chunks. These are more useful for speaking than
+   isolated nouns because they give the learner a ready-made sentence frame. */
+FRASES.push({section:"⚡ Acciones para hablar cada día",quizCat:"acciones",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[
+  {es:"Quiero...",en:"I want to...",register:"Everyday"},
+  {es:"Necesito...",en:"I need to...",register:"Everyday"},
+  {es:"Puedo...",en:"I can...",register:"Everyday"},
+  {es:"No puedo...",en:"I can't...",register:"Everyday"},
+  {es:"Tengo que...",en:"I have to...",register:"Everyday"},
+  {es:"Me toca...",en:"I have to... / It's my turn...",register:"Everyday · Colombia"},
+  {es:"Voy a...",en:"I'm going to...",register:"Everyday"},
+  {es:"Acabo de...",en:"I just...",register:"Everyday"},
+  {es:"Estoy tratando de...",en:"I'm trying to...",register:"Everyday"},
+  {es:"Estoy buscando...",en:"I'm looking for...",register:"Everyday"},
+  {es:"Estoy esperando...",en:"I'm waiting for...",register:"Everyday"},
+  {es:"Ya llegué.",en:"I already arrived.",register:"Everyday"},
+  {es:"Voy llegando.",en:"I'm on my way / almost there.",register:"Everyday · Colombia"},
+  {es:"Se me olvidó...",en:"I forgot...",register:"Everyday"},
+  {es:"Me hace falta...",en:"I need... / I'm missing...",register:"Everyday"},
+  {es:"Me queda...",en:"I have left... / It is left for me...",register:"Everyday"},
+  {es:"Voy para...",en:"I'm headed to...",register:"Everyday · Colombia"},
+  {es:"Vengo de...",en:"I come from... / I'm coming from...",register:"Everyday"},
+  {es:"Llevo...",en:"I bring / carry / have been...",register:"Everyday"},
+  {es:"Traigo...",en:"I bring...",register:"Everyday"},
+  {es:"Dejo...",en:"I leave / drop off...",register:"Everyday"},
+  {es:"Paso por...",en:"I stop by / pass through...",register:"Everyday"},
+  {es:"Me quedo...",en:"I stay...",register:"Everyday"},
+  {es:"Resulta que...",en:"It turns out that...",register:"Everyday"},
+  {es:"Depende de...",en:"It depends on...",register:"Everyday"}
+]});
+export const DIALOGUE=[{who:"A",es:"Hola, ¿cómo está?",en:"Hi, how are you? (formal)",tts:"Hola, ¿cómo está?"},{who:"B",es:"Hola, estoy bien, gracias.",en:"Hi, I'm fine, thank you.",tts:"Hola, estoy bien, gracias."},{who:"A",es:"Soy David. ¡Gusto en conocerle!",en:"I'm David. Nice to meet you!",tts:"Soy David. ¡Gusto en conocerle!"},{who:"B",es:"Soy Roberto. ¡El gusto es mío!",en:"I'm Roberto. The pleasure is mine!",tts:"Soy Roberto. ¡El gusto es mío!"},{who:"A",es:"Mucho gusto, señor Roberto.",en:"Nice to meet you, Mr. Roberto.",tts:"Mucho gusto, señor Roberto."},{who:"B",es:"Igualmente, señor David.",en:"Likewise, Mr. David.",tts:"Igualmente, señor David."}];
+export const CONVERSATIONS=[
+  {title:"Presentación personal",tense:"Ahora",lines:[{who:"A",es:"Hola, ¿cómo te llamas?",en:"Hi, what's your name?",tts:"Hola, ¿cómo te llamas?"},{who:"B",es:"Me llamo Laura. Mucho gusto.",en:"My name is Laura. Nice to meet you.",tts:"Me llamo Laura. Mucho gusto."}]},
+  {title:"Presentación personal",tense:"Planes",lines:[{who:"A",es:"Mañana voy a presentarme a mis nuevos vecinos.",en:"Tomorrow I'm going to introduce myself to my new neighbors.",tts:"Mañana voy a presentarme a mis nuevos vecinos."},{who:"B",es:"¡Qué bien! Vas a hablar con mucha confianza.",en:"Great! You are going to speak confidently.",tts:"¡Qué bien! Vas a hablar con mucha confianza."}]},
+  {title:"Presentación personal",tense:"Ayer",lines:[{who:"A",es:"Ayer conocí a una persona nueva.",en:"Yesterday I met a new person.",tts:"Ayer conocí a una persona nueva."},{who:"B",es:"Le dije mi nombre y nos saludamos.",en:"I told them my name and we greeted each other.",tts:"Le dije mi nombre y nos saludamos."}]},
+  {title:"Profesión",tense:"Ahora",lines:[{who:"A",es:"¿En qué trabajas?",en:"What do you do for work?",tts:"¿En qué trabajas?"},{who:"B",es:"Trabajo como ingeniero.",en:"I work as an engineer.",tts:"Trabajo como ingeniero."}]},
+  {title:"Profesión",tense:"Planes",lines:[{who:"A",es:"¿Qué vas a estudiar?",en:"What are you going to study?",tts:"¿Qué vas a estudiar?"},{who:"B",es:"Voy a estudiar para ser médico.",en:"I'm going to study to become a doctor.",tts:"Voy a estudiar para ser médico."}]},
+  {title:"Profesión",tense:"Ayer",lines:[{who:"A",es:"¿Qué hiciste ayer?",en:"What did you do yesterday?",tts:"¿Qué hiciste ayer?"},{who:"B",es:"Ayer trabajé en la oficina.",en:"Yesterday I worked at the office.",tts:"Ayer trabajé en la oficina."}]},
+  {title:"¿Dónde vives?",tense:"Ahora",lines:[{who:"A",es:"¿Dónde vives?",en:"Where do you live?",tts:"¿Dónde vives?"},{who:"B",es:"Vivo en Medellín, cerca del parque.",en:"I live in Medellín, near the park.",tts:"Vivo en Medellín, cerca del parque."}]},
+  {title:"¿Dónde vives?",tense:"Planes",lines:[{who:"A",es:"¿Dónde vas a vivir?",en:"Where are you going to live?",tts:"¿Dónde vas a vivir?"},{who:"B",es:"Voy a vivir en Bogotá el próximo año.",en:"I'm going to live in Bogotá next year.",tts:"Voy a vivir en Bogotá el próximo año."}]},
+  {title:"¿Dónde vives?",tense:"Ayer",lines:[{who:"A",es:"¿Dónde viviste antes?",en:"Where did you live before?",tts:"¿Dónde viviste antes?"},{who:"B",es:"Viví en Cali con mi familia.",en:"I lived in Cali with my family.",tts:"Viví en Cali con mi familia."}]},
+  {title:"Gustos y familia",tense:"Ahora",lines:[{who:"A",es:"¿Tienes hermanos?",en:"Do you have siblings?",tts:"¿Tienes hermanos?"},{who:"B",es:"Sí, tengo una hermana y un hermano.",en:"Yes, I have a sister and a brother.",tts:"Sí, tengo una hermana y un hermano."}]},
+  {title:"Gustos y familia",tense:"Planes",lines:[{who:"A",es:"¿Qué vas a hacer con tu familia?",en:"What are you going to do with your family?",tts:"¿Qué vas a hacer con tu familia?"},{who:"B",es:"Voy a pasar tiempo con ellos.",en:"I'm going to spend time with them.",tts:"Voy a pasar tiempo con ellos."}]},
+  {title:"Gustos y familia",tense:"Ayer",lines:[{who:"A",es:"¿Qué hiciste con tu familia?",en:"What did you do with your family?",tts:"¿Qué hiciste con tu familia?"},{who:"B",es:"Ayer cené con mis padres.",en:"Yesterday I had dinner with my parents.",tts:"Ayer cené con mis padres."}]},
+  {title:"Pedir direcciones",tense:"Ahora",lines:[{who:"A",es:"Disculpe, ¿me regala la dirección?",en:"Excuse me, could you give me the address?",tts:"Disculpe, ¿me regala la dirección?"},{who:"B",es:"Siga derecho y gire a la izquierda.",en:"Go straight and turn left.",tts:"Siga derecho y gire a la izquierda."}]},
+  {title:"Pedir direcciones",tense:"Planes",lines:[{who:"A",es:"¿Cómo voy a llegar al parqueadero?",en:"How am I going to get to the parking lot?",tts:"¿Cómo voy a llegar al parqueadero?"},{who:"B",es:"Va a girar en la próxima esquina.",en:"You are going to turn at the next corner.",tts:"Va a girar en la próxima esquina."}]},
+  {title:"Pedir direcciones",tense:"Ayer",lines:[{who:"A",es:"¿Cómo llegaste al hospital?",en:"How did you get to the hospital?",tts:"¿Cómo llegaste al hospital?"},{who:"B",es:"Seguí derecho y pregunté en la esquina.",en:"I went straight and asked at the corner.",tts:"Seguí derecho y pregunté en la esquina."}]},
+  {title:"Carro y taxi",tense:"Ahora",lines:[{who:"A",es:"¿Me lleva a esta dirección, por favor?",en:"Can you take me to this address, please?",tts:"¿Me lleva a esta dirección, por favor?"},{who:"B",es:"Claro, con mucho gusto.",en:"Of course, with pleasure.",tts:"Claro, con mucho gusto."}]},
+  {title:"Carro y taxi",tense:"Planes",lines:[{who:"A",es:"¿Vamos a pedir un carro?",en:"Are we going to request a car?",tts:"¿Vamos a pedir un carro?"},{who:"B",es:"Sí, voy a pedir un taxi.",en:"Yes, I'm going to request a taxi.",tts:"Sí, voy a pedir un taxi."}]},
+  {title:"Carro y taxi",tense:"Ayer",lines:[{who:"A",es:"¿Tomaste taxi ayer?",en:"Did you take a taxi yesterday?",tts:"¿Tomaste taxi ayer?"},{who:"B",es:"Sí, el conductor fue muy amable.",en:"Yes, the driver was very kind.",tts:"Sí, el conductor fue muy amable."}]},
+  {title:"Cocinar juntos",tense:"Ahora",lines:[{who:"A",es:"¿Cocinamos juntos?",en:"Shall we cook together?",tts:"¿Cocinamos juntos?"},{who:"B",es:"Dale, yo corto las verduras.",en:"Sure, I'll cut the vegetables.",tts:"Dale, yo corto las verduras."}]},
+  {title:"Cocinar juntos",tense:"Planes",lines:[{who:"A",es:"¿Qué vamos a cocinar?",en:"What are we going to cook?",tts:"¿Qué vamos a cocinar?"},{who:"B",es:"Vamos a preparar una sopa.",en:"We are going to make a soup.",tts:"Vamos a preparar una sopa."}]},
+  {title:"Cocinar juntos",tense:"Ayer",lines:[{who:"A",es:"¿Qué cocinaron ayer?",en:"What did you cook yesterday?",tts:"¿Qué cocinaron ayer?"},{who:"B",es:"Ayer hervimos la comida y probamos la salsa.",en:"Yesterday we boiled the food and tasted the sauce.",tts:"Ayer hervimos la comida y probamos la salsa."}]},
+  {title:"Contar lo que pasó",tense:"Ahora",lines:[{who:"A",es:"¿Dónde estás?",en:"Where are you?",tts:"¿Dónde estás?"},{who:"B",es:"Estoy en casa y tengo que terminar un proyecto.",en:"I'm at home and I have to finish a project.",tts:"Estoy en casa y tengo que terminar un proyecto."}]},
+  {title:"Contar lo que pasó",tense:"Planes",lines:[{who:"A",es:"¿Qué ibas a hacer?",en:"What were you going to do?",tts:"¿Qué ibas a hacer?"},{who:"B",es:"Iba a cocinar, pero tuve que trabajar.",en:"I was going to cook, but I had to work.",tts:"Iba a cocinar, pero tuve que trabajar."}]},
+   {title:"Contar lo que pasó",tense:"Ayer",lines:[{who:"A",es:"¿Qué hiciste ayer?",en:"What did you do yesterday?",tts:"¿Qué hiciste ayer?"},{who:"B",es:"Fui al mercado porque necesitaba comida.",en:"I went to the market because I needed food.",tts:"Fui al mercado porque necesitaba comida."},{who:"A",es:"¿Y dónde estabas después?",en:"And where were you afterward?",tts:"¿Y dónde estabas después?"},{who:"B",es:"Estaba en casa; quería descansar.",en:"I was at home; I wanted to rest.",tts:"Estaba en casa; quería descansar."}]},
+   {title:"Groserías colombianas",tense:"Ahora",lines:[{who:"A",es:"¿Qué significa «juepucha»?",en:"What does «juepucha» mean?",tts:"¿Qué significa juepucha?"},{who:"B",es:"Es una forma más suave de decir «hijueputa». Úsala con cuidado.",en:"It is a milder way to say «hijueputa». Use it carefully.",tts:"Es una forma más suave de decir hijueputa. Úsala con cuidado."}]},
+   {title:"Groserías colombianas",tense:"Planes",lines:[{who:"A",es:"¿Puedo decir «marica» con cualquier persona?",en:"Can I say «marica» with anyone?",tts:"¿Puedo decir marica con cualquier persona?"},{who:"B",es:"No. Depende mucho de la confianza, el tono y la región; mejor entiéndela primero.",en:"No. It depends a lot on trust, tone, and region; understand it first.",tts:"No. Depende mucho de la confianza, el tono y la región; mejor entiéndela primero."}]},
+   {title:"Groserías colombianas",tense:"Ayer",lines:[{who:"A",es:"¿Qué escuchaste en la calle?",en:"What did you hear in the street?",tts:"¿Qué escuchaste en la calle?"},{who:"B",es:"Escuché «qué jartera», una queja informal y menos fuerte.",en:"I heard «qué jartera», an informal and milder complaint.",tts:"Escuché qué jartera, una queja informal y menos fuerte."}]},
+   {title:"Ver televisión",tense:"Ahora",lines:[{who:"A",es:"¿Qué quieres ver?",en:"What do you want to watch?",tts:"¿Qué quieres ver?"},{who:"B",es:"Una serie. ¿Dónde está el control remoto?",en:"A series. Where is the remote control?",tts:"Una serie. ¿Dónde está el control remoto?"},{who:"A",es:"Está en el sofá.",en:"It's on the sofa.",tts:"Está en el sofá."}]},
+  {title:"Ver televisión",tense:"Planes",lines:[{who:"A",es:"¿Qué vas a hacer esta noche?",en:"What are you going to do tonight?",tts:"¿Qué vas a hacer esta noche?"},{who:"B",es:"Voy a ver una película y relajarme.",en:"I'm going to watch a movie and relax.",tts:"Voy a ver una película y relajarme."}]},
+  {title:"Ver televisión",tense:"Ayer",lines:[{who:"A",es:"¿Qué viste anoche?",en:"What did you watch last night?",tts:"¿Qué viste anoche?"},{who:"B",es:"Vi las noticias y descansé en el sofá.",en:"I watched the news and rested on the sofa.",tts:"Vi las noticias y descansé en el sofá."}]},
+  {title:"En casa",tense:"Ahora",lines:[{who:"A",es:"¿Dónde está el baño?",en:"Where is the bathroom?",tts:"¿Dónde está el baño?"},{who:"B",es:"Está al lado de la habitación.",en:"It is next to the bedroom.",tts:"Está al lado de la habitación."}]},
+  {title:"En casa",tense:"Planes",lines:[{who:"A",es:"¿Vas a arreglar la habitación?",en:"Are you going to tidy the bedroom?",tts:"¿Vas a arreglar la habitación?"},{who:"B",es:"Sí, voy a cambiar la sábana y la cobija.",en:"Yes, I'm going to change the sheet and the blanket.",tts:"Sí, voy a cambiar la sábana y la cobija."}]},
+  {title:"En casa",tense:"Ayer",lines:[{who:"A",es:"¿Dónde estaba la toalla?",en:"Where was the towel?",tts:"¿Dónde estaba la toalla?"},{who:"B",es:"Ayer la dejé junto al lavamanos.",en:"Yesterday I left it next to the sink.",tts:"Ayer la dejé junto al lavamanos."}]}
+  ,{title:"La habitación",tense:"Ahora",lines:[{who:"A",es:"¿Dónde está la sábana?",en:"Where is the sheet?",tts:"¿Dónde está la sábana?"},{who:"B",es:"Está en el clóset, al lado de la cobija.",en:"It is in the closet, next to the blanket.",tts:"Está en el clóset, al lado de la cobija."},{who:"A",es:"También necesito una almohada.",en:"I also need a pillow.",tts:"También necesito una almohada."},{who:"B",es:"Hay una sobre la cama.",en:"There is one on the bed.",tts:"Hay una sobre la cama."}]},
+  {title:"La habitación",tense:"Planes",lines:[
+    {who:"A",es:"Voy a organizar la habitación mañana.",en:"I'm going to organize the bedroom tomorrow.",tts:"Voy a organizar la habitación mañana."},
+    {who:"B",es:"¿Vas a cambiar las sábanas?",en:"Are you going to change the sheets?",tts:"¿Vas a cambiar las sábanas?"},
+    {who:"A",es:"Sí, y voy a comprar una almohada nueva.",en:"Yes, and I'm going to buy a new pillow.",tts:"Sí, y voy a comprar una almohada nueva."}]},
+  {title:"La habitación",tense:"Ayer",lines:[
+    {who:"A",es:"Ayer arreglé la habitación.",en:"Yesterday I tidied up the bedroom.",tts:"Ayer arreglé la habitación."},
+    {who:"B",es:"¿Lavaste las cobijas?",en:"Did you wash the blankets?",tts:"¿Lavaste las cobijas?"},
+    {who:"A",es:"Sí, y guardé la ropa en el clóset.",en:"Yes, and I put the clothes away in the closet.",tts:"Sí, y guardé la ropa en el clóset."}]},
+  {title:"El baño",tense:"Ahora",lines:[{who:"A",es:"Disculpe, ¿dónde está el baño?",en:"Excuse me, where is the bathroom?",tts:"Disculpe, ¿dónde está el baño?"},{who:"B",es:"Está al fondo, a la derecha.",en:"It is at the back, on the right.",tts:"Está al fondo, a la derecha."},{who:"A",es:"¿Hay una toalla limpia?",en:"Is there a clean towel?",tts:"¿Hay una toalla limpia?"},{who:"B",es:"Sí, está junto al lavamanos.",en:"Yes, it is next to the sink.",tts:"Sí, está junto al lavamanos."}]},
+  {title:"El baño",tense:"Planes",lines:[
+    {who:"A",es:"Voy a tomar una ducha.",en:"I'm going to take a shower.",tts:"Voy a tomar una ducha."},
+    {who:"B",es:"Listo, voy a buscar una toalla limpia.",en:"OK, I'm going to get a clean towel.",tts:"Listo, voy a buscar una toalla limpia."},
+    {who:"A",es:"¿Vas a comprar champú mañana?",en:"Are you going to buy shampoo tomorrow?",tts:"¿Vas a comprar champú mañana?"},
+    {who:"B",es:"Sí, y también jabón.",en:"Yes, and soap too.",tts:"Sí, y también jabón."}]},
+  {title:"El baño",tense:"Ayer",lines:[
+    {who:"A",es:"Ayer limpié el baño.",en:"Yesterday I cleaned the bathroom.",tts:"Ayer limpié el baño."},
+    {who:"B",es:"¡Gracias! ¿Cambiaste la cortina de baño?",en:"Thanks! Did you change the shower curtain?",tts:"¡Gracias! ¿Cambiaste la cortina de baño?"},
+    {who:"A",es:"Sí, y lavé el lavamanos.",en:"Yes, and I washed the sink.",tts:"Sí, y lavé el lavamanos."}]},
+  {title:"Trabajo y oficina",tense:"Ahora",lines:[{who:"A",es:"¿Tienes una reunión hoy?",en:"Do you have a meeting today?",tts:"¿Tienes una reunión hoy?"},{who:"B",es:"Sí, con un cliente nuevo.",en:"Yes, with a new client.",tts:"Sí, con un cliente nuevo."},{who:"A",es:"¿Vas a enviar el correo?",en:"Are you going to send the email?",tts:"¿Vas a enviar el correo?"},{who:"B",es:"Sí, después de imprimir el documento.",en:"Yes, after printing the document.",tts:"Sí, después de imprimir el documento."}]},
+  {title:"Trabajo y oficina",tense:"Planes",lines:[
+    {who:"A",es:"Mañana voy a firmar el contrato.",en:"Tomorrow I'm going to sign the contract.",tts:"Mañana voy a firmar el contrato."},
+    {who:"B",es:"¡Qué bueno! ¿Vas a hablar con el jefe?",en:"Great! Are you going to talk to the boss?",tts:"¡Qué bueno! ¿Vas a hablar con el jefe?"},
+    {who:"A",es:"Sí, vamos a revisar el proyecto en la sala de juntas.",en:"Yes, we're going to review the project in the meeting room.",tts:"Sí, vamos a revisar el proyecto en la sala de juntas."}]},
+  {title:"Trabajo y oficina",tense:"Ayer",lines:[
+    {who:"A",es:"¿Cómo te fue en la reunión ayer?",en:"How did the meeting go yesterday?",tts:"¿Cómo te fue en la reunión ayer?"},
+    {who:"B",es:"Muy bien. El cliente firmó el contrato.",en:"Very well. The client signed the contract.",tts:"Muy bien. El cliente firmó el contrato."},
+    {who:"A",es:"¡Felicitaciones! Fue una buena venta.",en:"Congratulations! It was a good sale.",tts:"¡Felicitaciones! Fue una buena venta."}]},
+  {title:"Partes del carro",tense:"Ahora",lines:[{who:"A",es:"¿Qué le pasa al carro?",en:"What is wrong with the car?",tts:"¿Qué le pasa al carro?"},{who:"B",es:"La llanta está baja y el freno suena.",en:"The tire is low and the brake makes a noise.",tts:"La llanta está baja y el freno suena."},{who:"A",es:"¿Hay gasolina?",en:"Is there gas?",tts:"¿Hay gasolina?"},{who:"B",es:"Sí, pero hay que revisar la batería.",en:"Yes, but we need to check the battery.",tts:"Sí, pero hay que revisar la batería."}]},
+  {title:"Partes del carro",tense:"Planes",lines:[
+    {who:"A",es:"Mañana voy a llevar el carro al taller.",en:"Tomorrow I'm going to take the car to the shop.",tts:"Mañana voy a llevar el carro al taller."},
+    {who:"B",es:"¿Qué le van a cambiar?",en:"What are they going to change on it?",tts:"¿Qué le van a cambiar?"},
+    {who:"A",es:"Van a cambiar la llanta y revisar los frenos.",en:"They're going to change the tire and check the brakes.",tts:"Van a cambiar la llanta y revisar los frenos."}]},
+  {title:"Partes del carro",tense:"Ayer",lines:[
+    {who:"A",es:"Ayer llevé el carro al taller.",en:"Yesterday I took the car to the shop.",tts:"Ayer llevé el carro al taller."},
+    {who:"B",es:"¿Qué le hicieron?",en:"What did they do to it?",tts:"¿Qué le hicieron?"},
+    {who:"A",es:"Cambiaron la batería y arreglaron el pito.",en:"They changed the battery and fixed the horn.",tts:"Cambiaron la batería y arreglaron el pito."},
+    {who:"B",es:"¡Uy, qué caro!",en:"Wow, so expensive!",tts:"¡Uy, qué caro!"}]},
+  {title:"Preparar la cocina",tense:"Ahora",lines:[{who:"A",es:"¿Dónde está el cuchillo?",en:"Where is the knife?",tts:"¿Dónde está el cuchillo?"},{who:"B",es:"Está en el cajón, junto a la cuchara.",en:"It is in the drawer, next to the spoon.",tts:"Está en el cajón, junto a la cuchara."},{who:"A",es:"Voy a cortar las verduras.",en:"I am going to cut the vegetables.",tts:"Voy a cortar las verduras."},{who:"B",es:"Listo, yo caliento la olla.",en:"All right, I will heat the pot.",tts:"Listo, yo caliento la olla."}]},
+  {title:"Preparar la cocina",tense:"Planes",lines:[
+    {who:"A",es:"¿Qué vamos a cocinar mañana?",en:"What are we going to cook tomorrow?",tts:"¿Qué vamos a cocinar mañana?"},
+    {who:"B",es:"Vamos a freír unas arepas.",en:"We're going to fry some arepas.",tts:"Vamos a freír unas arepas."},
+    {who:"A",es:"Voy a sacar los huevos de la nevera.",en:"I'm going to get the eggs out of the fridge.",tts:"Voy a sacar los huevos de la nevera."}]},
+  {title:"Preparar la cocina",tense:"Ayer",lines:[
+    {who:"A",es:"¿Qué cocinaste anoche?",en:"What did you cook last night?",tts:"¿Qué cocinaste anoche?"},
+    {who:"B",es:"Hice una sopa. Herví las verduras en la olla.",en:"I made a soup. I boiled the vegetables in the pot.",tts:"Hice una sopa. Herví las verduras en la olla."},
+    {who:"A",es:"¿Y probaste la salsa?",en:"And did you taste the sauce?",tts:"¿Y probaste la salsa?"},
+    {who:"B",es:"Sí, ¡quedó deliciosa!",en:"Yes, it turned out delicious!",tts:"Sí, ¡quedó deliciosa!"}]},
+  {title:"Pronombres en acción",tense:"Ahora",lines:[
+    {who:"A",es:"¿Me lo puede repetir, por favor?",en:"Can you repeat it for me, please?",tts:"¿Me lo puede repetir, por favor?"},
+    {who:"B",es:"Sí, se lo repito despacio.",en:"Yes, I'll repeat it slowly.",tts:"Sí, se lo repito despacio."},
+    {who:"A",es:"¿La dirección la tiene?",en:"Do you have the address?",tts:"¿La dirección la tiene?"},
+    {who:"B",es:"Sí, la tengo aquí.",en:"Yes, I have it here.",tts:"Sí, la tengo aquí."}]},
+  {title:"Pronombres en acción",tense:"Planes",lines:[
+    {who:"A",es:"¿Me lo va a mandar hoy?",en:"Are you going to send it to me today?",tts:"¿Me lo va a mandar hoy?"},
+    {who:"B",es:"Sí, se lo voy a mandar en la tarde.",en:"Yes, I'm going to send it to you this afternoon.",tts:"Sí, se lo voy a mandar en la tarde."},
+    {who:"A",es:"¿La ubicación la tiene?",en:"Do you have the location?",tts:"¿La ubicación la tiene?"},
+    {who:"B",es:"No, pero me la puede enviar.",en:"No, but you can send it to me.",tts:"No, pero me la puede enviar."}]},
+  {title:"Pronombres en acción",tense:"Ayer",lines:[
+    {who:"A",es:"¿Le explicaste el problema?",en:"Did you explain the problem to him/her?",tts:"¿Le explicaste el problema?"},
+    {who:"B",es:"Sí, se lo expliqué al técnico.",en:"Yes, I explained it to the technician.",tts:"Sí, se lo expliqué al técnico."},
+    {who:"A",es:"¿La factura la guardaste?",en:"Did you save the invoice?",tts:"¿La factura la guardaste?"},
+    {who:"B",es:"Sí, la guardé en el archivo.",en:"Yes, I saved it in the file.",tts:"Sí, la guardé en el archivo."}]}
+ ];
+
+/* v36: practical conversations.  The helper keeps every line's TTS field
+   consistent while still storing both sides and the English meaning. */
+export const v36Lines=rows=>rows.map(([who,es,en])=>({who,es,en,tts:es}));
+export const v36Conversation=(title,en,now,plans,was)=>[
+  {title,tense:"Ahora",lines:v36Lines(now)},
+  ...(plans?[{title,tense:"Planes",lines:v36Lines(plans)}]:[]),
+  ...(was?[{title,tense:"Ayer",lines:v36Lines(was)}]:[])
+];
+export const V36_CONVERSATIONS=[
+  ...v36Conversation("Uber: confirmar la recogida","Confirming an Uber pickup",[
+    ["A","Buenas, ¿usted es mi conductor?","Hi, are you my driver?"],["B","Sí, soy yo. ¿Usted es Seth?","Yes, that's me. Are you Seth?"],["A","Sí. Estoy al frente del hotel.","Yes. I am in front of the hotel."],["B","Ya lo veo. Estoy en un carro gris.","I see you now. I am in a gray car."],["A","Perfecto. Voy para este hotel.","Perfect. I'm going to this hotel."],["B","Listo, súbase. ¿Tiene el equipaje?","Okay, get in. Do you have your luggage?"],["A","Sí, aquí está. Muchas gracias.","Yes, here it is. Thank you very much."]
+  ],[
+    ["A","Buenas, mañana tengo un viaje al aeropuerto.","Hi, tomorrow I have a trip to the airport."],["B","Claro, puedo recogerlo a las seis.","Sure, I can pick you up at six."],["A","¿Puede confirmar la dirección?","Can you confirm the address?"],["B","Sí, lo recojo frente al hotel.","Yes, I will pick you up in front of the hotel."],["A","Perfecto, le escribo cuando esté listo.","Perfect, I will message you when I am ready."],["B","De una. Nos vemos mañana.","Sounds good. See you tomorrow."]
+  ],[
+    ["A","Ayer pedí un Uber desde el hotel.","Yesterday I requested an Uber from the hotel."],["B","¿El conductor encontró la dirección?","Did the driver find the address?"],["A","Sí, lo vi al frente del edificio.","Yes, I saw him in front of the building."],["B","¿Llegó a tiempo?","Did you arrive on time?"],["A","Sí, pero había mucho trancón.","Yes, but there was a lot of traffic."],["B","Bueno, lo importante es que llegó bien.","Well, the important thing is that you arrived safely."]
+  ]),
+  ...v36Conversation("Uber: hablo poquito español","Explaining limited Spanish to a driver",[
+    ["A","Buenas, hablo poquito español.","Hi, I speak a little Spanish."],["B","Tranquilo, ¿para dónde va?","No worries, where are you going?"],["A","Voy para este hotel.","I'm going to this hotel."],["B","¿Quiere que usemos la dirección de la aplicación?","Do you want us to use the address in the app?"],["A","Sí, por favor. ¿Puede hablar más despacio?","Yes, please. Can you speak more slowly?"],["B","Claro. No se preocupe.","Sure. Don't worry."],["A","Gracias por tener paciencia.","Thanks for being patient."]
+  ]),
+  ...v36Conversation("Uber: pedir que repita","Asking the driver to repeat",[
+    ["A","Perdón, no entendí.","Sorry, I didn't understand."],["B","Le pregunté si quiere ir por esta avenida.","I asked if you want to go along this avenue."],["A","¿Me puede repetir, por favor?","Can you repeat that, please?"],["B","¿Quiere ir por esta avenida?","Do you want to go along this avenue?"],["A","Sí, está bien. Más despacio, por favor.","Yes, that's fine. More slowly, please."],["B","Listo, vamos despacio.","Okay, we will go slowly."]
+  ]),
+  ...v36Conversation("Uber: dirección equivocada","Fixing a wrong pickup or building",[
+    ["A","Creo que estamos en el edificio equivocado.","I think we are at the wrong building."],["B","¿La dirección dice número veinte?","Does the address say number twenty?"],["A","Sí, pero la entrada está por allá.","Yes, but the entrance is over there."],["B","¿Es el edificio alto de la esquina?","Is it the tall building on the corner?"],["A","Sí. Devuélvase un poquito, por favor.","Yes. Go back a little, please."],["B","Listo, ya estamos en la entrada.","Okay, we are at the entrance now."],["A","Perfecto. Muchas gracias.","Perfect. Thank you very much."]
+  ]),
+  ...v36Conversation("Hotel: registrarse","Checking into a hotel",[
+    ["A","Buenas, tengo una reserva a nombre de Seth.","Hi, I have a reservation under Seth's name."],["B","Buenas. ¿Me puede mostrar el pasaporte?","Hi. Can you show me your passport?"],["A","Claro, aquí tiene.","Of course, here you go."],["B","Su habitación está en el segundo piso.","Your room is on the second floor."],["A","¿A qué hora es el desayuno?","What time is breakfast?"],["B","De seis a diez, en el primer piso.","From six to ten, on the first floor."],["A","Muchas gracias. ¿Dónde está el ascensor?","Thank you very much. Where is the elevator?"]
+  ],[
+    ["A","Mañana voy a llegar al hotel a las ocho.","Tomorrow I am going to arrive at the hotel at eight."],["B","Perfecto, vamos a tener su habitación lista.","Perfect, we will have your room ready."],["A","¿Puedo dejar el equipaje antes?","Can I leave my luggage earlier?"],["B","Sí, puede dejarlo en recepción.","Yes, you can leave it at reception."],["A","De una. Nos vemos mañana.","Sounds good. See you tomorrow."],["B","Con mucho gusto.","With pleasure."]
+  ],[
+    ["A","Ayer llegué al hotel y mostré mi pasaporte.","Yesterday I arrived at the hotel and showed my passport."],["B","¿Le dieron la habitación enseguida?","Did they give you the room right away?"],["A","Sí, pero pregunté por el ascensor.","Yes, but I asked about the elevator."],["B","¿Y dónde estaba el desayuno?","And where was breakfast?"],["A","Estaba en el primer piso.","It was on the first floor."],["B","Qué bien. ¿Descansó?","Great. Did you rest?"]
+  ]),
+  ...v36Conversation("Restaurante: pedir y cambiar","Ordering and changing a restaurant order",[
+    ["A","Buenas, quisiera pedir una sopa y un jugo.","Hi, I would like to order a soup and a juice."],["B","Claro. ¿La sopa con arroz o con papa?","Sure. Soup with rice or potato?"],["A","Con papa, por favor. Sin picante.","With potato, please. Without spice."],["B","¿Y para tomar?","And to drink?"],["A","Un jugo de mango, pero sin azúcar.","A mango juice, but without sugar."],["B","Listo, ya le traigo todo.","Okay, I will bring everything right away."],["A","Perdón, ¿puede cambiar el jugo por agua?","Sorry, can you change the juice for water?"]
+  ],null,[
+    ["A","Ayer pedí una sopa en un restaurante.","Yesterday I ordered a soup at a restaurant."],["B","¿Te gustó?","Did you like it?"],["A","Sí, pero estaba un poco picante.","Yes, but it was a little spicy."],["B","¿Pediste algo para tomar?","Did you order something to drink?"],["A","Sí, pedí agua y después la cuenta.","Yes, I ordered water and then the bill."],["B","¿Pagaste con tarjeta?","Did you pay by card?"]
+  ]),
+  ...v36Conversation("Farmacia: explicar síntomas","Explaining symptoms at a pharmacy",[
+    ["A","Buenas, necesito algo para el dolor de cabeza.","Hi, I need something for a headache."],["B","¿Desde cuándo le duele?","Since when has it hurt?"],["A","Desde esta mañana.","Since this morning."],["B","¿Tiene fiebre o tos?","Do you have a fever or cough?"],["A","No, pero me siento cansado.","No, but I feel tired."],["B","Le recomiendo estas pastillas.","I recommend these pills."],["A","¿Cómo las debo tomar?","How should I take them?"]
+  ]),
+  ...v36Conversation("Mercado: comprar comida","Buying food at a Colombian market",[
+    ["A","Buenas, ¿cuánto cuestan estas arepas?","Hi, how much do these arepas cost?"],["B","Son cinco mil pesos las dos.","They are five thousand pesos for two."],["A","Me regala dos, por favor.","Can I have two, please?"],["B","Claro. ¿Algo más?","Sure. Anything else?"],["A","Sí, necesito tomates y aguacate.","Yes, I need tomatoes and avocado."],["B","Todo cuesta quince mil.","Everything costs fifteen thousand."],["A","¿Puedo pagar con tarjeta?","Can I pay by card?"]
+  ]),
+  ...v36Conversation("Teléfono: mala señal","Handling a phone call with a bad signal",[
+    ["A","¿Aló? ¿Me escuchas?","Hello? Can you hear me?"],["B","Te escucho, pero la señal está mala.","I can hear you, but the signal is bad."],["A","Se está cortando la llamada.","The call is cutting out."],["B","Te llamo más tarde.","I will call you later."],["A","No, mándame un mensaje mejor.","No, send me a message instead."],["B","Listo. Te escribo en un momento.","Okay. I will text you in a moment."]
+  ],null,[
+    ["A","Ayer llamé, pero no tenía señal.","Yesterday I called, but I had no signal."],["B","¿Se cortó la llamada?","Did the call drop?"],["A","Sí. Después mandé un mensaje.","Yes. Then I sent a message."],["B","¿Te respondieron?","Did they answer you?"],["A","Sí, me respondieron en la noche.","Yes, they answered me at night."],["B","Qué bueno.","That's good."]
+  ]),
+  ...v36Conversation("Compañeros de trabajo","Meeting coworkers",[
+    ["A","Hola, soy nuevo en el equipo.","Hi, I am new on the team."],["B","Mucho gusto. Yo trabajo con el jefe.","Nice to meet you. I work with the boss."],["A","¿En qué proyecto estás trabajando?","What project are you working on?"],["B","Estoy trabajando en el proyecto de ventas.","I am working on the sales project."],["A","Tengo una reunión a las diez.","I have a meeting at ten."],["B","De una. Después tomamos un tinto.","Sounds good. We can have a coffee afterward."]
+  ]),
+  ...v36Conversation("Planes de fin de semana","Making weekend plans",[
+    ["A","¿Qué vas a hacer este fin de semana?","What are you going to do this weekend?"],["B","Voy a visitar a mi familia.","I am going to visit my family."],["A","¿Nos vemos el sábado?","Shall we meet Saturday?"],["B","De una. ¿A qué hora?","Sure. What time?"],["A","A las tres, para tomar un tinto.","At three, to have a coffee."],["B","Listo. Te aviso el lugar.","Okay. I will let you know the place."]
+  ],[
+    ["A","El próximo sábado voy a visitar a mi familia.","Next Saturday I am going to visit my family."],["B","Entonces podemos vernos el domingo.","Then we can meet Sunday."],["A","Sí, si tengo tiempo te escribo.","Yes, if I have time I will text you."],["B","Perfecto. ¿Quieres ir a un café?","Perfect. Do you want to go to a café?"],["A","Sí, me gustaría conocer uno nuevo.","Yes, I would like to try a new one."],["B","Hágale. Quedamos así.","Let's do it. It's a plan."]
+  ]),
+  ...v36Conversation("Problema con apartamento o carro","Reporting a home, car, or reservation problem",[
+    ["A","Buenas, la ducha no funciona.","Hi, the shower does not work."],["B","¿Desde cuándo tiene el problema?","Since when have you had the problem?"],["A","Desde ayer. También hay una gotera.","Since yesterday. There is also a leak."],["B","Voy a mandar un técnico esta tarde.","I am going to send a technician this afternoon."],["A","Perfecto. ¿A qué hora viene?","Perfect. What time is he coming?"],["B","Llega entre dos y cuatro.","He will arrive between two and four."],["A","Muchas gracias por la ayuda.","Thank you very much for the help."]
+  ],null,[
+    ["A","Ayer se dañó el carro en la carretera.","Yesterday the car broke down on the road."],["B","¿Qué parte se dañó?","What part broke?"],["A","La llanta estaba baja y el motor se apagó.","The tire was low and the engine turned off."],["B","¿Llamaste al seguro?","Did you call the insurance company?"],["A","Sí, pero tuve que esperar una hora.","Yes, but I had to wait an hour."],["B","Qué problema. ¿Ya está funcionando?","What a problem. Is it working now?"]
+  ])
+];
+CONVERSATIONS.push(...V36_CONVERSATIONS);
+export const V38_CONVERSATIONS=[
+  ...v36Conversation("Palabras para conversar","Using everyday glue words to keep a conversation moving",[
+    ["A","¿Qué vas a hacer después del trabajo?","What are you going to do after work?"],
+    ["B","Todavía no sé. De pronto voy a pasar por el mercado.","I don't know yet. Maybe I am going to stop by the market."],
+    ["A","Bueno, si tienes tiempo, me avisas.","Well, if you have time, let me know."],
+    ["B","De una. En cuanto pueda te escribo.","Sure. I will text you as soon as I can."]
+  ],[
+    ["A","¿Qué piensas hacer mañana?","What are you thinking of doing tomorrow?"],
+    ["B","Por ahora no tengo planes.","For now I don't have plans."],
+    ["A","Si no llueve, podemos ir a tomar un tinto.","If it doesn't rain, we can go have a coffee."],
+    ["B","Más bien nos vemos al rato, ¿te parece?","Instead, let's meet later. What do you think?"]
+  ],[
+    ["A","¿Qué pasó ayer?","What happened yesterday?"],
+    ["B","El problema es que había mucho trancón.","The problem is that there was a lot of traffic."],
+    ["A","¿Llegaste tarde?","Did you arrive late?"],
+    ["B","Sí, pero de hecho llegué a tiempo.","Yes, but in fact I arrived on time."]
+  ])
+];
+CONVERSATIONS.push(...V38_CONVERSATIONS);
+export const V39_CONVERSATIONS=[
+  ...v36Conversation("Acciones de todos los días","High-frequency action chunks in a natural conversation",[
+    ["A","¿Qué quieres hacer después del trabajo?","What do you want to do after work?"],
+    ["B","Quiero pasar por el mercado, pero tengo que llegar temprano.","I want to stop by the market, but I have to arrive early."],
+    ["A","¿Vas para tu casa después?","Are you headed home afterward?"],
+    ["B","Sí, voy para la casa y acabo de comprar la comida.","Yes, I am headed home and I just bought the food."]
+  ],[
+    ["A","¿Qué estás haciendo?","What are you doing?"],
+    ["B","Estoy buscando la dirección. No puedo encontrarla.","I am looking for the address. I can't find it."],
+    ["A","¿Te puedo ayudar?","Can I help you?"],
+    ["B","Sí, me hace falta la ubicación. Te la mando en un momento.","Yes, I need the location. I will send it to you in a moment."]
+  ],[
+    ["A","¿Qué pasó ayer?","What happened yesterday?"],
+    ["B","Se me olvidó la cita y me tocó llamar para cambiarla.","I forgot the appointment and had to call to change it."],
+    ["A","¿Y después qué hiciste?","And what did you do afterward?"],
+    ["B","Me quedé en casa porque estaba cansado.","I stayed home because I was tired."]
+  ])
+];
+CONVERSATIONS.push(...V39_CONVERSATIONS);
+
+/* v60: longer, task-based conversations. Each one follows a real-life arc:
+   opening → request → clarification → confirmation/closing. */
+export const v60Lines=rows=>rows.map(([who,es,en])=>({who,es,en,tts:es}));
+export const v60Dialogue=(title,en,rows,alternates=[])=>({title,en,tense:"Ahora",lines:v60Lines(rows),alternates});
+export const V60_CONVERSATIONS=[
+  v60Dialogue("Comunicación: pedir y aclarar","Asking someone to repeat and give directions",[
+    ["A","Perdón, ¿me puede ayudar?","Excuse me, can you help me?"],["B","Claro, dígame.","Of course, tell me."],["A","Hábleme más despacio, por favor.","Speak to me more slowly, please."],["B","Sí, cómo no.","Yes, of course."],["A","¿Me puede repetir la dirección?","Can you repeat the address for me?"],["B","Sí, siga derecho y gire a la derecha.","Yes, go straight and turn right."],["A","Disculpe, ¿es el edificio de allá?","Excuse me, is it that building over there?"],["B","Sí, ese mismo.","Yes, that one."]
+  ],[{es:"¿Me puede hablar un poco más despacio, por favor?",en:"Can you speak a little more slowly, please?",tts:"¿Me puede hablar un poco más despacio, por favor?"},{es:"Perdón, ¿me lo puede repetir?",en:"Sorry, can you repeat that for me?",tts:"Perdón, ¿me lo puede repetir?"}]),
+  v60Dialogue("Uber: viaje completo","A complete Uber ride from pickup to drop-off",[
+    ["A","Hola, ¿usted es el conductor de Uber?","Hi, are you the Uber driver?"],["B","Sí, soy yo. ¿Usted es Seth?","Yes, that's me. Are you Seth?"],["A","Sí. Hablo un poco de español. ¿Puede hablar despacio?","Yes. I speak a little Spanish. Can you speak slowly?"],["B","Claro, no hay problema.","Of course, no problem."],["A","Voy para este edificio, el de la esquina.","I'm going to this building, the one on the corner."],["B","¿El edificio alto que está al frente?","The tall building that's across the way?"],["A","Sí, ese mismo. Avíseme dónde me bajo, por favor.","Yes, that one. Please let me know where I get out."],["B","Listo, llegamos en unos minutos.","Okay, we'll arrive in a few minutes."]
+  ],[{es:"Voy para el edificio de la esquina. ¿Me puede avisar cuando lleguemos?",en:"I'm going to the building on the corner. Can you let me know when we arrive?",tts:"Voy para el edificio de la esquina. ¿Me puede avisar cuando lleguemos?"},{es:"No conozco mucho la ciudad; ¿me ayuda con la dirección?",en:"I don't know the city very well; can you help me with the address?",tts:"No conozco mucho la ciudad; ¿me ayuda con la dirección?"}]),
+  v60Dialogue("Restaurante: una comida completa","Ordering, changing an order, and asking for the bill",[
+    ["A","Buenas, ¿tiene una mesa para dos?","Hi, do you have a table for two?"],["B","Sí, por aquí.","Yes, this way."],["A","Quisiera una sopa y un jugo, por favor.","I would like a soup and a juice, please."],["B","¿La sopa la quiere con arroz o con papa?","Would you like the soup with rice or potato?"],["A","Con papa. Y el jugo sin azúcar, por favor.","With potato. And the juice without sugar, please."],["B","Claro. ¿Algo más?","Of course. Anything else?"],["A","No, gracias. ¿Me trae la cuenta cuando pueda?","No, thank you. Can you bring me the bill when you can?"],["B","De una, ya se la traigo.","Sure, I'll bring it right away."]
+  ],[{es:"Me gustaría pedir una sopa y algo para tomar.",en:"I would like to order a soup and something to drink.",tts:"Me gustaría pedir una sopa y algo para tomar."},{es:"¿Me puede traer la cuenta, por favor?",en:"Can you bring me the bill, please?",tts:"¿Me puede traer la cuenta, por favor?"}]),
+  v60Dialogue("Mercado: comprar y negociar","Buying food and negotiating a price",[
+    ["A","Buenas, ¿cuánto cuesta el kilo de tomates?","Hi, how much does a kilo of tomatoes cost?"],["B","Cuesta ocho mil pesos.","It costs eight thousand pesos."],["A","Está un poco caro. ¿Me lo deja en siete?","It's a little expensive. Can you let me have it for seven?"],["B","Bueno, se lo dejo en siete mil.","Okay, I'll let you have it for seven thousand."],["A","Listo, deme un kilo y dos aguacates.","Great, give me a kilo and two avocados."],["B","¿Algo más?","Anything else?"],["A","No, gracias. ¿Puedo pagar con Nequi?","No, thank you. Can I pay with Nequi?"],["B","Sí, claro.","Yes, of course."]
+  ],[{es:"¿Me hace un descuento si compro dos?",en:"Can you give me a discount if I buy two?",tts:"¿Me hace un descuento si compro dos?"},{es:"¿Cuánto le debo por todo?",en:"How much do I owe you for everything?",tts:"¿Cuánto le debo por todo?"}]),
+  v60Dialogue("Cocinar y hablar de lo que haces","Talking about what you are doing",[
+    ["A","¿Qué estás haciendo?","What are you doing?"],["B","Estoy cocinando la cena.","I'm cooking dinner."],["A","¿Y después qué vas a hacer?","And what are you going to do afterward?"],["B","Voy a salir con unos amigos.","I'm going to go out with some friends."],["A","Yo estaba trabajando cuando me llamaste.","I was working when you called me."],["B","Perdón, no sabía.","Sorry, I didn't know."],["A","No pasa nada. Ahora estoy descansando.","No problem. Now I'm resting."],["B","Qué bien, te lo mereces.","Great, you deserve it."]
+  ],[{es:"En este momento estoy preparando la comida.",en:"At this moment I am preparing the food.",tts:"En este momento estoy preparando la comida."},{es:"Acabo de llegar y estoy buscando algo para comer.",en:"I just arrived and I am looking for something to eat.",tts:"Acabo de llegar y estoy buscando algo para comer."}]),
+  v60Dialogue("Salir con amigos","Making and adjusting plans with friends",[
+    ["A","¿Qué más? ¿Qué vas a hacer esta noche?","What's up? What are you going to do tonight?"],["B","Voy a salir con unos amigos.","I'm going out with some friends."],["A","¿Nos vemos después?","Shall we meet later?"],["B","De una, pero llego un poco tarde.","Sure, but I'll arrive a little late."],["A","No hay problema. Avísame cuando llegues.","No problem. Let me know when you arrive."],["B","Listo, te escribo.","Okay, I'll text you."],["A","¿Quieres ir a comer algo?","Do you want to go eat something?"],["B","Sí, me parece buena idea.","Yes, I think that's a good idea."]
+  ],[{es:"¿Te parece si nos vemos más tarde?",en:"How about we meet later?",tts:"¿Te parece si nos vemos más tarde?"},{es:"De pronto llego después de las ocho.",en:"Maybe I'll arrive after eight.",tts:"De pronto llego después de las ocho."}]),
+  v60Dialogue("En una fiesta","Meeting people and making conversation at a party",[
+    ["A","Hola, ¿cómo conoces a la gente de aquí?","Hi, how do you know the people here?"],["B","Soy amigo de Laura. ¿Y tú?","I'm a friend of Laura. And you?"],["A","También. ¿Quieres algo de tomar?","Me too. Do you want something to drink?"],["B","Sí, gracias. Un jugo está bien.","Yes, thank you. A juice is fine."],["A","La música está muy buena.","The music is really good."],["B","Sí, está chévere.","Yes, it's cool."],["A","Me tengo que ir, pero la pasé muy bien.","I have to go, but I had a great time."],["B","Nos vemos, cuídate.","See you, take care."]
+  ],[{es:"¿Ya conocías a alguien antes de venir?",en:"Did you already know anyone before coming?",tts:"¿Ya conocías a alguien antes de venir?"},{es:"Qué gusto conocerte. Nos vemos luego.",en:"Nice to meet you. See you later.",tts:"Qué gusto conocerte. Nos vemos luego."}]),
+  v60Dialogue("Ver el partido","Talking about a soccer match",[
+    ["A","¿Vas a ver el partido esta noche?","Are you going to watch the game tonight?"],["B","Claro, no me lo pierdo.","Of course, I wouldn't miss it."],["A","¿Quién está jugando?","Who's playing?"],["B","Juega Colombia contra Brasil.","Colombia is playing against Brazil."],["A","Ojalá gane Colombia.","I hope Colombia wins."],["B","Sí, vamos con toda.","Yes, let's give it our all."],["A","Si hacen gol, te escribo.","If they score, I'll text you."],["B","De una, lo vemos juntos.","Sure, we'll watch it together."]
+  ],[{es:"¿Cómo va el marcador?",en:"How is the score?",tts:"¿Cómo va el marcador?"},{es:"Ese partido estuvo buenísimo.",en:"That game was really great.",tts:"Ese partido estuvo buenísimo."}]),
+  v60Dialogue("Oficina: proyecto y retraso","Explaining progress and a delay at work",[
+    ["A","¿Cómo va el proyecto?","How is the project going?"],["B","Va bien, pero estoy un poco atrasado.","It's going well, but I'm a little behind."],["A","¿Necesitas ayuda con el informe?","Do you need help with the report?"],["B","Sí, ¿me puede revisar esta parte?","Yes, can you review this part for me?"],["A","Claro, se la reviso después de la reunión.","Of course, I'll review it after the meeting."],["B","Perfecto. Yo termino los datos hoy.","Perfect. I'll finish the data today."],["A","Entonces mañana lo mandamos al cliente.","Then tomorrow we'll send it to the client."],["B","Listo, me parece bien.","Okay, sounds good to me."]
+  ],[{es:"El proyecto está casi listo, pero necesito un día más.",en:"The project is almost ready, but I need one more day.",tts:"El proyecto está casi listo, pero necesito un día más."},{es:"¿Me puede dar una mano con este informe?",en:"Can you give me a hand with this report?",tts:"¿Me puede dar una mano con este informe?"}])
+];
+CONVERSATIONS.push(...V60_CONVERSATIONS);
+
+FRASES.push(
+  {section:"🗣️ Pedir, repetir y aclarar",quizCat:"mandatos",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[{es:"Háblame más despacio.",en:"Speak to me more slowly. (informal)"},{es:"Hábleme más despacio, por favor.",en:"Speak to me more slowly, please. (formal)"},{es:"Dígame la dirección.",en:"Tell me the address. (formal)"},{es:"Escúchame un momento.",en:"Listen to me for a moment. (informal)"},{es:"Repítame la pregunta, por favor.",en:"Repeat the question for me, please. (formal)"},{es:"Disculpe, no entendí.",en:"Excuse me, I didn't understand."},{es:"Dime otra vez.",en:"Tell me again. (informal)"},{es:"¿Me puede mostrar?","en":"Can you show me?"}]},
+  {section:"🚗 Un viaje completo en Uber",quizCat:"uber-real",cls:"color:var(--blue);background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2)",items:[{es:"¿Usted es el conductor de Uber?",en:"Are you the Uber driver?"},{es:"Hablo un poco de español.",en:"I speak a little Spanish."},{es:"¿Puede hablar despacio?",en:"Can you speak slowly?"},{es:"Voy para el edificio de la esquina.",en:"I'm going to the building on the corner."},{es:"El de allá, al frente.",en:"The one over there, across the way."},{es:"Avíseme dónde me bajo.",en:"Let me know where I get out."},{es:"¿Cuánto falta?",en:"How much longer?"},{es:"Ya llegamos.",en:"We've arrived."}]},
+  {section:"🍽️ Comer fuera — conversación real",quizCat:"restaurante-real",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[{es:"¿Tiene una mesa para dos?",en:"Do you have a table for two?"},{es:"Quisiera pedir…",en:"I would like to order…"},{es:"Con papa, por favor.",en:"With potato, please."},{es:"Sin azúcar.",en:"Without sugar."},{es:"¿Algo más?",en:"Anything else?"},{es:"¿Me cambia esto, por favor?",en:"Can you change this for me, please?"},{es:"¿Me trae la cuenta?",en:"Can you bring me the bill?"},{es:"¿Puedo pagar con tarjeta?",en:"Can I pay by card?"}]},
+  {section:"🛍️ Mercado — comprar y negociar",quizCat:"mercado",cls:"color:var(--green);background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2)",items:[{es:"¿Cuánto cuesta el kilo?",en:"How much does a kilo cost?"},{es:"Está un poco caro.",en:"It's a little expensive."},{es:"¿Me lo deja en siete?",en:"Can you let me have it for seven?"},{es:"¿Me hace un descuento?",en:"Can you give me a discount?"},{es:"Deme dos, por favor.",en:"Give me two, please."},{es:"¿Cuánto le debo por todo?",en:"How much do I owe you for everything?"},{es:"¿Puedo pagar con Nequi?",en:"Can I pay with Nequi?"},{es:"Listo, muchas gracias.",en:"Great, thank you very much."}]},
+  {section:"🔄 Actividades en progreso",quizCat:"gerundios",cls:"color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)",items:[{es:"Estoy cocinando.",en:"I am cooking."},{es:"Estoy buscando la dirección.",en:"I am looking for the address."},{es:"Estoy aprendiendo español.",en:"I am learning Spanish."},{es:"Está lloviendo.",en:"It is raining."},{es:"¿Qué estás haciendo?",en:"What are you doing?"},{es:"Estaba trabajando.",en:"I was working."},{es:"Acabo de llegar.",en:"I just arrived."},{es:"Fui de compras.",en:"I went shopping."}]},
+  {section:"🤝 Salir con amigos",quizCat:"social",cls:"color:var(--pink);background:rgba(232,93,117,0.1);border:1px solid rgba(232,93,117,0.2)",items:[{es:"¿Qué vas a hacer esta noche?",en:"What are you going to do tonight?"},{es:"Voy a salir con unos amigos.",en:"I'm going out with some friends."},{es:"¿Nos vemos después?",en:"Shall we meet later?"},{es:"De una.",en:"Sure / I'm in. (Colombian)"},{es:"Llego un poco tarde.",en:"I'll arrive a little late."},{es:"Avísame cuando llegues.",en:"Let me know when you arrive."},{es:"¿Quieres ir a comer algo?",en:"Do you want to go eat something?"},{es:"Me parece buena idea.",en:"I think that's a good idea."}]},
+  {section:"🎉 En una fiesta",quizCat:"fiesta",cls:"color:var(--pink);background:rgba(232,93,117,0.1);border:1px solid rgba(232,93,117,0.2)",items:[{es:"¿Cómo conoces a la gente de aquí?",en:"How do you know the people here?"},{es:"Soy amigo de…",en:"I'm a friend of…"},{es:"¿Quieres algo de tomar?",en:"Do you want something to drink?"},{es:"Un jugo está bien.",en:"A juice is fine."},{es:"La música está muy buena.",en:"The music is really good."},{es:"Está chévere.",en:"It's cool."},{es:"La pasé muy bien.",en:"I had a great time."},{es:"Me tengo que ir.",en:"I have to go."}]},
+  {section:"⚽ Ver el partido",quizCat:"deportes",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[{es:"¿Vas a ver el partido?",en:"Are you going to watch the game?"},{es:"No me lo pierdo.",en:"I wouldn't miss it."},{es:"¿Quién está jugando?",en:"Who's playing?"},{es:"¿Cómo va el marcador?",en:"How is the score?"},{es:"Ojalá gane Colombia.",en:"I hope Colombia wins."},{es:"Vamos con toda.",en:"Let's give it our all. (Colombian)"},{es:"Hicieron gol.",en:"They scored."},{es:"Lo vemos juntos.",en:"We'll watch it together."}]},
+  {section:"🧑‍💼 Oficina — conversación real",quizCat:"oficina-real",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[{es:"¿Cómo va el proyecto?",en:"How is the project going?"},{es:"Estoy un poco atrasado.",en:"I'm a little behind."},{es:"¿Necesitas ayuda?",en:"Do you need help?"},{es:"¿Me puede revisar esta parte?",en:"Can you review this part for me?"},{es:"Se la reviso después.",en:"I'll review it for you afterward."},{es:"Termino los datos hoy.",en:"I'll finish the data today."},{es:"Lo mandamos mañana.",en:"We'll send it tomorrow."},{es:"Me parece bien.",en:"Sounds good to me."}]}
+);
+
+ /* Speaking missions: situations first, with more than one natural answer. */
+export const CONVERSATION_MISSIONS=[
+   {id:"taxi-aeropuerto",title:"Pide un taxi",scenario:"You are outside a hotel in Bogotá. Ask the driver to take you to the airport and ask the price.",prompt:"Di tu respuesta en español:",lesson:"calle",models:[{es:"¿Me lleva al aeropuerto, por favor? ¿Cuánto cuesta?",en:"Can you take me to the airport, please? How much does it cost?",tts:"¿Me lleva al aeropuerto, por favor? ¿Cuánto cuesta?"},{es:"Buenas, necesito ir al aeropuerto. ¿Cuánto me cobra?",en:"Hi, I need to go to the airport. How much will you charge me?",tts:"Buenas, necesito ir al aeropuerto. ¿Cuánto me cobra?"}]},
+   {id:"tinto-por-favor",title:"Pide un tinto",scenario:"You are in a Colombian café. Order a black coffee politely and say you want it without sugar.",prompt:"Di tu pedido:",lesson:"colombia",models:[{es:"¿Me regala un tinto, por favor? Sin azúcar.",en:"Can I have a black coffee, please? Without sugar.",tts:"¿Me regala un tinto, por favor? Sin azúcar."},{es:"Quisiera un tinto, por favor, y no le ponga azúcar.",en:"I would like a black coffee, please, and don't add sugar.",tts:"Quisiera un tinto, por favor, y no le ponga azúcar."}]},
+   {id:"saludo-parce",title:"Saluda a un amigo",scenario:"You run into a Colombian friend you have not seen recently. Greet them and ask how things are going.",prompt:"Saluda de forma natural:",lesson:"colombia",models:[{es:"¡Hola, parce! ¿Qué más?",en:"Hi, buddy! What's up?",tts:"¡Hola, parce! ¿Qué más?"},{es:"¿Qué más, parce? ¿Cómo te ha ido?",en:"What's up, buddy? How have things been?",tts:"¿Qué más, parce? ¿Cómo te ha ido?"}]},
+   {id:"reunion-trabajo",title:"Habla de tu trabajo",scenario:"A new coworker asks what you are doing today. Say that you have a meeting and need to finish a project.",prompt:"Responde en español:",lesson:"trabajo",models:[{es:"Tengo una reunión y necesito terminar un proyecto.",en:"I have a meeting and I need to finish a project.",tts:"Tengo una reunión y necesito terminar un proyecto."},{es:"Estoy trabajando en un proyecto; después tengo una reunión.",en:"I am working on a project; afterward I have a meeting.",tts:"Estoy trabajando en un proyecto; después tengo una reunión."}]},
+   {id:"problema-casa",title:"Explica un problema",scenario:"Something at home stopped working. Explain the problem and say you need help.",prompt:"Explica qué pasó:",lesson:"casa",models:[{es:"La ducha no funciona y necesito ayuda.",en:"The shower does not work and I need help.",tts:"La ducha no funciona y necesito ayuda."},{es:"Se dañó la ducha. ¿Me puede ayudar, por favor?",en:"The shower broke. Can you help me, please?",tts:"Se dañó la ducha. ¿Me puede ayudar, por favor?"}]},
+   {id:"mercado-comida",title:"Compra comida",scenario:"You are at a market. Say what you need to buy and ask how much it costs.",prompt:"Habla con el vendedor:",lesson:"plata",models:[{es:"Necesito comprar arepas. ¿Cuánto cuestan?",en:"I need to buy arepas. How much do they cost?",tts:"Necesito comprar arepas. ¿Cuánto cuestan?"},{es:"¿Me regala dos arepas? ¿Cuánto le debo?",en:"Can I have two arepas? How much do I owe you?",tts:"¿Me regala dos arepas? ¿Cuánto le debo?"}]},
+   {id:"contar-ayer",title:"Cuenta qué pasó",scenario:"A friend asks what you did yesterday. Say where you went and what you wanted to do afterward.",prompt:"Cuenta tu día:",lesson:"gram-pasado-historia",models:[{es:"Ayer fui al mercado y después quería descansar en casa.",en:"Yesterday I went to the market and afterward I wanted to rest at home.",tts:"Ayer fui al mercado y después quería descansar en casa."},{es:"Fui al mercado porque necesitaba comida; luego me quedé en casa.",en:"I went to the market because I needed food; then I stayed home.",tts:"Fui al mercado porque necesitaba comida; luego me quedé en casa."}]},
+   {id:"planes-fin-semana",title:"Haz planes",scenario:"Ask a friend what they are going to do this weekend and suggest meeting for coffee.",prompt:"Propón un plan:",lesson:"planes",models:[{es:"¿Qué vas a hacer este fin de semana? ¿Nos vemos para un tinto?",en:"What are you going to do this weekend? Shall we meet for a coffee?",tts:"¿Qué vas a hacer este fin de semana? ¿Nos vemos para un tinto?"},{es:"¿Te parece si nos vemos el sábado para tomar un tinto?",en:"How about we meet Saturday for a coffee?",tts:"¿Te parece si nos vemos el sábado para tomar un tinto?"}]},
+   {id:"direcciones-hospital",title:"Pide direcciones",scenario:"You are lost and need to find the hospital. Ask someone politely and repeat the key location.",prompt:"Pide ayuda:",lesson:"calle",models:[{es:"Disculpe, ¿dónde queda el hospital?",en:"Excuse me, where is the hospital?",tts:"Disculpe, ¿dónde queda el hospital?"},{es:"Perdón, estoy perdido. ¿Me regala la dirección del hospital?",en:"Sorry, I am lost. Could you give me the hospital's address?",tts:"Perdón, estoy perdido. ¿Me regala la dirección del hospital?"}]},
+   {id:"como-te-sientes",title:"Explica cómo te sientes",scenario:"A friend asks how you feel. Say that you are tired, have a headache, and need to rest.",prompt:"Responde:",lesson:"sentirse",models:[{es:"Estoy cansado y me duele la cabeza. Necesito descansar.",en:"I am tired and my head hurts. I need to rest.",tts:"Estoy cansado y me duele la cabeza. Necesito descansar."},{es:"Me siento mal; tengo sueño y quiero descansar.",en:"I feel bad; I am sleepy and I want to rest.",tts:"Me siento mal; tengo sueño y quiero descansar."}]}
+ ];
+
+CONVERSATION_MISSIONS.push(
+  {id:"uber-habla-despacio",title:"Pide que hablen despacio",scenario:"Your Uber driver speaks quickly. Explain that you are learning Spanish and ask them to repeat slowly.",prompt:"Responde con calma:",lesson:"uber-ride",models:[{es:"Hablo poquito español. ¿Puede hablar más despacio, por favor?",en:"I speak a little Spanish. Can you speak more slowly, please?",tts:"Hablo poquito español. ¿Puede hablar más despacio, por favor?"},{es:"Perdón, estoy aprendiendo español. ¿Me puede repetir?",en:"Sorry, I am learning Spanish. Can you repeat that?",tts:"Perdón, estoy aprendiendo español. ¿Me puede repetir?"}]},
+  {id:"hotel-checkin",title:"Regístrate en el hotel",scenario:"Check in, show your passport, and ask where breakfast is.",prompt:"Haz el registro:",lesson:"hotel-checkin",models:[{es:"Buenas, tengo una reserva a nombre de Seth. ¿A qué hora es el desayuno?",en:"Hi, I have a reservation under Seth's name. What time is breakfast?",tts:"Buenas, tengo una reserva a nombre de Seth. ¿A qué hora es el desayuno?"},{es:"Claro, aquí tiene mi pasaporte. ¿Dónde está el ascensor?",en:"Of course, here is my passport. Where is the elevator?",tts:"Claro, aquí tiene mi pasaporte. ¿Dónde está el ascensor?"}]},
+  {id:"farmacia-sintomas",title:"Explica síntomas",scenario:"At a pharmacy, say that you have a headache and ask how to take the medicine.",prompt:"Explica lo que necesitas:",lesson:"farmacia",models:[{es:"Necesito algo para el dolor de cabeza. ¿Cómo lo debo tomar?",en:"I need something for a headache. How should I take it?",tts:"Necesito algo para el dolor de cabeza. ¿Cómo lo debo tomar?"},{es:"Me siento cansado y me duele la cabeza desde esta mañana.",en:"I feel tired and my head has hurt since this morning.",tts:"Me siento cansado y me duele la cabeza desde esta mañana."}]},
+  {id:"edificio-direcciones",title:"Encuentra el edificio",scenario:"You are looking for a building. Ask where the entrance is and repeat the directions.",prompt:"Pide y confirma la dirección:",lesson:"direcciones",models:[{es:"¿Me puede indicar? ¿Es el edificio de allá?",en:"Can you point it out? Is it that building over there?",tts:"¿Me puede indicar? ¿Es el edificio de allá?"},{es:"¿Dónde está la entrada? ¿Queda al frente o detrás del edificio?",en:"Where is the entrance? Is it in front of or behind the building?",tts:"¿Dónde está la entrada? ¿Queda al frente o detrás del edificio?"}]}
+);
+CONVERSATION_MISSIONS.push(
+  {id:"acciones-diarias",title:"Habla de tus acciones",scenario:"A friend asks what you are doing and where you are going. Use two or three action chunks to answer naturally.",prompt:"Responde sin traducir palabra por palabra:",lesson:"action-chunks",models:[{es:"Estoy buscando la dirección y voy para el hotel. Te aviso cuando llegue.",en:"I am looking for the address and I am headed to the hotel. I will let you know when I arrive.",tts:"Estoy buscando la dirección y voy para el hotel. Te aviso cuando llegue."},{es:"Quiero pasar por el mercado, pero tengo que llegar a casa temprano.",en:"I want to stop by the market, but I have to get home early.",tts:"Quiero pasar por el mercado, pero tengo que llegar a casa temprano."}]}
+);
+CONVERSATION_MISSIONS.push(
+  {id:"uber-ruta",title:"Corrige la ruta del Uber",scenario:"Your Uber driver seems to be going the wrong way. Explain the problem politely and confirm the destination.",prompt:"Responde con una frase para reparar la situación:",lesson:"uber-ride",models:[{es:"Disculpe, creo que vamos por otro lado. El destino es este hotel.",en:"Excuse me, I think we are going another way. The destination is this hotel.",tts:"Disculpe, creo que vamos por otro lado. El destino es este hotel."},{es:"Perdón, ¿puede revisar la dirección? Creo que esta no es la ruta.",en:"Sorry, can you check the address? I think this is not the route.",tts:"Perdón, ¿puede revisar la dirección? Creo que esta no es la ruta."}]},
+  {id:"edificio-entrada",title:"Explica dónde está el edificio",scenario:"Someone asks for directions. Tell them to go straight, identify the building over there, and explain where the entrance is.",prompt:"Da las indicaciones:",lesson:"direcciones",models:[{es:"Siga derecho hasta el fondo. Es el edificio de allá y la entrada queda detrás.",en:"Go straight to the back. It is that building over there, and the entrance is behind it.",tts:"Siga derecho hasta el fondo. Es el edificio de allá y la entrada queda detrás."},{es:"Vaya derecho hasta la esquina; el edificio está al frente y la entrada queda por atrás.",en:"Go straight to the corner; the building is in front, and the entrance is in the back.",tts:"Vaya derecho hasta la esquina; el edificio está al frente y la entrada queda por atrás."}]},
+  {id:"cita-cambio",title:"Cambia una cita",scenario:"You cannot attend an appointment tomorrow. Explain why and suggest another time.",prompt:"Llama y cambia la cita:",lesson:"planes",models:[{es:"Mañana no puedo ir porque tengo una reunión. ¿Podemos vernos el viernes?",en:"I cannot go tomorrow because I have a meeting. Can we meet Friday?",tts:"Mañana no puedo ir porque tengo una reunión. ¿Podemos vernos el viernes?"},{es:"Se me cruzó algo mañana. ¿Le parece si cambiamos la cita para la próxima semana?",en:"Something came up tomorrow. Would it be okay if we move the appointment to next week?",tts:"Se me cruzó algo mañana. ¿Le parece si cambiamos la cita para la próxima semana?"}]},
+  {id:"si-entonces-plan",title:"Propón un plan con una condición",scenario:"Make a weekend plan with a friend. Say what you will do if the weather is good, and offer a backup plan.",prompt:"Habla de las dos posibilidades:",lesson:"planes",models:[{es:"Si hace buen tiempo, vamos al parque; si no, nos vemos para un tinto.",en:"If the weather is good, we will go to the park; if not, we will meet for a coffee.",tts:"Si hace buen tiempo, vamos al parque; si no, nos vemos para un tinto."},{es:"Si no llueve, podemos caminar. Si llueve, hacemos algo en casa.",en:"If it does not rain, we can walk. If it rains, we will do something at home.",tts:"Si no llueve, podemos caminar. Si llueve, hacemos algo en casa."}]}
+);
+
+ /* Short readings: read for meaning first, then shadow each sentence aloud. */
+export const READINGS=[
+   {id:"lectura-cafe",level:"A1",title:"Un tinto en la mañana",lesson:"colombia",intro:"A simple Colombian café order.",lines:[
+     {es:"Por la mañana voy a una cafetería cerca de mi casa.",en:"In the morning I go to a café near my house.",tts:"Por la mañana voy a una cafetería cerca de mi casa."},
+     {es:"¿Me regala un tinto, por favor?",en:"Can I have a black coffee, please?",tts:"¿Me regala un tinto, por favor?"},
+     {es:"Sí, claro. ¿Lo quiere con azúcar?",en:"Yes, of course. Do you want it with sugar?",tts:"Sí, claro. ¿Lo quiere con azúcar?"},
+     {es:"No, gracias. Así está bien.",en:"No, thank you. It is fine like that.",tts:"No, gracias. Así está bien."}
+   ],questions:[{q:"¿Qué pide la persona?",choices:["Un tinto","Una cerveza","Un jugo"],answer:"Un tinto"}]},
+   {id:"lectura-mercado",level:"A1",title:"En el mercado",lesson:"plata",intro:"Useful words for buying food.",lines:[
+     {es:"Hoy necesito comprar mercado para la semana.",en:"Today I need to buy groceries for the week.",tts:"Hoy necesito comprar mercado para la semana."},
+     {es:"Compro arepas, huevos, arroz y aguacates.",en:"I buy arepas, eggs, rice, and avocados.",tts:"Compro arepas, huevos, arroz y aguacates."},
+     {es:"La señora me dice el precio y yo pago con tarjeta.",en:"The woman tells me the price and I pay by card.",tts:"La señora me dice el precio y yo pago con tarjeta."},
+     {es:"Después vuelvo a casa con las bolsas.",en:"Afterward I return home with the bags.",tts:"Después vuelvo a casa con las bolsas."}
+   ],questions:[{q:"¿Qué compra la persona?",choices:["Comida","Ropa","Un carro"],answer:"Comida"}]},
+   {id:"lectura-taxi",level:"A1",title:"Un taxi en Bogotá",lesson:"calle",intro:"Practice directions and polite requests.",lines:[
+     {es:"Salgo del hotel y busco un taxi.",en:"I leave the hotel and look for a taxi.",tts:"Salgo del hotel y busco un taxi."},
+     {es:"Buenas, ¿me lleva al aeropuerto, por favor?",en:"Hi, can you take me to the airport, please?",tts:"Buenas, ¿me lleva al aeropuerto, por favor?"},
+     {es:"Claro. Siga derecho y luego gire a la izquierda.",en:"Of course. Go straight and then turn left.",tts:"Claro. Siga derecho y luego gire a la izquierda."},
+     {es:"Hay un poco de trancón, pero llegamos a tiempo.",en:"There is a little traffic, but we will arrive on time.",tts:"Hay un poco de trancón, pero llegamos a tiempo."}
+   ],questions:[{q:"¿A dónde va la persona?",choices:["Al aeropuerto","Al mercado","A la oficina"],answer:"Al aeropuerto"}]},
+   {id:"lectura-trabajo",level:"A1",title:"Un día de trabajo",lesson:"trabajo",intro:"Present tense plus everyday speaking patterns.",lines:[
+     {es:"Trabajo en una oficina y llego a las ocho.",en:"I work in an office and arrive at eight.",tts:"Trabajo en una oficina y llego a las ocho."},
+     {es:"Tengo que terminar un proyecto antes del almuerzo.",en:"I have to finish a project before lunch.",tts:"Tengo que terminar un proyecto antes del almuerzo."},
+     {es:"A las diez tengo una reunión con mi jefe.",en:"At ten I have a meeting with my boss.",tts:"A las diez tengo una reunión con mi jefe."},
+     {es:"Después de trabajar, voy a descansar en casa.",en:"After working, I am going to rest at home.",tts:"Después de trabajar, voy a descansar en casa."}
+   ],questions:[{q:"¿Qué tiene la persona a las diez?",choices:["Una reunión","Un taxi","Una clase"],answer:"Una reunión"}]},
+   {id:"lectura-ayer",level:"A2",title:"Lo que hice ayer",lesson:"gram-pasado-historia",intro:"Tell a short story with past-tense verbs.",lines:[
+     {es:"Ayer fui al centro porque necesitaba comprar un regalo.",en:"Yesterday I went downtown because I needed to buy a gift.",tts:"Ayer fui al centro porque necesitaba comprar un regalo."},
+     {es:"Había mucho trancón, así que llegué un poco tarde.",en:"There was a lot of traffic, so I arrived a little late.",tts:"Había mucho trancón, así que llegué un poco tarde."},
+     {es:"Compré el regalo y después tomé un tinto.",en:"I bought the gift and afterward had a black coffee.",tts:"Compré el regalo y después tomé un tinto."},
+     {es:"Al final regresé a casa y descansé.",en:"In the end I returned home and rested.",tts:"Al final regresé a casa y descansé."}
+   ],questions:[{q:"¿Por qué fue al centro?",choices:["Para comprar un regalo","Para trabajar","Para tomar un taxi"],answer:"Para comprar un regalo"}]},
+   {id:"lectura-planes",level:"A2",title:"Planes para el sábado",lesson:"planes",intro:"Use future plans and natural Colombian responses.",lines:[
+     {es:"El viernes le escribo a mi amigo para hacer planes.",en:"On Friday I text my friend to make plans.",tts:"El viernes le escribo a mi amigo para hacer planes."},
+     {es:"¿Qué vas a hacer el sábado?",en:"What are you going to do Saturday?",tts:"¿Qué vas a hacer el sábado?"},
+     {es:"Voy a visitar a mi familia, pero podemos vernos en la tarde.",en:"I am going to visit my family, but we can meet in the afternoon.",tts:"Voy a visitar a mi familia, pero podemos vernos en la tarde."},
+     {es:"De una. Te aviso la hora después.",en:"I'm in. I will let you know the time later.",tts:"De una. Te aviso la hora después."}
+   ],questions:[{q:"¿Cuándo pueden verse?",choices:["En la tarde","En la mañana","La próxima semana"],answer:"En la tarde"}]}
+ ];
+
+READINGS.push(
+  {id:"lectura-uber",level:"A1",title:"Una recogida en Uber",lesson:"uber-ride",intro:"Read a short pickup conversation and notice repair phrases.",lines:[
+    {es:"Buenas, ¿usted es mi conductor?",en:"Hi, are you my driver?",tts:"Buenas, ¿usted es mi conductor?"},{es:"Sí, soy yo. Estoy en un carro gris.",en:"Yes, that's me. I am in a gray car.",tts:"Sí, soy yo. Estoy en un carro gris."},{es:"Hablo poquito español, pero voy para este hotel.",en:"I speak a little Spanish, but I am going to this hotel.",tts:"Hablo poquito español, pero voy para este hotel."},{es:"¿Puede hablar más despacio, por favor?",en:"Can you speak more slowly, please?",tts:"¿Puede hablar más despacio, por favor?"}
+  ],questions:[{q:"¿Adónde va la persona?",choices:["A un hotel","A una farmacia","A una oficina"],answer:"A un hotel"}]},
+  {id:"lectura-hotel",level:"A1",title:"Llegar al hotel",lesson:"hotel-checkin",intro:"Practice a simple check-in and location question.",lines:[
+    {es:"Tengo una reserva a nombre de Seth.",en:"I have a reservation under Seth's name.",tts:"Tengo una reserva a nombre de Seth."},{es:"Claro, ¿me puede mostrar el pasaporte?",en:"Of course, can you show me your passport?",tts:"Claro, ¿me puede mostrar el pasaporte?"},{es:"Aquí tiene. ¿A qué hora es el desayuno?",en:"Here you go. What time is breakfast?",tts:"Aquí tiene. ¿A qué hora es el desayuno?"},{es:"El desayuno es en el primer piso, al lado del ascensor.",en:"Breakfast is on the first floor, next to the elevator.",tts:"El desayuno es en el primer piso, al lado del ascensor."}
+  ],questions:[{q:"¿Dónde está el desayuno?",choices:["En el primer piso","En el carro","Detrás del hospital"],answer:"En el primer piso"}]},
+  {id:"lectura-telefono",level:"A2",title:"Una llamada con mala señal",lesson:"daily-repair",intro:"Notice how speakers repair a broken phone call.",lines:[
+    {es:"¿Aló? ¿Me escuchas?",en:"Hello? Can you hear me?",tts:"¿Aló? ¿Me escuchas?"},{es:"Te escucho, pero la señal está mala.",en:"I can hear you, but the signal is bad.",tts:"Te escucho, pero la señal está mala."},{es:"Se está cortando la llamada, así que te escribo.",en:"The call is cutting out, so I will text you.",tts:"Se está cortando la llamada, así que te escribo."},{es:"Listo, hablamos más tarde.",en:"Okay, we will talk later.",tts:"Listo, hablamos más tarde."}
+  ],questions:[{q:"¿Qué problema tienen?",choices:["Mala señal","No tienen comida","Perdieron el carro"],answer:"Mala señal"}]},
+  {id:"lectura-edificio",level:"A1",title:"El edificio de allá",lesson:"direcciones",intro:"Practice front, behind, entrance, and floor directions.",lines:[
+    {es:"Disculpe, ¿dónde está la entrada?",en:"Excuse me, where is the entrance?",tts:"Disculpe, ¿dónde está la entrada?"},{es:"Es el edificio de allá, al frente.",en:"It is that building over there, across the way.",tts:"Es el edificio de allá, al frente."},{es:"Siga derecho hasta la esquina y gire a la derecha.",en:"Go straight to the corner and turn right.",tts:"Siga derecho hasta la esquina y gire a la derecha."},{es:"Después suba al segundo piso.",en:"Then go up to the second floor.",tts:"Después suba al segundo piso."}
+  ],questions:[{q:"¿A qué piso debe subir?",choices:["Al segundo piso","Al primer piso","Al sótano"],answer:"Al segundo piso"}]}
+);
+READINGS.push(
+  {id:"lectura-historia-contraste",level:"A2",title:"Una tarde con lluvia",lesson:"gram-pasado-contraste",intro:"Notice the difference between the background and the completed events. Read once for meaning, then shadow each line.",lines:[
+    {es:"Cuando era niño, vivía cerca de un parque.",en:"When I was a child, I lived near a park.",tts:"Cuando era niño, vivía cerca de un parque."},
+    {es:"Ayer fui al mismo parque porque quería caminar.",en:"Yesterday I went to the same park because I wanted to walk.",tts:"Ayer fui al mismo parque porque quería caminar."},
+    {es:"Estaba lloviendo cuando llegué, pero no me devolví.",en:"It was raining when I arrived, but I did not turn back.",tts:"Estaba lloviendo cuando llegué, pero no me devolví."},
+    {es:"Esperé diez minutos y después regresé a casa.",en:"I waited ten minutes and then returned home.",tts:"Esperé diez minutos y después regresé a casa."}
+  ],questions:[{q:"¿Qué estaba pasando cuando llegó?",choices:["Estaba lloviendo","Estaba trabajando","Estaba cocinando"],answer:"Estaba lloviendo"},{q:"¿Qué hizo después?",choices:["Regresó a casa","Compró un carro","Llamó al médico"],answer:"Regresó a casa"}]},
+  {id:"lectura-pronombres-ubicacion",level:"A2",title:"La dirección y el mensaje",lesson:"gram-pronombres",intro:"Listen for lo, la, le, and se lo. Try to say each line before hearing it.",lines:[
+    {es:"¿Tienes la dirección del edificio?",en:"Do you have the building's address?",tts:"¿Tienes la dirección del edificio?"},
+    {es:"Sí, la tengo aquí, pero no sé cómo llegar.",en:"Yes, I have it here, but I do not know how to get there.",tts:"Sí, la tengo aquí, pero no sé cómo llegar."},
+    {es:"Mándamela por mensaje y se la muestro al conductor.",en:"Send it to me by message and I will show it to the driver.",tts:"Mándamela por mensaje y se la muestro al conductor."},
+    {es:"Listo, ya te la mandé.",en:"Okay, I already sent it to you.",tts:"Listo, ya te la mandé."}
+  ],questions:[{q:"¿Qué va a mostrarle al conductor?",choices:["La dirección","La habitación","La comida"],answer:"La dirección"}]}
+);
+
+// ── Grammar data ──────────────────────────────────────────────────────────────
+export const GRAMMAR={
+  presente:{intro:"The present tense describes habits, facts, and current actions. 3 verb types: AR, ER, IR.",trick:"The -O ending always means 'I'. Yo habl-O = I speak. Yo com-O = I eat. Yo viv-O = I live. Learn -O and you can talk about yourself instantly!",
+    tables:[{title:"AR Verbs — Hablar",sub:"Drop -AR, add: -o, -as, -a, -amos, -an",rows:[{pro:"Yo",verb:"hablo",en:"I speak",tts:"yo hablo"},{pro:"Tú",verb:"hablas",en:"you speak",tts:"tú hablas"},{pro:"Él/Ella/Ud.",verb:"habla",en:"he/she speaks",tts:"él habla"},{pro:"Nosotros",verb:"hablamos",en:"we speak",tts:"nosotros hablamos"},{pro:"Ellos/Uds.",verb:"hablan",en:"they speak",tts:"ellos hablan"}]},{title:"ER Verbs — Comer",sub:"Drop -ER, add: -o, -es, -e, -emos, -en",rows:[{pro:"Yo",verb:"como",en:"I eat",tts:"yo como"},{pro:"Tú",verb:"comes",en:"you eat",tts:"tú comes"},{pro:"Él/Ella/Ud.",verb:"come",en:"he/she eats",tts:"él come"},{pro:"Nosotros",verb:"comemos",en:"we eat",tts:"nosotros comemos"},{pro:"Ellos/Uds.",verb:"comen",en:"they eat",tts:"ellos comen"}]},{title:"IR Verbs — Vivir",sub:"Drop -IR, add: -o, -es, -e, -imos, -en",rows:[{pro:"Yo",verb:"vivo",en:"I live",tts:"yo vivo"},{pro:"Tú",verb:"vives",en:"you live",tts:"tú vives"},{pro:"Él/Ella/Ud.",verb:"vive",en:"he/she lives",tts:"él vive"},{pro:"Nosotros",verb:"vivimos",en:"we live",tts:"nosotros vivimos"},{pro:"Ellos/Uds.",verb:"viven",en:"they live",tts:"ellos viven"}]}],
+    examples:[{es:"Yo hablo un poco de español.",en:"I speak a little Spanish.",tts:"Yo hablo un poco de español."},{es:"¿Dónde vives tú?",en:"Where do you live?",tts:"¿Dónde vives tú?"},{es:"Ella come arepa todos los días.",en:"She eats arepa every day.",tts:"Ella come arepa todos los días."}]},
+  pasado:{intro:"The simple past (Pretérito Indefinido) is used for completed actions. 'I spoke', 'I ate', 'I went'. Accents on the endings are the key signal.",trick:"Look for the accent at the END of a verb — it signals past tense! hablÉ = I spoke, comIÓ = he ate, fuÉ = I was/went. Spot the tilde = something HAPPENED!",
+    tables:[{title:"AR Verbs — Hablar",sub:"Past endings: -é, -aste, -ó, -amos, -aron",rows:[{pro:"Yo",verb:"hablé",en:"I spoke",tts:"yo hablé"},{pro:"Tú",verb:"hablaste",en:"you spoke",tts:"tú hablaste"},{pro:"Él/Ella/Ud.",verb:"habló",en:"he/she spoke",tts:"él habló"},{pro:"Nosotros",verb:"hablamos",en:"we spoke",tts:"nosotros hablamos"},{pro:"Ellos/Uds.",verb:"hablaron",en:"they spoke",tts:"ellos hablaron"}]},{title:"ER/IR Verbs — Comer",sub:"Past endings: -í, -iste, -ió, -imos, -ieron",rows:[{pro:"Yo",verb:"comí",en:"I ate",tts:"yo comí"},{pro:"Tú",verb:"comiste",en:"you ate",tts:"tú comiste"},{pro:"Él/Ella/Ud.",verb:"comió",en:"he/she ate",tts:"él comió"},{pro:"Nosotros",verb:"comimos",en:"we ate",tts:"nosotros comimos"},{pro:"Ellos/Uds.",verb:"comieron",en:"they ate",tts:"ellos comieron"}]},{title:"⚡ Ser & Ir — IDENTICAL past tense!",sub:"Both mean 'was' AND 'went' — context tells you which",rows:[{pro:"Yo",verb:"fui",en:"I was / I went",tts:"yo fui"},{pro:"Tú",verb:"fuiste",en:"you were / went",tts:"tú fuiste"},{pro:"Él/Ella/Ud.",verb:"fue",en:"he was / he went",tts:"él fue"},{pro:"Nosotros",verb:"fuimos",en:"we were / went",tts:"nosotros fuimos"},{pro:"Ellos/Uds.",verb:"fueron",en:"they were / went",tts:"ellos fueron"}]}],
+    examples:[{es:"Ayer hablé con mi amigo.",en:"Yesterday I spoke with my friend.",tts:"Ayer hablé con mi amigo."},{es:"¿Qué comiste anoche?",en:"What did you eat last night?",tts:"¿Qué comiste anoche?"},{es:"Fui al mercado esta mañana.",en:"I went to the market this morning.",tts:"Fui al mercado esta mañana."}]},
+  futuro:{intro:"Great news — the future is the EASIEST tense! Keep the full infinitive and add endings. Or use the even simpler 'voy a' (going to) form.",trick:"Near future = VOY A + any verb. Exactly like English 'going to'. Voy a comer = I'm going to eat. Start with this — you can use it for months before needing the full future tense!",
+    tables:[{title:"Simple Future — Any Verb",sub:"Keep full infinitive + add: -é, -ás, -á, -emos, -án",rows:[{pro:"Yo",verb:"-é  (hablaré)",en:"I will speak",tts:"yo hablaré"},{pro:"Tú",verb:"-ás  (hablarás)",en:"you will speak",tts:"tú hablarás"},{pro:"Él/Ella/Ud.",verb:"-á  (hablará)",en:"he/she will speak",tts:"él hablará"},{pro:"Nosotros",verb:"-emos  (hablaremos)",en:"we will speak",tts:"nosotros hablaremos"},{pro:"Ellos/Uds.",verb:"-án  (hablarán)",en:"they will speak",tts:"ellos hablarán"}]},{title:"Ir a + Infinitive — Near Future",sub:"The easy way: voy/vas/va/vamos/van + a + verb",rows:[{pro:"Yo",verb:"voy a comer",en:"I'm going to eat",tts:"voy a comer"},{pro:"Tú",verb:"vas a comer",en:"you're going to eat",tts:"vas a comer"},{pro:"Él/Ella/Ud.",verb:"va a comer",en:"he's going to eat",tts:"va a comer"},{pro:"Nosotros",verb:"vamos a comer",en:"we're going to eat",tts:"vamos a comer"},{pro:"Ellos/Uds.",verb:"van a comer",en:"they're going to eat",tts:"van a comer"}]}],
+    examples:[{es:"Mañana voy a ir al mercado.",en:"Tomorrow I'm going to go to the market.",tts:"Mañana voy a ir al mercado."},{es:"¿Vas a comer arepa?",en:"Are you going to eat arepa?",tts:"¿Vas a comer arepa?"},{es:"Va a llover esta tarde.",en:"It's going to rain this afternoon.",tts:"Va a llover esta tarde."}]},
+  "pasado-contraste":{intro:"Spanish uses two past viewpoints: the preterite tells the completed event; the imperfect paints the background, habit, or action in progress.",trick:"Preterite moves the story forward: Ayer fui al mercado. Imperfect sets the scene: Cuando era niño, vivía en Cali.",tables:[{title:"The contrast",sub:"Completed event vs. background or repeated action",rows:[{pro:"Evento",verb:"Ayer fui al mercado.",en:"Yesterday I went to the market.",tts:"Ayer fui al mercado."},{pro:"Contexto",verb:"Cuando era niño, vivía en Cali.",en:"When I was a child, I used to live in Cali.",tts:"Cuando era niño, vivía en Cali."},{pro:"En progreso",verb:"Mientras cocinaba, me llamaste.",en:"While I was cooking, you called me.",tts:"Mientras cocinaba, me llamaste."}]}],examples:[{es:"Ayer fui al mercado, pero estaba cerrado.",en:"Yesterday I went to the market, but it was closed.",tts:"Ayer fui al mercado, pero estaba cerrado."},{es:"Cuando era niño, iba al parque todos los días.",en:"When I was a child, I used to go to the park every day.",tts:"Cuando era niño, iba al parque todos los días."},{es:"Mientras trabajaba, sonó el teléfono.",en:"While I was working, the phone rang.",tts:"Mientras trabajaba, sonó el teléfono."}]},
+  subjuntivo:{intro:"The subjunctive is useful after a wish, hope, request, emotion, or recommendation when another person is doing the action.",trick:"Learn it as a speaking chunk: trigger + que + new subject + subjunctive. Quiero que vengas. Espero que estés bien.",tables:[{title:"Useful conversation triggers",sub:"Memorize the whole chunk",rows:[{pro:"Quiero que",verb:"vengas",en:"I want you to come",tts:"Quiero que vengas mañana."},{pro:"Espero que",verb:"estés",en:"I hope you are well",tts:"Espero que estés bien."},{pro:"Es importante que",verb:"hables",en:"It is important that you speak",tts:"Es importante que hables despacio."}]}],examples:[{es:"Quiero que vengas mañana.",en:"I want you to come tomorrow.",tts:"Quiero que vengas mañana."},{es:"Espero que estés bien.",en:"I hope you are well.",tts:"Espero que estés bien."},{es:"Es importante que practiques todos los días.",en:"It is important that you practice every day.",tts:"Es importante que practiques todos los días."}]},
+  trucos:[{main:"V = B in Colombian Spanish",sub:"Never stress about V vs B. Vaca = 'baca'. Vo = 'bo'. Identical sounds in Colombia. ✓",icon:"🎯"},{main:"Accents at end = Past tense",sub:"Hablé = I spoke. Comió = he ate. Fue = he was/went. If you see an accent at the END of a verb, something HAPPENED.",icon:"⏮️"},{main:"Voy a = 'Going to'",sub:"The simplest future: Voy a + verb. Voy a comer = I'm going to eat. Start with this for months.",icon:"⏭️"},{main:"Ser vs Estar (both = 'to be')",sub:"Ser = permanent: Soy alto. Estar = temporary: Estoy cansado. Will it change? Yes → Estar. No → Ser.",icon:"⭐"},{main:"Fui = was AND went",sub:"Ser and Ir are IDENTICAL in past tense! Fui = I was (ser) OR I went (ir). Context tells you which.",icon:"🤯"},{main:"-O ending always means 'I'",sub:"Any present verb ending -O = I do it. Hablo = I speak. Como = I eat. Tengo = I have.",icon:"👤"},{main:"H is always silent",sub:"Hola, huevo, hacer, hotel — H is NEVER pronounced in Spanish. Just ignore it.",icon:"🤫"},{main:"The tilde changes meaning",sub:"Sí = Yes. Si = If. Él = He. El = The. Más = More. Mas = But. That little accent changes everything.",icon:"✍️"},{main:"Colombia = no 'vosotros'",sub:"Spain uses 'vosotros' for 'you all'. Colombia just uses 'ustedes' for everyone. One less thing to learn!",icon:"🇨🇴"},{main:"Gerunds end in -ando/-iendo",sub:"Habl-ANDO = speaking. Com-IENDO = eating. Viv-IENDO = living. Use these with estar: Estoy hablando = I am speaking.",icon:"🔄"}],
+};
+
+/* v58: the next tense layer, taught as useful speaking patterns first. */
+Object.assign(GRAMMAR,{
+  perfecto:{label:"Present perfect",intro:"Use he/has/ha + participle for experiences or actions connected to now. It is useful for talking about what you have done during a trip or today.",trick:"Keep the helper verb short: he, has, ha, hemos, han + -ado/-ido. He comido = I have eaten.",tables:[{title:"Haber + participle",sub:"he / has / ha / hemos / han + -ado or -ido",rows:[{pro:"Yo",verb:"he hablado",en:"I have spoken",tts:"yo he hablado"},{pro:"Tú",verb:"has comido",en:"you have eaten",tts:"tú has comido"},{pro:"Él/Ella/Ud.",verb:"ha ido",en:"he/she has gone",tts:"él ha ido"},{pro:"Nosotros",verb:"hemos visto",en:"we have seen",tts:"nosotros hemos visto"},{pro:"Ellos/Uds.",verb:"han llegado",en:"they have arrived",tts:"ellos han llegado"}]}],examples:[{es:"He practicado español esta semana.",en:"I have practiced Spanish this week.",tts:"He practicado español esta semana."},{es:"¿Has probado la arepa?",en:"Have you tried arepa?",tts:"¿Has probado la arepa?"},{es:"Ya hemos llegado al hotel.",en:"We have already arrived at the hotel.",tts:"Ya hemos llegado al hotel."}]},
+  condicional:{label:"Conditional",intro:"Use the conditional for polite requests, possibilities, and imagined situations. These forms are especially useful for sounding natural and respectful.",trick:"Keep the infinitive and add: -ía, -ías, -ía, -íamos, -ían. Me gustaría and podría are high-value chunks.",tables:[{title:"Useful conditional forms",sub:"infinitive + -ía endings",rows:[{pro:"Yo",verb:"me gustaría",en:"I would like",tts:"me gustaría"},{pro:"Tú",verb:"podrías",en:"you could",tts:"tú podrías"},{pro:"Él/Ella/Ud.",verb:"debería",en:"he/she should",tts:"él debería"},{pro:"Nosotros",verb:"iríamos",en:"we would go",tts:"nosotros iríamos"},{pro:"Ellos/Uds.",verb:"tendrían",en:"they would have",tts:"ellos tendrían"}]}],examples:[{es:"Me gustaría pedir una mesa.",en:"I would like to order a table.",tts:"Me gustaría pedir una mesa."},{es:"¿Podría repetir, por favor?",en:"Could you repeat, please?",tts:"¿Podría repetir, por favor?"},{es:"Deberíamos salir temprano.",en:"We should leave early.",tts:"Deberíamos salir temprano."}]},
+  "pasado-perfecto":{label:"Past perfect",intro:"Use había + participle for something that had already happened before another past event. Learn it after the preterite and imperfect contrast.",trick:"Put the earlier event in the background with había: Cuando llegué, ya había salido.",tables:[{title:"Había + participle",sub:"había / habías / había / habíamos / habían + -ado or -ido",rows:[{pro:"Yo",verb:"había hablado",en:"I had spoken",tts:"yo había hablado"},{pro:"Tú",verb:"habías comido",en:"you had eaten",tts:"tú habías comido"},{pro:"Él/Ella/Ud.",verb:"había salido",en:"he/she had left",tts:"él había salido"},{pro:"Nosotros",verb:"habíamos visto",en:"we had seen",tts:"nosotros habíamos visto"},{pro:"Ellos/Uds.",verb:"habían llegado",en:"they had arrived",tts:"ellos habían llegado"}]}],examples:[{es:"Cuando llegué, ya habían cerrado.",en:"When I arrived, they had already closed.",tts:"Cuando llegué, ya habían cerrado."},{es:"Nunca había usado esa aplicación.",en:"I had never used that app.",tts:"Nunca había usado esa aplicación."},{es:"Ya había comido cuando me llamaste.",en:"I had already eaten when you called me.",tts:"Ya había comido cuando me llamaste."}]},
+  "futuro-perfecto":{label:"Future perfect",intro:"Use habré + participle for something that will have happened by a future point. This is advanced; recognize it before trying to produce it quickly.",trick:"Think: by then, I will have… Habré llegado = I will have arrived.",tables:[{title:"Habré + participle",sub:"habré / habrás / habrá / habremos / habrán + -ado or -ido",rows:[{pro:"Yo",verb:"habré llegado",en:"I will have arrived",tts:"yo habré llegado"},{pro:"Tú",verb:"habrás terminado",en:"you will have finished",tts:"tú habrás terminado"},{pro:"Él/Ella/Ud.",verb:"habrá salido",en:"he/she will have left",tts:"él habrá salido"},{pro:"Nosotros",verb:"habremos comido",en:"we will have eaten",tts:"nosotros habremos comido"},{pro:"Ellos/Uds.",verb:"habrán llegado",en:"they will have arrived",tts:"ellos habrán llegado"}]}],examples:[{es:"Para las ocho, habré terminado.",en:"By eight, I will have finished.",tts:"Para las ocho, habré terminado."},{es:"Cuando llegues, ya habremos salido.",en:"When you arrive, we will have already left.",tts:"Cuando llegues, ya habremos salido."},{es:"En un año, habré aprendido mucho.",en:"In a year, I will have learned a lot.",tts:"En un año, habré aprendido mucho."}]}
+});
+
+export const V58_SPEAKING_GUIDE=[
+  {id:"perfecto",title:"Present perfect for recent experience",formula:"he / has / ha + participle",explain:"Use this for experiences or actions connected to now. In daily speech, learn it as a complete chunk instead of memorizing every rule first.",examples:[{es:"He practicado esta semana.",en:"I have practiced this week.",tts:"He practicado esta semana."},{es:"¿Has probado la arepa?",en:"Have you tried arepa?",tts:"¿Has probado la arepa?"}],mistake:"Do not use the English word 'have' by itself. Spanish needs the correct form of haber: he, has, ha, hemos, han.",exercise:"Say one thing you have done today and ask someone ¿Has...?"},
+  {id:"condicional",title:"Polite requests and possibilities",formula:"infinitive + -ía",explain:"The conditional helps you ask politely and talk about possibilities. Me gustaría and podría are more useful at first than a full table.",examples:[{es:"Me gustaría pedir una mesa.",en:"I would like to order a table.",tts:"Me gustaría pedir una mesa."},{es:"¿Podría repetir, por favor?",en:"Could you repeat, please?",tts:"¿Podría repetir, por favor?"}],mistake:"Keep the infinitive before the ending: gustaría, podría, debería. Do not remove the whole verb stem.",exercise:"Make one polite request with Me gustaría and one with ¿Podría...?"},
+  {id:"pasado-perfecto",title:"Had already happened",formula:"había + participle",explain:"Use this to place an earlier action before another past event. It is useful for telling clearer stories, but it comes after the basic past contrast.",examples:[{es:"Cuando llegué, ya habían cerrado.",en:"When I arrived, they had already closed.",tts:"Cuando llegué, ya habían cerrado."},{es:"Ya había comido cuando me llamaste.",en:"I had already eaten when you called me.",tts:"Ya había comido cuando me llamaste."}],mistake:"Do not use this for every past sentence. Use it only when one past action happened before another.",exercise:"Tell what had already happened before you arrived somewhere."},
+  {id:"futuro-perfecto",title:"Will have happened",formula:"habré + participle",explain:"This is an advanced recognition pattern. Learn to understand it first; you can produce it later when the simpler future forms feel automatic.",examples:[{es:"Para las ocho, habré terminado.",en:"By eight, I will have finished.",tts:"Para las ocho, habré terminado."},{es:"En un año, habré aprendido mucho.",en:"In a year, I will have learned a lot.",tts:"En un año, habré aprendido mucho."}],mistake:"Do not confuse habré with the simple future of the main verb. Habré terminado means I will have finished.",exercise:"Recognize one future-perfect sentence and explain what will be completed by then."}
+];
+
+// Pronouns data
+export const PRONOMBRES={
+  directo:{title:"Objeto Directo (Direct Object)",sub:"Replaces the thing receiving the action directly",color:"#60a5fa",rows:[
+    {w:"lo",meaning:"him / it (m.)",example:"Lo veo. — I see him/it.",tts:"lo veo"},
+    {w:"la",meaning:"her / it (f.)",example:"La veo. — I see her/it.",tts:"la veo"},
+    {w:"los",meaning:"them (m./mixed)",example:"Los compro. — I'm buying them.",tts:"los compro"},
+    {w:"las",meaning:"them (f.)",example:"Las tengo. — I have them.",tts:"las tengo"},
+    {w:"me",meaning:"me (first person)",example:"Me llaman. — They call me.",tts:"me llaman"},
+    {w:"te",meaning:"you (second person)",example:"Te veo mañana. — I'll see you tomorrow.",tts:"te veo mañana"},
+    {w:"nos",meaning:"us",example:"Nos llaman. — They call us.",tts:"nos llaman"},
+  ]},
+  indirecto:{title:"Objeto Indirecto (Indirect Object)",sub:"Replaces the person TO WHOM something is done",color:"#a78bfa",rows:[
+    {w:"le",meaning:"to him / to her / to you (formal)",example:"Le doy el libro. — I give him/her the book.",tts:"le doy el libro"},
+    {w:"me",meaning:"to me",example:"Me da el dinero. — He gives me the money.",tts:"me da el dinero"},
+    {w:"te",meaning:"to you",example:"Te mando un mensaje. — I'm sending you a message.",tts:"te mando un mensaje"},
+    {w:"nos",meaning:"to us",example:"Nos explica todo. — He explains everything to us.",tts:"nos explica todo"},
+    {w:"les",meaning:"to them / to you all",example:"Les digo la verdad. — I tell them the truth.",tts:"les digo la verdad"},
+  ]},
+  trick:"In Colombian Spanish: 'Le' is used for the indirect object (to him/her). 'Lo/La' for the direct object (him/her/it). Unlike Spain, Colombians do NOT use 'le' for the direct object — they always say 'lo veo' (I see him), never 'le veo'.",
+  examples:[
+    {es:"¿Lo ves? — Sí, lo veo.",en:"Do you see it/him? — Yes, I see it/him.",tts:"¿Lo ves? Sí, lo veo."},
+    {es:"Le di el dinero a Juan.",en:"I gave Juan the money. (to Juan = le)",tts:"Le di el dinero a Juan."},
+    {es:"Te quiero mucho.",en:"I love you a lot.",tts:"Te quiero mucho."},
+    {es:"¿Me puede ayudar?",en:"Can you help me?",tts:"¿Me puede ayudar?"},
+    {es:"La compré en el mercado.",en:"I bought it (f.) at the market.",tts:"La compré en el mercado."},
+    {es:"Nos llaman mañana.",en:"They're calling us tomorrow.",tts:"Nos llaman mañana."},
+  ],
+};
+
+// Reflexive verbs
+export const REFLEXIVOS=[
+  {inf:"llamarse",en:"to be called (name)",forms:[{p:"Yo",v:"me llamo",e:"I am called / my name is"},{p:"Tú",v:"te llamas",e:"you are called"},{p:"Él/Ella/Ud.",v:"se llama",e:"he/she is called"},{p:"Nosotros",v:"nos llamamos",e:"we are called"},{p:"Ellos/Uds.",v:"se llaman",e:"they are called"}],example:{es:"Me llamo David. ¿Cómo te llamas?",en:"My name is David. What's your name?"}},
+  {inf:"levantarse",en:"to get up / to stand up",forms:[{p:"Yo",v:"me levanto",e:"I get up"},{p:"Tú",v:"te levantas",e:"you get up"},{p:"Él/Ella/Ud.",v:"se levanta",e:"he/she gets up"},{p:"Nosotros",v:"nos levantamos",e:"we get up"},{p:"Ellos/Uds.",v:"se levantan",e:"they get up"}],example:{es:"Me levanto a las seis.",en:"I get up at six o'clock."}},
+  {inf:"sentarse",en:"to sit down",forms:[{p:"Yo",v:"me siento",e:"I sit down"},{p:"Tú",v:"te sientas",e:"you sit down"},{p:"Él/Ella/Ud.",v:"se sienta",e:"he/she sits down"},{p:"Nosotros",v:"nos sentamos",e:"we sit down"},{p:"Ellos/Uds.",v:"se sientan",e:"they sit down"}],example:{es:"¿Puedo sentarme aquí?",en:"Can I sit here?"}},
+  {inf:"irse",en:"to leave / to go away",forms:[{p:"Yo",v:"me voy",e:"I'm leaving"},{p:"Tú",v:"te vas",e:"you're leaving"},{p:"Él/Ella/Ud.",v:"se va",e:"he/she is leaving"},{p:"Nosotros",v:"nos vamos",e:"we're leaving"},{p:"Ellos/Uds.",v:"se van",e:"they're leaving"}],example:{es:"¡Me voy! Hasta mañana.",en:"I'm leaving! See you tomorrow."}},
+  {inf:"sentirse",en:"to feel (emotion/physical)",forms:[{p:"Yo",v:"me siento",e:"I feel"},{p:"Tú",v:"te sientes",e:"you feel"},{p:"Él/Ella/Ud.",v:"se siente",e:"he/she feels"},{p:"Nosotros",v:"nos sentimos",e:"we feel"},{p:"Ellos/Uds.",v:"se sienten",e:"they feel"}],example:{es:"Me siento muy bien hoy.",en:"I feel very well today."}},
+  {inf:"despertarse",en:"to wake up",forms:[{p:"Yo",v:"me despierto",e:"I wake up"},{p:"Tú",v:"te despiertas",e:"you wake up"},{p:"Él/Ella/Ud.",v:"se despierta",e:"he/she wakes up"},{p:"Nosotros",v:"nos despertamos",e:"we wake up"},{p:"Ellos/Uds.",v:"se despiertan",e:"they wake up"}],example:{es:"Me despierto temprano en Colombia.",en:"I wake up early in Colombia."}},
+];
+
+
+/* v36: simple explanations for turning words into sentences.  These are
+   rendered in Gramática and their examples are added to the quiz pool. */
+export const SPEAKING_GUIDE=[
+  {id:"estructura",title:"Subject + verb + object",formula:"Subject + verb + object",explain:"Spanish can use the same basic order as English, but the subject is often optional.",examples:[{es:"Yo necesito ayuda.",en:"I need help.",tts:"Yo necesito ayuda."},{es:"Necesito ayuda.",en:"I need help. (the subject is understood)",tts:"Necesito ayuda."}],mistake:"Do not force Yo into every sentence; the verb ending often already tells us who is speaking.",exercise:"Say three sentences beginning with Necesito, Quiero, and Puedo."},
+  {id:"sujeto-omitido",title:"Why Spanish omits the subject",formula:"Hablo = I speak · Hablas = you speak",explain:"Verb endings carry information. Native speakers add yo, tú, or él when they want emphasis or clarity.",examples:[{es:"Vivo en Bogotá.",en:"I live in Bogotá.",tts:"Vivo en Bogotá."},{es:"Yo vivo en Bogotá, pero ella vive en Cali.",en:"I live in Bogotá, but she lives in Cali.",tts:"Yo vivo en Bogotá, pero ella vive en Cali."}],mistake:"English needs the subject more often; Spanish does not.",exercise:"Answer ¿Dónde vives? with Vivo en... instead of Yo vivo..."},
+  {id:"presente",title:"Present-tense endings",formula:"AR: -o, -as, -a · ER/IR: -o, -es, -e",explain:"Remove -ar, -er, or -ir and add the ending that matches the person. Start with the useful yo -o ending.",examples:[{es:"Hablo un poco de español.",en:"I speak a little Spanish.",tts:"Hablo un poco de español."},{es:"¿Qué haces hoy?",en:"What are you doing today?",tts:"¿Qué haces hoy?"}],mistake:"The infinitive is not the sentence: quiero hablar, but yo hablo.",exercise:"Say what you do today with Trabajo, Vivo, Tengo, and Quiero."},
+  {id:"futuro",title:"Near future with voy a",formula:"Voy / vas / va / vamos / van + a + infinitive",explain:"This is the easiest everyday future. Keep the second verb in its infinitive form.",examples:[{es:"Voy a practicar esta noche.",en:"I am going to practice tonight.",tts:"Voy a practicar esta noche."},{es:"¿Qué vas a hacer mañana?",en:"What are you going to do tomorrow?",tts:"¿Qué vas a hacer mañana?"}],mistake:"Do not conjugate the second verb: voy a hablar, not voy a hablo.",exercise:"Say three plans beginning with Voy a..."},
+  {id:"pasado",title:"Completed past actions",formula:"Ayer + completed verb",explain:"Use the past to tell what happened. Common first-person endings are -é for AR verbs and -í for ER/IR verbs; memorize high-frequency irregulars like fui, hice, and tuve.",examples:[{es:"Ayer fui al mercado.",en:"Yesterday I went to the market.",tts:"Ayer fui al mercado."},{es:"Comí una arepa y tomé un tinto.",en:"I ate an arepa and had a coffee.",tts:"Comí una arepa y tomé un tinto."}],mistake:"Fui means I went or I was; the rest of the sentence gives the context.",exercise:"Tell one short story with Ayer fui..., después..., y al final..."},
+  {id:"negativas-preguntas",title:"Negatives and questions",formula:"No + verb · question words + sentence",explain:"Put no directly before the conjugated verb. Questions can keep normal word order; your voice and question marks do the work.",examples:[{es:"No entiendo.",en:"I don't understand.",tts:"No entiendo."},{es:"¿Dónde queda la farmacia?",en:"Where is the pharmacy?",tts:"¿Dónde queda la farmacia?"}],mistake:"Do not add do/does: ¿Hablas español? means Do you speak Spanish?",exercise:"Turn Entiendo un poco into a negative and then ask ¿Entiendes?"},
+  {id:"acuerdo",title:"Gender and number agreement",formula:"el/la + noun · adjective matches noun",explain:"Nouns and adjectives often show masculine/feminine and singular/plural. Learn the article with the noun.",examples:[{es:"La dirección correcta.",en:"The correct address.",tts:"La dirección correcta."},{es:"Los edificios altos.",en:"The tall buildings.",tts:"Los edificios altos."}],mistake:"The adjective is not always masculine; follow the noun.",exercise:"Say el edificio alto and la entrada correcta."},
+  {id:"ser-estar",title:"Ser vs. estar",formula:"Ser = identity · estar = state/location",explain:"Use ser for identity, origin, and description; use estar for temporary states and location.",examples:[{es:"Soy de Estados Unidos.",en:"I am from the United States.",tts:"Soy de Estados Unidos."},{es:"Estoy cansado y estoy en el hotel.",en:"I am tired and I am at the hotel.",tts:"Estoy cansado y estoy en el hotel."}],mistake:"Location normally uses estar: El hotel está al frente.",exercise:"Say where you are and how you feel with Estoy..."},
+  {id:"hay",title:"Hay vs. está / están",formula:"Hay = there is/are · está/están = is/are located",explain:"Use hay to introduce that something exists. Use está or están for the location of a known thing.",examples:[{es:"Hay una farmacia cerca.",en:"There is a pharmacy nearby.",tts:"Hay una farmacia cerca."},{es:"La farmacia está al frente.",en:"The pharmacy is across the way.",tts:"La farmacia está al frente."}],mistake:"Hay does not change for singular or plural.",exercise:"Say There is a hotel and The hotel is behind the building."},
+  {id:"gustar",title:"Gustar sentence structure",formula:"Me gusta + singular · Me gustan + plural",explain:"The thing you like is grammatically the subject. Me means to me; gusta agrees with the thing, not with you.",examples:[{es:"Me gusta la música.",en:"I like music.",tts:"Me gusta la música."},{es:"Me gustan las arepas.",en:"I like arepas.",tts:"Me gustan las arepas."}],mistake:"Do not say Yo gusto la música for I like music.",exercise:"Say one thing you like and two things you like."},
+  {id:"pronombres",title:"lo, la, le, se lo",formula:"lo/la = thing · le = to someone · se lo = it to someone",explain:"Object pronouns make speech shorter and more natural. Put them before a conjugated verb; with an infinitive they can attach to the end.",examples:[{es:"Lo tengo aquí.",en:"I have it here. (masculine)",tts:"Lo tengo aquí."},{es:"Se lo voy a mandar.",en:"I am going to send it to him/her.",tts:"Se lo voy a mandar."},{es:"Voy a verlo.",en:"I am going to see it.",tts:"Voy a verlo."}],mistake:"The combination le lo changes to se lo: never le lo.",exercise:"Replace el documento in Tengo el documento with lo."},
+  {id:"conectores",title:"Connectors make speech flow",formula:"Idea 1 + connector + idea 2",explain:"Use connectors to join short sentences into a natural thought instead of stopping after every phrase.",examples:[{es:"Quería salir, pero tuve que trabajar.",en:"I wanted to go out, but I had to work.",tts:"Quería salir, pero tuve que trabajar."},{es:"Había trancón, así que llegué tarde.",en:"There was traffic, so I arrived late.",tts:"Había trancón, así que llegué tarde."},{es:"Si puedo, te aviso.",en:"If I can, I will let you know.",tts:"Si puedo, te aviso."}],mistake:"si means if; sí means yes. porque means because; ¿por qué? means why.",exercise:"Join two ideas with pero, porque, entonces, and así que."},
+  {id:"por-para",title:"Por vs. para",formula:"para = purpose/destination · por = reason/route/exchange",explain:"Use para when you mean for a purpose, a recipient, or a destination. Use por for a reason, a route, an amount of time, or an exchange.",examples:[{es:"Voy para el hotel.",en:"I'm headed to the hotel.",tts:"Voy para el hotel."},{es:"Estudio español para hablar con la gente.",en:"I study Spanish in order to speak with people.",tts:"Estudio español para hablar con la gente."},{es:"Gracias por la ayuda.",en:"Thanks for the help.",tts:"Gracias por la ayuda."}],mistake:"Do not translate every English 'for' the same way. Ask: purpose/destination (para) or reason/route/exchange (por)?",exercise:"Say one destination with para and one reason with por."},
+  {id:"ir-venir",title:"Ir, venir, llevar, traer",formula:"ir = go · venir = come · llevar = take/bring there · traer = bring here",explain:"The direction is from the speaker's point of view. Use venir/traer when something moves toward the place or person you are talking about; use ir/llevar when it moves away.",examples:[{es:"Voy para tu casa.",en:"I'm going to your house.",tts:"Voy para tu casa."},{es:"¿Vienes a la reunión?",en:"Are you coming to the meeting?",tts:"¿Vienes a la reunión?"},{es:"Te llevo el documento.",en:"I'll take/bring the document to you there.",tts:"Te llevo el documento."},{es:"Tráeme un tinto, por favor.",en:"Bring me a black coffee, please.",tts:"Tráeme un tinto, por favor."}],mistake:"Choose the verb based on direction, not only on the English word 'bring' or 'take'.",exercise:"Say where you are going, what you are taking, and what someone should bring you."},
+  {id:"se-me",title:"Se me... for things that happened to you",formula:"Se me + verb + thing",explain:"This very common pattern presents an event as something that happened to you, often accidentally or unexpectedly. It sounds natural in phrases like Se me olvidó.",examples:[{es:"Se me olvidó la dirección.",en:"I forgot the address.",tts:"Se me olvidó la dirección."},{es:"Se me dañó el celular.",en:"My cell phone broke on me.",tts:"Se me dañó el celular."},{es:"Se me quedó la billetera en el carro.",en:"I left my wallet in the car.",tts:"Se me quedó la billetera en el carro."}],mistake:"Do not force a literal 'I forgot' structure. In conversation, Se me olvidó... is a useful natural chunk.",exercise:"Say three problems beginning with Se me..."},
+  {id:"quedar",title:"Quedar for location and plans",formula:"¿Dónde queda...? · Nos vemos / quedamos...",explain:"Use quedar to ask where a place is and to talk about arranging a meeting. It is one of the most useful verbs for getting around and making plans.",examples:[{es:"¿Dónde queda la farmacia?",en:"Where is the pharmacy located?",tts:"¿Dónde queda la farmacia?"},{es:"¿A qué hora quedamos?",en:"What time shall we meet?",tts:"¿A qué hora quedamos?"},{es:"Nos vemos a las siete.",en:"See you at seven.",tts:"Nos vemos a las siete."}],mistake:"For a known object's current location, use está; for asking where a place is located, ¿Dónde queda...? is very natural.",exercise:"Ask where the hotel is and arrange a time to meet."}
+];
+SPEAKING_GUIDE.push(
+  {id:"pasado-contraste",title:"Preterite vs. imperfect",formula:"event = preterite · background/habit = imperfect",explain:"Use the preterite for a completed event that moves the story forward. Use the imperfect for what was happening, what used to happen, or the setting.",examples:[{es:"Ayer fui al mercado.",en:"Yesterday I went to the market.",tts:"Ayer fui al mercado."},{es:"Cuando era niño, vivía en Cali.",en:"When I was a child, I used to live in Cali.",tts:"Cuando era niño, vivía en Cali."},{es:"Mientras trabajaba, sonó el teléfono.",en:"While I was working, the phone rang.",tts:"Mientras trabajaba, sonó el teléfono."}],mistake:"Do not choose only by translating was. Ask whether you are describing the background (era/estaba/iba) or a completed event (fui/sonó).",exercise:"Tell a two-sentence story: set the scene with estaba or era, then say what happened with fui or llegó."},
+  {id:"subjuntivo",title:"Wishes and recommendations",formula:"trigger + que + new subject + subjunctive",explain:"Use this high-value pattern after quiero que, espero que, es importante que, and similar expressions when another person is doing the action.",examples:[{es:"Quiero que vengas mañana.",en:"I want you to come tomorrow.",tts:"Quiero que vengas mañana."},{es:"Espero que estés bien.",en:"I hope you are well.",tts:"Espero que estés bien."},{es:"Es importante que hables despacio.",en:"It is important that you speak slowly.",tts:"Es importante que hables despacio."}],mistake:"If the subject stays the same, use the infinitive: Quiero hablar. If the subject changes, use que + subjunctive: Quiero que hables.",exercise:"Say one wish with Quiero que..., one hope with Espero que..., and one recommendation with Es importante que..."}
+);
+SPEAKING_GUIDE.push(...V58_SPEAKING_GUIDE);
+
+/* v60: high-frequency production patterns. Teach the useful chunk first;
+   explain the grammar only after the learner has said it. */
+SPEAKING_GUIDE.push(
+  {id:"gerundios",title:"Actions in progress",formula:"estar + gerundio",explain:"Use estar + -ando/-iendo for an action happening now or in progress. English -ing does not always use this form: Fui de compras means I went shopping, not I went being shopping.",examples:[{es:"Estoy cocinando la cena.",en:"I am cooking dinner.",tts:"Estoy cocinando la cena."},{es:"Estoy buscando la dirección.",en:"I am looking for the address.",tts:"Estoy buscando la dirección."},{es:"Estaba trabajando cuando llamaste.",en:"I was working when you called.",tts:"Estaba trabajando cuando llamaste."}],mistake:"Do not use estar + gerundio for every English -ing idea. Use fui de compras, me gusta cocinar, or voy a tomar depending on the meaning.",exercise:"Say what you are doing now, what you were doing earlier, and one activity you went to do."},
+  {id:"mandatos",title:"Useful commands and repair",formula:"habla / hable · dime / dígame",explain:"Commands let you ask for a practical action quickly. Use the informal form with a close friend and the formal usted form with a driver, employee, stranger, or older person.",examples:[{es:"Háblame más despacio.",en:"Speak to me more slowly. (informal)",tts:"Háblame más despacio."},{es:"Hábleme más despacio, por favor.",en:"Speak to me more slowly, please. (formal)",tts:"Hábleme más despacio, por favor."},{es:"Discúlpeme, ¿me puede repetir?",en:"Excuse me, can you repeat that for me? (formal)",tts:"Discúlpeme, ¿me puede repetir?"}],mistake:"Do not say discúlpe or discúplte. Say disculpa with a friend, disculpe to one person formally, and discúlpeme when you mean excuse me / excuse me for interrupting.",exercise:"Ask a friend to listen, then ask a driver to repeat the address more slowly."}
+);
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Lesson Player Content (v15) — speaking-first
+   goal: the sentence you'll be able to SAY at the end
+   words: key chunks (tap to hear) · phrases: production cards (EN shown → you say it in Spanish, tap to check)
+   ═══════════════════════════════════════════════════════════════════════════ */
+export const LESSON_CONTENT={
+  presentate:{goal:{es:"Hola, ¿cómo estás? Me llamo Seth, soy de Estados Unidos y vivo en Colombia.",en:"Hi, how are you? My name is Seth, I'm from the U.S. and I live in Colombia."},
+    words:[{es:"¿Cómo estás?",en:"How are you?"},{es:"Estoy bien, gracias.",en:"I'm fine, thank you."},{es:"Me llamo...",en:"My name is..."},{es:"Soy de...",en:"I'm from..."},{es:"Vivo en...",en:"I live in..."},{es:"Mucho gusto",en:"Nice to meet you"},{es:"¿Cómo te llamas?",en:"What's your name?"},{es:"¿De dónde eres?",en:"Where are you from?"},{es:"No entendí.",en:"I didn't understand."}],
+    phrases:[{en:"How are you?",es:"¿Cómo estás?"},{en:"I'm fine, thank you.",es:"Estoy bien, gracias."},{en:"My name is Ana.",es:"Me llamo Ana."},{en:"I'm from the United States.",es:"Soy de Estados Unidos."},{en:"I live in Bogotá.",es:"Vivo en Bogotá."},{en:"Nice to meet you!",es:"¡Mucho gusto!"},{en:"I didn't understand. Can you repeat, please?",es:"No entendí. ¿Puede repetir, por favor?"}]},
+  plata:{goal:{es:"¿Cuánto cuesta? — Son veinte mil pesos.",en:"How much is it? — It's twenty thousand pesos."},
+    words:[{es:"La plata",en:"Money (Colombian!)"},{es:"¿Cuánto cuesta?",en:"How much does it cost?"},{es:"Mil pesos",en:"A thousand pesos"},{es:"El cambio",en:"Change"},{es:"En efectivo",en:"In cash"},{es:"Caro / Barato",en:"Expensive / Cheap"}],
+    phrases:[{en:"How much does it cost?",es:"¿Cuánto cuesta?"},{en:"It's ten thousand pesos.",es:"Son diez mil pesos."},{en:"Do you have change?",es:"¿Tiene cambio?"},{en:"It's very expensive!",es:"¡Está muy caro!"}]},
+  trabajo:{goal:{es:"Trabajo como ingeniero y tengo una reunión hoy.",en:"I work as an engineer and I have a meeting today."},
+    words:[{es:"El trabajo",en:"Work / Job"},{es:"La reunión",en:"Meeting"},{es:"El cliente",en:"Client"},{es:"El jefe",en:"Boss"},{es:"El correo",en:"Email"},{es:"La oficina",en:"Office"}],
+    phrases:[{en:"What do you do for work?",es:"¿En qué trabajas?"},{en:"I work as an engineer.",es:"Trabajo como ingeniero."},{en:"I have a meeting today.",es:"Tengo una reunión hoy."},{en:"I like my job.",es:"Me gusta mi trabajo."}]},
+  casa:{goal:{es:"La toalla está en la habitación, sobre la cama.",en:"The towel is in the bedroom, on the bed."},
+    words:[{es:"La cama",en:"Bed"},{es:"La almohada",en:"Pillow"},{es:"La cobija",en:"Blanket (Colombian!)"},{es:"La ducha",en:"Shower"},{es:"La toalla",en:"Towel"},{es:"El clóset",en:"Closet"}],
+    phrases:[{en:"Where is the towel?",es:"¿Dónde está la toalla?"},{en:"It's on the bed.",es:"Está sobre la cama."},{en:"I need a pillow.",es:"Necesito una almohada."},{en:"The soap is in the shower.",es:"El jabón está en la ducha."}]},
+  calle:{goal:{es:"Siga derecho y gire a la derecha en el semáforo.",en:"Go straight and turn right at the traffic light."},
+    words:[{es:"La derecha",en:"Right"},{es:"La izquierda",en:"Left"},{es:"La esquina",en:"Corner"},{es:"El semáforo",en:"Traffic light"},{es:"Queda cerca",en:"It's nearby"},{es:"Queda lejos",en:"It's far"}],
+    phrases:[{en:"Where is the bank?",es:"¿Dónde queda el banco?"},{en:"Go straight.",es:"Siga derecho."},{en:"Turn left at the corner.",es:"Gire a la izquierda en la esquina."},{en:"Is it nearby?",es:"¿Queda cerca?"}]},
+  cocina:{goal:{es:"Voy a cortar las verduras y tú calientas la olla.",en:"I'll cut the vegetables and you heat the pot."},
+    words:[{es:"El cuchillo",en:"Knife"},{es:"La olla",en:"Pot"},{es:"La sartén",en:"Pan"},{es:"Cortar",en:"To cut"},{es:"Hervir",en:"To boil"},{es:"La nevera",en:"Fridge (Colombian!)"}],
+    phrases:[{en:"Where is the knife?",es:"¿Dónde está el cuchillo?"},{en:"I'm going to cut the onion.",es:"Voy a cortar la cebolla."},{en:"The pot is on the stove.",es:"La olla está en la estufa."},{en:"It's delicious!",es:"¡Está delicioso!"}]},
+  gustos:{goal:{es:"Me gusta cocinar y pasar tiempo con mi familia.",en:"I like cooking and spending time with my family."},
+    words:[{es:"Me gusta...",en:"I like..."},{es:"Me encanta...",en:"I love..."},{es:"La familia",en:"Family"},{es:"Los hermanos",en:"Siblings"},{es:"Mi favorito/a",en:"My favorite"},{es:"Odio...",en:"I hate..."}],
+    phrases:[{en:"I like music.",es:"Me gusta la música."},{en:"I love traveling.",es:"Me encanta viajar."},{en:"Do you have siblings?",es:"¿Tienes hermanos?"},{en:"I love them a lot.",es:"Los quiero mucho."}]},
+  planes:{goal:{es:"¿Nos vemos mañana? — ¡De una! Te escribo.",en:"Shall we meet tomorrow? — I'm in! I'll text you."},
+    words:[{es:"Mañana",en:"Tomorrow"},{es:"El celular",en:"Cell phone (Colombian!)"},{es:"El mensaje",en:"Message"},{es:"La llamada",en:"Call"},{es:"¿Aló?",en:"Hello? (phone, Colombian!)"},{es:"De pronto",en:"Maybe (Colombian!)"}],
+    phrases:[{en:"Shall we meet tomorrow?",es:"¿Nos vemos mañana?"},{en:"I'll call you later.",es:"Te llamo más tarde."},{en:"Send me the location.",es:"Mándame la ubicación."},{en:"I'm in!",es:"¡De una!"}]},
+  sentirse:{goal:{es:"Me duele la cabeza y tengo sueño.",en:"My head hurts and I'm sleepy."},
+    words:[{es:"Cansado/a",en:"Tired"},{es:"Feliz",en:"Happy"},{es:"Tengo hambre",en:"I'm hungry"},{es:"Tengo sueño",en:"I'm sleepy"},{es:"Me duele...",en:"...hurts"},{es:"Enfermo/a",en:"Sick"}],
+    phrases:[{en:"How do you feel?",es:"¿Cómo te sientes?"},{en:"I'm hungry.",es:"Tengo hambre."},{en:"My head hurts.",es:"Me duele la cabeza."},{en:"I need to rest.",es:"Necesito descansar."}]},
+  colombia:{goal:{es:"¿Qué más, parce? — Todo bien, ¡qué bacano verte!",en:"What's up, buddy? — All good, so cool to see you!"},
+    words:[{es:"Parce",en:"Buddy (Colombian!)"},{es:"Chévere",en:"Cool"},{es:"Bacano",en:"Awesome (Colombian!)"},{es:"El tinto",en:"Black coffee (Colombian!)"},{es:"La plata",en:"Money (Colombian!)"},{es:"¿Qué más?",en:"What's up? (Colombian!)"}],
+    phrases:[{en:"What's up, buddy?",es:"¿Qué más, parce?"},{en:"How cool!",es:"¡Qué bacano!"},{en:"Can I have a coffee?",es:"¿Me regala un tinto?"},{en:"OK, got it.",es:"Listo."}]},
+  "gram-presente":{goal:{es:"Hablo español todos los días y vivo en Colombia.",en:"I speak Spanish every day and I live in Colombia."},
+    words:[{es:"Hablo",en:"I speak"},{es:"Vivo",en:"I live"},{es:"Tengo",en:"I have"},{es:"Soy",en:"I am (identity)"},{es:"Estoy",en:"I am (state/location)"},{es:"Me gusta",en:"I like"}],
+    phrases:[{en:"I speak a little Spanish.",es:"Hablo un poco de español."},{en:"I live in Colombia.",es:"Vivo en Colombia."},{en:"I have a question.",es:"Tengo una pregunta."},{en:"I like Colombian food.",es:"Me gusta la comida colombiana."}]},
+  "gram-futuro":{goal:{es:"Mañana voy a practicar español y voy a hablar con un colombiano.",en:"Tomorrow I am going to practice Spanish and talk with a Colombian."},
+    words:[{es:"Voy a...",en:"I am going to..."},{es:"Vas a...",en:"You are going to..."},{es:"Vamos a...",en:"We are going to..."},{es:"Mañana",en:"Tomorrow"},{es:"Después",en:"Later / afterward"},{es:"Te voy a llamar",en:"I am going to call you"}],
+    phrases:[{en:"I am going to study tonight.",es:"Voy a estudiar esta noche."},{en:"What are you going to do tomorrow?",es:"¿Qué vas a hacer mañana?"},{en:"We are going to go out after work.",es:"Vamos a salir después del trabajo."},{en:"I am going to call you later.",es:"Te voy a llamar más tarde."}]},
+  "gram-pasado":{goal:{es:"Ayer fui al mercado y compré comida.",en:"Yesterday I went to the market and bought food."},
+    words:[{es:"Ayer",en:"Yesterday"},{es:"Fui",en:"I went / I was"},{es:"Hice",en:"I did / made"},{es:"Tuve",en:"I had"},{es:"Comí",en:"I ate"},{es:"Hablé",en:"I spoke"}],
+    phrases:[{en:"Yesterday I went to the market.",es:"Ayer fui al mercado."},{en:"I ate an arepa.",es:"Comí una arepa."},{en:"I spoke with my friend.",es:"Hablé con mi amigo."},{en:"What did you do yesterday?",es:"¿Qué hiciste ayer?"}]},
+  "gram-pronombres":{goal:{es:"¿Me lo puede repetir? — Sí, se lo repito despacio.",en:"Can you repeat it for me? — Yes, I will repeat it slowly."},
+    words:[{es:"lo",en:"him / it (masculine)"},{es:"la",en:"her / it (feminine)"},{es:"le",en:"to him / to her"},{es:"me lo",en:"it to me (masculine)"},{es:"se lo",en:"it to him/her"},{es:"me la",en:"it to me (feminine)"},{es:"se la",en:"it to him/her (feminine)"},{es:"lo necesito",en:"I need it (masculine)"}],
+    phrases:[{en:"Do you have the address? — Yes, I have it here.",es:"¿Tiene la dirección? — Sí, la tengo aquí."},{en:"Can you help me? — Yes, I will help you.",es:"¿Me puede ayudar? — Sí, le ayudo."},{en:"Can you repeat it for me? — Yes, I will repeat it slowly.",es:"¿Me lo puede repetir? — Sí, se lo repito despacio."},{en:"Can you send it to me? — Yes, I will send it.",es:"¿Me la puede mandar? — Sí, se la mando."},{en:"Do you have the document? — Yes, I have it.",es:"¿Tiene el documento? — Sí, lo tengo."},{en:"Did you send her the location? — Yes, I sent it to her.",es:"¿Le mandaste la ubicación? — Sí, se la mandé."}]},
+ };
+
+ /* Conversation foundations and Colombian slang are separate lesson content so
+    the existing lesson player can reuse the same speaking-first steps. */
+ Object.assign(LESSON_CONTENT,{
+   "gram-pasado-historia":{goal:{es:"Fui al mercado, pero después estaba en casa.",en:"I went to the market, but afterward I was at home."},
+     words:[{es:"Fui a...",en:"I went to..."},{es:"Estuve en...",en:"I was / stayed in..."},{es:"Estaba en...",en:"I was in / at..."},{es:"Era...",en:"I was... (identity / description)"},{es:"Iba a...",en:"I was going to..."},{es:"Tenía que...",en:"I had to..."}],
+     phrases:[{en:"I went to the market.",es:"Fui al mercado."},{en:"I was at the office.",es:"Estaba en la oficina."},{en:"I was going to cook.",es:"Iba a cocinar."},{en:"I had to work.",es:"Tuve que trabajar."}]},
+   "gram-necesidades":{goal:{es:"Quería salir, pero tuve que trabajar porque estaba ocupado.",en:"I wanted to go out, but I had to work because I was busy."},
+     words:[{es:"Quería...",en:"I wanted..."},{es:"Necesitaba...",en:"I needed..."},{es:"Podía...",en:"I could..."},{es:"No podía...",en:"I couldn't..."},{es:"Tuve que...",en:"I had to..."},{es:"Porque...",en:"Because..."}],
+     phrases:[{en:"I wanted to rest.",es:"Quería descansar."},{en:"I needed help.",es:"Necesitaba ayuda."},{en:"I couldn't go.",es:"No podía ir."},{en:"I had to work late.",es:"Tuve que trabajar hasta tarde."}]},
+   "gram-conectores":{goal:{es:"Fui al mercado, pero estaba cerrado, entonces regresé.",en:"I went to the market, but it was closed, so I went back."},
+     words:[{es:"Pero...",en:"But..."},{es:"Porque...",en:"Because..."},{es:"Entonces...",en:"So / then..."},{es:"Después...",en:"Afterward..."},{es:"También...",en:"Also..."},{es:"La verdad...",en:"The truth is..."}],
+     phrases:[{en:"I was tired, but I went.",es:"Estaba cansado, pero fui."},{en:"I stayed home because it was raining.",es:"Me quedé en casa porque estaba lloviendo."},{en:"I finished work, so I went home.",es:"Terminé el trabajo, entonces me fui a casa."},{en:"I also wanted to call you.",es:"También quería llamarte."}]},
+   "gram-groserias":{goal:{es:"Entiendo las groserías, pero sé cuándo no decirlas.",en:"I understand swear words, but I know when not to say them."},
+     words:[{es:"¡No joda!",en:"No way! / Come on! (informal)"},{es:"Juepucha",en:"Darn! (milder euphemism)"},{es:"Gonorrea",en:"Very strong insult / intensifier"},{es:"Pirobo",en:"Strong insult: jerk / scumbag"},{es:"Marica",en:"Highly context-sensitive: dude / insult"},{es:"Hijueputa",en:"Very strong insult / exclamation"}],
+     phrases:[{en:"Darn, I'm late!",es:"¡Juepucha, se me hizo tarde!"},{en:"No way!",es:"¡No joda!"},{en:"What horrible traffic! (very strong)",es:"¡Qué gonorrea de tráfico!"},{en:"I understand it, but I would not say it to a stranger.",es:"Lo entiendo, pero no se lo diría a un desconocido."}]}
+ });
+
+/* v36 lesson metadata gives each lesson a clear reason to exist and links it
+   to the exact conversation, reading, mission, and grammar guide it uses. */
+Object.assign(LESSON_CONTENT,{
+  "survival-communication":{goal:{es:"No entendí. ¿Puede repetir más despacio, por favor?",en:"I didn't understand. Can you repeat more slowly, please?"},words:[{es:"No entendí.",en:"I didn't understand."},{es:"¿Puede repetir?",en:"Can you repeat?"},{es:"Más despacio.",en:"More slowly."},{es:"¿Qué quiere decir?",en:"What does that mean?"},{es:"Un momento.",en:"One moment."},{es:"¿Así está bien?",en:"Is it okay like this?"}],phrases:[{en:"I speak a little Spanish.",es:"Hablo poquito español."},{en:"Can you repeat, please?",es:"¿Puede repetir, por favor?"},{en:"Sorry, I am learning Spanish.",es:"Perdón, estoy aprendiendo español."}]},
+  "uber-ride":{goal:{es:"Buenas, ¿usted es mi conductor? Hablo poquito español.",en:"Hi, are you my driver? I speak a little Spanish."},words:[{es:"el conductor",en:"driver"},{es:"la recogida",en:"pickup"},{es:"la dirección",en:"address"},{es:"el hotel",en:"hotel"},{es:"el trancón",en:"traffic jam (Colombian)"},{es:"súbase",en:"get in"}],phrases:[{en:"Are you my driver?",es:"¿Usted es mi conductor?"},{en:"I am going to this hotel.",es:"Voy para este hotel."},{en:"Can you speak more slowly?",es:"¿Puede hablar más despacio?"}]},
+  "hotel-checkin":{goal:{es:"Tengo una reserva a nombre de Seth. ¿Dónde está el ascensor?",en:"I have a reservation under Seth's name. Where is the elevator?"},words:[{es:"la reserva",en:"reservation"},{es:"a nombre de...",en:"under the name of..."},{es:"el pasaporte",en:"passport"},{es:"la recepción",en:"front desk"},{es:"el ascensor",en:"elevator"},{es:"el desayuno",en:"breakfast"}],phrases:[{en:"I have a reservation.",es:"Tengo una reserva."},{en:"Can you show me the elevator?",es:"¿Me puede mostrar el ascensor?"},{en:"What time is breakfast?",es:"¿A qué hora es el desayuno?"}]},
+  "farmacia":{goal:{es:"Me duele la cabeza desde esta mañana. ¿Cómo lo debo tomar?",en:"My head has hurt since this morning. How should I take it?"},words:[{es:"la farmacia",en:"pharmacy"},{es:"el dolor de cabeza",en:"headache"},{es:"la pastilla",en:"pill"},{es:"la fiebre",en:"fever"},{es:"la tos",en:"cough"},{es:"desde esta mañana",en:"since this morning"}],phrases:[{en:"I need something for a headache.",es:"Necesito algo para el dolor de cabeza."},{en:"How should I take it?",es:"¿Cómo lo debo tomar?"},{en:"I feel tired.",es:"Me siento cansado."}]},
+  "direcciones":{goal:{es:"Siga derecho hasta la esquina y gire a la derecha.",en:"Go straight to the corner and turn right."},words:[{es:"hasta el fondo",en:"to the back / end"},{es:"al frente",en:"in front / across"},{es:"detrás de",en:"behind"},{es:"la entrada",en:"entrance"},{es:"el edificio",en:"building"},{es:"el segundo piso",en:"second floor"}],phrases:[{en:"Where is the entrance?",es:"¿Dónde está la entrada?"},{en:"It is that building over there.",es:"Es el edificio de allá."},{en:"Go up to the second floor.",es:"Suba al segundo piso."}]},
+  "daily-repair":{goal:{es:"No entendí. La señal está mala, así que te escribo.",en:"I didn't understand. The signal is bad, so I will text you."},words:[{es:"¿Me escuchas?",en:"Can you hear me?"},{es:"la señal está mala",en:"the signal is bad"},{es:"se está cortando",en:"it is cutting out"},{es:"te escribo",en:"I will text you"},{es:"más tarde",en:"later"},{es:"un mensaje",en:"a message"}],phrases:[{en:"Can you hear me?",es:"¿Me escuchas?"},{en:"The call is cutting out.",es:"Se está cortando la llamada."},{en:"I will text you later.",es:"Te escribo más tarde."}]},
+  "sentence-structure":{goal:{es:"Quiero aprender, así que practico un poco todos los días.",en:"I want to learn, so I practice a little every day."},words:[{es:"Quiero...",en:"I want..."},{es:"así que...",en:"so / therefore..."},{es:"porque...",en:"because..."},{es:"primero...",en:"first..."},{es:"después...",en:"afterward..."},{es:"al final...",en:"in the end..."}],phrases:[{en:"I need to practice because I want to speak.",es:"Necesito practicar porque quiero hablar."},{en:"First I listen, then I repeat.",es:"Primero escucho, después repito."},{en:"I was tired, but I practiced.",es:"Estaba cansado, pero practiqué."}]},
+  "connectors-v36":{goal:{es:"Si puedo, te aviso; si no, no pasa nada.",en:"If I can, I will let you know; if not, it's okay."},words:[{es:"si",en:"if"},{es:"sí",en:"yes"},{es:"pero",en:"but"},{es:"porque",en:"because"},{es:"por qué",en:"why"},{es:"entonces",en:"so / then"},{es:"aunque",en:"although"},{es:"todavía no",en:"not yet"}],phrases:[{en:"I want to go, but I have to work.",es:"Quiero ir, pero tengo que trabajar."},{en:"Why are you late?",es:"¿Por qué llegas tarde?"},{en:"There is traffic, so I will arrive late.",es:"Hay trancón, entonces voy a llegar tarde."}]},
+  "function-words":{goal:{es:"Todavía no sé; si puedo, te aviso en cuanto pueda.",en:"I don't know yet; if I can, I will let you know as soon as I can."},words:[{es:"Todavía no",en:"Not yet"},{es:"De pronto",en:"Maybe (Colombian)"},{es:"En realidad",en:"Actually"},{es:"Lo que pasa es que",en:"The thing is"},{es:"Por ahora",en:"For now"},{es:"Al rato",en:"Later (Colombian)"}],phrases:[{en:"I don't know yet.",es:"Todavía no sé."},{en:"Maybe I will call you later.",es:"De pronto te llamo al rato."},{en:"The thing is, I have to work.",es:"Lo que pasa es que tengo que trabajar."},{en:"I will let you know as soon as I can.",es:"Te aviso en cuanto pueda."}]},
+  "action-chunks":{goal:{es:"Quiero ir para el hotel, pero tengo que pasar por el mercado.",en:"I want to go to the hotel, but I have to stop by the market."},words:[{es:"Quiero...",en:"I want to..."},{es:"Necesito...",en:"I need to..."},{es:"Tengo que...",en:"I have to..."},{es:"Voy para...",en:"I'm headed to..."},{es:"Estoy buscando...",en:"I'm looking for..."},{es:"Se me olvidó...",en:"I forgot..."},{es:"Me toca...",en:"I have to... / It's my turn..."}],phrases:[{en:"I want to go home.",es:"Quiero ir para la casa."},{en:"I need to find the address.",es:"Necesito encontrar la dirección."},{en:"I need to call my friend.",es:"Necesito llamar a mi amigo."},{en:"I have to call my friend.",es:"Tengo que llamar a mi amigo."},{en:"I'm going to call my friend.",es:"Voy a llamar a mi amigo."},{en:"I have to stop by the market.",es:"Tengo que pasar por el mercado."},{en:"I am looking for the hotel.",es:"Estoy buscando el hotel."},{en:"I forgot the location.",es:"Se me olvidó la ubicación."},{en:"I am on my way.",es:"Voy llegando."}]},
+  "social-colombia-v36":{goal:{es:"¿Qué más? Todo bien. ¡Qué nota verte, parce!",en:"What's up? All good. How cool to see you, buddy!"},words:[{es:"¿Cómo te ha ido?",en:"How have things been?"},{es:"Hágale",en:"Go ahead / let's do it"},{es:"Qué pena",en:"Sorry / what a shame"},{es:"Qué nota",en:"How cool"},{es:"Bacano",en:"Awesome"},{es:"Parce",en:"Buddy"}],phrases:[{en:"How have things been?",es:"¿Cómo te ha ido?"},{en:"Don't worry.",es:"No se preocupe."},{en:"Let's do it.",es:"¡Hágale!"}]}
+  ,"conversation-challenge":{goal:{es:"Puedo responder, pedir aclaración y mantener una conversación corta.",en:"I can respond, ask for clarification, and keep a short conversation going."},words:[{es:"No entendí.",en:"I didn't understand."},{es:"¿Puede repetir?",en:"Can you repeat?"},{es:"Voy a...",en:"I am going to..."},{es:"Ayer fui...",en:"Yesterday I went..."},{es:"Después...",en:"Afterward..."},{es:"¿Qué más?",en:"What's up?"}],phrases:[{en:"I speak a little Spanish, but I am practicing.",es:"Hablo poquito español, pero estoy practicando."},{en:"I am going to answer in Spanish.",es:"Voy a responder en español."},{en:"I did not understand, but I will try again.",es:"No entendí, pero voy a intentarlo otra vez."}]}
+});
+Object.assign(LESSON_CONTENT,{
+  "gram-pasado-contraste":{goal:{es:"Ayer fui al mercado mientras mi hermano estaba en casa.",en:"Yesterday I went to the market while my brother was at home."},words:[{es:"Ayer fui...",en:"Yesterday I went..."},{es:"Era...",en:"I was... (identity / description)"},{es:"Estaba...",en:"I was... (state / location)"},{es:"Iba...",en:"I used to go / was going"},{es:"Mientras...",en:"While..."},{es:"De repente...",en:"Suddenly..."}],phrases:[{en:"Yesterday I went to the market.",es:"Ayer fui al mercado."},{en:"When I was a child, I used to live in Cali.",es:"Cuando era niño, vivía en Cali."},{en:"While I was cooking, you called me.",es:"Mientras cocinaba, me llamaste."},{en:"The phone rang, so I stopped working.",es:"Sonó el teléfono, entonces dejé de trabajar."}]},
+  "gram-subjuntivo":{goal:{es:"Quiero que vengas y espero que estés bien.",en:"I want you to come, and I hope you are well."},words:[{es:"Quiero que...",en:"I want you to..."},{es:"Espero que...",en:"I hope that..."},{es:"Es importante que...",en:"It is important that..."},{es:"Vengas",en:"You come (subjunctive)"},{es:"Estés",en:"You are (subjunctive)"},{es:"Hables",en:"You speak (subjunctive)"}],phrases:[{en:"I want you to come tomorrow.",es:"Quiero que vengas mañana."},{en:"I hope you are well.",es:"Espero que estés bien."},{en:"It is important that you speak slowly.",es:"Es importante que hables despacio."},{en:"I want to practice so that I can speak.",es:"Quiero practicar para poder hablar."}]}
+  ,"gram-perfecto":{goal:{es:"He practicado español esta semana y ya he probado la arepa.",en:"I have practiced Spanish this week and I have already tried arepa."},words:[{es:"He hecho...",en:"I have done..."},{es:"Has probado...",en:"You have tried..."},{es:"Ya he visto...",en:"I have already seen..."},{es:"Hemos llegado...",en:"We have arrived..."},{es:"Todavía no he...",en:"I have not yet..."},{es:"Nunca he...",en:"I have never..."}],phrases:[{en:"I have practiced this week.",es:"He practicado esta semana."},{en:"Have you tried the arepa?",es:"¿Has probado la arepa?"},{en:"We have already arrived.",es:"Ya hemos llegado."}]}
+  ,"gram-condicional":{goal:{es:"Me gustaría pedir una mesa. ¿Podría repetir, por favor?",en:"I would like to order a table. Could you repeat, please?"},words:[{es:"Me gustaría...",en:"I would like..."},{es:"¿Podría...?",en:"Could you...?"},{es:"Podríamos...",en:"We could..."},{es:"Debería...",en:"I/you/he should..."},{es:"Sería...",en:"It would be..."},{es:"Quisiera...",en:"I would like... (polite)"}],phrases:[{en:"I would like to order a table.",es:"Me gustaría pedir una mesa."},{en:"Could you repeat, please?",es:"¿Podría repetir, por favor?"},{en:"We should leave early.",es:"Deberíamos salir temprano."}]}
+  ,"gram-pasado-perfecto":{goal:{es:"Cuando llegué, ya habían cerrado la tienda.",en:"When I arrived, they had already closed the store."},words:[{es:"Ya había...",en:"I had already..."},{es:"Habías visto...",en:"You had seen..."},{es:"Había salido...",en:"He/she had left..."},{es:"Habíamos comido...",en:"We had eaten..."},{es:"Antes de que...",en:"Before..."},{es:"Cuando llegué...",en:"When I arrived..."}],phrases:[{en:"When I arrived, they had already closed.",es:"Cuando llegué, ya habían cerrado."},{en:"I had already eaten when you called.",es:"Ya había comido cuando me llamaste."},{en:"I had never used that app.",es:"Nunca había usado esa aplicación."}]}
+  ,"gram-futuro-perfecto":{goal:{es:"Para las ocho, habré terminado.",en:"By eight, I will have finished."},words:[{es:"Habré terminado...",en:"I will have finished..."},{es:"Habrás llegado...",en:"You will have arrived..."},{es:"Habrá salido...",en:"He/she will have left..."},{es:"Habremos comido...",en:"We will have eaten..."},{es:"Para las ocho...",en:"By eight..."},{es:"Cuando llegues...",en:"When you arrive..."}],phrases:[{en:"By eight, I will have finished.",es:"Para las ocho, habré terminado."},{en:"When you arrive, we will have already left.",es:"Cuando llegues, ya habremos salido."},{en:"In a year, I will have learned a lot.",es:"En un año, habré aprendido mucho."}]}
+});
+/* v60 lesson content: each new lesson is short enough to finish, but moves
+   from recognition to guided production and then real conversation. */
+Object.assign(LESSON_CONTENT,{
+  "commands-repair":{goal:{es:"Disculpe, hábleme más despacio y repítame la dirección, por favor.",en:"Excuse me, speak to me more slowly and repeat the address for me, please."},words:[{es:"Disculpe",en:"Excuse me (formal)"},{es:"Hábleme",en:"Speak to me (formal)"},{es:"Dígame",en:"Tell me (formal)"},{es:"Escúchame",en:"Listen to me (informal)"},{es:"Repítame",en:"Repeat for me (formal)"},{es:"Más despacio",en:"More slowly"}],phrases:[{en:"Speak to me more slowly, please.",es:"Hábleme más despacio, por favor."},{en:"Tell me the address.",es:"Dígame la dirección."},{en:"Excuse me, I didn't understand.",es:"Disculpe, no entendí."},{en:"Can you repeat that for me?",es:"¿Me lo puede repetir?"}]},
+  "uber-completo":{goal:{es:"Hablo un poco de español. Voy para el edificio de la esquina.",en:"I speak a little Spanish. I am going to the building on the corner."},words:[{es:"el conductor",en:"driver"},{es:"la esquina",en:"corner"},{es:"al frente",en:"across the way"},{es:"hablo un poco",en:"I speak a little"},{es:"avísame",en:"let me know (informal)"},{es:"dónde me bajo",en:"where I get out"}],phrases:[{en:"Are you the Uber driver?",es:"¿Usted es el conductor de Uber?"},{en:"Can you speak slowly?",es:"¿Puede hablar despacio?"},{en:"I am going to the building on the corner.",es:"Voy para el edificio de la esquina."},{en:"Please let me know when we arrive.",es:"Avíseme cuando lleguemos, por favor."}]},
+  "restaurante-real":{goal:{es:"Quisiera una sopa con papa y un jugo sin azúcar, por favor.",en:"I would like a soup with potato and a juice without sugar, please."},words:[{es:"una mesa para dos",en:"a table for two"},{es:"quisiera",en:"I would like"},{es:"con papa",en:"with potato"},{es:"sin azúcar",en:"without sugar"},{es:"algo más",en:"anything else"},{es:"la cuenta",en:"the bill"}],phrases:[{en:"Do you have a table for two?",es:"¿Tiene una mesa para dos?"},{en:"I would like to order a soup.",es:"Quisiera pedir una sopa."},{en:"Without sugar, please.",es:"Sin azúcar, por favor."},{en:"Can you bring me the bill?",es:"¿Me trae la cuenta?"}]},
+  "mercado-negociar":{goal:{es:"Está un poco caro. ¿Me lo deja en siete mil?",en:"It's a little expensive. Can you let me have it for seven thousand?"},words:[{es:"el kilo",en:"kilo"},{es:"está caro",en:"it is expensive"},{es:"me lo deja",en:"can you let me have it"},{es:"un descuento",en:"a discount"},{es:"deme",en:"give me (formal)"},{es:"por todo",en:"for everything"}],phrases:[{en:"How much does a kilo cost?",es:"¿Cuánto cuesta el kilo?"},{en:"It's a little expensive.",es:"Está un poco caro."},{en:"Can you give me a discount?",es:"¿Me hace un descuento?"},{en:"How much do I owe you for everything?",es:"¿Cuánto le debo por todo?"}]},
+  "gerundios-actividades":{goal:{es:"Ahora estoy cocinando, pero después voy a salir.",en:"Right now I am cooking, but afterward I am going to go out."},words:[{es:"estoy cocinando",en:"I am cooking"},{es:"estoy buscando",en:"I am looking for"},{es:"estoy aprendiendo",en:"I am learning"},{es:"estaba trabajando",en:"I was working"},{es:"fui de compras",en:"I went shopping"},{es:"acabo de llegar",en:"I just arrived"}],phrases:[{en:"What are you doing?",es:"¿Qué estás haciendo?"},{en:"I am cooking dinner.",es:"Estoy cocinando la cena."},{en:"I was working when you called.",es:"Estaba trabajando cuando me llamaste."},{en:"I went shopping yesterday.",es:"Ayer fui de compras."}]},
+  "social-salida":{goal:{es:"De una, nos vemos después. Te aviso cuando llegue.",en:"Sure, see you later. I will let you know when I arrive."},words:[{es:"¿Qué más?",en:"What's up?"},{es:"esta noche",en:"tonight"},{es:"salir con amigos",en:"go out with friends"},{es:"de una",en:"sure / I'm in"},{es:"llego tarde",en:"I arrive late"},{es:"avísame",en:"let me know"}],phrases:[{en:"What are you going to do tonight?",es:"¿Qué vas a hacer esta noche?"},{en:"I am going out with some friends.",es:"Voy a salir con unos amigos."},{en:"Shall we meet later?",es:"¿Nos vemos después?"},{en:"I think that's a good idea.",es:"Me parece buena idea."}]},
+  "fiesta-gathering":{goal:{es:"La música está muy buena. La pasé muy bien.",en:"The music is really good. I had a great time."},words:[{es:"la gente",en:"the people"},{es:"conocer",en:"to know / meet"},{es:"algo de tomar",en:"something to drink"},{es:"está chévere",en:"it's cool"},{es:"la pasé bien",en:"I had a good time"},{es:"me tengo que ir",en:"I have to go"}],phrases:[{en:"How do you know the people here?",es:"¿Cómo conoces a la gente de aquí?"},{en:"Do you want something to drink?",es:"¿Quieres algo de tomar?"},{en:"The music is really good.",es:"La música está muy buena."},{en:"Nice to meet you. See you later.",es:"Qué gusto conocerte. Nos vemos luego."}]},
+  "deportes-partido":{goal:{es:"Ojalá gane Colombia. Lo vemos juntos.",en:"I hope Colombia wins. We will watch it together."},words:[{es:"el partido",en:"the game"},{es:"no me lo pierdo",en:"I wouldn't miss it"},{es:"el marcador",en:"the score"},{es:"jugar contra",en:"to play against"},{es:"ojalá gane",en:"I hope it wins"},{es:"hicieron gol",en:"they scored"}],phrases:[{en:"Are you going to watch the game?",es:"¿Vas a ver el partido?"},{en:"Who's playing?",es:"¿Quién está jugando?"},{en:"How is the score?",es:"¿Cómo va el marcador?"},{en:"I hope Colombia wins.",es:"Ojalá gane Colombia."}]},
+  "oficina-real":{goal:{es:"El proyecto va bien, pero estoy un poco atrasado.",en:"The project is going well, but I am a little behind."},words:[{es:"el proyecto",en:"the project"},{es:"atrasado",en:"behind / delayed"},{es:"el informe",en:"the report"},{es:"revisar",en:"to review"},{es:"después de la reunión",en:"after the meeting"},{es:"mandar al cliente",en:"send to the client"}],phrases:[{en:"How is the project going?",es:"¿Cómo va el proyecto?"},{en:"I am a little behind.",es:"Estoy un poco atrasado."},{en:"Can you review this part for me?",es:"¿Me puede revisar esta parte?"},{en:"Tomorrow we will send it to the client.",es:"Entonces mañana lo mandamos al cliente."}]}
+});
+
+export const LESSON_META={
+  presentate:{stage:"Start Here",difficulty:"Easy",prereq:"None",guideIds:["estructura"],readingId:"lectura-cafe",missionId:"saludo-parce"},
+  plata:{stage:"Start Here",difficulty:"Easy",prereq:"Preséntate",guideIds:["estructura"],readingId:"lectura-mercado",missionId:"mercado-comida"},
+  "survival-communication":{stage:"Start Here",difficulty:"Easy",prereq:"Preséntate",dialogue:"Uber: hablo poquito español",vocab:"gustos",quizCat:"reparar",quizMode:"mixed",guideIds:["negativas-preguntas"],missionId:"uber-habla-despacio"},
+  "uber-ride":{stage:"Travel and Survival",difficulty:"Easy",prereq:"Comunicación para aclarar",dialogue:"Uber: confirmar la recogida",vocab:"direcciones",quizCat:"uber",quizMode:"conversation",readingId:"lectura-uber",missionId:"taxi-aeropuerto"},
+  "hotel-checkin":{stage:"Travel and Survival",difficulty:"Easy",prereq:"Uber y transporte",dialogue:"Hotel: registrarse",vocab:"lugares",quizCat:"hotel",quizMode:"conversation",readingId:"lectura-hotel",missionId:"hotel-checkin"},
+  "farmacia":{stage:"Travel and Survival",difficulty:"Moderate",prereq:"Hotel",dialogue:"Farmacia: explicar síntomas",vocab:"emociones",quizCat:"farmacia",quizMode:"conversation",missionId:"farmacia-sintomas"},
+  calle:{stage:"Travel and Survival",difficulty:"Easy",prereq:"Números y plata",guideIds:["hay"],readingId:"lectura-edificio",missionId:"edificio-direcciones"},
+  "daily-repair":{stage:"Daily Life",difficulty:"Moderate",prereq:"Travel and Survival",dialogue:"Teléfono: mala señal",vocab:"tecnologia",quizCat:"reparar",quizMode:"conversation",readingId:"lectura-telefono"},
+  "sentence-structure":{stage:"Build Sentences",difficulty:"Moderate",prereq:"Start Here",dialogue:"Compañeros de trabajo",vocab:"acciones",quizCat:"estructura",quizMode:"mixed",guideIds:["estructura","sujeto-omitido","presente"]},
+  "connectors-v36":{stage:"Build Sentences",difficulty:"Moderate",prereq:"Sentence structure",dialogue:"Planes de fin de semana",vocab:"gustos",quizCat:"conectores",quizMode:"mixed",guideIds:["conectores"],missionId:"planes-fin-semana"},
+  "function-words":{stage:"Build Sentences",difficulty:"Moderate",prereq:"Connectors",dialogue:"Palabras para conversar",vocab:"gustos",quizCat:"conectores",quizMode:"mixed",guideIds:["conectores"],missionId:"planes-fin-semana"},
+  "action-chunks":{stage:"Build Sentences",difficulty:"Easy",prereq:"Start Here",dialogue:"Acciones de todos los días",vocab:"acciones",quizCat:"acciones",quizMode:"conversation",guideIds:["estructura","presente"],missionId:"acciones-diarias"},
+  "social-colombia-v36":{stage:"Speak More Naturally",difficulty:"Moderate",prereq:"Build Sentences",dialogue:"Compañeros de trabajo",vocab:"colombianismos",quizCat:"expresiones",quizMode:"conversation",guideIds:["conectores"],missionId:"saludo-parce"},
+  "conversation-challenge":{stage:"Conversation Challenge",difficulty:"Challenge",prereq:"Speak More Naturally",dialogue:"Uber: confirmar la recogida",vocab:"gustos",quizCat:"all",quizMode:"conversation",readingId:"lectura-uber",missionId:"uber-habla-despacio",guideIds:["conectores","pronombres"]},
+  "gram-presente":{stage:"Build Sentences",difficulty:"Moderate",prereq:"Start Here",guideIds:["presente","sujeto-omitido"]},
+  "gram-futuro":{stage:"Build Sentences",difficulty:"Easy",prereq:"Presente",guideIds:["futuro"]},
+  "gram-pasado":{stage:"Build Sentences",difficulty:"Moderate",prereq:"Presente",guideIds:["pasado"]},
+  "gram-pasado-contraste":{stage:"Build Sentences",difficulty:"Moderate",prereq:"Pasado",guideIds:["pasado-contraste"],quizCat:"frases",quizMode:"blank",quizFocus:"past"},
+  "gram-subjuntivo":{stage:"Build Sentences",difficulty:"Challenge",prereq:"Pasado",guideIds:["subjuntivo"],quizCat:"subjuntivo",quizMode:"blank",quizFocus:"subjuntivo"},
+  "gram-pasado-historia":{stage:"Build Sentences",difficulty:"Moderate",prereq:"Pasado",guideIds:["pasado","conectores"]},
+  "gram-necesidades":{stage:"Build Sentences",difficulty:"Moderate",prereq:"Pasado",guideIds:["negativas-preguntas"]},
+  "gram-conectores":{stage:"Build Sentences",difficulty:"Moderate",prereq:"Sentence structure",guideIds:["conectores"]},
+  "gram-pronombres":{stage:"Build Sentences",difficulty:"Challenge",prereq:"Sentence structure",guideIds:["pronombres"]},
+  "gram-groserias":{stage:"Speak More Naturally",difficulty:"Challenge",prereq:"Everyday expressions",guideIds:["conectores"]}
+};
+
+Object.assign(LESSON_META,{
+  "gram-perfecto":{stage:"Build Sentences",difficulty:"Moderate",prereq:"Pasado",guideIds:["perfecto"],quizCat:"frases",quizMode:"blank",quizFocus:"perfecto"},
+  "gram-condicional":{stage:"Build Sentences",difficulty:"Moderate",prereq:"Presente",guideIds:["condicional"],quizCat:"frases",quizMode:"blank",quizFocus:"condicional"},
+  "gram-pasado-perfecto":{stage:"Build Sentences",difficulty:"Challenge",prereq:"Pasado: evento vs. contexto",guideIds:["pasado-perfecto"],quizCat:"frases",quizMode:"blank",quizFocus:"pasado-perfecto"},
+  "gram-futuro-perfecto":{stage:"Build Sentences",difficulty:"Challenge",prereq:"Planes futuros",guideIds:["futuro-perfecto"],quizCat:"frases",quizMode:"blank",quizFocus:"futuro-perfecto"}
+});
+Object.assign(LESSON_META,{
+  "commands-repair":{stage:"Travel and Survival",difficulty:"Easy",prereq:"Hazte entender",dialogue:"Comunicación: pedir y aclarar",vocab:"direcciones",quizCat:"mandatos",quizMode:"conversation",guideIds:["mandatos"]},
+  "uber-completo":{stage:"Travel and Survival",difficulty:"Easy",prereq:"Uber en español",dialogue:"Uber: viaje completo",vocab:"direcciones",quizCat:"uber-real",quizMode:"conversation",guideIds:["negativas-preguntas"]},
+  "restaurante-real":{stage:"Travel and Survival",difficulty:"Easy",prereq:"Números y plata",dialogue:"Restaurante: una comida completa",vocab:"comida",quizCat:"restaurante-real",quizMode:"conversation",guideIds:["condicional"]},
+  "mercado-negociar":{stage:"Travel and Survival",difficulty:"Moderate",prereq:"Números y plata",dialogue:"Mercado: comprar y negociar",vocab:"comida",quizCat:"mercado",quizMode:"conversation",guideIds:["condicional"]},
+  "gerundios-actividades":{stage:"Build Sentences",difficulty:"Easy",prereq:"Acciones de todos los días",dialogue:"Cocinar y hablar de lo que haces",vocab:"acciones",quizCat:"gerundios",quizMode:"blank",quizFocus:"gerundios",guideIds:["gerundios"]},
+  "social-salida":{stage:"Speak More Naturally",difficulty:"Easy",prereq:"Planes y teléfono",dialogue:"Salir con amigos",vocab:"gustos",quizCat:"social",quizMode:"conversation",guideIds:["futuro"]},
+  "fiesta-gathering":{stage:"Speak More Naturally",difficulty:"Moderate",prereq:"Habla más colombiano",dialogue:"En una fiesta",vocab:"colombianismos",quizCat:"fiesta",quizMode:"conversation",guideIds:["conectores"]},
+  "deportes-partido":{stage:"Speak More Naturally",difficulty:"Moderate",prereq:"Planes y teléfono",dialogue:"Ver el partido",vocab:"tv",quizCat:"deportes",quizMode:"conversation",guideIds:["futuro"]},
+  "oficina-real":{stage:"Daily Life",difficulty:"Moderate",prereq:"Tu trabajo",dialogue:"Oficina: proyecto y retraso",vocab:"oficina",quizCat:"oficina-real",quizMode:"conversation",guideIds:["conectores","pronombres"]}
+});
+
+/* v56: speaking frames keep high-frequency sentence patterns separate from
+   app logic. The trainer uses these as short, repeatable production drills. */
+export const SPEAKING_FRAMES=[
+  {id:"quiero",title:"Say what you want",formula:"Quiero + infinitive",en:"I want to…",guide:"presente",prompts:[
+    {en:"I want to go home.",es:"Quiero ir para la casa."},
+    {en:"I want to practice Spanish.",es:"Quiero practicar español."},
+    {en:"I want to order a coffee.",es:"Quiero pedir un café."}
+  ]},
+  {id:"tengo-que",title:"Say what you have to do",formula:"Tengo que + infinitive",en:"I have to…",guide:"presente",prompts:[
+    {en:"I have to work today.",es:"Tengo que trabajar hoy."},
+    {en:"I have to find the address.",es:"Tengo que encontrar la dirección."},
+    {en:"I have to call my friend.",es:"Tengo que llamar a mi amigo."}
+  ]},
+  {id:"voy-a",title:"Talk about your next plan",formula:"Voy a + infinitive",en:"I am going to…",guide:"futuro",prompts:[
+    {en:"I am going to call you later.",es:"Voy a llamarte más tarde."},
+    {en:"I am going to take a taxi.",es:"Voy a tomar un taxi."},
+    {en:"I am going to practice tonight.",es:"Voy a practicar esta noche."}
+  ]},
+  {id:"acabo-de",title:"Say what just happened",formula:"Acabo de + infinitive",en:"I just…",guide:"presente",prompts:[
+    {en:"I just arrived.",es:"Acabo de llegar."},
+    {en:"I just ate.",es:"Acabo de comer."},
+    {en:"I just sent the location.",es:"Acabo de mandar la ubicación."}
+  ]},
+  {id:"se-me",title:"Explain an accidental problem",formula:"Se me + verb + thing",en:"Something happened to me…",guide:"se-me",prompts:[
+    {en:"I forgot the address.",es:"Se me olvidó la dirección."},
+    {en:"My phone broke on me.",es:"Se me dañó el celular."},
+    {en:"I left my wallet in the car.",es:"Se me quedó la billetera en el carro."}
+  ]},
+  {id:"me-gustaria",title:"Make a polite request",formula:"Me gustaría + infinitive",en:"I would like to…",guide:"estructura",prompts:[
+    {en:"I would like to ask a question.",es:"Me gustaría hacer una pregunta."},
+    {en:"I would like to change the order.",es:"Me gustaría cambiar el pedido."},
+    {en:"I would like to practice with you.",es:"Me gustaría practicar contigo."}
+  ]},
+  {id:"pronombres",title:"Use object pronouns naturally",formula:"lo / la / le → se lo / se la",en:"it / to him or her",guide:"pronombres",prompts:[
+    {en:"I have it here.",es:"Lo tengo aquí."},
+    {en:"I sent her the location.",es:"Se la mandé por mensaje."},
+    {en:"I am going to send it to him.",es:"Se lo voy a mandar."}
+  ]},
+  {id:"connectors",title:"Connect two ideas",formula:"idea + pero / porque / entonces",en:"but / because / so",guide:"conectores",prompts:[
+    {en:"I want to go, but I have to work.",es:"Quiero ir, pero tengo que trabajar."},
+    {en:"I practice because I want to speak.",es:"Practico porque quiero hablar."},
+    {en:"There is traffic, so I will arrive late.",es:"Hay trancón, entonces voy a llegar tarde."}
+  ]}
+];
+
+/* v59: high-frequency chunks for real conversation, not isolated vocabulary. */
+SPEAKING_FRAMES.push(
+  {id:"ya-todavia",title:"Say what is already done",formula:"ya + verb / todavía no",en:"already / not yet",guide:"presente",prompts:[
+    {en:"I already ate.",es:"Ya comí."},{en:"I have not arrived yet.",es:"Todavía no he llegado."},{en:"I already sent the location.",es:"Ya mandé la ubicación."}
+  ]},
+  {id:"lo-que-pasa",title:"Explain the real situation",formula:"Lo que pasa es que…",en:"The thing is…",guide:"conectores",prompts:[
+    {en:"The thing is, I am still learning.",es:"Lo que pasa es que todavía estoy aprendiendo."},{en:"The thing is, I do not have the address.",es:"Lo que pasa es que no tengo la dirección."},{en:"The thing is, I have to work tomorrow.",es:"Lo que pasa es que tengo que trabajar mañana."}
+  ]},
+  {id:"no-se-si",title:"Sound natural when you are unsure",formula:"No sé si + sentence",en:"I do not know if…",guide:"conectores",prompts:[
+    {en:"I do not know if the office is open.",es:"No sé si la oficina está abierta."},{en:"I do not know if he received the message.",es:"No sé si recibió el mensaje."},{en:"I do not know if I can go tomorrow.",es:"No sé si puedo ir mañana."}
+  ]},
+  {id:"si-entonces",title:"Talk about two possibilities",formula:"Si + present, …",en:"If…, then…",guide:"conectores",prompts:[
+    {en:"If it rains, I will stay home.",es:"Si llueve, me quedo en casa."},{en:"If you want, we can practice later.",es:"Si quieres, podemos practicar más tarde."},{en:"If the driver arrives, I will call you.",es:"Si llega el conductor, te llamo."}
+  ]},
+  {id:"me-toca",title:"Say what you have to handle",formula:"Me toca + infinitive",en:"I have to / it is my turn to…",guide:"presente",prompts:[
+    {en:"I have to work tomorrow.",es:"Me toca trabajar mañana."},{en:"I have to call the office.",es:"Me toca llamar a la oficina."},{en:"It is my turn to pay.",es:"Me toca pagar."}
+  ]}
+);
+
+/* v61: essential production frames for a true beginner. These are deliberately
+   short, reusable chunks; the learner swaps the final idea instead of
+   memorizing isolated vocabulary. */
+SPEAKING_FRAMES.push(
+  {id:"necesito",title:"Say what you need",formula:"Necesito + noun / infinitive",en:"I need…",guide:"presente",prompts:[
+    {en:"I need help.",es:"Necesito ayuda."},{en:"I need to find the bathroom.",es:"Necesito encontrar el baño."},{en:"I need to call my friend.",es:"Necesito llamar a mi amigo."}
+  ]},
+  {id:"puedo",title:"Ask what you can do",formula:"¿Puedo + infinitive?",en:"Can I…?",guide:"presente",prompts:[
+    {en:"Can I pay by card?",es:"¿Puedo pagar con tarjeta?"},{en:"Can I sit here?",es:"¿Puedo sentarme aquí?"},{en:"Can I ask a question?",es:"¿Puedo hacer una pregunta?"}
+  ]},
+  {id:"estoy",title:"Say where you are and how you feel",formula:"Estoy + state / location",en:"I am…",guide:"ser-estar",prompts:[
+    {en:"I am at the hotel.",es:"Estoy en el hotel."},{en:"I am tired, but I am okay.",es:"Estoy cansado, pero estoy bien."},{en:"I am ready.",es:"Estoy listo."}
+  ]},
+  {id:"fui",title:"Tell what you did",formula:"Ayer fui / hice / tuve…",en:"Yesterday I…",guide:"pasado",prompts:[
+    {en:"Yesterday I went to the market.",es:"Ayer fui al mercado."},{en:"Yesterday I worked all day.",es:"Ayer trabajé todo el día."},{en:"Yesterday I had a meeting.",es:"Ayer tuve una reunión."}
+  ]},
+  {id:"quiero-que",title:"Express a wish about another person",formula:"Quiero que + subjunctive",en:"I want you to…",guide:"subjuntivo",prompts:[
+    {en:"I want you to speak slowly.",es:"Quiero que hables despacio."},{en:"I want you to come tomorrow.",es:"Quiero que vengas mañana."},{en:"I want you to tell me the truth.",es:"Quiero que me digas la verdad."}
+  ]},
+  {id:"me-pasa",title:"Explain what is happening",formula:"Me pasa que… / El problema es que…",en:"What is happening is…",guide:"conectores",prompts:[
+    {en:"The problem is that I do not understand.",es:"El problema es que no entiendo."},{en:"What is happening is that the app is not working.",es:"Me pasa que la aplicación no funciona."},{en:"The problem is that I am running late.",es:"El problema es que voy tarde."}
+  ]}
+);
+
+/* v60 quiz additions. Conversation questions test the response a learner
+   would actually choose; fill blanks use a single, context-locked answer. */
+export const V60_CONVERSATION_QUIZ=[
+  {kind:"reply",focus:"present",cat:"mandatos",es:"Hábleme más despacio, por favor.",en:"Of course, no problem.",tts:"Hábleme más despacio, por favor.",choices:["Of course, no problem.","I went shopping yesterday.","It costs seven thousand.","The game is tonight."]},
+  {kind:"reply",focus:"present",cat:"uber-real",es:"¿Dónde me bajo, por favor?",en:"At the building on the corner.",tts:"¿Dónde me bajo, por favor?",choices:["At the building on the corner.","Without sugar, please.","I am a little behind.","I hope Colombia wins."]},
+  {kind:"reply",focus:"present",cat:"restaurante-real",es:"¿Algo más?",en:"No, thank you. Bring me the bill when you can.",tts:"¿Algo más?",choices:["No, thank you. Bring me the bill when you can.","The driver is over there.","I am going out tonight.","They scored a goal."]},
+  {kind:"reply",focus:"present",cat:"mercado",es:"Está un poco caro. ¿Me lo deja en siete?",en:"Okay, I will let you have it for seven thousand.",tts:"Está un poco caro. ¿Me lo deja en siete?",choices:["Okay, I will let you have it for seven thousand.","Yes, the report is ready.","I am cooking dinner.","See you at the party."]},
+  {kind:"meaning",focus:"gerundios",cat:"gerundios",es:"Estoy buscando la dirección.",en:"I am looking for the address.",tts:"Estoy buscando la dirección.",choices:["I am looking for the address.","I found the address yesterday.","I will send the address tomorrow.","I forgot the address."]},
+  {kind:"reply",focus:"future",cat:"social",es:"¿Nos vemos después?",en:"Sure, but I will arrive a little late.",tts:"¿Nos vemos después?",choices:["Sure, but I will arrive a little late.","No, I did not understand.","It is behind the building.","The soup has potato."]},
+  {kind:"reply",focus:"present",cat:"fiesta",es:"¿Quieres algo de tomar?",en:"Yes, thank you. A juice is fine.",tts:"¿Quieres algo de tomar?",choices:["Yes, thank you. A juice is fine.","I need the report.","Go straight to the corner.","I am a little behind."]},
+  {kind:"reply",focus:"future",cat:"deportes",es:"¿Vas a ver el partido esta noche?",en:"Of course, I wouldn't miss it.",tts:"¿Vas a ver el partido esta noche?",choices:["Of course, I wouldn't miss it.","I need to change the order.","The entrance is behind it.","I went to the market."]},
+  {kind:"reply",focus:"present",cat:"oficina-real",es:"¿Necesitas ayuda con el informe?",en:"Yes, can you review this part for me?",tts:"¿Necesitas ayuda con el informe?",choices:["Yes, can you review this part for me?","No, the music is good.","I am going to the corner.","Give me a kilo."]},
+  {kind:"reply",focus:"present",cat:"mandatos",es:"Disculpe, no entendí.",en:"No problem. I will repeat it.",tts:"Disculpe, no entendí.",choices:["No problem. I will repeat it.","The game is tomorrow.","I would like a table.","I am behind schedule."]},
+  {kind:"meaning",focus:"past",cat:"gerundios",es:"Estaba trabajando cuando me llamaste.",en:"I was working when you called.",tts:"Estaba trabajando cuando me llamaste.",choices:["I was working when you called.","I will work after I call.","I just finished working.","I went shopping for work."]},
+  {kind:"reply",focus:"pronombres",cat:"oficina-real",es:"¿Qué hacemos con el proyecto?",en:"We will send it to the client tomorrow.",tts:"¿Qué hacemos con el proyecto?",choices:["We will send it to the client tomorrow.","I am looking for the driver.","It is a little expensive.","I hope Colombia wins."]}
+];
+export const V60_FILL_BLANK_QUIZ=[
+  {kind:"blank",focus:"gerundios",cat:"gerundios",es:"Ahora ___ la cena.",quizPrompt:"Complete to mean 'Right now I am cooking dinner.': Ahora ___ la cena.",en:"estoy cocinando",tts:"Ahora estoy cocinando la cena.",trans:"Right now I am cooking dinner.",choices:["estoy cocinando","cociné","voy a cocinar","cocinar"]},
+  {kind:"blank",focus:"gerundios",cat:"gerundios",es:"¿Qué ___ haciendo?",en:"estás",tts:"¿Qué estás haciendo?",trans:"What are you doing?",choices:["estás","eres","fuiste","vas"]},
+  {kind:"blank",focus:"gerundios",cat:"gerundios",es:"Mientras ___, me llamaste.",quizPrompt:"Complete to mean 'While I was working, you called me.': Mientras ___, me llamaste.",en:"trabajaba",tts:"Mientras trabajaba, me llamaste.",trans:"While I was working, you called me.",choices:["trabajaba","trabajé","trabajo","trabajaré"]},
+  {kind:"blank",focus:"past",cat:"gerundios",es:"Ayer fui de ___.",en:"compras",tts:"Ayer fui de compras.",trans:"Yesterday I went shopping.",choices:["compras","cocinar","trabajo","salir"]},
+  {kind:"blank",focus:"present",cat:"mandatos",es:"___ más despacio, por favor.",quizPrompt:"Use usted (one person): ___ más despacio, por favor.",en:"Hábleme",tts:"Hábleme más despacio, por favor.",trans:"Speak to me more slowly, please.",choices:["Hábleme","Hablame","Háblate","Hablar"]},
+  {kind:"blank",focus:"present",cat:"mandatos",es:"___ la pregunta, por favor.",quizPrompt:"Use usted (one person): ___ la pregunta, por favor.",en:"Repítame",tts:"Repítame la pregunta, por favor.",trans:"Repeat the question for me, please.",choices:["Repítame","Repíteme","Repetir","Repítate"]},
+  {kind:"blank",focus:"present",cat:"mandatos",es:"___, no entendí.",quizPrompt:"Use usted (one person): ___, no entendí.",en:"Disculpe",tts:"Disculpe, no entendí.",trans:"Excuse me, I did not understand.",choices:["Disculpe","Discúlpame","Disculpa a él","Disculpen"]},
+  {kind:"blank",focus:"present",cat:"direcciones",es:"___ derecho hasta la esquina.",quizPrompt:"Use usted (one person): ___ derecho hasta la esquina.",en:"Siga",tts:"Siga derecho hasta la esquina.",trans:"Go straight to the corner.",choices:["Siga","Sigue","Seguir","Sigan"]},
+  {kind:"blank",focus:"present",cat:"restaurante-real",es:"Quisiera ___ una sopa.",en:"pedir",tts:"Quisiera pedir una sopa.",trans:"I would like to order a soup.",choices:["pedir","pido","pedí","pidiendo"]},
+  {kind:"blank",focus:"present",cat:"mercado",es:"¿Cuánto ___ el kilo?",quizPrompt:"Complete to mean 'How much does the kilo cost?': ¿Cuánto ___ el kilo?",en:"cuesta",tts:"¿Cuánto cuesta el kilo?",trans:"How much does the kilo cost?",choices:["cuesta","costó","costando","costar"]},
+  {kind:"blank",focus:"present",cat:"mercado",es:"¿Me ___ un descuento?",quizPrompt:"Complete to mean 'Can you give me a discount?': ¿Me ___ un descuento?",en:"hace",tts:"¿Me hace un descuento?",trans:"Can you give me a discount?",choices:["hace","hizo","haciendo","hacer"]},
+  {kind:"blank",focus:"future",cat:"social",es:"Voy a ___ con unos amigos.",en:"salir",tts:"Voy a salir con unos amigos.",trans:"I am going out with some friends.",choices:["salir","salgo","salí","saliendo"]},
+  {kind:"blank",focus:"future",cat:"social",es:"Avísame cuando ___.",en:"llegues",tts:"Avísame cuando llegues.",trans:"Let me know when you arrive.",choices:["llegues","llegas","llegaste","llegar"]},
+  {kind:"blank",focus:"subjuntivo",cat:"deportes",es:"Ojalá ___ Colombia.",quizPrompt:"Complete to mean 'I hope Colombia wins.': Ojalá ___ Colombia.",en:"gane",tts:"Ojalá gane Colombia.",trans:"I hope Colombia wins.",choices:["gane","gana","ganó","ganar"]},
+  {kind:"blank",focus:"present",cat:"oficina-real",es:"Estoy un poco ___.",en:"atrasado",tts:"Estoy un poco atrasado.",trans:"I am a little behind.",choices:["atrasado","atrasar","atrasando","atrasé"]},
+  {kind:"blank",focus:"pronombres",cat:"pronombres",es:"¿Tienes la dirección? Sí, ___ tengo aquí.",en:"la",tts:"¿Tienes la dirección? Sí, la tengo aquí.",trans:"Do you have the address? Yes, I have it here.",choices:["la","lo","le","las"]},
+  {kind:"blank",focus:"pronombres",cat:"pronombres",es:"El proyecto es importante; mañana ___ mandamos al cliente.",en:"lo",tts:"El proyecto es importante; mañana lo mandamos al cliente.",trans:"The project is important; tomorrow we will send it to the client.",choices:["lo","la","le","los"]},
+  {kind:"blank",focus:"present",cat:"fiesta",es:"La música ___ muy buena.",quizPrompt:"Describe how the music sounds right now: La música ___ muy buena.",en:"está",tts:"La música está muy buena.",trans:"The music is really good.",choices:["está","están","fue","sea"]}
+];
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v71 Conversational Roadmap Upgrade:
+   1. Colombian Polite Softeners, Diminutives, Time-Buyers (Muletillas), & Usted/Tú/Vos
+   2. Complete guideIds for all lessons (no generic fallbacks)
+   3. 5-Rung Sentence Expansion Ladders (Escalera de Oraciones)
+   4. Interactive 3-Column Slot-Swap Matrices (Constructor de Frases)
+   ═══════════════════════════════════════════════════════════════════════════ */
+SPEAKING_GUIDE.push(
+  {id:"cortesia-colombiana",title:"Colombian polite softeners",formula:"¿Me regala…? · ¿Será que…? · Qué pena con usted",explain:"In Colombia, direct requests like Quiero… or Deme… can sound abrupt with strangers. Soften requests with Qué pena con usted, ¿Me regala…?, or ¿Será que me puede…?",examples:[{es:"Qué pena con usted, ¿me regala un tintico?",en:"Sorry to bother you, can I have a black coffee?",tts:"Qué pena con usted, ¿me regala un tintico?"},{es:"¿Será que me puede ayudar con esta dirección?",en:"Could you possibly help me with this address?",tts:"¿Será que me puede ayudar con esta dirección?"},{es:"Veci, ¿me hace un favor?",en:"Neighbor/friend (shopkeeper), can you do me a favor?",tts:"Veci, ¿me hace un favor?"}],mistake:"Do not translate 'I want a coffee' as Yo quiero un café at a counter. Use ¿Me regala un tinto, por favor? or Quisiera…",exercise:"Ask for a coffee, the bill, and directions using ¿Me regala…? and ¿Será que…?"},
+  {id:"diminutivos",title:"Diminutives (-ito / -ico) for warmth",formula:"tinto → tintico · ahora → ahorita · momento → momentico",explain:"Colombians use -ito/-ita (and -ico/-ica after T, like tintico or momentico) to sound warm, polite, and relaxed—not just to describe small size.",examples:[{es:"Espéreme un momentico, por favor.",en:"Wait for me just a moment, please.",tts:"Espéreme un momentico, por favor."},{es:"Ahorita te llamo; estoy cerquita.",en:"I'll call you right now/shortly; I'm very close.",tts:"Ahorita te llamo; estoy cerquita."},{es:"¿Me habla más despacito, por favor?",en:"Can you speak a little more slowly to me, please?",tts:"¿Me habla más despacito, por favor?"}],mistake:"When a word ends in -to/-ta, Colombians switch to -tico/-tica: momentico, tintico, ratico (never momentito in Colombia).",exercise:"Soften un momento, ahora, despacio, and cerca using Colombian diminutives."},
+  {id:"muletillas",title:"Time-buyers while you think (Muletillas)",formula:"Pues… · A ver… · Es que… · Digamos que…",explain:"Native speakers use small filler chunks to hold the floor while organizing their next sentence. Using these prevents awkward silence while you think.",examples:[{es:"Pues, a ver… creo que vamos para el centro.",en:"Well, let's see… I think we are going downtown.",tts:"Pues, a ver… creo que vamos para el centro."},{es:"Es que todavía estoy aprendiendo español.",en:"It's just that I am still learning Spanish.",tts:"Es que todavía estoy aprendiendo español."},{es:"Digamos que necesito un poco más de práctica.",en:"Let's say I need a little more practice.",tts:"Digamos que necesito un poco más de práctica."}],mistake:"Instead of saying English 'uh / um' or freezing, start your answer with Pues, a ver… or Lo que pasa es que…",exercise:"Start three answers out loud with Pues, a ver…, Es que…, and O sea…"},
+  {id:"usted-tu-vos",title:"Usted, tú, sumercé, and vos in Colombia",formula:"usted = respect & daily Bogotá · tú = friendly · ustedes = plural you",explain:"Colombian pronoun choice is warm and regional. Usted is standard with drivers, shopkeepers, doctors, and often even friends in Bogotá. Ustedes is always used for plural 'you all'.",examples:[{es:"Disculpe, ¿usted me puede indicar la entrada?",en:"Excuse me, can you show me the entrance? (formal)",tts:"Disculpe, ¿usted me puede indicar la entrada?"},{es:"¿Tú vas a salir esta noche o te quedas?",en:"Are you going out tonight or staying in? (friendly)",tts:"¿Tú vas a salir esta noche o te quedas?"},{es:"¿Ustedes a qué hora abren mañana?",en:"What time do you all open tomorrow?",tts:"¿Ustedes a qué hora abren mañana?"}],mistake:"Remember that él, ella, and usted all share the exact same verb form (habla, tiene, va), and ellos/ustedes share the -n form (hablan, tienen, van).",exercise:"Ask the same question first to a friend with tú, then to a driver with usted."}
+);
+
+FRASES.push(
+  {section:"🙏 Cortesía colombiana — polite requests",quizCat:"cortesia",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[
+    {es:"Qué pena con usted.",en:"Sorry to bother you / Excuse me.",register:"Colombian · polite"},
+    {es:"¿Me regala un tintico, por favor?",en:"Can I have a black coffee, please?",register:"Colombian · everyday"},
+    {es:"¿Será que me puede ayudar?",en:"Could you possibly help me?",register:"Colombian · polite"},
+    {es:"¿Será que tiene cambio?",en:"Would you happen to have change?",register:"Colombian · polite"},
+    {es:"Veci, ¿cuánto le debo?",en:"Neighbor/shopkeeper, how much do I owe you?",register:"Colombian · everyday"},
+    {es:"¿Me hace un favor?",en:"Can you do me a favor?",register:"Everyday"},
+    {es:"Con mucho gusto.",en:"With pleasure / Happy to help.",register:"Colombian · polite"},
+    {es:"A la orden.",en:"At your service / You're welcome.",register:"Colombian · everyday"},
+    {es:"Dios le pague.",en:"Thank you very much (warm traditional).",register:"Colombian · warm"}
+  ]},
+  {section:"☕ Diminutivos y muletillas — sound local",quizCat:"muletillas",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[
+    {es:"Espéreme un momentico.",en:"Wait for me just a moment.",register:"Colombian · everyday"},
+    {es:"Ahorita vengo.",en:"I'll be right back / coming shortly.",register:"Colombian · everyday"},
+    {es:"Queda aquí cerquita.",en:"It's right nearby.",register:"Colombian · everyday"},
+    {es:"Hábleme más despacito, por favor.",en:"Speak to me a little more slowly, please.",register:"Colombian · polite"},
+    {es:"Nos vemos en un ratico.",en:"See you in a little while.",register:"Colombian · everyday"},
+    {es:"Pues, a ver…",en:"Well, let's see… (buying time)",register:"Everyday"},
+    {es:"Es que todavía estoy aprendiendo.",en:"It's just that I'm still learning.",register:"Everyday"},
+    {es:"Digamos que sí.",en:"Let's say yes / more or less.",register:"Everyday"},
+    {es:"¿Sí me entiende?",en:"Do you see what I mean?",register:"Colombian · everyday"}
+  ]}
+);
+
+CONVERSATIONS.push(
+  v60Dialogue("Cortesía en una tienda","Polite Colombian ordering with ¿Me regala…?, ¿Será que…?, and Veci",[
+    ["A","Buenas, veci. Qué pena con usted, ¿me regala un tintico?","Hi, neighbor. Sorry to bother you, can I have a black coffee?"],
+    ["B","Claro, con mucho gusto. ¿Lo quiere con azúcar?","Of course, with pleasure. Do you want it with sugar?"],
+    ["A","Sin azúcar, por favor. ¿Y será que tiene una arepa con queso?","Without sugar, please. And would you happen to have an arepa with cheese?"],
+    ["B","Sí, claro, ya le sale calentica.","Yes, of course, it's coming right out warm."],
+    ["A","Perfecto. ¿Cuánto le debo por todo?","Perfect. How much do I owe you for everything?"],
+    ["B","Son seis mil pesos. A la orden.","It's six thousand pesos. At your service."]
+  ],[{es:"Qué pena, ¿será que puedo pagar con Nequi o en efectivo?",en:"Excuse me, could I pay with Nequi or in cash?",tts:"Qué pena, ¿será que puedo pagar con Nequi o en efectivo?"},{es:"Muchas gracias, muy amable.",en:"Thank you very much, very kind of you.",tts:"Muchas gracias, muy amable."}]),
+  v60Dialogue("Ganar tiempo al hablar","Using muletillas and diminutives to keep a conversation flowing",[
+    ["A","Hola, ¿ya conoces bien el barrio?","Hi, do you know the neighborhood well yet?"],
+    ["B","Pues, a ver… apenas llevo unos días aquí, pero me gusta mucho.","Well, let's see… I've only been here a few days, but I like it a lot."],
+    ["A","¿Y dónde queda tu hotel?","And where is your hotel located?"],
+    ["B","Queda aquí cerquita, a dos cuadras del parque.","It's right nearby, two blocks from the park."],
+    ["A","¿Vamos por un tintico ahorita?","Shall we go for a coffee right now?"],
+    ["B","De una, espéreme un momentico y salimos.","I'm in, wait for me just a moment and we'll head out."]
+  ],[{es:"Lo que pasa es que todavía hablo despacito, pero ahí voy.",en:"The thing is I still speak slowly, but I'm getting there.",tts:"Lo que pasa es que todavía hablo despacito, pero ahí voy."},{es:"Nos vemos en un ratico en la esquina.",en:"See you in a little while on the corner.",tts:"Nos vemos en un ratico en la esquina."}])
+);
+
+Object.assign(LESSON_CONTENT,{
+  "cortesia-colombiana":{
+    goal:{es:"Qué pena con usted, ¿me regala un tintico y me dice cuánto le debo?",en:"Sorry to bother you, can I have a black coffee and can you tell me how much I owe you?"},
+    words:[{es:"Qué pena con usted",en:"Sorry to bother you"},{es:"¿Me regala…?",en:"Can I have…? (Colombian)"},{es:"¿Será que…?",en:"Could it be that…? (polite opener)"},{es:"Veci",en:"Friendly shopkeeper address"},{es:"Con mucho gusto",en:"With pleasure"},{es:"A la orden",en:"At your service"}],
+    phrases:[{en:"Sorry to bother you, can you help me?",es:"Qué pena con usted, ¿me puede ayudar?"},{en:"Can I have a black coffee, please?",es:"¿Me regala un tintico, por favor?"},{en:"Would you happen to have change?",es:"¿Será que tiene cambio?"},{en:"How much do I owe you for everything?",es:"¿Cuánto le debo por todo?"}]
+  },
+  "muletillas-diminutivos":{
+    goal:{es:"Pues, a ver… espéreme un momentico porque ya estoy cerquita.",en:"Well, let's see… wait for me just a moment because I am already very close."},
+    words:[{es:"un momentico",en:"just a moment"},{es:"ahorita",en:"right now / shortly"},{es:"cerquita",en:"very close"},{es:"despacito",en:"nice and slowly"},{es:"Pues, a ver…",en:"Well, let's see…"},{es:"Es que…",en:"It's just that…"}],
+    phrases:[{en:"Wait for me just a moment, please.",es:"Espéreme un momentico, por favor."},{en:"It's right nearby, across the way.",es:"Queda aquí cerquita, al frente."},{en:"Well, let's see… it's just that I'm still learning.",es:"Pues, a ver… es que todavía estoy aprendiendo."},{en:"I'll call you in a little while.",es:"Te llamo en un ratico."}]
+  }
+});
+
+Object.assign(LESSON_META,{
+  trabajo:{stage:"Daily Life",difficulty:"Easy",prereq:"Preséntate",guideIds:["presente","por-para"],readingId:"lectura-trabajo",missionId:"reunion-trabajo"},
+  casa:{stage:"Start Here",difficulty:"Easy",prereq:"Preséntate",guideIds:["ser-estar","hay"],missionId:"problema-casa"},
+  cocina:{stage:"Travel and Survival",difficulty:"Easy",prereq:"Tu casa",guideIds:["futuro","ir-venir"]},
+  gustos:{stage:"Start Here",difficulty:"Easy",prereq:"Preséntate",guideIds:["gustar","acuerdo"]},
+  planes:{stage:"Daily Life",difficulty:"Easy",prereq:"Gustos y familia",guideIds:["quedar","futuro"],readingId:"lectura-planes",missionId:"planes-fin-semana"},
+  sentirse:{stage:"Daily Life",difficulty:"Easy",prereq:"Tu casa",guideIds:["ser-estar","estructura"],missionId:"como-te-sientes"},
+  colombia:{stage:"Speak More Naturally",difficulty:"Easy",prereq:"Start Here",guideIds:["cortesia-colombiana","diminutivos"],readingId:"lectura-cafe",missionId:"tinto-por-favor"},
+  "uber-ride":{stage:"Travel and Survival",difficulty:"Easy",prereq:"Comunicación para aclarar",dialogue:"Uber: confirmar la recogida",vocab:"direcciones",quizCat:"uber",quizMode:"conversation",guideIds:["usted-tu-vos","por-para"],readingId:"lectura-uber",missionId:"taxi-aeropuerto"},
+  "hotel-checkin":{stage:"Travel and Survival",difficulty:"Easy",prereq:"Uber y transporte",dialogue:"Hotel: registrarse",vocab:"lugares",quizCat:"hotel",quizMode:"conversation",guideIds:["hay","cortesia-colombiana"],readingId:"lectura-hotel",missionId:"hotel-checkin"},
+  farmacia:{stage:"Travel and Survival",difficulty:"Moderate",prereq:"Hotel",dialogue:"Farmacia: explicar síntomas",vocab:"emociones",quizCat:"farmacia",quizMode:"conversation",guideIds:["ser-estar","negativas-preguntas"],missionId:"farmacia-sintomas"},
+  "daily-repair":{stage:"Daily Life",difficulty:"Moderate",prereq:"Travel and Survival",dialogue:"Teléfono: mala señal",vocab:"tecnologia",quizCat:"reparar",quizMode:"conversation",guideIds:["conectores","se-me"],readingId:"lectura-telefono"},
+  direcciones:{stage:"Travel and Survival",difficulty:"Easy",prereq:"En la calle",dialogue:"Uber: dirección equivocada",vocab:"direcciones",quizCat:"direcciones",quizMode:"conversation",guideIds:["hay","quedar"],readingId:"lectura-edificio",missionId:"edificio-direcciones"},
+  "cortesia-colombiana":{stage:"Start Here",difficulty:"Easy",prereq:"Preséntate",dialogue:"Cortesía en una tienda",vocab:"colombianismos",quizCat:"cortesia",quizMode:"conversation",guideIds:["cortesia-colombiana","usted-tu-vos"],readingId:"lectura-cafe",missionId:"tinto-por-favor"},
+  "muletillas-diminutivos":{stage:"Speak More Naturally",difficulty:"Easy",prereq:"Colombianismos",dialogue:"Ganar tiempo al hablar",vocab:"colombianismos",quizCat:"muletillas",quizMode:"conversation",guideIds:["diminutivos","muletillas"],readingId:"lectura-cafe",missionId:"saludo-parce"}
+});
+
+SPEAKING_FRAMES.push(
+  {id:"sera-que",title:"Soften a request the Colombian way",formula:"¿Será que + can / have…?",en:"Could it be that / Would you happen to…?",guide:"cortesia-colombiana",prompts:[
+    {en:"Could you possibly help me?",es:"¿Será que me puede ayudar?"},
+    {en:"Would you happen to have change?",es:"¿Será que tiene cambio?"},
+    {en:"Could we meet a little later?",es:"¿Será que nos vemos más tarde?"}
+  ]},
+  {id:"me-regala",title:"Order or ask politely in Colombia",formula:"¿Me regala + thing, por favor?",en:"Can I have…, please?",guide:"cortesia-colombiana",prompts:[
+    {en:"Can I have a black coffee, please?",es:"¿Me regala un tintico, por favor?"},
+    {en:"Can you give me the address, please?",es:"¿Me regala la dirección, por favor?"},
+    {en:"Can I have the bill, please?",es:"¿Me regala la cuenta, por favor?"}
+  ]},
+  {id:"pues-es-que",title:"Buy time while you think",formula:"Pues, a ver… es que + sentence",en:"Well, let's see… it's just that…",guide:"muletillas",prompts:[
+    {en:"Well, let's see… it's just that I am still learning.",es:"Pues, a ver… es que todavía estoy aprendiendo."},
+    {en:"It's just that I forgot the address.",es:"Es que se me olvidó la dirección."},
+    {en:"Well, let's see… I think it's over there.",es:"Pues, a ver… creo que queda por allá."}
+  ]}
+);
+
+export const V71_QUIZ=[
+  {kind:"reply",focus:"present",cat:"cortesia",es:"Buenas, veci. ¿Me regala un tintico, por favor?",en:"Claro, con mucho gusto. ¿Con azúcar?",tts:"Buenas, veci. ¿Me regala un tintico, por favor?",choices:["Claro, con mucho gusto. ¿Con azúcar?","La llanta está baja.","Ayer trabajé en la oficina.","Juega Colombia esta noche."]},
+  {kind:"meaning",focus:"present",cat:"cortesia",es:"¿Será que me puede ayudar con esta dirección?",en:"Could you possibly help me with this address?",tts:"¿Será que me puede ayudar con esta dirección?",choices:["Could you possibly help me with this address?","Did you already send the address?","I forgot the address yesterday.","Go straight to the corner."]},
+  {kind:"reply",focus:"present",cat:"muletillas",es:"¿Vamos por un tintico ahorita?",en:"De una, espéreme un momentico y salimos.",tts:"¿Vamos por un tintico ahorita?",choices:["De una, espéreme un momentico y salimos.","No, la impresora no funciona.","Ayer fui al mercado.","El semáforo está en rojo."]},
+  {kind:"meaning",focus:"present",cat:"muletillas",es:"Queda aquí cerquita, a dos cuadras.",en:"It's right nearby, two blocks away.",tts:"Queda aquí cerquita, a dos cuadras.",choices:["It's right nearby, two blocks away.","It is very far from the airport.","I lived there last year.","The entrance is on the second floor."]}
+];
+V60_CONVERSATION_QUIZ.push(...V71_QUIZ);
+
+/* ── 5-Rung Sentence Expansion Ladders (Escalera de Oraciones) ─────────────
+   Teaches learners how to start with a 2-word anchor chunk and snap pieces
+   together into a complete conversational sentence, plus 3 slot-swaps. */
+export const SENTENCE_LADDERS={
+  presentate:{
+    title:"Build your introduction step by step",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Me llamo…",en:"My name is…"},
+      {tag:"2. + Origin",es:"Me llamo Seth y soy de Estados Unidos.",en:"My name is Seth and I'm from the United States."},
+      {tag:"3. + Where you live",es:"Me llamo Seth, soy de Estados Unidos y vivo en Colombia.",en:"My name is Seth, I'm from the U.S. and I live in Colombia."},
+      {tag:"4. + Conversational softener",es:"Hola, mucho gusto. Me llamo Seth, soy de Estados Unidos y estoy aprendiendo español.",en:"Hi, nice to meet you. My name is Seth, I'm from the U.S. and I'm learning Spanish."}
+    ],
+    swaps:[
+      {label:"Swap city",es:"Vivo en Medellín, cerca del parque.",en:"I live in Medellín, near the park."},
+      {label:"Ask back",es:"Mucho gusto, ¿y tú de dónde eres?",en:"Nice to meet you, and where are you from?"},
+      {label:"Slow down",es:"Hablo un poquito de español; ¿me habla más despacito?",en:"I speak a little Spanish; can you speak more slowly to me?"}
+    ]
+  },
+  "cortesia-colombiana":{
+    title:"Grow a polite Colombian request",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Me regala…?",en:"Can I have…?"},
+      {tag:"2. + Warm diminutive",es:"¿Me regala un tintico, por favor?",en:"Can I have a black coffee, please?"},
+      {tag:"3. + Polite opener",es:"Buenas, veci. Qué pena con usted, ¿me regala un tintico?",en:"Hi, neighbor. Sorry to bother you, can I have a black coffee?"},
+      {tag:"4. + Second polite question",es:"Qué pena con usted, ¿me regala un tintico y será que tiene cambio?",en:"Sorry to bother you, can I have a black coffee and would you happen to have change?"}
+    ],
+    swaps:[
+      {label:"Swap for water",es:"Qué pena con usted, ¿me regala un vaso de agua?",en:"Sorry to bother you, can I have a glass of water?"},
+      {label:"Swap for the bill",es:"Veci, ¿me regala la cuenta cuando pueda?",en:"Neighbor, can I have the bill when you can?"},
+      {label:"Swap for directions",es:"Qué pena con usted, ¿será que me puede indicar la entrada?",en:"Sorry to bother you, could you possibly show me the entrance?"}
+    ]
+  },
+  plata:{
+    title:"Ask prices and negotiate naturally",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Cuánto cuesta?",en:"How much does it cost?"},
+      {tag:"2. + Specific item",es:"¿Cuánto cuestan estas arepas?",en:"How much do these arepas cost?"},
+      {tag:"3. + Quantity request",es:"¿Cuánto cuestan estas arepas? Me regala dos, por favor.",en:"How much do these arepas cost? Can I have two, please."},
+      {tag:"4. + Payment question",es:"Me regala dos arepas, por favor. ¿Será que puedo pagar con tarjeta?",en:"Can I have two arepas, please. Could I pay by card?"}
+    ],
+    swaps:[
+      {label:"Pay cash",es:"Pago en efectivo; ¿tiene cambio de cincuenta mil?",en:"I'll pay in cash; do you have change for fifty thousand?"},
+      {label:"Ask total",es:"Listo, ¿cuánto le debo por todo?",en:"Great, how much do I owe you for everything?"},
+      {label:"Ask discount",es:"Está un poquito caro; ¿me hace un descuento?",en:"It's a little expensive; can you give me a discount?"}
+    ]
+  },
+  "survival-communication":{
+    title:"Repair a fast conversation without freezing",
+    rungs:[
+      {tag:"1. Anchor stem",es:"No entendí.",en:"I didn't understand."},
+      {tag:"2. + Polite request",es:"Disculpe, no entendí bien.",en:"Excuse me, I didn't quite understand."},
+      {tag:"3. + Ask to slow down",es:"Disculpe, no entendí bien. ¿Me puede hablar más despacito?",en:"Excuse me, I didn't quite understand. Can you speak more slowly to me?"},
+      {tag:"4. + Explain why",es:"Disculpe, ¿me lo puede repetir más despacito? Es que todavía estoy aprendiendo español.",en:"Excuse me, can you repeat it more slowly for me? It's just that I'm still learning Spanish."}
+    ],
+    swaps:[
+      {label:"Buy time",es:"Espéreme un momentico, déjeme pensar.",en:"Wait for me just a moment, let me think."},
+      {label:"Ask meaning",es:"Perdón, ¿qué quiere decir esa palabra?",en:"Sorry, what does that word mean?"},
+      {label:"Check yourself",es:"¿Así está bien o cómo se dice?",en:"Is it okay like this, or how do you say it?"}
+    ]
+  },
+  "uber-ride":{
+    title:"Confirm your Uber pickup and destination",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Voy para…",en:"I'm headed to…"},
+      {tag:"2. + Destination",es:"Voy para este hotel.",en:"I'm headed to this hotel."},
+      {tag:"3. + Pickup location",es:"Buenas, estoy al frente y voy para este hotel.",en:"Hi, I'm out front and I'm headed to this hotel."},
+      {tag:"4. + Polite instruction",es:"Buenas, estoy al frente del edificio. Voy para este hotel; ¿me avisa cuando lleguemos?",en:"Hi, I'm in front of the building. I'm going to this hotel; can you let me know when we arrive?"}
+    ],
+    swaps:[
+      {label:"Drop-off",es:"¿Me puede dejar aquí en la esquina, por favor?",en:"Can you drop me off here on the corner, please?"},
+      {label:"Check traffic",es:"¿Hay mucho trancón por esta avenida?",en:"Is there a lot of traffic on this avenue?"},
+      {label:"Wrong entrance",es:"Creo que la entrada queda por allá; ¿se devuelve un poquito?",en:"I think the entrance is over there; can you go back a little?"}
+    ]
+  },
+  "action-chunks":{
+    title:"Snap action stems onto infinitives",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Tengo que…",en:"I have to…"},
+      {tag:"2. + Infinitive + object",es:"Tengo que pasar por el mercado.",en:"I have to stop by the market."},
+      {tag:"3. + Second clause",es:"Quiero ir para la casa, pero tengo que pasar por el mercado.",en:"I want to go home, but I have to stop by the market."},
+      {tag:"4. + Time + follow-up",es:"Quiero ir para la casa, pero primero tengo que pasar por el mercado; te aviso ahorita.",en:"I want to go home, but first I have to stop by the market; I'll let you know shortly."}
+    ],
+    swaps:[
+      {label:"Use Necesito",es:"Necesito encontrar la dirección antes de salir.",en:"I need to find the address before leaving."},
+      {label:"Use Me toca",es:"Hoy me toca trabajar hasta tarde en la oficina.",en:"Today I have to work late at the office."},
+      {label:"Use Acabo de",es:"Acabo de llegar al hotel y voy a descansar.",en:"I just arrived at the hotel and I'm going to rest."}
+    ]
+  }
+};
+
+/* ── 3-Column Interactive Slot-Swap Matrices (Constructor de Frases) ────────
+   Lets learners physically tap 1 opener + 1 core action + 1 connector/reason
+   to assemble dozens of real Colombian sentences and speak them out loud. */
+export const SLOT_SWAP_MATRICES=[
+  {
+    id:"survival-polite",
+    title:"🇨🇴 Polite Requests & Survival",
+    sub:"Combine a Colombian opener + what you need + why",
+    col1Title:"1. Opener / Stem",
+    col2Title:"2. Action / Need",
+    col3Title:"3. Context / Reason",
+    col1:[
+      {es:"Qué pena con usted, necesito",en:"Sorry to bother you, I need"},
+      {es:"Disculpe, ¿será que puedo",en:"Excuse me, could I possibly"},
+      {es:"Buenas, veci, quisiera",en:"Hi neighbor, I would like"},
+      {es:"Perdón, tengo que",en:"Sorry, I have to"}
+    ],
+    col2:[
+      {es:"pedir un Uber para el hotel",en:"to order an Uber to the hotel"},
+      {es:"confirmar esta dirección",en:"to confirm this address"},
+      {es:"pagar la cuenta con tarjeta",en:"to pay the bill by card"},
+      {es:"cambiar la reserva para mañana",en:"to change the reservation for tomorrow"}
+    ],
+    col3:[
+      {es:"porque voy un poquito tarde.",en:"because I'm running a little late."},
+      {es:"pero todavía no tengo buena señal.",en:"but I still don't have good signal."},
+      {es:"antes de que empiece el trancón.",en:"before the traffic jam starts."},
+      {es:"si me hace el favor.",en:"if you'd do me the favor."}
+    ]
+  },
+  {
+    id:"daily-plans",
+    title:"📆 Plans, Work & Daily Flow",
+    sub:"Talk about what you're doing now and next",
+    col1Title:"1. Time + Stem",
+    col2Title:"2. Core Action",
+    col3Title:"3. Connector + Follow-up",
+    col1:[
+      {es:"Ahorita voy a",en:"Right now I'm going to"},
+      {es:"Después del trabajo quiero",en:"After work I want"},
+      {es:"Hoy me toca",en:"Today I have to"},
+      {es:"En este momento estoy tratando de",en:"Right now I'm trying to"}
+    ],
+    col2:[
+      {es:"pasar por el mercado",en:"to stop by the market"},
+      {es:"terminar el informe de la oficina",en:"to finish the office report"},
+      {es:"tomar un tintico con unos amigos",en:"to have a coffee with some friends"},
+      {es:"buscar la entrada del edificio",en:"to look for the building entrance"}
+    ],
+    col3:[
+      {es:"y te aviso en cuanto llegue.",en:"and I'll let you know as soon as I arrive."},
+      {es:"pero primero tengo una reunión.",en:"but first I have a meeting."},
+      {es:"porque mañana salgo temprano.",en:"because tomorrow I leave early."},
+      {es:"así que nos vemos en un ratico.",en:"so I'll see you in a little while."}
+    ]
+  },
+  {
+    id:"past-stories",
+    title:"⏮️ Telling What Happened (Past)",
+    sub:"Combine a past event with background context",
+    col1Title:"1. Past Anchor",
+    col2Title:"2. What Happened",
+    col3Title:"3. Background / Result",
+    col1:[
+      {es:"Ayer fui a",en:"Yesterday I went to"},
+      {es:"Anoche tuve que",en:"Last night I had to"},
+      {es:"Esta mañana iba a",en:"This morning I was going to"},
+      {es:"Hace un ratico acabé de",en:"A little while ago I finished"}
+    ],
+    col2:[
+      {es:"hacer una vuelta en el centro",en:"run an errand downtown"},
+      {es:"llamar al técnico del apartamento",en:"call the apartment technician"},
+      {es:"comprar comida para la cena",en:"buy food for dinner"},
+      {es:"hablar con mi compañero de trabajo",en:"talk with my coworker"}
+    ],
+    col3:[
+      {es:"porque estaba lloviendo muy fuerte.",en:"because it was raining very hard."},
+      {es:"pero había mucho trancón en la avenida.",en:"but there was a lot of traffic on the avenue."},
+      {es:"entonces llegué a la casa un poco cansado.",en:"so I arrived home a little tired."},
+      {es:"mientras esperaba el carro.",en:"while I was waiting for the car."}
+    ]
+  }
+];
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v91.0 Curriculum & Conversational Expansion:
+   1. 10 Essential Conversational Verbs in VERBS (25 verbs total)
+   2. 5 Real-Life Colombian Scenarios (Aeropuerto, Pagos/Nequi, Barbería, Médico, Portería/Rappi)
+   3. Complete 4-Rung Sentence Expansion Ladders (SENTENCE_LADDERS) for all 52 lessons
+   4. 4 New Interactive 3-Column Slot-Swap Matrices (7 matrices total)
+   5. Context-locked Conversation & Fill-in-the-Blank Quiz Items
+   ═══════════════════════════════════════════════════════════════════════════ */
+Object.assign(VERBS,{
+  decir:{en:"to say / to tell",type:"IR — Irregular",icon:"💬",color:"#4aa8a0",
+    gerund:{f:"diciendo",en:"saying / telling"},participle:{f:"dicho",en:"said / told (irregular!)"},
+    imperative:{tu:{f:"¡Di!",en:"Say / Tell! (informal)"},usted:{f:"¡Diga!",en:"Say / Tell! (formal)"}},
+    present:[{p:"yo",v:"digo",e:"I say/tell"},{p:"tú",v:"dices",e:"you say/tell"},{p:"él/ella/ud.",v:"dice",e:"he/she says/tells"},{p:"nosotros",v:"decimos",e:"we say/tell"},{p:"ellos/uds.",v:"dicen",e:"they say/tell"}],
+    past:[{p:"yo",v:"dije",e:"I said/told"},{p:"tú",v:"dijiste",e:"you said/told"},{p:"él/ella/ud.",v:"dijo",e:"he/she said/told"},{p:"nosotros",v:"dijimos",e:"we said/told"},{p:"ellos/uds.",v:"dijeron",e:"they said/told"}],
+    imperfect:[{p:"yo",v:"decía",e:"I was saying / used to say"},{p:"tú",v:"decías",e:"you were saying"},{p:"él/ella/ud.",v:"decía",e:"he/she was saying"},{p:"nosotros",v:"decíamos",e:"we were saying"},{p:"ellos/uds.",v:"decían",e:"they were saying"}],
+    future:[{p:"yo",v:"diré",e:"I will say/tell"},{p:"tú",v:"dirás",e:"you will say/tell"},{p:"él/ella/ud.",v:"dirá",e:"he/she will say/tell"},{p:"nosotros",v:"diremos",e:"we will say/tell"},{p:"ellos/uds.",v:"dirán",e:"they will say/tell"}],
+    family:[{f:"el dicho",e:"saying / proverb",t:"sustantivo"},{f:"querer decir",e:"to mean",t:"expresión"},{f:"es decir",e:"that is to say",t:"conector"},{f:"dígame",e:"tell me (formal phone/service)",t:"expresión"}],
+    example:{es:"¿Cómo se dice esto en español?",en:"How do you say this in Spanish?"}},
+  venir:{en:"to come",type:"IR — Irregular",icon:"👋",color:"#34d399",
+    gerund:{f:"viniendo",en:"coming"},participle:{f:"venido",en:"come"},
+    imperative:{tu:{f:"¡Ven!",en:"Come! (informal)"},usted:{f:"¡Venga!",en:"Come! (formal)"}},
+    present:[{p:"yo",v:"vengo",e:"I come"},{p:"tú",v:"vienes",e:"you come"},{p:"él/ella/ud.",v:"viene",e:"he/she comes"},{p:"nosotros",v:"venimos",e:"we come"},{p:"ellos/uds.",v:"vienen",e:"they come"}],
+    past:[{p:"yo",v:"vine",e:"I came"},{p:"tú",v:"viniste",e:"you came"},{p:"él/ella/ud.",v:"vino",e:"he/she came"},{p:"nosotros",v:"vinimos",e:"we came"},{p:"ellos/uds.",v:"vinieron",e:"they came"}],
+    imperfect:[{p:"yo",v:"venía",e:"I was coming / used to come"},{p:"tú",v:"venías",e:"you were coming"},{p:"él/ella/ud.",v:"venía",e:"he/she was coming"},{p:"nosotros",v:"veníamos",e:"we were coming"},{p:"ellos/uds.",v:"venían",e:"they were coming"}],
+    future:[{p:"yo",v:"vendré",e:"I will come"},{p:"tú",v:"vendrás",e:"you will come"},{p:"él/ella/ud.",v:"vendrá",e:"he/she will come"},{p:"nosotros",v:"vendremos",e:"we will come"},{p:"ellos/uds.",v:"vendrán",e:"they will come"}],
+    family:[{f:"la venida",e:"arrival / coming",t:"sustantivo"},{f:"bienvenido/a",e:"welcome",t:"adjetivo"},{f:"el porvenir",e:"future",t:"sustantivo"},{f:"venga le digo",e:"come here, let me tell you (Colombian!)",t:"expresión"}],
+    example:{es:"Vengo de Estados Unidos por turismo.",en:"I come from the United States for tourism."}},
+  salir:{en:"to leave / to go out",type:"IR — Irregular yo",icon:"🚪",color:"#f59e0b",
+    gerund:{f:"saliendo",en:"leaving / going out"},participle:{f:"salido",en:"left / gone out"},
+    imperative:{tu:{f:"¡Sal!",en:"Leave / Go out! (informal)"},usted:{f:"¡Salga!",en:"Leave / Come out! (formal)"}},
+    present:[{p:"yo",v:"salgo",e:"I leave / go out"},{p:"tú",v:"sales",e:"you leave / go out"},{p:"él/ella/ud.",v:"sale",e:"he/she leaves"},{p:"nosotros",v:"salimos",e:"we leave / go out"},{p:"ellos/uds.",v:"salen",e:"they leave / go out"}],
+    past:[{p:"yo",v:"salí",e:"I left / went out"},{p:"tú",v:"saliste",e:"you left"},{p:"él/ella/ud.",v:"salió",e:"he/she left"},{p:"nosotros",v:"salimos",e:"we left"},{p:"ellos/uds.",v:"salieron",e:"they left"}],
+    imperfect:[{p:"yo",v:"salía",e:"I was leaving / used to go out"},{p:"tú",v:"salías",e:"you were leaving"},{p:"él/ella/ud.",v:"salía",e:"he/she was leaving"},{p:"nosotros",v:"salíamos",e:"we were leaving"},{p:"ellos/uds.",v:"salían",e:"they were leaving"}],
+    future:[{p:"yo",v:"saldré",e:"I will leave"},{p:"tú",v:"saldrás",e:"you will leave"},{p:"él/ella/ud.",v:"saldrá",e:"he/she will leave"},{p:"nosotros",v:"saldremos",e:"we will leave"},{p:"ellos/uds.",v:"saldrán",e:"they will leave"}],
+    family:[{f:"la salida",e:"exit / departure / outing",t:"sustantivo"},{f:"salir con amigos",e:"to go out with friends",t:"expresión"},{f:"salir bien",e:"to turn out well",t:"expresión"},{f:"ya le sale",e:"it's coming right out for you (Colombian!)",t:"expresión"}],
+    example:{es:"Salgo del trabajo a las cinco.",en:"I leave work at five."}},
+  saber:{en:"to know (facts / how to)",type:"ER — Irregular",icon:"🧠",color:"#60a5fa",
+    gerund:{f:"sabiendo",en:"knowing"},participle:{f:"sabido",en:"known"},
+    imperative:{tu:{f:"¡Sabe!",en:"Know! (rare)"},usted:{f:"¡Sepa!",en:"Know! (formal)"}},
+    present:[{p:"yo",v:"sé",e:"I know"},{p:"tú",v:"sabes",e:"you know"},{p:"él/ella/ud.",v:"sabe",e:"he/she knows"},{p:"nosotros",v:"sabemos",e:"we know"},{p:"ellos/uds.",v:"saben",e:"they know"}],
+    past:[{p:"yo",v:"supe",e:"I found out"},{p:"tú",v:"supiste",e:"you found out"},{p:"él/ella/ud.",v:"supo",e:"he/she found out"},{p:"nosotros",v:"supimos",e:"we found out"},{p:"ellos/uds.",v:"supieron",e:"they found out"}],
+    imperfect:[{p:"yo",v:"sabía",e:"I knew"},{p:"tú",v:"sabías",e:"you knew"},{p:"él/ella/ud.",v:"sabía",e:"he/she knew"},{p:"nosotros",v:"sabíamos",e:"we knew"},{p:"ellos/uds.",v:"sabían",e:"they knew"}],
+    future:[{p:"yo",v:"sabré",e:"I will know"},{p:"tú",v:"sabrás",e:"you will know"},{p:"él/ella/ud.",v:"sabrá",e:"he/she will know"},{p:"nosotros",v:"sabremos",e:"we will know"},{p:"ellos/uds.",v:"sabrán",e:"they will know"}],
+    family:[{f:"el saber",e:"knowledge",t:"sustantivo"},{f:"sabio/a",e:"wise",t:"adjetivo"},{f:"no sé",e:"I don't know",t:"expresión"},{f:"¿quién sabe?",e:"who knows?",t:"expresión"}],
+    example:{es:"No sé dónde queda la entrada.",en:"I don't know where the entrance is."}},
+  conocer:{en:"to know (people / places) / meet",type:"ER — Irregular yo",icon:"🤝",color:"#a78bfa",
+    gerund:{f:"conociendo",en:"knowing / meeting"},participle:{f:"conocido",en:"known / met"},
+    imperative:{tu:{f:"¡Conoce!",en:"Meet / Get to know!"},usted:{f:"¡Conozca!",en:"Meet / Get to know! (formal)"}},
+    present:[{p:"yo",v:"conozco",e:"I know / meet"},{p:"tú",v:"conoces",e:"you know"},{p:"él/ella/ud.",v:"conoce",e:"he/she knows"},{p:"nosotros",v:"conocemos",e:"we know"},{p:"ellos/uds.",v:"conocen",e:"they know"}],
+    past:[{p:"yo",v:"conocí",e:"I met / visited"},{p:"tú",v:"conociste",e:"you met"},{p:"él/ella/ud.",v:"conoció",e:"he/she met"},{p:"nosotros",v:"conocimos",e:"we met"},{p:"ellos/uds.",v:"conocieron",e:"they met"}],
+    imperfect:[{p:"yo",v:"conocía",e:"I knew (person/place)"},{p:"tú",v:"conocías",e:"you knew"},{p:"él/ella/ud.",v:"conocía",e:"he/she knew"},{p:"nosotros",v:"conocíamos",e:"we knew"},{p:"ellos/uds.",v:"conocían",e:"they knew"}],
+    future:[{p:"yo",v:"conoceré",e:"I will know / meet"},{p:"tú",v:"conocerás",e:"you will know"},{p:"él/ella/ud.",v:"conocerá",e:"he/she will know"},{p:"nosotros",v:"conoceremos",e:"we will know"},{p:"ellos/uds.",v:"conocerán",e:"they will know"}],
+    family:[{f:"el conocimiento",e:"knowledge",t:"sustantivo"},{f:"conocido/a",e:"acquaintance / well-known",t:"sustantivo/adj"},{f:"desconocido/a",e:"stranger / unknown",t:"sustantivo/adj"},{f:"mucho gusto en conocerte",e:"nice to meet you",t:"expresión"}],
+    example:{es:" Todavía no conozco bien el barrio.",en:"I still don't know the neighborhood well."}},
+  dar:{en:"to give",type:"AR — Irregular",icon:"🎁",color:"#ec4899",
+    gerund:{f:"dando",en:"giving"},participle:{f:"dado",en:"given"},
+    imperative:{tu:{f:"¡Da! / ¡Dame!",en:"Give! / Give me!"},usted:{f:"¡Dé! / ¡Deme!",en:"Give! / Give me! (formal)"}},
+    present:[{p:"yo",v:"doy",e:"I give"},{p:"tú",v:"das",e:"you give"},{p:"él/ella/ud.",v:"da",e:"he/she gives"},{p:"nosotros",v:"damos",e:"we give"},{p:"ellos/uds.",v:"dan",e:"they give"}],
+    past:[{p:"yo",v:"di",e:"I gave"},{p:"tú",v:"diste",e:"you gave"},{p:"él/ella/ud.",v:"dio",e:"he/she gave"},{p:"nosotros",v:"dimos",e:"we gave"},{p:"ellos/uds.",v:"dieron",e:"they gave"}],
+    imperfect:[{p:"yo",v:"daba",e:"I was giving / used to give"},{p:"tú",v:"dabas",e:"you were giving"},{p:"él/ella/ud.",v:"daba",e:"he/she was giving"},{p:"nosotros",v:"dábamos",e:"we were giving"},{p:"ellos/uds.",v:"daban",e:"they were giving"}],
+    future:[{p:"yo",v:"daré",e:"I will give"},{p:"tú",v:"darás",e:"you will give"},{p:"él/ella/ud.",v:"dará",e:"he/she will give"},{p:"nosotros",v:"daremos",e:"we will give"},{p:"ellos/uds.",v:"darán",e:"they will give"}],
+    family:[{f:"el dato",e:"fact / piece of info",t:"sustantivo"},{f:"darse cuenta",e:"to realize",t:"expresión"},{f:"dar una vuelta",e:"to take a walk / ride",t:"expresión"},{f:"¿me da la cuenta?",e:"can you give me the bill?",t:"expresión"}],
+    example:{es:"¿Me da un recibo, por favor?",en:"Can you give me a receipt, please?"}},
+  poner:{en:"to put / to place",type:"ER — Irregular",icon:"📍",color:"#f97316",
+    gerund:{f:"poniendo",en:"putting"},participle:{f:"puesto",en:"put / placed (irregular!)"},
+    imperative:{tu:{f:"¡Pon!",en:"Put! (informal)"},usted:{f:"¡Ponga!",en:"Put! (formal)"}},
+    present:[{p:"yo",v:"pongo",e:"I put"},{p:"tú",v:"pones",e:"you put"},{p:"él/ella/ud.",v:"pone",e:"he/she puts"},{p:"nosotros",v:"ponemos",e:"we put"},{p:"ellos/uds.",v:"ponen",e:"they put"}],
+    past:[{p:"yo",v:"puse",e:"I put"},{p:"tú",v:"pusiste",e:"you put"},{p:"él/ella/ud.",v:"puso",e:"he/she put"},{p:"nosotros",v:"pusimos",e:"we put"},{p:"ellos/uds.",v:"pusieron",e:"they put"}],
+    imperfect:[{p:"yo",v:"ponía",e:"I was putting / used to put"},{p:"tú",v:"ponías",e:"you were putting"},{p:"él/ella/ud.",v:"ponía",e:"he/she was putting"},{p:"nosotros",v:"poníamos",e:"we were putting"},{p:"ellos/uds.",v:"ponían",e:"they were putting"}],
+    future:[{p:"yo",v:"pondré",e:"I will put"},{p:"tú",v:"pondrás",e:"you will put"},{p:"él/ella/ud.",v:"pondrá",e:"he/she will put"},{p:"nosotros",v:"pondremos",e:"we will put"},{p:"ellos/uds.",v:"pondrán",e:"they will put"}],
+    family:[{f:"el puesto",e:"stall / seat / position",t:"sustantivo"},{f:"ponerse",e:"to put on (clothes) / become",t:"verbo"},{f:"póngale cuidado",e:"pay attention (Colombian!)",t:"expresión"},{f:"no le ponga azúcar",e:"don't put sugar in it",t:"expresión"}],
+    example:{es:"No le ponga azúcar al tinto, por favor.",en:"Don't put sugar in the coffee, please."}},
+  pedir:{en:"to ask for / to order",type:"IR — Stem-change (e→i)",icon:"🍽️",color:"#e8b44a",
+    gerund:{f:"pidiendo",en:"asking for / ordering"},participle:{f:"pedido",en:"asked for / ordered"},
+    imperative:{tu:{f:"¡Pide!",en:"Ask for / Order! (informal)"},usted:{f:"¡Pida!",en:"Ask for / Order! (formal)"}},
+    present:[{p:"yo",v:"pido",e:"I ask for / order"},{p:"tú",v:"pides",e:"you ask for / order"},{p:"él/ella/ud.",v:"pide",e:"he/she asks for / orders"},{p:"nosotros",v:"pedimos",e:"we ask for / order"},{p:"ellos/uds.",v:"piden",e:"they ask for / order"}],
+    past:[{p:"yo",v:"pedí",e:"I asked for / ordered"},{p:"tú",v:"pediste",e:"you ordered"},{p:"él/ella/ud.",v:"pidió",e:"he/she ordered"},{p:"nosotros",v:"pedimos",e:"we ordered"},{p:"ellos/uds.",v:"pidieron",e:"they ordered"}],
+    imperfect:[{p:"yo",v:"pedía",e:"I was ordering / used to ask for"},{p:"tú",v:"pedías",e:"you were ordering"},{p:"él/ella/ud.",v:"pedía",e:"he/she was ordering"},{p:"nosotros",v:"pedíamos",e:"we were ordering"},{p:"ellos/uds.",v:"pedían",e:"they were ordering"}],
+    future:[{p:"yo",v:"pediré",e:"I will order"},{p:"tú",v:"pedirás",e:"you will order"},{p:"él/ella/ud.",v:"pedirá",e:"he/she will order"},{p:"nosotros",v:"pediremos",e:"we will order"},{p:"ellos/uds.",v:"pedirán",e:"they will order"}],
+    family:[{f:"el pedido",e:"order (food/delivery)",t:"sustantivo"},{f:"pedir perdón",e:"to apologize",t:"expresión"},{f:"pedir un Uber",e:"to order an Uber",t:"expresión"},{f:"pedir un domicilio",e:"to order delivery (Colombian!)",t:"expresión"}],
+    example:{es:"Voy a pedir un domicilio por Rappi.",en:"I'm going to order delivery on Rappi."}},
+  entender:{en:"to understand",type:"ER — Stem-change (e→ie)",icon:"💡",color:"#06b6d4",
+    gerund:{f:"entendiendo",en:"understanding"},participle:{f:"entendido",en:"understood"},
+    imperative:{tu:{f:"¡Entiende!",en:"Understand! (informal)"},usted:{f:"¡Entienda!",en:"Understand! (formal)"}},
+    present:[{p:"yo",v:"entiendo",e:"I understand"},{p:"tú",v:"entiendes",e:"you understand"},{p:"él/ella/ud.",v:"entiende",e:"he/she understands"},{p:"nosotros",v:"entendemos",e:"we understand"},{p:"ellos/uds.",v:"entienden",e:"they understand"}],
+    past:[{p:"yo",v:"entendí",e:"I understood"},{p:"tú",v:"entendiste",e:"you understood"},{p:"él/ella/ud.",v:"entendió",e:"he/she understood"},{p:"nosotros",v:"entendimos",e:"we understood"},{p:"ellos/uds.",v:"entendieron",e:"they understood"}],
+    imperfect:[{p:"yo",v:"entendía",e:"I understood / was understanding"},{p:"tú",v:"entendías",e:"you understood"},{p:"él/ella/ud.",v:"entendía",e:"he/she understood"},{p:"nosotros",v:"entendíamos",e:"we understood"},{p:"ellos/uds.",v:"entendían",e:"they understood"}],
+    future:[{p:"yo",v:"entenderé",e:"I will understand"},{p:"tú",v:"entenderás",e:"you will understand"},{p:"él/ella/ud.",v:"entenderá",e:"he/she will understand"},{p:"nosotros",v:"entenderemos",e:"we will understand"},{p:"ellos/uds.",v:"entenderán",e:"they will understand"}],
+    family:[{f:"el entendimiento",e:"understanding",t:"sustantivo"},{f:"entendido/a",e:"understood / expert",t:"adjetivo"},{f:"no entendí",e:"I didn't understand",t:"expresión"},{f:"¿sí me entiende?",e:"do you see what I mean? (Colombian!)",t:"expresión"}],
+    example:{es:"Disculpe, no entendí bien. ¿Me repite?",en:"Excuse me, I didn't quite understand. Can you repeat for me?"}},
+  llamar:{en:"to call",type:"AR — Regular",icon:"📞",color:"#10b981",
+    gerund:{f:"llamando",en:"calling"},participle:{f:"llamado",en:"called"},
+    imperative:{tu:{f:"¡Llama!",en:"Call! (informal)"},usted:{f:"¡Llame!",en:"Call! (formal)"}},
+    present:[{p:"yo",v:"llamo",e:"I call"},{p:"tú",v:"llamas",e:"you call"},{p:"él/ella/ud.",v:"llama",e:"he/she calls"},{p:"nosotros",v:"llamamos",e:"we call"},{p:"ellos/uds.",v:"llaman",e:"they call"}],
+    past:[{p:"yo",v:"llamé",e:"I called"},{p:"tú",v:"llamaste",e:"you called"},{p:"él/ella/ud.",v:"llamó",e:"he/she called"},{p:"nosotros",v:"llamamos",e:"we called"},{p:"ellos/uds.",v:"llamaron",e:"they called"}],
+    imperfect:[{p:"yo",v:"llamaba",e:"I was calling / used to call"},{p:"tú",v:"llamabas",e:"you were calling"},{p:"él/ella/ud.",v:"llamaba",e:"he/she was calling"},{p:"nosotros",v:"llamábamos",e:"we were calling"},{p:"ellos/uds.",v:"llamaban",e:"they were calling"}],
+    future:[{p:"yo",v:"llamaré",e:"I will call"},{p:"tú",v:"llamarás",e:"you will call"},{p:"él/ella/ud.",v:"llamará",e:"he/she will call"},{p:"nosotros",v:"llamaremos",e:"we will call"},{p:"ellos/uds.",v:"llamarán",e:"they will call"}],
+    family:[{f:"la llamada",e:"phone call",t:"sustantivo"},{f:"llamarse",e:"to be named",t:"verbo reflexivo"},{f:"devolver la llamada",e:"to call back",t:"expresión"},{f:"te llamo ahorita",e:"I'll call you shortly",t:"expresión"}],
+    example:{es:"Te llamo ahorita cuando salga de la reunión.",en:"I'll call you shortly when I get out of the meeting."}}
+});
+
+/* ── 5 New Real-Life Colombian Scenarios (Phrases, Dialogues, Readings, Missions, Lessons) ── */
+FRASES.push(
+  {section:"🛬 Aeropuerto y migración",quizCat:"aeropuerto",cls:"color:var(--blue);background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.2)",items:[
+    {es:"Vengo por turismo y a visitar amigos.",en:"I'm coming for tourism and to visit friends.",register:"Travel · formal"},
+    {es:"Me voy a quedar dos semanas en el país.",en:"I am going to stay in the country for two weeks.",register:"Travel · formal"},
+    {es:"Aquí tiene mi pasaporte y la reserva del hotel.",en:"Here is my passport and the hotel reservation.",register:"Travel · formal"},
+    {es:"¿Por dónde queda el reclamo de equipaje?",en:"Where is the baggage claim located?",register:"Travel · everyday"},
+    {es:"Mi maleta todavía no ha salido por la banda.",en:"My suitcase still hasn't come out on the belt.",register:"Travel · everyday"},
+    {es:"¿En qué puerta me recoge el Uber?",en:"At which door does the Uber pick me up?",register:"Colombian · everyday"}
+  ]},
+  {section:"💳 Nequi, datáfono y pagos",quizCat:"bancos-pagos",cls:"color:var(--gold);background:rgba(232,180,74,0.1);border:1px solid rgba(232,180,74,0.2)",items:[
+    {es:"¿Puedo pagar con tarjeta o por Nequi?",en:"Can I pay by card or with Nequi?",register:"Colombian · everyday"},
+    {es:"Con tarjeta de crédito, a una sola cuota, por favor.",en:"By credit card, in a single installment, please.",register:"Colombian · everyday"},
+    {es:"Cuenta de ahorros, por favor.",en:"Savings account, please.",register:"Colombian · everyday"},
+    {es:"Sí, puede incluir el servicio en la cuenta.",en:"Yes, you can include the tip/service charge on the bill.",register:"Colombian · polite"},
+    {es:"Sin factura electrónica; consumidor final, por favor.",en:"No electronic invoice needed; final consumer, please.",register:"Colombian · everyday"},
+    {es:"¿Me acerca el datáfono, por favor?",en:"Can you bring the card machine over to me, please?",register:"Colombian · polite"}
+  ]},
+  {section:"💈 Peluquería y barbería",quizCat:"barberia",cls:"color:var(--teal);background:rgba(74,168,160,0.1);border:1px solid rgba(74,168,160,0.2)",items:[
+    {es:"Buenas, ¿tiene turno disponible ahorita?",en:"Hi, do you have an opening available right now?",register:"Colombian · everyday"},
+    {es:"Quiero un corte bajito a los lados con la dos.",en:"I want a low cut on the sides with a #2 guard.",register:"Colombian · everyday"},
+    {es:"Arriba solo bájeme un poquito con tijera.",en:"On top just trim a little bit with scissors.",register:"Colombian · everyday"},
+    {es:"¿Me hace un desvanecido limpio atrás?",en:"Can you give me a clean fade in the back?",register:"Colombian · everyday"},
+    {es:"También quiero arreglarme y perfilar la barba.",en:"I also want to trim and line up my beard.",register:"Everyday"},
+    {es:"Así quedó perfecto, muchas gracias.",en:"That turned out perfect, thank you very much.",register:"Polite"}
+  ]},
+  {section:"🩺 Cita médica y urgencias",quizCat:"medico",cls:"color:var(--pink);background:rgba(232,93,117,0.1);border:1px solid rgba(232,93,117,0.2)",items:[
+    {es:"Vengo a consulta porque me siento mal desde ayer.",en:"I'm here for a consultation because I've felt sick since yesterday.",register:"Medical · formal"},
+    {es:"Tengo dolor de estómago y un poco de fiebre.",en:"I have a stomachache and a slight fever.",register:"Medical"},
+    {es:"No soy alérgico a ningún medicamento.",en:"I am not allergic to any medication.",register:"Medical"},
+    {es:"¿Cada cuántas horas debo tomar esta pastilla?",en:"How many hours apart should I take this pill?",register:"Medical"},
+    {es:"¿La debo tomar antes o después de las comidas?",en:"Should I take it before or after meals?",register:"Medical"},
+    {es:"¿Necesito fórmula médica para comprar esto?",en:"Do I need a prescription to buy this?",register:"Colombian · medical"}
+  ]},
+  {section:"🏢 Portería, Rappi y apartamento",quizCat:"porteria",cls:"color:var(--purple);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)",items:[
+    {es:"Buenas, vecino. Voy para el apartamento quinientos dos.",en:"Hi, doorman. I'm going to apartment 502.",register:"Colombian · everyday"},
+    {es:"Estoy esperando un domicilio de Rappi; ¿me avisa cuando llegue?",en:"I'm waiting for a Rappi delivery; can you let me know when it arrives?",register:"Colombian · everyday"},
+    {es:"¿Me autoriza la subida del domiciliario, por favor?",en:"Can you authorize the delivery driver to come up, please?",register:"Colombian · polite"},
+    {es:"Se cayó el internet en el apartamento desde esta mañana.",en:"The internet has been down in the apartment since this morning.",register:"Everyday"},
+    {es:"Parece que se fue el agua en todo el edificio.",en:"It seems the water went out in the whole building.",register:"Everyday"},
+    {es:"¿Le puedo dejar este paquete aquí en portería?",en:"Can I leave this package here at the front desk?",register:"Colombian · polite"}
+  ]}
+);
+
+CONVERSATIONS.push(
+  v60Dialogue("Aeropuerto y migración","Passport control, length of stay, and finding baggage claim",[
+    ["A","Buenos días. ¿Me permite su pasaporte, por favor? ¿Cuál es el motivo de su viaje?","Good morning. May I see your passport, please? What is the purpose of your trip?"],
+    ["B","Buenos días, aquí tiene. Vengo por turismo y a visitar a unos amigos.","Good morning, here you go. I'm coming for tourism and to visit some friends."],
+    ["A","¿Cuántos días se va a quedar en Colombia y dónde se va a hospedar?","How many days are you going to stay in Colombia and where will you be staying?"],
+    ["B","Me voy a quedar dos semanas. Aquí tengo la dirección del hotel en Bogotá.","I'm going to stay two weeks. Here I have the address of the hotel in Bogotá."],
+    ["A","Perfecto, bienvenido a Colombia. Siga adelante hacia el reclamo de equipaje.","Perfect, welcome to Colombia. Go ahead toward the baggage claim."],
+    ["B","Muchas gracias, muy amable. ¿Por qué puerta salgo para pedir un taxi?","Thank you very much, very kind. Which door do I exit through to get a taxi?"]
+  ],[{es:"Vengo por negocios durante diez días.",en:"I'm coming on business for ten days.",tts:"Vengo por negocios durante diez días."},{es:"Me quedo en un apartamento en Medellín.",en:"I'm staying at an apartment in Medellín.",tts:"Me quedo en un apartamento en Medellín."}]),
+  v60Dialogue("Pagos con datáfono y Nequi","Paying by card in one installment, savings vs. checking, and Nequi",[
+    ["A","Listo, señor. Son cuarenta y cinco mil pesos. ¿Desea incluir el servicio?","All set, sir. That's forty-five thousand pesos. Would you like to include the service charge?"],
+    ["B","Sí, claro, inclúyalo por favor. ¿Puedo pagar con tarjeta o por Nequi?","Yes, of course, please include it. Can I pay by card or with Nequi?"],
+    ["A","Claro que sí, ya le traigo el datáfono. ¿Ahorros, corriente o crédito?","Of course, I'll bring you the card terminal right away. Savings, checking, or credit?"],
+    ["B","Con tarjeta de crédito, a una sola cuota, por favor.","With a credit card, in a single installment, please."],
+    ["A","Perfecto. ¿Necesita factura electrónica a su nombre o consumidor final?","Perfect. Do you need an electronic invoice in your name or final consumer?"],
+    ["B","Consumidor final está bien. Muchas gracias, qué buena atención.","Final consumer is fine. Thank you very much, great service."]
+  ],[{es:"¿Me regala el número de Nequi o el código QR para transferirle?",en:"Can you give me the Nequi number or QR code to transfer to you?",tts:"¿Me regala el número de Nequi o el código QR para transferirle?"},{es:"A una cuota sin factura electrónica, por favor.",en:"One installment without an electronic invoice, please.",tts:"A una cuota sin factura electrónica, por favor."}]),
+  v60Dialogue("En la barbería","Asking for a fade, scissor trim on top, and beard line-up",[
+    ["A","Buenas, parcero. Siga y siéntese. ¿Cómo se lo vamos a cortar hoy?","Hi, buddy. Come in and have a seat. How are we going to cut it for you today?"],
+    ["B","Buenas, maestro. Quiero un desvanecido bajito a los lados con la máquina dos.","Hi, boss. I want a low fade on the sides with a #2 guard."],
+    ["A","Listo, de una. ¿Y arriba cómo lo quiere? ¿Le bajo bastante o solo las puntas?","Got it, right away. And how do you want it on top? Should I take a lot off or just the tips?"],
+    ["B","Arriba solo bájeme un poquito con tijera para que quede parejo.","On top just take a little off with scissors so it looks even."],
+    ["A","Perfecto. ¿Le arreglo y le perfilo también la barba?","Perfect. Shall I also trim and line up your beard?"],
+    ["B","Sí, por favor, bájela un poquito y límpieme el cuello.","Yes, please, take it down a little and clean up my neck."]
+  ],[{es:"Déjemelo natural atrás, sin subir mucho la máquina.",en:"Leave it natural in the back, without taking the clippers too high.",tts:"Déjemelo natural atrás, sin subir mucho la máquina."},{es:"Así quedó excelente, hermano. ¿Le pago en efectivo o por Nequi?",en:"That turned out excellent, brother. Do I pay you in cash or by Nequi?",tts:"Así quedó excelente, hermano. ¿Le pago en efectivo o por Nequi?"}]),
+  v60Dialogue("Consulta médica y droguería","Explaining symptoms, duration, allergies, and medicine instructions",[
+    ["A","Buenas tardes. Cuénteme, ¿qué síntomas tiene y desde cuándo se siente así?","Good afternoon. Tell me, what symptoms do you have and since when have you felt like this?"],
+    ["B","Buenas tardes, doctora. Desde anoche tengo dolor de estómago y un poco de fiebre.","Good afternoon, doctor. Since last night I've had a stomachache and a slight fever."],
+    ["A","Entiendo. ¿Ha tomado algún medicamento hoy o es alérgico a algo?","I understand. Have you taken any medication today or are you allergic to anything?"],
+    ["B","No soy alérgico a nada; solo he tomado agua y suero oral esta mañana.","I'm not allergic to anything; I've only had water and oral rehydration salts this morning."],
+    ["A","Le voy a formular estas pastillas. Tómese una cada ocho horas después de comer.","I'm going to prescribe these pills for you. Take one every eight hours after eating."],
+    ["B","Perfecto, doctora. ¿Con esta fórmula las puedo comprar en cualquier droguería?","Perfect, doctor. With this prescription can I buy them at any pharmacy?"]
+  ],[{es:"Me duele mucho la garganta al pasar saliva.",en:"My throat hurts a lot when I swallow.",tts:"Me duele mucho la garganta al pasar saliva."},{es:"¿Por cuántos días debo seguir el tratamiento?",en:"For how many days should I continue the treatment?",tts:"¿Por cuántos días debo seguir el tratamiento?"}]),
+  v60Dialogue("Portería y domicilio Rappi","Talking to the building doorman, receiving Rappi, and reporting an issue",[
+    ["A","Buenas tardes, vecino.Llegó un domiciliario de Rappi para el apartamento quinientos dos.","Good afternoon, neighbor. A Rappi delivery driver arrived for apartment 502."],
+    ["B","Hola, don Carlos. Qué pena, ¿se lo puede recibir ahí en portería? Ya bajo en un momentico.","Hi, Don Carlos. Sorry to bother you, can you receive it there at the front desk? I'll come down in just a moment."],
+    ["A","Claro que sí, tranquilo, yo se lo guardo aquí en recepción.","Of course, no worries, I'll keep it for you right here at the front desk."],
+    ["B","Muchas gracias. Aprovecho para preguntarle: ¿se fue el agua en el edificio?","Thank you very much. While I have you, let me ask: did the water go out in the building?"],
+    ["A","Sí, señor, están haciendo un arreglo en la tubería, pero vuelve en una hora.","Yes, sir, they are doing a repair on the pipe, but it comes back in an hour."],
+    ["B","Listo, don Carlos, muy amable. Ya mismo bajo por el pedido.","Got it, Don Carlos, very kind of you. I'm coming right down for the order."]
+  ],[{es:"Vecino, hoy viene un técnico a revisar el internet; ¿lo deja seguir?",en:"Doorman, a technician is coming today to check the internet; can you let him in?",tts:"Vecino, hoy viene un técnico a revisar el internet; ¿lo deja seguir?"},{es:"¿Llegó algún paquete o correspondencia para mi apartamento?",en:"Did any package or mail arrive for my apartment?",tts:"¿Llegó algún paquete o correspondencia para mi apartamento?"}])
+);
+
+READINGS.push(
+  {id:"lectura-aeropuerto",level:"A2",title:"Llegada al aeropuerto El Dorado",lesson:"aeropuerto-migracion",intro:"Follow a traveler passing through Colombian immigration and picking up their ride.",lines:[
+    {es:"Acabo de aterrizar en Bogotá y hago la fila para migración.",en:"I just landed in Bogotá and I get in line for immigration.",tts:"Acabo de aterrizar en Bogotá y hago la fila para migración."},
+    {es:"El oficial me pide el pasaporte y me pregunta cuántos días me voy a quedar.",en:"The officer asks for my passport and asks how many days I am going to stay.",tts:"El oficial me pide el pasaporte y me pregunta cuántos días me voy a quedar."},
+    {es:"Le explico que vengo por turismo durante dos semanas y le muestro la dirección del hotel.",en:"I explain that I am coming for tourism for two weeks and show him the hotel address.",tts:"Le explico que vengo por turismo durante dos semanas y le muestro la dirección del hotel."},
+    {es:"Después recojo mi maleta en la banda y salgo al segundo piso para pedir mi Uber.",en:"Afterward I pick up my suitcase at the belt and go out to the second floor to order my Uber.",tts:"Después recojo mi maleta en la banda y salgo al segundo piso para pedir mi Uber."}
+  ],questions:[{q:"¿Cuánto tiempo se va a quedar en Colombia?",choices:["Dos semanas","Dos meses","Tres días"],answer:"Dos semanas"}]},
+  {id:"lectura-pagos",level:"A2",title:"Pagar la cuenta en Colombia",lesson:"bancos-pagos",intro:"Learn the three questions every Colombian cashier or waiter asks when you pay by card.",lines:[
+    {es:"Cuando pido la cuenta en un restaurante, el mesero me pregunta si deseo incluir el servicio.",en:"When I ask for the bill at a restaurant, the waiter asks if I want to include the service charge.",tts:"Cuando pido la cuenta en un restaurante, el mesero me pregunta si deseo incluir el servicio."},
+    {es:"Le digo que sí y le pido pagar con tarjeta en el datáfono.",en:"I tell him yes and ask to pay by card on the terminal.",tts:"Le digo que sí y le pido pagar con tarjeta en el datáfono."},
+    {es:"Siempre me preguntan si es cuenta de ahorros, corriente o crédito y a cuántas cuotas.",en:"They always ask me if it is savings, checking, or credit and how many installments.",tts:"Siempre me preguntan si es cuenta de ahorros, corriente o crédito y a cuántas cuotas."},
+    {es:"Respondo: a una sola cuota y consumidor final, por favor.",en:"I answer: in a single installment and final consumer, please.",tts:"Respondo: a una sola cuota y consumidor final, por favor."}
+  ],questions:[{q:"¿Qué responde cuando le preguntan por las cuotas?",choices:["A una sola cuota","A doce cuotas","En efectivo"],answer:"A una sola cuota"}]},
+  {id:"lectura-barberia",level:"A2",title:"Un corte en la barbería",lesson:"barberia",intro:"Read how to ask for a clean fade and trim in a neighborhood barbershop.",lines:[
+    {es:"El sábado por la mañana voy a la barbería que queda a dos cuadras de mi casa.",en:"On Saturday morning I go to the barbershop that is two blocks from my house.",tts:"El sábado por la mañana voy a la barbería que queda a dos cuadras de mi casa."},
+    {es:"Le pido al barbero un desvanecido bajito a los lados con la máquina número dos.",en:"I ask the barber for a low fade on the sides with a #2 clipper guard.",tts:"Le pido al barbero un desvanecido bajito a los lados con la máquina número dos."},
+    {es:"Arriba solo quiero bajar un poquito las puntas con tijera.",en:"On top I only want to trim the tips a little bit with scissors.",tts:"Arriba solo quiero bajar un poquito las puntas con tijera."},
+    {es:"Al final me perfila la barba y le pago por Nequi.",en:"At the end he lines up my beard and I pay him via Nequi.",tts:"Al final me perfila la barba y le pago por Nequi."}
+  ],questions:[{q:"¿Cómo quiere el corte en la parte de arriba?",choices:["Un poquito con tijera","Rapado con la cero","Sin tocar nada"],answer:"Un poquito con tijera"}]},
+  {id:"lectura-medico",level:"A2",title:"En la consulta médica",lesson:"medico-urgencias",intro:"Practice describing symptoms clearly and understanding dosage instructions.",lines:[
+    {es:"Me desperté con dolor de estómago y fiebre, así que pedí una cita médica.",en:"I woke up with a stomachache and fever, so I scheduled a medical appointment.",tts:"Me desperté con dolor de estómago y fiebre, así que pedí una cita médica."},
+    {es:"La doctora me pregunta desde cuándo me siento mal y si soy alérgico a algún medicamento.",en:"The doctor asks me since when I have felt sick and if I am allergic to any medication.",tts:"La doctora me pregunta desde cuándo me siento mal y si soy alérgico a algún medicamento."},
+    {es:"Me receta unas pastillas que debo tomar cada ocho horas después de comer.",en:"She prescribes some pills that I must take every eight hours after eating.",tts:"Me receta unas pastillas que debo tomar cada ocho horas después de comer."},
+    {es:"Paso por la droguería con la fórmula médica y regreso a casa a descansar.",en:"I stop by the pharmacy with the prescription and return home to rest.",tts:"Paso por la droguería con la fórmula médica y regreso a casa a descansar."}
+  ],questions:[{q:"¿Cada cuánto debe tomar las pastillas?",choices:["Cada ocho horas","Una vez a la semana","Antes de dormir"],answer:"Cada ocho horas"}]},
+  {id:"lectura-porteria",level:"A2",title:"La portería y el domicilio",lesson:"porteria-domicilios",intro:"Everyday building life in Colombia: talking to the portero and receiving deliveries.",lines:[
+    {es:"En Colombia casi todos los edificios tienen una portería con vigilante las veinticuatro horas.",en:"In Colombia almost all apartment buildings have a front desk with a 24-hour doorman.",tts:"En Colombia casi todos los edificios tienen una portería con vigilante las veinticuatro horas."},
+    {es:"Cuando pido comida por Rappi, el portero me llama por el citófono para avisarme.",en:"When I order food on Rappi, the doorman calls me on the intercom to let me know.",tts:"Cuando pido comida por Rappi, el portero me llama por el citófono para avisarme."},
+    {es:"Si estoy ocupado en una reunión, le pido el favor de recibirme el paquete abajo.",en:"If I am busy in a meeting, I ask him the favor of receiving the package for me downstairs.",tts:"Si estoy ocupado en una reunión, le pido el favor de recibirme el paquete abajo."},
+    {es:"Ahorita bajo un momentico, saludo al vecino y recojo mi pedido.",en:"Shortly I go down for a moment, greet the doorman, and pick up my order.",tts:"Ahorita bajo un momentico, saludo al vecino y recojo mi pedido."}
+  ],questions:[{q:"¿Por dónde avisa el portero cuando llega el pedido?",choices:["Por el citófono","Por correo postal","En el aeropuerto"],answer:"Por el citófono"}]}
+);
+
+CONVERSATION_MISSIONS.push(
+  {id:"migracion-llegada",title:"Responde en migración",scenario:"The immigration officer in Bogotá asks why you are visiting Colombia and how long you will stay.",prompt:"Responde con calma y muestra tu reserva:",lesson:"aeropuerto-migracion",models:[
+    {es:"Buenos días. Vengo por turismo durante dos semanas y me voy a quedar en este hotel.",en:"Good morning. I am coming for tourism for two weeks and I am going to stay at this hotel.",tts:"Buenos días. Vengo por turismo durante dos semanas y me voy a quedar en este hotel."},
+    {es:"Vengo a visitar a unos amigos por diez días; aquí tiene mi pasaporte y la dirección.",en:"I'm coming to visit some friends for ten days; here is my passport and the address.",tts:"Vengo a visitar a unos amigos por diez días; aquí tiene mi pasaporte y la dirección."}
+  ]},
+  {id:"pagar-datafono",title:"Paga con tarjeta en Colombia",scenario:"The waiter brings the bill and asks if you want to include the tip and how you will pay.",prompt:"Acepta el servicio y pide pagar a una cuota:",lesson:"bancos-pagos",models:[
+    {es:"Sí, incluya el servicio, por favor. Pago con tarjeta de crédito a una sola cuota.",en:"Yes, include the service charge, please. I'll pay by credit card in a single installment.",tts:"Sí, incluya el servicio, por favor. Pago con tarjeta de crédito a una sola cuota."},
+    {es:"Con tarjeta en el datáfono, cuenta de ahorros y sin factura electrónica, por favor.",en:"By card on the terminal, savings account and without an electronic invoice, please.",tts:"Con tarjeta en el datáfono, cuenta de ahorros y sin factura electrónica, por favor."}
+  ]},
+  {id:"corte-barberia",title:"Explica tu corte de pelo",scenario:"You sit down in a Colombian barbershop and the barber asks how you want your hair and beard.",prompt:"Explica cómo quieres los lados y la parte de arriba:",lesson:"barberia",models:[
+    {es:"Quiero un desvanecido bajito a los lados con la dos, y arriba solo las puntas con tijera.",en:"I want a low fade on the sides with a #2, and on top just the tips with scissors.",tts:"Quiero un desvanecido bajito a los lados con la dos, y arriba solo las puntas con tijera."},
+    {es:"Bájeme a los lados con máquina y arrégleme un poquito la barba, por favor.",en:"Take the sides down with clippers and trim my beard a little bit, please.",tts:"Bájeme a los lados con máquina y arrégleme un poquito la barba, por favor."}
+  ]},
+  {id:"consulta-medica",title:"Explica tus síntomas al médico",scenario:"You are at a medical consultation. Explain what hurts, since when, and ask how to take the medicine.",prompt:"Habla con la doctora:",lesson:"medico-urgencias",models:[
+    {es:"Desde ayer tengo dolor de estómago y fiebre. ¿Cada cuántas horas debo tomar la pastilla?",en:"Since yesterday I've had a stomachache and fever. Every how many hours should I take the pill?",tts:"Desde ayer tengo dolor de estómago y fiebre. ¿Cada cuántas horas debo tomar la pastilla?"},
+    {es:"Me siento muy cansado y me duele la garganta desde anoche; no soy alérgico a nada.",en:"I feel very tired and my throat has hurt since last night; I'm not allergic to anything.",tts:"Me siento muy cansado y me duele la garganta desde anoche; no soy alérgico a nada."}
+  ]},
+  {id:"porteria-rappi",title:"Habla con la portería",scenario:"Your Rappi delivery arrived while you are finishing a call. Ask the doorman to hold it for you for a moment.",prompt:"Dile al portero:",lesson:"porteria-domicilios",models:[
+    {es:"Qué pena, vecino, ¿me puede recibir el pedido ahí en portería? Ya bajo en un momentico.",en:"Sorry to bother you, doorman, can you receive the order for me there at the front desk? I'll come down in a moment.",tts:"Qué pena, vecino, ¿me puede recibir el pedido ahí en portería? Ya bajo en un momentico."},
+    {es:"Buenas, don Carlos. Estoy esperando un domicilio de Rappi; ¿me avisa cuando llegue?",en:"Hi, Don Carlos. I'm waiting for a Rappi delivery; can you let me know when it arrives?",tts:"Buenas, don Carlos. Estoy esperando un domicilio de Rappi; ¿me avisa cuando llegue?"}
+  ]}
+);
+
+Object.assign(LESSON_CONTENT,{
+  "aeropuerto-migracion":{
+    goal:{es:"Vengo por turismo durante dos semanas y me voy a quedar en este hotel.",en:"I'm coming for tourism for two weeks and I'm going to stay at this hotel."},
+    words:[{es:"vengo por turismo",en:"I come for tourism"},{es:"me voy a quedar",en:"I am going to stay"},{es:"dos semanas",en:"two weeks"},{es:"el reclamo de equipaje",en:"baggage claim"},{es:"la maleta",en:"suitcase"},{es:"la puerta de salida",en:"exit door"}],
+    phrases:[{en:"I am coming for tourism.",es:"Vengo por turismo."},{en:"I am going to stay for two weeks.",es:"Me voy a quedar dos semanas."},{en:"Here is my passport and hotel reservation.",es:"Aquí tiene mi pasaporte y la reserva del hotel."},{en:"Where is the baggage claim?",es:"¿Por dónde queda el reclamo de equipaje?"}]
+  },
+  "bancos-pagos":{
+    goal:{es:"Sí, incluya el servicio. Pago con tarjeta a una sola cuota, por favor.",en:"Yes, include the service charge. I'll pay by card in a single installment, please."},
+    words:[{es:"el datáfono",en:"card terminal (Colombian)"},{es:"a una cuota",en:"one installment"},{es:"cuenta de ahorros",en:"savings account"},{es:"incluir el servicio",en:"include tip/service"},{es:"por Nequi",en:"via Nequi"},{es:"consumidor final",en:"final consumer (no tax ID invoice)"}],
+    phrases:[{en:"Can I pay by card or with Nequi?",es:"¿Puedo pagar con tarjeta o por Nequi?"},{en:"In a single installment, please.",es:"A una sola cuota, por favor."},{en:"Savings account, please.",es:"Cuenta de ahorros, por favor."},{en:"Yes, you can include the service charge.",es:"Sí, puede incluir el servicio."}]
+  },
+  "barberia":{
+    goal:{es:"Quiero un desvanecido bajito a los lados con la dos y arriba solo con tijera.",en:"I want a low fade on the sides with a #2 and on top only with scissors."},
+    words:[{es:"un desvanecido",en:"a fade"},{es:"bajito a los lados",en:"low on the sides"},{es:"con la dos",en:"with a #2 guard"},{es:"con tijera",en:"with scissors"},{es:"solo las puntas",en:"just the tips"},{es:"perfilar la barba",en:"line up the beard"}],
+    phrases:[{en:"Do you have an opening right now?",es:"¿Tiene turno disponible ahorita?"},{en:"I want it low on the sides with a #2.",es:"Lo quiero bajito a los lados con la dos."},{en:"On top just trim a little with scissors.",es:"Arriba solo bájeme un poquito con tijera."},{en:"Can you also line up my beard?",es:"¿Me perfila también la barba?"}]
+  },
+  "medico-urgencias":{
+    goal:{es:"Tengo dolor de estómago desde anoche. ¿Cada cuántas horas debo tomar la pastilla?",en:"I've had a stomachache since last night. Every how many hours should I take the pill?"},
+    words:[{es:"desde anoche",en:"since last night"},{es:"dolor de estómago",en:"stomachache"},{es:"soy alérgico/a",en:"I am allergic"},{es:"cada ocho horas",en:"every eight hours"},{es:"después de comer",en:"after eating"},{es:"la fórmula médica",en:"medical prescription"}],
+    phrases:[{en:"I have felt sick since yesterday.",es:"Me siento mal desde ayer."},{en:"I am not allergic to any medication.",es:"No soy alérgico a ningún medicamento."},{en:"Every how many hours should I take it?",es:"¿Cada cuántas horas debo tomarla?"},{en:"Should I take it after eating?",es:"¿La debo tomar después de comer?"}]
+  },
+  "porteria-domicilios":{
+    goal:{es:"Vecino, estoy esperando un domicilio de Rappi; ¿me lo recibe en portería?",en:"Doorman, I'm waiting for a Rappi delivery; can you hold it for me at the front desk?"},
+    words:[{es:"la portería",en:"front desk / doorman station"},{es:"el domicilio",en:"delivery (Colombian)"},{es:"el citófono",en:"intercom"},{es:"se fue el agua",en:"the water went out"},{es:"se cayó el internet",en:"the internet went down"},{es:"ya bajo",en:"I'm coming right down"}],
+    phrases:[{en:"I am waiting for a Rappi delivery.",es:"Estoy esperando un domicilio de Rappi."},{en:"Can you receive it for me at the front desk?",es:"¿Me lo puede recibir ahí en portería?"},{en:"I'll come down in just a moment.",es:"Ya bajo en un momentico."},{en:"Did the water go out in the building?",es:"¿Se fue el agua en el edificio?"}]
+  }
+});
+
+Object.assign(LESSON_META,{
+  "aeropuerto-migracion":{stage:"Travel and Survival",difficulty:"Easy",prereq:"Uber en español",dialogue:"Aeropuerto y migración",vocab:"lugares",quizCat:"aeropuerto",quizMode:"conversation",guideIds:["futuro","por-para"],readingId:"lectura-aeropuerto",missionId:"migracion-llegada"},
+  "bancos-pagos":{stage:"Travel and Survival",difficulty:"Easy",prereq:"Números y plata",dialogue:"Pagos con datáfono y Nequi",vocab:"numeros",quizCat:"bancos-pagos",quizMode:"conversation",guideIds:["cortesia-colombiana","usted-tu-vos"],readingId:"lectura-pagos",missionId:"pagar-datafono"},
+  "barberia":{stage:"Daily Life",difficulty:"Moderate",prereq:"Cortesía colombiana",dialogue:"En la barbería",vocab:"cuerpo",quizCat:"barberia",quizMode:"conversation",guideIds:["mandatos","pronombres"],readingId:"lectura-barberia",missionId:"corte-barberia"},
+  "medico-urgencias":{stage:"Travel and Survival",difficulty:"Moderate",prereq:"En la farmacia",dialogue:"Consulta médica y droguería",vocab:"cuerpo",quizCat:"medico",quizMode:"conversation",guideIds:["ser-estar","perfecto"],readingId:"lectura-medico",missionId:"consulta-medica"},
+  "porteria-domicilios":{stage:"Daily Life",difficulty:"Easy",prereq:"Tu casa",dialogue:"Portería y domicilio Rappi",vocab:"casa",quizCat:"porteria",quizMode:"conversation",guideIds:["cortesia-colombiana","se-me"],readingId:"lectura-porteria",missionId:"porteria-rappi"}
+});
+
+/* ── Complete 4-Rung Sentence Expansion Ladders for All Remaining 46 Lessons ── */
+Object.assign(SENTENCE_LADDERS,{
+  trabajo:{
+    title:"Talk about your job and daily schedule",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Trabajo como…",en:"I work as…"},
+      {tag:"2. + Profession",es:"Trabajo como ingeniero en una empresa.",en:"I work as an engineer at a company."},
+      {tag:"3. + Today's plan",es:"Trabajo como ingeniero y hoy tengo una reunión.",en:"I work as an engineer and today I have a meeting."},
+      {tag:"4. + Follow-up",es:"Trabajo como ingeniero; hoy tengo una reunión importante con un cliente, así que salgo un poco tarde.",en:"I work as an engineer; today I have an important meeting with a client, so I leave a little late."}
+    ],
+    swaps:[
+      {label:"Remote work",es:"Hoy estoy trabajando desde la casa porque tengo varias llamadas.",en:"Today I'm working from home because I have several calls."},
+      {label:"Ask back",es:"Me gusta mucho mi trabajo. ¿Y tú en qué trabajas?",en:"I like my job a lot. And what do you do for work?"},
+      {label:"Send email",es:"Antes de salir tengo que mandar un correo a la oficina.",en:"Before leaving I have to send an email to the office."}
+    ]
+  },
+  casa:{
+    title:"Describe where things are in your home",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Está en…",en:"It is in…"},
+      {tag:"2. + Room",es:"La toalla está en la habitación.",en:"The towel is in the bedroom."},
+      {tag:"3. + Exact spot",es:"La toalla limpia está en la habitación, sobre la cama.",en:"The clean towel is in the bedroom, on the bed."},
+      {tag:"4. + Extra need",es:"La toalla está sobre la cama, pero necesito buscar otra cobija en el clóset.",en:"The towel is on the bed, but I need to look for another blanket in the closet."}
+    ],
+    swaps:[
+      {label:"Bathroom",es:"El jabón y el champú están en la ducha.",en:"The soap and shampoo are in the shower."},
+      {label:"Kitchen",es:"Dejé las llaves sobre la mesa del comedor.",en:"I left the keys on the dining table."},
+      {label:"Ask location",es:"Disculpa, ¿sabes dónde está la almohada extra?",en:"Excuse me, do you know where the extra pillow is?"}
+    ]
+  },
+  calle:{
+    title:"Give and follow street directions",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Siga derecho…",en:"Go straight…"},
+      {tag:"2. + Landmark",es:"Siga derecho hasta el semáforo.",en:"Go straight to the traffic light."},
+      {tag:"3. + Turn",es:"Siga derecho hasta el semáforo y gire a la derecha.",en:"Go straight to the traffic light and turn right."},
+      {tag:"4. + Final spot",es:"Siga derecho dos cuadras y gire a la derecha en la esquina; el banco queda ahí al frente.",en:"Go straight two blocks and turn right at the corner; the bank is right there across the way."}
+    ],
+    swaps:[
+      {label:"Turn left",es:"Pasa el parque y gira a la izquierda en la farmacia.",en:"Pass the park and turn left at the pharmacy."},
+      {label:"Ask distance",es:"Qué pena, ¿el supermercado queda cerca o queda lejos?",en:"Excuse me, is the supermarket nearby or far away?"},
+      {label:"Stop here",es:"Déjeme aquí después del semáforo, por favor.",en:"Drop me off here after the traffic light, please."}
+    ]
+  },
+  cocina:{
+    title:"Coordinate cooking and kitchen tasks",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Voy a cortar…",en:"I'm going to cut…"},
+      {tag:"2. + Ingredient",es:"Voy a cortar las verduras para la cena.",en:"I'm going to cut the vegetables for dinner."},
+      {tag:"3. + Partner action",es:"Voy a cortar las verduras y tú calientas la olla.",en:"I'll cut the vegetables and you heat the pot."},
+      {tag:"4. + Full kitchen flow",es:"Mientras yo corto la cebolla y el tomate, ¿puedes ir calentando la sartén en la estufa?",en:"While I cut the onion and tomato, can you start heating the pan on the stove?"}
+    ],
+    swaps:[
+      {label:"Fridge",es:"Saca el aguacate y el queso de la nevera, por favor.",en:"Take the avocado and cheese out of the fridge, please."},
+      {label:"Boil water",es:"Ya puse a hervir el agua para hacer el arroz.",en:"I already put the water on to boil to make the rice."},
+      {label:"Compliment",es:"¡Esta comida huele muy rico y quedó deliciosa!",en:"This food smells great and turned out delicious!"}
+    ]
+  },
+  gustos:{
+    title:"Share what you love and talk about family",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Me gusta…",en:"I like…"},
+      {tag:"2. + Activity",es:"Me gusta cocinar y escuchar música.",en:"I like cooking and listening to music."},
+      {tag:"3. + With whom",es:"Me gusta cocinar y pasar tiempo con mi familia.",en:"I like cooking and spending time with my family."},
+      {tag:"4. + Weekend detail",es:"Me encanta pasar tiempo con mi familia los fines de semana y preparar algo rico en casa.",en:"I love spending time with my family on weekends and making something delicious at home."}
+    ],
+    swaps:[
+      {label:"Plural things",es:"Me gustan mucho las arepas y el café de Colombia.",en:"I really like arepas and Colombian coffee."},
+      {label:"Ask back",es:"A mí me encanta viajar. ¿Y a ti qué te gusta hacer?",en:"I love traveling. And what do you like to do?"},
+      {label:"Siblings",es:"Tengo dos hermanos y los quiero muchísimo.",en:"I have two siblings and I love them very much."}
+    ]
+  },
+  planes:{
+    title:"Set up a plan and coordinate by phone",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Nos vemos…?",en:"Shall we meet…?"},
+      {tag:"2. + Time",es:"¿Nos vemos mañana por la tarde?",en:"Shall we meet tomorrow afternoon?"},
+      {tag:"3. + Enthusiastic reply",es:"¿Nos vemos mañana? — ¡De una! Te escribo.",en:"Shall we meet tomorrow? — I'm in! I'll text you."},
+      {tag:"4. + Location follow-up",es:"¡De una! Mándame la ubicación por WhatsApp y te aviso apenas salga de la casa.",en:"I'm in! Send me the location on WhatsApp and I'll let you know as soon as I leave the house."}
+    ],
+    swaps:[
+      {label:"Call later",es:"Ahorita estoy ocupado, pero te llamo más tarde.",en:"Right now I'm busy, but I'll call you later."},
+      {label:"Reschedule",es:"De pronto llego diez minutos tarde por el trancón.",en:"Maybe I'll arrive ten minutes late because of traffic."},
+      {label:"Confirm",es:"¿A qué hora quedamos entonces en el centro?",en:"What time shall we meet downtown then?"}
+    ]
+  },
+  sentirse:{
+    title:"Explain how you feel physically and emotionally",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Me siento…",en:"I feel…"},
+      {tag:"2. + Symptom",es:"Me siento cansado y tengo sueño.",en:"I feel tired and I'm sleepy."},
+      {tag:"3. + Specific pain",es:"Me duele la cabeza y tengo mucho sueño.",en:"My head hurts and I'm very sleepy."},
+      {tag:"4. + What you need",es:"Hoy me duele un poco la cabeza y tengo sueño, así que me voy a acostar temprano para descansar.",en:"Today my head hurts a little and I'm sleepy, so I'm going to go to bed early to rest."}
+    ],
+    swaps:[
+      {label:"Hungry/Thirsty",es:"Tengo mucha hambre y sed; ¿vamos a comer algo?",en:"I'm very hungry and thirsty; shall we go eat something?"},
+      {label:"Feeling great",es:"Hoy me siento muy bien y estoy contento de estar aquí.",en:"Today I feel great and I'm happy to be here."},
+      {label:"Ask someone",es:"Te veo cansado, ¿cómo te sientes hoy?",en:"You look tired, how do you feel today?"}
+    ]
+  },
+  colombia:{
+    title:"Greet friends with warm Colombian expressions",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Qué más?",en:"What's up?"},
+      {tag:"2. + Friendly address",es:"¿Qué más, parce? ¿Todo bien?",en:"What's up, buddy? All good?"},
+      {tag:"3. + Warm reaction",es:"¿Qué más, parce? — Todo bien, ¡qué bacano verte!",en:"What's up, buddy? — All good, so cool to see you!"},
+      {tag:"4. + Invite for coffee",es:"¡Qué bacano verte, parce! ¿Vamos por un tintico ahorita y me cuentas cómo te ha ido?",en:"So cool to see you, buddy! Shall we grab a coffee right now and you tell me how things have been?"}
+    ],
+    swaps:[
+      {label:"Hágale",es:"¡Hágale de una! Nos vemos allá en diez minutos.",en:"Let's do it! See you there in ten minutes."},
+      {label:"Qué nota",es:"¡Qué nota que viniste a visitar Colombia!",en:"How awesome that you came to visit Colombia!"},
+      {label:"Listo",es:"Listo, parce, cuadramos entonces para el sábado.",en:"Got it, buddy, we'll set it up for Saturday then."}
+    ]
+  },
+  "hotel-checkin":{
+    title:"Check into your hotel and get oriented",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Tengo una reserva…",en:"I have a reservation…"},
+      {tag:"2. + Under your name",es:"Buenas, tengo una reserva a nombre de Seth.",en:"Hi, I have a reservation under Seth's name."},
+      {tag:"3. + Ask for elevator",es:"Tengo una reserva a nombre de Seth. ¿Dónde está el ascensor?",en:"I have a reservation under Seth's name. Where is the elevator?"},
+      {tag:"4. + Breakfast & Wi-Fi",es:"Aquí tiene mi pasaporte. ¿Me dice a qué hora es el desayuno y cuál es la clave del wifi?",en:"Here is my passport. Can you tell me what time breakfast is and what the Wi-Fi password is?"}
+    ],
+    swaps:[
+      {label:"Luggage",es:"¿Puedo dejar mi maleta en recepción mientras sale la habitación?",en:"Can I leave my suitcase at the front desk while the room gets ready?"},
+      {label:"Check-out",es:"Disculpe, ¿a qué hora es la salida mañana?",en:"Excuse me, what time is check-out tomorrow?"},
+      {label:"Room issue",es:"En mi habitación falta una toalla; ¿me regala una?",en:"My room is missing a towel; can I have one?"}
+    ]
+  },
+  farmacia:{
+    title:"Explain symptoms at a Colombian droguería",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Me duele…",en:"My … hurts"},
+      {tag:"2. + Duration",es:"Me duele la cabeza desde esta mañana.",en:"My head has hurt since this morning."},
+      {tag:"3. + Ask for medicine",es:"Me duele la cabeza desde esta mañana. ¿Qué me recomienda?",en:"My head has hurt since this morning. What do you recommend?"},
+      {tag:"4. + Dosage question",es:"Necesito algo para el dolor de cabeza y la tos. ¿Cómo me debo tomar estas pastillas?",en:"I need something for a headache and cough. How should I take these pills?"}
+    ],
+    swaps:[
+      {label:"Stomach",es:"¿Tiene algo bueno para el dolor de estómago?",en:"Do you have something good for a stomachache?"},
+      {label:"With food",es:"¿La tomo con agua antes o después de comer?",en:"Do I take it with water before or after eating?"},
+      {label:"Drowsiness",es:"¿Esta pastilla da sueño o puedo trabajar normal?",en:"Does this pill make you drowsy or can I work normally?"}
+    ]
+  },
+  direcciones:{
+    title:"Find the right building, entrance, and floor",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Dónde está la entrada?",en:"Where is the entrance?"},
+      {tag:"2. + Point out building",es:"Es el edificio de allá, al frente.",en:"It is that building over there, across the way."},
+      {tag:"3. + Street path",es:"Siga derecho hasta la esquina y gire a la derecha.",en:"Go straight to the corner and turn right."},
+      {tag:"4. + Entrance & floor",es:"La entrada principal queda detrás del edificio; entre por ahí y suba al segundo piso.",en:"The main entrance is behind the building; go in there and go up to the second floor."}
+    ],
+    swaps:[
+      {label:"Ask security",es:"Buenas, ¿por dónde entro para ir a la oficina trescientos?",en:"Hi, which way do I go in to get to office 300?"},
+      {label:"Across street",es:"No es de este lado, sino cruzando la avenida al frente.",en:"It's not on this side, but across the avenue in front."},
+      {label:"Confirm number",es:"¿Este es el edificio de la calle setenta y dos?",en:"Is this the building on 72nd Street?"}
+    ]
+  },
+  "daily-repair":{
+    title:"Handle a bad phone connection smoothly",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Me escuchas?",en:"Can you hear me?"},
+      {tag:"2. + Explain signal",es:"No te escucho bien; la señal está mala.",en:"I can't hear you well; the signal is bad."},
+      {tag:"3. + Call cutting out",es:"Se está cortando la llamada, así que te escribo.",en:"The call is cutting out, so I'll text you."},
+      {tag:"4. + Full recovery",es:"Casi no te escucho porque se está cortando la señal; te mando un mensaje por WhatsApp ahorita.",en:"I can barely hear you because the signal is cutting out; I'll send you a WhatsApp message right now."}
+    ],
+    swaps:[
+      {label:"Call back",es:"Voy a colgar y te devuelvo la llamada en un minuto.",en:"I'm going to hang up and call you back in a minute."},
+      {label:"Voice note",es:"Mejor mándame un audio porque hay mucho ruido aquí.",en:"Better send me a voice note because there's a lot of noise here."},
+      {label:"Repeat last part",es:"Se cortó al final; ¿me repites lo último que dijiste?",en:"It cut out at the end; can you repeat the last thing you said?"}
+    ]
+  },
+  "sentence-structure":{
+    title:"Build clear Subject + Verb + Reason sentences",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Quiero aprender.",en:"I want to learn."},
+      {tag:"2. + Daily action",es:"Quiero aprender, así que practico todos los días.",en:"I want to learn, so I practice every day."},
+      {tag:"3. + Detail",es:"Quiero aprender español, así que practico un poco todos los días.",en:"I want to learn Spanish, so I practice a little every day."},
+      {tag:"4. + Two-part routine",es:"Primero escucho las frases en español y después las repito en voz alta para hablar mejor.",en:"First I listen to the phrases in Spanish and then I repeat them out loud to speak better."}
+    ],
+    swaps:[
+      {label:"Need + because",es:"Necesito practicar hoy porque mañana tengo una reunión.",en:"I need to practice today because tomorrow I have a meeting."},
+      {label:"Contrast",es:"Estaba un poco cansado, pero igual practiqué diez minutos.",en:"I was a little tired, but I practiced ten minutes anyway."},
+      {label:"Omit subject",es:"Vivo en Colombia y hablo con mis vecinos todos los días.",en:"I live in Colombia and talk with my neighbors every day."}
+    ]
+  },
+  "connectors-v36":{
+    title:"Link short thoughts with natural connectors",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Si puedo…",en:"If I can…"},
+      {tag:"2. + Promise",es:"Si puedo, te aviso más tarde.",en:"If I can, I'll let you know later."},
+      {tag:"3. + Backup option",es:"Si puedo, te aviso; si no, no pasa nada.",en:"If I can, I'll let you know; if not, no worries."},
+      {tag:"4. + Full explanation",es:"Quiero ir contigo, pero tengo que terminar un trabajo; si salgo temprano, te aviso de una.",en:"I want to go with you, but I have to finish some work; if I get out early, I'll let you know right away."}
+    ],
+    swaps:[
+      {label:"Traffic result",es:"Hay mucho trancón en la calle, entonces voy a llegar tarde.",en:"There is a lot of traffic on the street, so I'm going to arrive late."},
+      {label:"Although",es:"Aunque todavía hablo despacio, la gente me entiende bien.",en:"Although I still speak slowly, people understand me well."},
+      {label:"Not yet",es:"Todavía no he cenado porque acabo de llegar a la casa.",en:"I haven't eaten dinner yet because I just got home."}
+    ]
+  },
+  "function-words":{
+    title:"Use everyday conversational glue chunks",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Todavía no sé.",en:"I don't know yet."},
+      {tag:"2. + Colombian maybe",es:"Todavía no sé; de pronto voy más tarde.",en:"I don't know yet; maybe I'll go later."},
+      {tag:"3. + Explain why",es:"Lo que pasa es que todavía tengo que trabajar.",en:"The thing is, I still have to work."},
+      {tag:"4. + Natural flow",es:"Todavía no sé a qué hora salgo, pero te aviso en cuanto pueda para vernos al rato.",en:"I don't know yet what time I leave, but I'll let you know as soon as I can so we can meet later."}
+    ],
+    swaps:[
+      {label:"For now",es:"Por ahora me quedo aquí, pero al rato paso por tu casa.",en:"For now I'm staying here, but later I'll stop by your place."},
+      {label:"Actually",es:"En realidad prefiero salir mañana temprano.",en:"Actually I prefer to leave early tomorrow."},
+      {label:"The thing is",es:"Lo que pasa es que se me descargó el celular.",en:"The thing is, my cell phone died."}
+    ]
+  },
+  "social-colombia-v36":{
+    title:"Sound warm and local in social conversations",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Cómo te ha ido?",en:"How have things been?"},
+      {tag:"2. + Positive reply",es:"Todo muy bien, gracias. ¡Qué nota verte!",en:"Everything's great, thanks. How cool to see you!"},
+      {tag:"3. + Friendly address",es:"¿Qué más, parce? Todo bien. ¡Qué nota verte!",en:"What's up, buddy? All good. How cool to see you!"},
+      {tag:"4. + Social plan",es:"¡Qué nota verte, parce! Hágale, sentémonos un ratico y nos tomamos un café.",en:"How cool to see you, buddy! Come on, let's sit down for a bit and have a coffee."}
+    ],
+    swaps:[
+      {label:"Polite apology",es:"Qué pena llegar tarde, es que había mucho trancón.",en:"Sorry for arriving late, it's just that there was a lot of traffic."},
+      {label:"No worries",es:"Tranquilo, no se preocupe, acabamos de llegar también.",en:"Relax, don't worry, we just arrived too."},
+      {label:"Praise",es:"¡Este restaurante que elegiste está muy bacano!",en:"This restaurant you picked is really cool!"}
+    ]
+  },
+  "muletillas-diminutivos":{
+    title:"Buy time with muletillas and warm diminutives",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Pues, a ver…",en:"Well, let's see…"},
+      {tag:"2. + Diminutive wait",es:"Pues, a ver… espéreme un momentico.",en:"Well, let's see… wait for me just a moment."},
+      {tag:"3. + Distance",es:"Pues, a ver… espéreme un momentico porque ya estoy cerquita.",en:"Well, let's see… wait for me just a moment because I'm already very close."},
+      {tag:"4. + Full local turn",es:"Pues, a ver… es que todavía estoy a dos cuadras, pero espéreme un momentico que ya llego ahorita.",en:"Well, let's see… it's just that I'm still two blocks away, but wait for me a moment, I'll be right there."}
+    ],
+    swaps:[
+      {label:"Slow down",es:"Qué pena, ¿me habla un poquito más despacito, por favor?",en:"Excuse me, can you speak a little bit more slowly to me, please?"},
+      {label:"Coffee",es:"Ahorita en un ratico pasamos por un tintico calentico.",en:"In a little while we'll stop by for a warm black coffee."},
+      {label:"Hold the floor",es:"Digamos que entiendo bastante, aunque todavía practico cada día.",en:"Let's say I understand quite a bit, although I still practice every day."}
+    ]
+  },
+  "gram-presente":{
+    title:"Speak in the present tense about habits and facts",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Hablo español.",en:"I speak Spanish."},
+      {tag:"2. + Frequency",es:"Hablo español todos los días.",en:"I speak Spanish every day."},
+      {tag:"3. + Where you live",es:"Hablo español todos los días y vivo en Colombia.",en:"I speak Spanish every day and I live in Colombia."},
+      {tag:"4. + Extra detail",es:"Vivo en Colombia, trabajo desde aquí y practico español todos los días con mis amigos.",en:"I live in Colombia, work from here, and practice Spanish every day with my friends."}
+    ],
+    swaps:[
+      {label:"Tengo + question",es:"Tengo una pregunta rápida sobre esta palabra.",en:"I have a quick question about this word."},
+      {label:"Estoy + state",es:"Hoy estoy un poco ocupado, pero tengo tiempo ahorita.",en:"Today I am a little busy, but I have time right now."},
+      {label:"Ask tú",es:"¿Tú vives por aquí cerca o trabajas en este barrio?",en:"Do you live near here or work in this neighborhood?"}
+    ]
+  },
+  "gram-futuro":{
+    title:"Express plans using voy a + infinitive",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Voy a practicar.",en:"I am going to practice."},
+      {tag:"2. + Time",es:"Mañana voy a practicar español.",en:"Tomorrow I am going to practice Spanish."},
+      {tag:"3. + Second plan",es:"Mañana voy a practicar español y voy a hablar con un amigo.",en:"Tomorrow I'm going to practice Spanish and talk with a friend."},
+      {tag:"4. + Full schedule",es:"Esta noche voy a estudiar un rato y mañana vamos a salir a comer después del trabajo.",en:"Tonight I'm going to study for a bit and tomorrow we're going to go out to eat after work."}
+    ],
+    swaps:[
+      {label:"Call you",es:"Te voy a llamar apenas salga de la oficina.",en:"I'm going to call you as soon as I leave the office."},
+      {label:"Ask plans",es:"¿Qué vas a hacer este fin de semana con tu familia?",en:"What are you going to do this weekend with your family?"},
+      {label:"Group plan",es:"Vamos a pedir un taxi porque va a llover.",en:"We are going to order a taxi because it's going to rain."}
+    ]
+  },
+  "gram-pasado":{
+    title:"Tell completed past events with preterite verbs",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Ayer fui…",en:"Yesterday I went…"},
+      {tag:"2. + Place",es:"Ayer fui al mercado por la mañana.",en:"Yesterday I went to the market in the morning."},
+      {tag:"3. + Second event",es:"Ayer fui al mercado y compré comida.",en:"Yesterday I went to the market and bought food."},
+      {tag:"4. + Full mini-story",es:"Ayer fui al mercado, compré frutas y arepas, y después hablé un buen rato con mi vecino.",en:"Yesterday I went to the market, bought fruit and arepas, and afterward talked for a good while with my neighbor."}
+    ],
+    swaps:[
+      {label:"What I ate",es:"Anoche comí bandeja paisa y tomé un jugo natural.",en:"Last night I ate bandeja paisa and drank a fresh juice."},
+      {label:"Ask yesterday",es:"¿Qué hiciste ayer después de salir de la reunión?",en:"What did you do yesterday after leaving the meeting?"},
+      {label:"Had to do",es:"Esta mañana tuve que hacer una vuelta en el banco.",en:"This morning I had to run an errand at the bank."}
+    ]
+  },
+  "gram-pasado-historia":{
+    title:"Combine what happened with where you were",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Fui al mercado.",en:"I went to the market."},
+      {tag:"2. + Contrast",es:"Fui al mercado, pero estaba lleno.",en:"I went to the market, but it was crowded."},
+      {tag:"3. + Where you stayed",es:"Fui al mercado, pero después estuve en casa.",en:"I went to the market, but afterward I stayed at home."},
+      {tag:"4. + Background plan",es:"Esta mañana iba a salir temprano, pero tenía que terminar un trabajo y me quedé en casa.",en:"This morning I was going to leave early, but I had to finish some work and stayed home."}
+    ],
+    swaps:[
+      {label:"At the office",es:"Estaba en la oficina cuando me mandaste el mensaje.",en:"I was at the office when you sent me the message."},
+      {label:"Was going to",es:"Iba a cocinar anoche, pero al final pedimos domicilio.",en:"I was going to cook last night, but in the end we ordered delivery."},
+      {label:"Description",es:"El restaurante era pequeño, pero la comida estuvo deliciosa.",en:"The restaurant was small, but the food was delicious."}
+    ]
+  },
+  "gram-pasado-contraste":{
+    title:"Contrast background scene (imperfect) with event (preterite)",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Mientras trabajaba…",en:"While I was working…"},
+      {tag:"2. + Interrupting event",es:"Mientras trabajaba, sonó el teléfono.",en:"While I was working, the phone rang."},
+      {tag:"3. + Consequence",es:"Mientras trabajaba, sonó el teléfono y contesté de una.",en:"While I was working, the phone rang and I answered right away."},
+      {tag:"4. + Complete story",es:"Ayer fui al mercado mientras mi hermano estaba en casa, pero empezó a llover muy fuerte.",en:"Yesterday I went to the market while my brother was at home, but it started raining very hard."}
+    ],
+    swaps:[
+      {label:"Childhood habit",es:"Cuando era niño, vivía cerca de aquí e iba al parque todos los días.",en:"When I was a child, I used to live near here and went to the park every day."},
+      {label:"Closed shop",es:"Fui a la tienda a las ocho, pero ya estaba cerrada.",en:"I went to the shop at eight, but it was already closed."},
+      {label:"Cooking call",es:"Mientras cocinaba la cena, llegaste tú con las arepas.",en:"While I was cooking dinner, you arrived with the arepas."}
+    ]
+  },
+  "gram-subjuntivo":{
+    title:"Express wishes and advice with que + subjunctive",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Quiero que…",en:"I want you to…"},
+      {tag:"2. + Subjunctive verb",es:"Quiero que vengas mañana.",en:"I want you to come tomorrow."},
+      {tag:"3. + Warm hope",es:"Quiero que vengas y espero que estés muy bien.",en:"I want you to come and I hope you are doing very well."},
+      {tag:"4. + Polite request",es:"Es importante que me hables un poquito más despacio para que yo te entienda todo bien.",en:"It's important that you speak a little more slowly to me so that I understand everything well."}
+    ],
+    swaps:[
+      {label:"Ojalá",es:"Ojalá no llueva esta tarde para que podamos salir.",en:"Hopefully it doesn't rain this afternoon so we can go out."},
+      {label:"Recommendation",es:"Te recomiendo que pruebes el ajiaco de este restaurante.",en:"I recommend that you try the ajiaco at this restaurant."},
+      {label:"When you arrive",es:"Avísame por mensaje en cuanto llegues al edificio.",en:"Let me know by message as soon as you arrive at the building."}
+    ]
+  },
+  "gram-necesidades":{
+    title:"Explain past intentions, needs, and obligations",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Quería salir…",en:"I wanted to go out…"},
+      {tag:"2. + Obligation",es:"Quería salir, pero tuve que trabajar.",en:"I wanted to go out, but I had to work."},
+      {tag:"3. + Reason",es:"Quería salir, pero tuve que trabajar porque estaba ocupado.",en:"I wanted to go out, but I had to work because I was busy."},
+      {tag:"4. + Full apology",es:"Ayer quería ir a cenar contigo, pero no pude porque necesitaba entregar un informe temprano.",en:"Yesterday I wanted to go to dinner with you, but I couldn't because I needed to turn in a report early."}
+    ],
+    swaps:[
+      {label:"Needed help",es:"Necesitaba ayuda con la dirección, así que le pregunté al vecino.",en:"I needed help with the address, so I asked the neighbor."},
+      {label:"Couldn't answer",es:"No podía contestar el celular porque estaba manejando.",en:"I couldn't answer my phone because I was driving."},
+      {label:"Had to rest",es:"Quería seguir practicando, pero tenía mucho sueño.",en:"I wanted to keep practicing, but I was very sleepy."}
+    ]
+  },
+  "gram-conectores":{
+    title:"Chain three clauses into a smooth story",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Fui al mercado…",en:"I went to the market…"},
+      {tag:"2. + Obstacle (pero)",es:"Fui al mercado, pero estaba cerrado.",en:"I went to the market, but it was closed."},
+      {tag:"3. + Result (entonces)",es:"Fui al mercado, pero estaba cerrado, entonces regresé.",en:"I went to the market, but it was closed, so I went back."},
+      {tag:"4. + Next step (después)",es:"Fui al mercado, pero como estaba cerrado, entonces regresé a casa y después pedí un domicilio.",en:"I went to the market, but since it was closed, I went back home and afterward ordered delivery."}
+    ],
+    swaps:[
+      {label:"Rain reason",es:"Me quedé trabajando en casa porque estaba lloviendo durísimo.",en:"I stayed working at home because it was raining really hard."},
+      {label:"Also",es:"Compré café y también traje pan fresco para el desayuno.",en:"I bought coffee and also brought fresh bread for breakfast."},
+      {label:"Truth is",es:"La verdad es que todavía necesito practicar más este tema.",en:"The truth is that I still need to practice this topic more."}
+    ]
+  },
+  "gram-groserias":{
+    title:"Recognize strong Colombian slang and respond safely",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Lo entiendo…",en:"I understand it…"},
+      {tag:"2. + Safe boundary",es:"Entiendo las groserías, pero no las uso.",en:"I understand swear words, but I don't use them."},
+      {tag:"3. + Register awareness",es:"Entiendo las groserías, pero sé cuándo no decirlas.",en:"I understand swear words, but I know when not to say them."},
+      {tag:"4. + Safe alternative",es:"Si escucho una palabra fuerte en la calle la entiendo, pero yo prefiero decir «¡juepucha!» o «¡no puede ser!».",en:"If I hear a strong word on the street I understand it, but I prefer to say 'juepucha!' or 'no way!'."}
+    ],
+    swaps:[
+      {label:"Mild euphemism",es:"¡Juepucha, se me hizo tardísimo para llegar a la cita!",en:"Darn, it got super late on me to make it to the appointment!"},
+      {label:"Express surprise",es:"¡No me diga eso! ¿De verdad pasó todo eso ayer?",en:"You don't say! Did all that really happen yesterday?"},
+      {label:"Keep it polite",es:"Con desconocidos siempre es mejor hablar con respeto y calma.",en:"With strangers it is always better to speak with respect and calm."}
+    ]
+  },
+  "gram-pronombres":{
+    title:"Use lo, la, le, and se lo without tangling your words",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Me lo repite?",en:"Can you repeat it for me?"},
+      {tag:"2. + Polite modal",es:"¿Me lo puede repetir, por favor?",en:"Can you repeat it for me, please?"},
+      {tag:"3. + Natural reply",es:"¿Me lo puede repetir? — Sí, se lo repito despacio.",en:"Can you repeat it for me? — Yes, I'll repeat it to you slowly."},
+      {tag:"4. + Location transfer",es:"¿Tienes la dirección del hotel? — Sí, ya la tengo aquí y te la voy a mandar por mensaje.",en:"Do you have the hotel address? — Yes, I already have it here and I'm going to send it to you by message."}
+    ],
+    swaps:[
+      {label:"Direct object (lo)",es:"El documento ya está listo; lo tengo aquí sobre la mesa.",en:"The document is ready; I have it right here on the table."},
+      {label:"Double pronoun",es:"El cliente pidió el informe, así que se lo mandé esta mañana.",en:"The client asked for the report, so I sent it to him this morning."},
+      {label:"Help me / you",es:"¿Me puede ayudar un momentico? — Claro, ya le ayudo.",en:"Can you help me a moment? — Of course, I'll help you right now."}
+    ]
+  },
+  "gram-perfecto":{
+    title:"Talk about recent experiences with he / has + participle",
+    rungs:[
+      {tag:"1. Anchor stem",es:"He practicado…",en:"I have practiced…"},
+      {tag:"2. + Timeframe",es:"He practicado español toda esta semana.",en:"I have practiced Spanish all this week."},
+      {tag:"3. + Second experience",es:"He practicado español esta semana y ya he probado la arepa.",en:"I have practiced Spanish this week and I have already tried arepa."},
+      {tag:"4. + Ask back",es:"Esta semana he aprendido muchas frases nuevas. ¿Y tú ya has probado el ajiaco bogotano?",en:"This week I have learned many new phrases. And have you already tried Bogotá ajiaco?"}
+    ],
+    swaps:[
+      {label:"Not yet",es:"Todavía no he ido a Medellín, pero quiero ir pronto.",en:"I haven't gone to Medellín yet, but I want to go soon."},
+      {label:"Never",es:"Nunca he visto ese lugar, ¿queda cerca del centro?",en:"I have never seen that place, is it near downtown?"},
+      {label:"We arrived",es:"Ya hemos llegado al restaurante y estamos en la mesa.",en:"We have already arrived at the restaurante and are at the table."}
+    ]
+  },
+  "gram-condicional":{
+    title:"Make polite requests and suggestions with -ía forms",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Me gustaría…",en:"I would like…"},
+      {tag:"2. + Order/Request",es:"Me gustaría pedir una mesa para dos.",en:"I would like to request a table for two."},
+      {tag:"3. + Polite question",es:"Me gustaría pedir una mesa. ¿Podría ayudarme, por favor?",en:"I would like to request a table. Could you help me, please?"},
+      {tag:"4. + Suggestion",es:"¿Podría traernos el menú, por favor? Y creo que deberíamos pedir algo típico para compartir.",en:"Could you bring us the menu, please? And I think we should order something traditional to share."}
+    ],
+    swaps:[
+      {label:"Could you repeat",es:"Disculpe, ¿podría hablarme un poquito más despacio?",en:"Excuse me, could you speak a little more slowly to me?"},
+      {label:"We could",es:"Si tienes tiempo mañana, podríamos vernos para almorzar.",en:"If you have time tomorrow, we could meet for lunch."},
+      {label:"It would be",es:"Sería muy bueno practicar diez minutos antes de salir.",en:"It would be great to practice ten minutes before leaving."}
+    ]
+  },
+  "gram-pasado-perfecto":{
+    title:"Explain what had already happened before a past moment",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Ya había…",en:"I/it had already…"},
+      {tag:"2. + Past participle",es:"Ya habían cerrado la tienda.",en:"They had already closed the store."},
+      {tag:"3. + Time anchor",es:"Cuando llegué, ya habían cerrado la tienda.",en:"When I arrived, they had already closed the store."},
+      {tag:"4. + Full context",es:"Cuando llegué al mercado a las nueve, ya habían cerrado todo, así que tuve que ir a otra tienda.",en:"When I arrived at the market at nine, they had already closed everything, so I had to go to another shop."}
+    ],
+    swaps:[
+      {label:"Already eaten",es:"Ya había cenado en casa cuando me invitaste a salir.",en:"I had already eaten dinner at home when you invited me out."},
+      {label:"Never tried",es:"Antes de venir a Colombia, nunca había probado el lulo.",en:"Before coming to Colombia, I had never tried lulo fruit."},
+      {label:"Had left",es:"Cuando bajé a la portería, el taxi ya había llegado.",en:"When I went down to the front desk, the taxi had already arrived."}
+    ]
+  },
+  "gram-futuro-perfecto":{
+    title:"Recognize and express what will be completed by a deadline",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Habré terminado.",en:"I will have finished."},
+      {tag:"2. + Deadline",es:"Para las ocho, ya habré terminado.",en:"By eight o'clock, I will have already finished."},
+      {tag:"3. + Object",es:"Para las ocho, ya habré terminado el informe.",en:"By eight o'clock, I will have already finished the report."},
+      {tag:"4. + Follow-up plan",es:"Para las seis de la tarde ya habré terminado el trabajo, así que podremos salir a cenar tranquilos.",en:"By six in the afternoon I will have finished work, so we'll be able to go out for dinner relaxed."}
+    ],
+    swaps:[
+      {label:"We will have left",es:"Cuando llegues a la oficina, ya habremos salido.",en:"When you arrive at the office, we will have already left."},
+      {label:"In a year",es:"En unos meses habré aprendido a conversar con mucha más fluidez.",en:"In a few months I will have learned to converse much more fluently."},
+      {label:"By tomorrow",es:"Para mañana al mediodía ya habrán arreglado el internet.",en:"By tomorrow at noon they will have fixed the internet."}
+    ]
+  },
+  "conversation-challenge":{
+    title:"Keep a full conversation going even when surprised",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Hablo poquito español…",en:"I speak a little Spanish…"},
+      {tag:"2. + Positive attitude",es:"Hablo poquito español, pero estoy practicando.",en:"I speak a little Spanish, but I am practicing."},
+      {tag:"3. + Ask to slow down",es:"No entendí todo, pero si me habla despacito le respondo en español.",en:"I didn't understand everything, but if you speak slowly I'll answer you in Spanish."},
+      {tag:"4. + Full confident turn",es:"Disculpe, todavía estoy aprendiendo español; ¿me repite la pregunta más despacito para poder responderle bien?",en:"Excuse me, I'm still learning Spanish; can you repeat the question more slowly so I can answer you properly?"}
+    ],
+    swaps:[
+      {label:"Buy time & answer",es:"Pues, a ver… déjeme pensar un momentico y ya le digo.",en:"Well, let's see… let me think for a moment and I'll tell you right away."},
+      {label:"Confirm meaning",es:"¿Usted me pregunta por la dirección del hotel o por mi nombre?",en:"Are you asking me for the hotel address or for my name?"},
+      {label:"Keep talking",es:"Ayer practiqué este tema y hoy quiero intentar decirlo completo.",en:"Yesterday I practiced this topic and today I want to try saying it in full."}
+    ]
+  },
+  "commands-repair":{
+    title:"Use polite usted commands to guide the conversation",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Disculpe, hábleme…",en:"Excuse me, speak to me…"},
+      {tag:"2. + Speed",es:"Disculpe, hábleme más despacio, por favor.",en:"Excuse me, speak to me more slowly, please."},
+      {tag:"3. + Second command",es:"Disculpe, hábleme más despacio y repítame la dirección.",en:"Excuse me, speak to me more slowly and repeat the address for me."},
+      {tag:"4. + Full polite repair",es:"Qué pena con usted, hábleme un poquito más despacio y dígame otra vez por dónde queda la entrada.",en:"Sorry to bother you, speak to me a little more slowly and tell me again where the entrance is."}
+    ],
+    swaps:[
+      {label:"Informal friend",es:"Oye, escúchame un segundo y dime qué opinas de esto.",en:"Hey, listen to me for a second and tell me what you think of this."},
+      {label:"Driver drop-off",es:"Maestro, déjeme ahí adelante después del semáforo, por favor.",en:"Boss, drop me off up ahead after the traffic light, please."},
+      {label:"Wait a moment",es:"Espéreme un momentico mientras reviso el mensaje en el celular.",en:"Wait for me just a moment while I check the message on my phone."}
+    ]
+  },
+  "uber-completo":{
+    title:"Navigate a complete Uber ride from pickup to drop-off",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Voy para…",en:"I'm going to…"},
+      {tag:"2. + Corner building",es:"Voy para el edificio de la esquina.",en:"I'm going to the building on the corner."},
+      {tag:"3. + Introduce yourself",es:"Buenas, hablo un poco de español. Voy para el edificio de la esquina.",en:"Hi, I speak a little Spanish. I'm going to the building on the corner."},
+      {tag:"4. + Arrival instruction",es:"Buenas, voy para el edificio blanco de la esquina; ¿me avisa cuando lleguemos y me deja al frente?",en:"Hi, I'm going to the white building on the corner; can you let me know when we arrive and drop me off out front?"}
+    ],
+    swaps:[
+      {label:"Confirm driver",es:"Buenas, ¿usted es el conductor para Seth? Ya salgo.",en:"Hi, are you the driver for Seth? I'm coming right out."},
+      {label:"Traffic route",es:"Si hay mucho trancón por ahí, podemos irnos por otra calle.",en:"If there's a lot of traffic that way, we can go down another street."},
+      {label:"Where to exit",es:"¿Dónde me bajo para quedar cerca de la puerta principal?",en:"Where do I get out to be close to the main door?"}
+    ]
+  },
+  "restaurante-real":{
+    title:"Order a complete meal, customize it, and ask for the bill",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Quisiera pedir…",en:"I would like to order…"},
+      {tag:"2. + Main dish",es:"Quisiera pedir una sopa con papa, por favor.",en:"I would like to order a soup with potato, please."},
+      {tag:"3. + Customized drink",es:"Quisiera una sopa con papa y un jugo sin azúcar, por favor.",en:"I would like a soup with potato and a juice without sugar, please."},
+      {tag:"4. + Full table flow",es:"Buenas tardes, ¿tiene una mesa para dos? Quisiera pedir el menú del día con jugo de mora sin azúcar.",en:"Good afternoon, do you have a table for two? I'd like to order the daily special with blackberry juice without sugar."}
+    ],
+    swaps:[
+      {label:"Sauce on the side",es:"¿Me trae el ají aparte, por favor, para que no pique mucho?",en:"Can you bring me the hot sauce on the side, please, so it's not too spicy?"},
+      {label:"Ask for the bill",es:"Todo estuvo delicioso; ¿me regala la cuenta cuando pueda?",en:"Everything was delicious; can I have the bill when you can?"},
+      {label:"Change side dish",es:"¿Será que me puede cambiar las papas por ensalada?",en:"Could you possibly swap the fries for salad for me?"}
+    ]
+  },
+  "mercado-negociar":{
+    title:"Ask prices by weight and negotiate politely at a market",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Cuánto cuesta el kilo?",en:"How much does a kilo cost?"},
+      {tag:"2. + Gentle reaction",es:"Está un poquito caro hoy.",en:"It's a little expensive today."},
+      {tag:"3. + Polite counter-offer",es:"Está un poco caro. ¿Me lo deja en siete mil?",en:"It's a little expensive. Can you let me have it for seven thousand?"},
+      {tag:"4. + Bundle & pay",es:"Veci, deme dos kilos de aguacate; ¿me hace un descuentico y me dice cuánto le debo por todo?",en:"Neighbor, give me two kilos of avocado; can you give me a little discount and tell me how much I owe you for everything?"}
+    ],
+    swaps:[
+      {label:"Pick ripe one",es:"¿Me escoge uno que esté madurito para comer hoy mismo?",en:"Can you pick one for me that's nice and ripe to eat today?"},
+      {label:"Pay cash",es:"Aquí tiene veinte mil en efectivo; gracias por la ñapa.",en:"Here is twenty thousand in cash; thanks for the free extra bit."},
+      {label:"Ask total",es:"¿En cuánto me salen las frutas y las arepas por todo?",en:"How much do the fruits and arepas come out to for everything?"}
+    ]
+  },
+  "gerundios-actividades":{
+    title:"Describe what you are doing right now vs. next",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Estoy cocinando.",en:"I am cooking."},
+      {tag:"2. + Right now",es:"Ahora mismo estoy cocinando la cena.",en:"Right now I am cooking dinner."},
+      {tag:"3. + Next plan",es:"Ahora estoy cocinando, pero después voy a salir.",en:"Right now I am cooking, but afterward I am going to go out."},
+      {tag:"4. + Past + present flow",es:"Hace un ratico acabo de llegar del mercado y ahora estoy cocinando antes de salir con mis amigos.",en:"A little while ago I just arrived from the market and now I'm cooking before going out with my friends."}
+    ],
+    swaps:[
+      {label:"Looking for",es:"En este momento estoy buscando la entrada del edificio.",en:"Right now I am looking for the building entrance."},
+      {label:"Was doing",es:"Estaba trabajando en el computador cuando me llamaste.",en:"I was working on the computer when you called me."},
+      {label:"Learning",es:"Estoy aprendiendo a hablar español cada vez con más confianza.",en:"I am learning to speak Spanish with more and more confidence."}
+    ]
+  },
+  "social-salida":{
+    title:"Propose a night out, accept, and coordinate arrival",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¡De una!",en:"Sure / I'm in!"},
+      {tag:"2. + See you later",es:"¡De una! Nos vemos después del trabajo.",en:"I'm in! See you after work."},
+      {tag:"3. + Arrival update",es:"De una, nos vemos después. Te aviso cuando llegue.",en:"Sure, see you later. I'll let you know when I arrive."},
+      {tag:"4. + Full plan",es:"Me parece muy buena idea salir esta noche; voy un poquito tarde, pero te aviso apenas llegue allá.",en:"Going out tonight sounds like a great idea; I'm running a little late, but I'll let you know as soon as I get there."}
+    ],
+    swaps:[
+      {label:"Invite friends",es:"¿Qué vas a hacer esta noche? Vamos a tomar algo con unos amigos.",en:"What are you doing tonight? Let's go grab a drink with some friends."},
+      {label:"Send pin",es:"Mándame la ubicación exacta del sitio para pedir el Uber.",en:"Send me the exact location of the place so I can order the Uber."},
+      {label:"Confirm time",es:"Listo, entonces quedamos a las ocho en la entrada.",en:"Got it, so we'll meet at eight at the entrance."}
+    ]
+  },
+  "fiesta-gathering":{
+    title:"Break the ice, chat, and say goodbye at a gathering",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Está muy chévere.",en:"It's really cool."},
+      {tag:"2. + Compliment music",es:"La música está muy buena y el sitio está chévere.",en:"The music is really good and the place is cool."},
+      {tag:"3. + Warm summary",es:"La música está muy buena. La pasé muy bien hoy.",en:"The music is really good. I had a great time today."},
+      {tag:"4. + Polite exit",es:"Qué gusto conocerte; la pasé muy bien con ustedes, pero ya me tengo que ir porque mañana madrugo.",en:"So nice to meet you; I had a great time with you all, but I have to head out now because I get up early tomorrow."}
+    ],
+    swaps:[
+      {label:"Offer a drink",es:"Voy a la cocina; ¿quieres algo de tomar o un vaso de agua?",en:"I'm going to the kitchen; do you want something to drink or a glass of water?"},
+      {label:"How you know host",es:"¿Y tú cómo conoces a la gente de aquí? Yo soy amigo de Carlos.",en:"And how do you know the people here? I'm a friend of Carlos."},
+      {label:"Keep in touch",es:"Pásame tu número para que cuadremos una salida la otra semana.",en:"Give me your number so we can set up an outing next week."}
+    ]
+  },
+  "deportes-partido":{
+    title:"Talk about a Colombian fútbol match with friends",
+    rungs:[
+      {tag:"1. Anchor stem",es:"¿Vas a ver el partido?",en:"Are you going to watch the game?"},
+      {tag:"2. + Enthusiasm",es:"Claro, no me lo pierdo por nada.",en:"Of course, I wouldn't miss it for anything."},
+      {tag:"3. + Cheer for Colombia",es:"Ojalá gane Colombia hoy. Lo vemos juntos.",en:"I hope Colombia wins today. We'll watch it together."},
+      {tag:"4. + Full match talk",es:"¿Cómo va el marcador? Ojalá gane la selección Colombia hoy; nos vemos ahorita para verlo juntos.",en:"What's the score? I hope the Colombian national team wins today; see you shortly to watch it together."}
+    ],
+    swaps:[
+      {label:"Goal reaction",es:"¡Qué golazo hicieron! Están jugando muy bien este segundo tiempo.",en:"What an amazing goal they scored! They're playing great this second half."},
+      {label:"Who's playing",es:"¿Hoy a qué hora juega Colombia y contra quién le toca?",en:"What time does Colombia play today and who are they playing against?"},
+      {label:"Watch at a bar",es:"Vamos a verlo en el restaurante de la esquina que tiene pantalla grande.",en:"Let's go watch it at the corner restaurant that has a big screen."}
+    ]
+  },
+  "oficina-real":{
+    title:"Give project updates, ask for review, and set next steps",
+    rungs:[
+      {tag:"1. Anchor stem",es:"El proyecto va bien.",en:"The project is going well."},
+      {tag:"2. + Honest status",es:"El proyecto va bien, pero estoy un poco atrasado.",en:"The project is going well, but I am a little behind."},
+      {tag:"3. + Ask for review",es:"Estoy un poco atrasado; ¿me puede revisar esta parte del informe?",en:"I'm a little behind; can you review this part of the report for me?"},
+      {tag:"4. + Next step",es:"Hoy termino los datos después de la reunión y mañana a primera hora se lo mandamos al cliente.",en:"Today I'll finish the data after the meeting and tomorrow first thing we'll send it to the client."}
+    ],
+    swaps:[
+      {label:"Offer help",es:"Ya terminé mi parte; ¿necesitas que te ayude a revisar algo?",en:"I already finished my part; do you need me to help you review anything?"},
+      {label:"Schedule call",es:"Hablemos diez minutos por teléfono antes de mandar el correo.",en:"Let's talk ten minutes by phone before sending the email."},
+      {label:"Confirm deadline",es:"Me parece bien así; entonces queda listo para el jueves.",en:"Sounds good to me like that; so it'll be ready for Thursday."}
+    ]
+  },
+  "aeropuerto-migracion":{
+    title:"Pass Colombian immigration and find your airport pickup",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Vengo por turismo.",en:"I'm coming for tourism."},
+      {tag:"2. + Length of stay",es:"Vengo por turismo y me voy a quedar dos semanas.",en:"I'm coming for tourism and I'm going to stay two weeks."},
+      {tag:"3. + Hotel address",es:"Vengo por turismo durante dos semanas y me quedo en este hotel.",en:"I'm coming for tourism for two weeks and I'm staying at this hotel."},
+      {tag:"4. + Full immigration turn",es:"Buenos días, aquí tiene mi pasaporte; vengo por turismo dos semanas y aquí está la dirección de mi hotel.",en:"Good morning, here is my passport; I'm coming for tourism for two weeks and here is my hotel address."}
+    ],
+    swaps:[
+      {label:"Baggage claim",es:"Disculpe, ¿por dónde queda la banda para recoger el equipaje?",en:"Excuse me, where is the belt to pick up baggage?"},
+      {label:"Uber pickup",es:"Ya salí con mi maleta; estoy en el segundo piso en la puerta cuatro.",en:"I already came out with my suitcase; I'm on the second floor at door 4."},
+      {label:"Visiting friends",es:"Vengo a visitar a unos amigos en Medellín por diez días.",en:"I'm coming to visit some friends in Medellín for ten days."}
+    ]
+  },
+  "bancos-pagos":{
+    title:"Pay smoothly by card, datáfono, or Nequi",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Con tarjeta, por favor.",en:"By card, please."},
+      {tag:"2. + Installments",es:"Con tarjeta de crédito, a una sola cuota.",en:"By credit card, in a single installment."},
+      {tag:"3. + Include tip",es:"Sí, incluya el servicio y pago con tarjeta a una cuota.",en:"Yes, include the service charge and I'll pay by card in one installment."},
+      {tag:"4. + Full checkout reflex",es:"Sí, incluya el servicio, por favor; pago con tarjeta a una sola cuota y consumidor final.",en:"Yes, include the service charge, please; I'll pay by credit card in one installment and final consumer."}
+    ],
+    swaps:[
+      {label:"Savings card",es:"Es tarjeta débito, cuenta de ahorros, por favor.",en:"It's a debit card, savings account, please."},
+      {label:"Pay by Nequi",es:"¿Tienes Nequi o código QR para hacerte la transferencia?",en:"Do you have Nequi or a QR code so I can transfer to you?"},
+      {label:"Bring terminal",es:"Qué pena, ¿me acerca el datáfono a la mesa, por favor?",en:"Excuse me, can you bring the card terminal to the table, please?"}
+    ]
+  },
+  barberia:{
+    title:"Ask for the exact haircut and beard trim you want",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Quiero un corte…",en:"I want a cut…"},
+      {tag:"2. + Sides (clipper #)",es:"Quiero un desvanecido bajito a los lados con la dos.",en:"I want a low fade on the sides with a #2."},
+      {tag:"3. + Top (scissors)",es:"Bajito a los lados con la dos, y arriba solo las puntas con tijera.",en:"Low on the sides with a #2, and on top just the tips with scissors."},
+      {tag:"4. + Beard & neck",es:"Maestro, hágame un desvanecido bajito con la dos, arriba solo tijera y perfíleme un poquito la barba.",en:"Boss, give me a low fade with a #2, scissors only on top, and line up my beard a little bit."}
+    ],
+    swaps:[
+      {label:"Ask opening",es:"Buenas, ¿tiene turno ahorita o a qué hora puedo pasar?",en:"Hi, do you have an opening right now or what time can I stop by?"},
+      {label:"Keep natural",es:"No me lo suba mucho atrás; déjemelo más bien natural.",en:"Don't take it too high in the back; leave it more natural for me."},
+      {label:"Great result",es:"Así quedó perfecto, hermano, muchas gracias.",en:"That turned out perfect, brother, thank you very much."}
+    ]
+  },
+  "medico-urgencias":{
+    title:"Describe symptoms, allergies, and prescriptions clearly",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Me siento mal…",en:"I feel sick…"},
+      {tag:"2. + Symptoms & time",es:"Tengo dolor de estómago y fiebre desde anoche.",en:"I've had a stomachache and fever since last night."},
+      {tag:"3. + Allergy info",es:"Tengo fiebre desde anoche y no soy alérgico a ningún medicamento.",en:"I've had a fever since last night and I'm not allergic to any medication."},
+      {tag:"4. + Ask dosage",es:"Doctora, tengo dolor de estómago desde ayer; ¿cada cuántas horas debo tomar esta pastilla?",en:"Doctor, I've had a stomachache since yesterday; how many hours apart should I take this pill?"}
+    ],
+    swaps:[
+      {label:"Before/after food",es:"¿Este medicamento se toma antes o después de las comidas?",en:"Is this medication taken before or after meals?"},
+      {label:"Prescription",es:"¿Con esta fórmula médica puedo comprar todo en la droguería?",en:"With this prescription can I buy everything at the pharmacy?"},
+      {label:"Sore throat",es:"Me duele bastante la garganta y tengo tos desde hace dos días.",en:"My throat hurts quite a bit and I've had a cough for two days."}
+    ]
+  },
+  "porteria-domicilios":{
+    title:"Coordinate deliveries and building questions with the portero",
+    rungs:[
+      {tag:"1. Anchor stem",es:"Estoy esperando…",en:"I'm waiting for…"},
+      {tag:"2. + Rappi order",es:"Estoy esperando un domicilio de Rappi.",en:"I'm waiting for a Rappi delivery."},
+      {tag:"3. + Ask front desk",es:"Vecino, estoy esperando un domicilio; ¿me lo recibe en portería?",en:"Doorman, I'm waiting for a delivery; can you receive it for me at the front desk?"},
+      {tag:"4. + Full polite request",es:"Hola, don Carlos, qué pena: llegó un pedido de Rappi para el quinientos dos; ¿me lo guarda un momentico mientras bajo?",en:"Hi, Don Carlos, sorry to bother you: a Rappi order arrived for 502; can you hold it for a moment while I come down?"}
+    ],
+    swaps:[
+      {label:"Authorize guest",es:"Vecino, ahorita viene un amigo a visitarme; ¿lo deja subir?",en:"Doorman, a friend is coming to visit me shortly; can you let him come up?"},
+      {label:"Water/Internet",es:"Disculpe, ¿sabe si se fue el agua o la luz en el edificio?",en:"Excuse me, do you know if the water or power went out in the building?"},
+      {label:"Leave package",es:"¿Le puedo dejar esta llave aquí encargada en recepción?",en:"Can I leave this key here in your care at the front desk?"}
+    ]
+  }
+});
+
+/* ── 4 New 3-Column Interactive Slot-Swapper Matrices (7 total) ── */
+SLOT_SWAP_MATRICES.push(
+  {
+    id:"restaurante-pedido",
+    title:"🍽️ Ordering & Customizing Food",
+    sub:"Order politely at any Colombian café or restaurant and customize your meal",
+    col1Title:"1. Polite Opener",
+    col2Title:"2. Dish or Drink",
+    col3Title:"3. Customization",
+    col1:[
+      {es:"Buenas tardes, ¿me regala",en:"Good afternoon, can I have"},
+      {es:"Qué pena, quisiera pedir",en:"Excuse me, I would like to order"},
+      {es:"Veci, ¿será que me trae",en:"Neighbor, could you bring me"},
+      {es:"Para mí me da por favor",en:"For me please give me"}
+    ],
+    col2:[
+      {es:"el almuerzo ejecutivo del día",en:"today's lunch special"},
+      {es:"una bandeja paisa y un jugo de mora",en:"a bandeja paisa and a blackberry juice"},
+      {es:"dos arepas con queso y un tintico",en:"two cheese arepas and a black coffee"},
+      {es:"una sopa caliente con aguacate",en:"a hot soup with avocado"}
+    ],
+    col3:[
+      {es:"pero sin azúcar, por favor.",en:"but without sugar, please."},
+      {es:"con el ají aparte, si es tan amable.",en:"with the hot sauce on the side, if you'd be so kind."},
+      {es:"para llevar, y me regala la cuenta.",en:"to go, and can I have the bill."},
+      {es:"y pago con tarjeta a una sola cuota.",en:"and I'll pay by card in one installment."}
+    ]
+  },
+  {
+    id:"uber-navegacion",
+    title:"🚕 Uber, Directions & Drop-offs",
+    sub:"Guide your driver smoothly through Bogotá, Medellín, or Cali",
+    col1Title:"1. Driver Prompt",
+    col2Title:"2. Direction / Action",
+    col3Title:"3. Landmark / Reason",
+    col1:[
+      {es:"Buenas, maestro, por favor",en:"Hi boss, please"},
+      {es:"Disculpe, ¿será que puede",en:"Excuse me, could you possibly"},
+      {es:"Qué pena con usted,",en:"Sorry to bother you,"},
+      {es:"Listo, amigo, ahí adelante",en:"Great friend, right up ahead"}
+    ],
+    col2:[
+      {es:"siga derecho dos cuadras más",en:"go straight two more blocks"},
+      {es:"gire a la derecha después del semáforo",en:"turn right after the traffic light"},
+      {es:"déjeme aquí al frente del edificio",en:"drop me off right here in front of the building"},
+      {es:"espéreme un momentico en la esquina",en:"wait for me just a moment on the corner"}
+    ],
+    col3:[
+      {es:"porque la entrada principal queda por detrás.",en:"because the main entrance is in the back."},
+      {es:"antes de que cojamos el trancón.",en:"before we hit the traffic jam."},
+      {es:"que ya estoy saliendo por la portería.",en:"as I'm coming out through the front desk right now."},
+      {es:"donde está la tienda de la esquina.",en:"where the corner shop is."}
+    ]
+  },
+  {
+    id:"social-parche",
+    title:"🎉 Social Plans & El Parche",
+    sub:"Invite Colombian friends out, accept plans, or reschedule naturally",
+    col1Title:"1. Casual Opener",
+    col2Title:"2. Proposed Plan",
+    col3Title:"3. Time / Condition",
+    col1:[
+      {es:"¿Qué más, parce? ¿Vamos a",en:"What's up, buddy? Shall we"},
+      {es:"Oye, ¿te parece si podemos",en:"Hey, how about we"},
+      {es:"¡De una! Esta noche quiero",en:"I'm in! Tonight I want to"},
+      {es:"Estaba pensando que podríamos",en:"I was thinking we could"}
+    ],
+    col2:[
+      {es:"tomarnos un tintico y conversar",en:"grab a coffee and chat"},
+      {es:"ver el partido de Colombia juntos",en:"watch the Colombia game together"},
+      {es:"salir a cenar con unos amigos",en:"go out to dinner with some friends"},
+      {es:"caminar un rato por el parque",en:"walk around the park for a bit"}
+    ],
+    col3:[
+      {es:"apenas salgamos de la oficina.",en:"as soon as we get out of the office."},
+      {es:"mañana por la tarde si no llueve.",en:"tomorrow afternoon if it doesn't rain."},
+      {es:"y yo te mando la ubicación por WhatsApp.",en:"and I'll send you the location on WhatsApp."},
+      {es:"en un ratico cuando termine aquí.",en:"in a little while when I finish here."}
+    ]
+  },
+  {
+    id:"deseos-subjuntivo",
+    title:"🌱 Wishes & Subjunctive Chunks",
+    sub:"Connect a wish, hope, or recommendation to what someone else does",
+    col1Title:"1. Trigger + Que",
+    col2Title:"2. Subjunctive Action",
+    col3Title:"3. Purpose / Time",
+    col1:[
+      {es:"Quiero que",en:"I want you/us to"},
+      {es:"Espero que",en:"I hope that"},
+      {es:"Es importante que",en:"It is important that"},
+      {es:"Ojalá que",en:"Hopefully"}
+    ],
+    col2:[
+      {es:"me hables un poquito más despacito",en:"you speak a little more slowly to me"},
+      {es:"vengas a visitarnos a Colombia",en:"you come visit us in Colombia"},
+      {es:"nos veamos este fin de semana",en:"we meet up this weekend"},
+      {es:"todo te salga muy bien en la reunión",en:"everything goes really well for you in the meeting"}
+    ],
+    col3:[
+      {es:"para que podamos practicar español.",en:"so that we can practice Spanish."},
+      {es:"cuando tengas un tiempito libre.",en:"when you have a little free time."},
+      {es:"antes de que te regreses a casa.",en:"before you head back home."},
+      {es:"y me avises apenas llegues.",en:"and let me know as soon as you arrive."}
+    ]
+  }
+);
+
+/* ── New Quiz Items for All 5 New Scenarios & Verbs (V91) ── */
+V60_CONVERSATION_QUIZ.push(
+  {kind:"reply",focus:"future",cat:"aeropuerto",es:"¿Cuál es el motivo de su viaje y cuántos días se queda?",en:"Vengo por turismo y me voy a quedar dos semanas.",tts:"¿Cuál es el motivo de su viaje y cuántos días se queda?",choices:["Vengo por turismo y me voy a quedar dos semanas.","A una sola cuota, por favor.","Bajito a los lados con la dos.","Se fue el agua en el edificio."]},
+  {kind:"meaning",focus:"present",cat:"aeropuerto",es:"¿Por dónde queda el reclamo de equipaje?",en:"Where is the baggage claim located?",tts:"¿Por dónde queda el reclamo de equipaje?",choices:["Where is the baggage claim located?","Can you include the service charge?","Every how many hours do I take the pill?","Can you trim my beard with scissors?"]},
+  {kind:"reply",focus:"present",cat:"bancos-pagos",es:"¿Ahorros, corriente o crédito, y a cuántas cuotas?",en:"Crédito, a una sola cuota, por favor.",tts:"¿Ahorros, corriente o crédito, y a cuántas cuotas?",choices:["Crédito, a una sola cuota, por favor.","Vengo por turismo dos semanas.","Cada ocho horas después de comer.","Arriba solo las puntas con tijera."]},
+  {kind:"meaning",focus:"present",cat:"bancos-pagos",es:"Sin factura electrónica; consumidor final, por favor.",en:"No electronic invoice needed; final consumer, please.",tts:"Sin factura electrónica; consumidor final, por favor.",choices:["No electronic invoice needed; final consumer, please.","My suitcase still hasn't come out on the belt.","I am waiting for a Rappi delivery.","I am not allergic to any medication."]},
+  {kind:"reply",focus:"present",cat:"barberia",es:"Buenas, parcero. ¿Cómo se lo vamos a cortar hoy?",en:"Quiero un desvanecido bajito a los lados con la dos.",tts:"Buenas, parcero. ¿Cómo se lo vamos a cortar hoy?",choices:["Quiero un desvanecido bajito a los lados con la dos.","Cuenta de ahorros, por favor.","Aquí tiene mi pasaporte.","Tómese una pastilla cada ocho horas."]},
+  {kind:"meaning",focus:"present",cat:"barberia",es:"Arriba solo bájeme un poquito con tijera.",en:"On top just trim a little bit with scissors.",tts:"Arriba solo bájeme un poquito con tijera.",choices:["On top just trim a little bit with scissors.","Go straight to the traffic light.","The internet went down this morning.","Include the tip on the bill, please."]},
+  {kind:"reply",focus:"present",cat:"medico",es:"¿Desde cuándo tiene fiebre y es alérgico a algún medicamento?",en:"Desde anoche, y no soy alérgico a nada.",tts:"¿Desde cuándo tiene fiebre y es alérgico a algún medicamento?",choices:["Desde anoche, y no soy alérgico a nada.","A una sola cuota sin factura.","En el apartamento quinientos dos.","Solo las puntas con tijera."]},
+  {kind:"meaning",focus:"present",cat:"medico",es:"¿Cada cuántas horas debo tomar esta pastilla?",en:"How many hours apart should I take this pill?",tts:"¿Cada cuántas horas debo tomar esta pastilla?",choices:["How many hours apart should I take this pill?","At which door does the Uber pick me up?","Can I pay with Nequi or cash?","Can you hold the package at the front desk?"]},
+  {kind:"reply",focus:"present",cat:"porteria",es:"Vecino, llegó un domiciliario de Rappi para su apartamento.",en:"Qué pena, ¿me lo puede recibir ahí en portería? Ya bajo.",tts:"Vecino, llegó un domiciliario de Rappi para su apartamento.",choices:["Qué pena, ¿me lo puede recibir ahí en portería? Ya bajo.","Vengo por turismo durante diez días.","No soy alérgico a ningún medicamento.","Quiero un corte bajito a los lados."]},
+  {kind:"meaning",focus:"past",cat:"porteria",es:"Se cayó el internet en el apartamento desde esta mañana.",en:"The internet has been down in the apartment since this morning.",tts:"Se cayó el internet en el apartamento desde esta mañana.",choices:["The internet has been down in the apartment since this morning.","The suitcase arrived on the baggage belt.","He trimmed my beard at the barbershop.","We included the tip on the credit card."]}
+);
+
+V60_FILL_BLANK_QUIZ.push(
+  {kind:"blank",focus:"future",cat:"aeropuerto",es:"Me ___ a quedar dos semanas en Colombia.",en:"voy",tts:"Me voy a quedar dos semanas en Colombia.",trans:"I am going to stay two weeks in Colombia.",choices:["voy","fui","vaya","yendo"]},
+  {kind:"blank",focus:"present",cat:"bancos-pagos",es:"Con tarjeta de crédito, a una sola ___, por favor.",en:"cuota",tts:"Con tarjeta de crédito, a una sola cuota, por favor.",trans:"By credit card, in a single installment, please.",choices:["cuota","cuenta","maleta","tijera"]},
+  {kind:"blank",focus:"present",cat:"bancos-pagos",es:"¿Me acerca el ___ para pagar con tarjeta?",en:"datáfono",tts:"¿Me acerca el datáfono para pagar con tarjeta?",trans:"Can you bring me the card terminal to pay by card?",choices:["datáfono","semáforo","citófono","pasaporte"]},
+  {kind:"blank",focus:"present",cat:"barberia",es:"Quiero un ___ bajito a los lados con la dos.",en:"desvanecido",tts:"Quiero un desvanecido bajito a los lados con la dos.",trans:"I want a low fade on the sides with a #2.",choices:["desvanecido","domicilio","equipaje","descuento"]},
+  {kind:"blank",focus:"present",cat:"medico",es:"Tómese esta pastilla cada ocho horas ___ de comer.",en:"después",tts:"Tómese esta pastilla cada ocho horas después de comer.",trans:"Take this pill every eight hours after eating.",choices:["después","durante","adentro","lejos"]},
+  {kind:"blank",focus:"present",cat:"porteria",es:"Estoy esperando un ___ de Rappi; ¿me avisa cuando llegue?",en:"domicilio",tts:"Estoy esperando un domicilio de Rappi; ¿me avisa cuando llegue?",trans:"I am waiting for a Rappi delivery; can you let me know when it arrives?",choices:["domicilio","datáfono","desayuno","documento"]},
+  {kind:"blank",focus:"past",cat:"porteria",es:"Parece que se ___ el agua en todo el edificio.",en:"fue",tts:"Parece que se fue el agua en todo el edificio.",trans:"It seems the water went out in the whole building.",choices:["fue","fui","iré","ido"]}
+);
+
+// ── V92.0 CONVERSATIONAL MASTERY EXPANSION ──────────────────────────────────
+/* 1. Regional tags for existing COLOMBIANISMOS + 24 new regional expressions */
+(function(){
+  const regionMap={
+    "¿Qué más?":"all","¡Venga!":"all","Listo":"all","Bacano/a":"all","Chévere":"all",
+    "Parcero / Parce":"medellin","Tinto":"all","Plata":"all","Vaina":"all","¡Uy!":"all",
+    "Dale":"all","Chimba":"medellin","Hacer una vuelta":"all","¿Me regala...?":"bogota",
+    "Chino/a":"bogota","Berraco/a":"all","Juepucha / hijuepucha":"all","Hijueputa":"all",
+    "Gonorrea":"all","Pirobo":"bogota","Malparido/a":"all","Carechimba":"medellin",
+    "Marica":"all","Güevón / huevón":"all","Puta":"all","No joda / No jodas":"cali-costa",
+    "Qué jartera":"bogota","Me importa un culo":"all"
+  };
+  COLOMBIANISMOS.forEach(item=>{if(!item.region)item.region=regionMap[item.word]||"all";});
+})();
+
+COLOMBIANISMOS.push(
+  /* 🏔️ Bogotá & Altiplano (Rolos) */
+  {word:"Sumercé",en:"You (warm, respectful address)",region:"bogota",register:"Bogotá · warm polite",registerGroup:"everyday",usage:"A beloved Bogotá and Boyacá pronoun meaning 'you' (from 'su merced'). Shows warmth and respect with family, shopkeepers, or elders.",example:"Sumercé, ¿me regala un tintico por favor?",tts:"Sumercé, ¿me regala un tintico por favor?"},
+  {word:"Veci / Vecino/a",en:"Neighbor (used for shopkeepers & doormen)",region:"bogota",register:"Bogotá · everyday polite",registerGroup:"everyday",usage:"In Bogotá, people call store clerks, bakers, and building staff 'veci' or 'vecino/a' even if they don't know them.",example:"Buenas, veci, ¿a cómo tiene el aguacate hoy?",tts:"Buenas, veci, ¿a cómo tiene el aguacate hoy?"},
+  {word:"Qué pena con usted",en:"Excuse me / Sorry to bother you",region:"bogota",register:"Colombian · essential polite",registerGroup:"everyday",usage:"The gold-standard Bogotá softener before asking a question, squeezing past someone, or apologizing.",example:"Qué pena con usted, ¿me dice dónde queda el baño?",tts:"Qué pena con usted, ¿me dice dónde queda el baño?"},
+  {word:"Pola",en:"Beer (cold lager)",region:"bogota",register:"Colombian · everyday",registerGroup:"everyday",usage:"Named after independence heroine Policarpa Salavarrieta ('La Pola'). 'Vamos por unas polas' = Let's grab some beers.",example:"¿Nos tomamos una pola después del trabajo?",tts:"¿Nos tomamos una pola después del trabajo?"},
+  {word:"Mecato",en:"Snacks / junk food / treats",region:"all",register:"Colombian · everyday",registerGroup:"everyday",usage:"Small snacks between meals (chips, chocolates, pastries). 'Mecatear' = to snack.",example:"Voy a la tienda a comprar mecato para la tarde.",tts:"Voy a la tienda a comprar mecato para la tarde."},
+  {word:"Hacer frío / El Pacheco",en:"Bitterness of Bogotá's cold wind",region:"bogota",register:"Bogotá · local",registerGroup:"everyday",usage:"In Bogotá, intense cold weather is affectionately called 'el Pacheco'. Always carry an umbrella and jacket!",example:"¡Uy, hoy está haciendo un frío tenaz en Bogotá!",tts:"¡Uy, hoy está haciendo un frío tenaz en Bogotá!"},
+  {word:"Chusco/a",en:"Cute / good-looking / nice",region:"bogota",register:"Bogotá · friendly",registerGroup:"everyday",usage:"Classic Bogotá compliment for a person, outfit, or place.",example:"¡Qué apartamento tan chusco tienes!",tts:"¡Qué apartamento tan chusco tienes!"},
+  {word:"Juicioso/a",en:"Well-behaved / diligent / responsible",region:"all",register:"Colombian · everyday",registerGroup:"everyday",usage:"One of the most Colombian words of all. Means hardworking, focused, or staying out of trouble.",example:"Estoy estudiando español muy juicioso todos los días.",tts:"Estoy estudiando español muy juicioso todos los días."},
+
+  /* 🌸 Medellín & Eje Cafetero (Paisas) */
+  {word:"¿Qué más pues?",en:"How's it going then? (Paisa greeting)",region:"medellin",register:"Medellín · everyday",registerGroup:"everyday",usage:"Adding 'pues' at the end of phrases is the signature rhythm of Medellín and the coffee region.",example:"¡Hola, parce! ¿Qué más pues? ¿Todo bien?",tts:"¡Hola, parce! ¿Qué más pues? ¿Todo bien?"},
+  {word:"Hágale pues",en:"Go right ahead / Sounds good / Let's do it",region:"medellin",register:"Medellín · everyday",registerGroup:"everyday",usage:"Warm green-light response in Medellín for 'go ahead', 'sure thing', or 'let's do it'.",example:"¿Nos vemos a las siete? — ¡Hágale pues!",tts:"¿Nos vemos a las siete? ¡Hágale pues!"},
+  {word:"Amañado/a",en:"Feeling at home / loving a place",region:"medellin",register:"Medellín · warm local",registerGroup:"everyday",usage:"In Medellín, people will constantly ask '¿Está amañado en Colombia?' meaning 'Are you settling in and enjoying it here?'",example:"Estoy muy amañado viviendo aquí en Medellín.",tts:"Estoy muy amañado viviendo aquí en Medellín."},
+  {word:"Charro/a",en:"Funny / awkward / uncool (Paisa)",region:"medellin",register:"Medellín · watch context",registerGroup:"informal",usage:"In Medellín, 'qué charro' means something is either hilariously silly OR a bit lame/awkward depending on tone.",example:"¡Qué cuento tan charro el que me contaste!",tts:"¡Qué cuento tan charro el que me contaste!"},
+  {word:"El parche",en:"The friend group / hangout plan",region:"medellin",register:"Colombian · casual",registerGroup:"everyday",usage:"'Armar parche' or 'un buen parche' means a great hangout plan or group of friends.",example:"Hoy tenemos un parche muy bacano con los amigos.",tts:"Hoy tenemos un parche muy bacano con los amigos."},
+  {word:"Taco",en:"Traffic jam (Medellín!)",region:"medellin",register:"Medellín · everyday",registerGroup:"everyday",usage:"While Bogotá says 'trancón', Medellín says 'taco' for heavy traffic! ('Hay mucho taco en El Poblado').",example:"Llegué tarde porque había un taco horrible en la avenida.",tts:"Llegué tarde porque había un taco horrible en la avenida."},
+  {word:"¡Eh, ave María!",en:"Oh my goodness! / Well I never!",region:"medellin",register:"Medellín · classic paisa",registerGroup:"everyday",usage:"Classic Paisa exclamation of surprise, admiration, or emphasis.",example:"¡Eh, ave María, qué almuerzo tan rico!",tts:"¡Eh, ave María, qué almuerzo tan rico!"},
+  {word:"Vos ( ¿Cómo estás vos? )",en:"You (informal Paisa & Cali pronoun)",region:"medellin",register:"Medellín & Cali · everyday",registerGroup:"everyday",usage:"In Medellín and Cali, 'vos' often replaces 'tú' among friends ('¿Vos de dónde sos?', '¿Qué querés comer?').",example:"¿Y vos a qué hora salís de trabajar hoy?",tts:"¿Y vos a qué hora salís de trabajar hoy?"},
+
+  /* 🌴 Cali, Valle & La Costa */
+  {word:"¡Mirá ve!",en:"Look here! / Hey listen! (Cali signature)",region:"cali-costa",register:"Cali · everyday",registerGroup:"everyday",usage:"The unmistakable signature phrase of Cali (Valle del Cauca) to get someone's attention warmly.",example:"¡Mirá ve, vamos a comer un cholado en el parque!",tts:"¡Mirá ve, vamos a comer un cholado en el parque!"},
+  {word:"¿Oís? / ¿Oíste?",en:"You hear? / Got it? (Cali & Costa)",region:"cali-costa",register:"Cali & Costa · everyday",registerGroup:"everyday",usage:"Placed at the end of a sentence in Cali and the Caribbean coast to check agreement, like 'okay?' or 'you know?'",example:"Te aviso apenas llegue a la casa, ¿oíste?",tts:"Te aviso apenas llegue a la casa, ¿oíste?"},
+  {word:"Camellar",en:"To work hard / hustle",region:"all",register:"Colombian · casual",registerGroup:"everyday",usage:"'El camello' = work/job; 'camellar' = to work. Heard across Cali, the Coast, Bogotá, and Medellín.",example:"Mañana me toca camellar desde temprano.",tts:"Mañana me toca camellar desde temprano."},
+  {word:"Un chicharrón",en:"A messy problem / hassle (or crispy pork!)",region:"all",register:"Colombian · everyday",registerGroup:"everyday",usage:"Besides delicious crispy pork belly, 'tener un chicharrón' in Colombia means dealing with a complicated work or life problem.",example:"Me salió un chicharrón en la oficina a última hora.",tts:"Me salió un chicharrón en la oficina a última hora."},
+  {word:"Guayabo",en:"Hangover (or homesickness)",region:"all",register:"Colombian · everyday",registerGroup:"everyday",usage:"In Colombia, 'tener guayabo' means having a hangover after a party (unlike Mexico's 'cruda' or Spain's 'resaca').",example:"Amanecí con guayabo después de la fiesta de anoche.",tts:"Amanecí con guayabo después de la fiesta de anoche."},
+  {word:"La ñapa",en:"Free extra bit / bonus on top",region:"cali-costa",register:"Colombian · market & shops",registerGroup:"everyday",usage:"When buying fruit, juice, or street food, asking '¿Y la ñapa?' politely asks for a little extra on the house.",example:"Veci, deme dos jugos de mango, ¿y me da la ñapa?",tts:"Veci, deme dos jugos de mango, ¿y me da la ñapa?"},
+  {word:"Rumbear / La rumba",en:"To party / go out dancing",region:"cali-costa",register:"Colombian · social",registerGroup:"everyday",usage:"In Colombia (especially Cali, the salsa capital), 'ir de rumba' or 'rumbear' means going out dancing and partying.",example:"El viernes vamos a rumbear y a bailar salsa en Cali.",tts:"El viernes vamos a rumbear y a bailar salsa en Cali."},
+  {word:"¡Eche!",en:"Hey! / Come on! (Caribbean Coast)",region:"cali-costa",register:"Costa · informal",registerGroup:"informal",usage:"Signature expression in Barranquilla, Cartagena, and Santa Marta expressing surprise or 'come on!'",example:"¡Eche, pero por qué llegaste tan tarde hoy!",tts:"¡Eche, pero por qué llegaste tan tarde hoy!"}
+);
+
+/* 2. Interactive Connector & Time-Buyer Bridge Drills for Gramática → Hablar */
