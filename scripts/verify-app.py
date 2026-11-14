@@ -198,7 +198,7 @@ def check_version_parity():
     ver_num = ver.lstrip("v")
 
     idx_txt = (ROOT / "index.html").read_text(encoding="utf-8")
-    for asset in ("manifest.json", "styles/base.css", "styles/polish.css", "styles/labs.css", "src/main.js"):
+    for asset in ("manifest.json", "styles/base.css", "styles/polish.css", "styles/labs.css", "styles/shell.css", "src/main.js"):
         needle = f"{asset}?v={ver_num}"
         if needle not in idx_txt:
             errors.append(f"index.html: missing versioned reference `{needle}` (expected {ver})")
@@ -213,13 +213,24 @@ def check_version_parity():
         if needle not in storage_txt:
             errors.append(f"src/state/storage.js: missing `{needle}` (expected {ver})")
 
+    sync_path = ROOT / "sync.js"
+    if sync_path.exists():
+        sync_txt = sync_path.read_text(encoding="utf-8")
+        if f'V = "{ver_num}"' not in sync_txt:
+            errors.append(f'sync.js: missing `V = "{ver_num}"` (expected {ver})')
+
     return errors
 
 
 def check_github_hygiene():
     errors = []
     if os.environ.get("CI") == "true" and (ROOT / "AGENTS.md").exists():
-        errors.append("AGENTS.md must not exist in GitHub repository!")
+        errors.append("AGENTS.md must not exist in CI repository!")
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        gitlab_only = ("api", "sync.js", "nginx.conf", "Dockerfile", "docker-compose.yml", ".gitlab-ci.yml", ".dockerignore", "tools", "build.txt")
+        present = [name for name in gitlab_only if (ROOT / name).exists()]
+        if present:
+            errors.append(f"GitHub repository must not contain GitLab/server files: {present}")
     sensitive_pats = [
         (r"norvi\.tech", "private host reference"),
         (r"github_pat_[A-Za-z0-9_]{10,}|ghp_[A-Za-z0-9]{10,}", "GitHub token literal"),

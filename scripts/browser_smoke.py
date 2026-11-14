@@ -52,17 +52,34 @@ def launch_browser(p):
 
 
 def run_smoke():
+    import re as _re
     httpd = ReusableTCPServer(("127.0.0.1", 0), QuietHandler)
     port = httpd.server_address[1]
     threading.Thread(target=httpd.serve_forever, daemon=True).start()
     base_url = f"http://127.0.0.1:{port}/index.html"
 
+    raw_html = (ROOT / "index.html").read_text(encoding="utf-8")
+    ver_m = _re.search(r'(?:src/main|sync)\.js\?v=([0-9.]+)', raw_html)
+    ver = ver_m.group(1) if ver_m else "110.0"
+    static_html = (
+        raw_html
+        .replace('<div id="splash" role=', '<div id="splash" hidden role=')
+        .replace(f'<script src="sync.js?v={ver}"></script>', f'<script type="module" src="src/main.js?v={ver}"></script>')
+    )
+    sync_html = (
+        raw_html
+        .replace('<div id="splash" hidden', '<div id="splash"')
+        .replace(f'<script type="module" src="src/main.js?v={ver}"></script>', f'<script src="sync.js?v={ver}"></script>')
+    )
+
     console_errors = []
     page_errors = []
     http_errors = []
 
-    def attach_listeners(page):
+    def attach_listeners(page, use_static_html=True):
         page.route("https://fonts.**", lambda route: route.abort())
+        if use_static_html and raw_html != static_html:
+            page.route("**/index.html", lambda route: route.fulfill(status=200, content_type="text/html; charset=utf-8", body=static_html))
         page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
         page.on("pageerror", lambda err: page_errors.append(str(err)))
         page.on(
@@ -197,6 +214,95 @@ def run_smoke():
             due_prompt = page2.locator("#lesson-list .sprint-cue-word").inner_text().strip()
             assert "gaseosa" in due_prompt.lower(), f"Expected due pm|pm-gaseosa card in unified SRS review, got {due_prompt!r}"
             ctx2.close()
+
+            # Verify desktop left tab rail & fixed #topbar without horizontal overflow
+            ctx_desk = browser.new_context(viewport={"width": 1280, "height": 800})
+            page_desk = ctx_desk.new_page()
+            attach_listeners(page_desk)
+            if page_desk_sync := (ROOT / "sync.js").exists():
+                pass
+            page_desk.goto(base_url, wait_until="domcontentloaded")
+            page_desk.wait_for_selector("#topbar .top-utility-summary")
+            desk = page_desk.evaluate(
+                """() => {
+                    const topbar = document.getElementById('topbar').getBoundingClientRect();
+                    const tabbar = document.querySelector('.tab-bar').getBoundingClientRect();
+                    const scroll = document.querySelector('.scroll');
+                    return {
+                        topbarH: topbar.height,
+                        tabLeft: tabbar.left,
+                        tabWidth: tabbar.width,
+                        tabHeight: tabbar.height,
+                        overflowX: scroll.scrollWidth > scroll.clientWidth || document.documentElement.scrollWidth > window.innerWidth,
+                    };
+                }"""
+            )
+            assert desk["topbarH"] >= 50 and desk["tabLeft"] == 0 and desk["tabWidth"] <= 110 and desk["tabHeight"] >= 500, (
+                f"Expected fixed topbar + left vertical tab rail on 1280x800, got {desk}"
+            )
+            assert not desk["overflowX"], f"Desktop layout overflowed horizontally: {desk}"
+            ctx_desk.close()
+
+            # 3. Portal sync smoke checks (runs when sync.js is present, e.g. local & GitLab CI)
+            if (ROOT / "sync.js").exists():
+                import json as _json
+                ctx_sync = browser.new_context(viewport={"width": 1280, "height": 800})
+                ctx_sync.add_init_script("localStorage.setItem('esco-profile-seth-esco-streak-v1', '7');")
+                page_sync = ctx_sync.new_page()
+                attach_listeners(page_sync, use_static_html=False)
+                sync_calls = {"import": 0, "state_puts": [], "avatar": 0}
+
+                def route_sync(route):
+                    url = route.request.url
+                    if url.endswith("/index.html") or url.endswith("/"):
+                        route.fulfill(status=200, content_type="text/html; charset=utf-8", body=sync_html)
+                    elif url.endswith("/api/me"):
+                        route.fulfill(status=200, content_type="application/json", body=_json.dumps({
+                            "principal_id": 9, "username": "other", "display_name": "Other User",
+                            "email": "other@example.test", "provider": "portal", "avatar": {"kind": "initials"},
+                            "imported": False,
+                        }))
+                    elif url.endswith("/api/state"):
+                        route.fulfill(status=200, content_type="application/json", body='{"items":{}}')
+                    elif url.endswith("/api/import"):
+                        sync_calls["import"] += 1
+                        route.fulfill(status=200, content_type="application/json", body='{"ok":true}')
+                    elif "/api/state/" in url and route.request.method in ("PUT", "DELETE"):
+                        if route.request.method == "PUT":
+                            sync_calls["state_puts"].append(url.split("/api/state/")[-1])
+                        route.fulfill(status=200, content_type="application/json", body='{"ok":true}')
+                    else:
+                        route.continue_()
+
+                page_sync.route("**/*", route_sync)
+                page_sync.goto(base_url, wait_until="domcontentloaded")
+                page_sync.wait_for_selector(".account-name", timeout=10000)
+                acct_name = page_sync.locator(".account-name").inner_text().strip()
+                assert acct_name == "Other User", f"Expected portal account bar, got {acct_name!r}"
+                assert sync_calls["import"] == 0, "Review #4 regression: auto-imported legacy seth keys without user consent!"
+                page_sync.locator(".account-summary").click()
+                assert page_sync.locator(".import-legacy-banner button").count() == 1, "Expected explicit opt-in import button"
+                # Ensure app writes sync normal state while VOICE_KEY remains device-local
+                page_sync.evaluate("""async () => {
+                    const st = await import('./src/state/storage.js?v=' + '%s');
+                    st.appStorage.setItem('esco-selected-voice-v45', 'apple-paulina');
+                    st.appStorage.setItem('esco-streak-v1', '8');
+                }""" % ver)
+                page_sync.wait_for_timeout(850)
+                assert "esco-streak-v1" in sync_calls["state_puts"], f"Expected streak sync PUT, got {sync_calls['state_puts']}"
+                assert "esco-selected-voice-v45" not in sync_calls["state_puts"], f"Voice key leaked to sync queue: {sync_calls['state_puts']}"
+                ctx_sync.close()
+
+                # Fail-closed 401 test
+                ctx_401 = browser.new_context(viewport={"width": 430, "height": 932})
+                page_401 = ctx_401.new_page()
+                page_401.route("https://fonts.**", lambda r: r.abort())
+                page_401.route("**/*", lambda r: r.fulfill(status=200, content_type="text/html; charset=utf-8", body=sync_html) if (r.request.url.endswith("/index.html") or r.request.url.endswith("/")) else (r.fulfill(status=401, content_type="application/json", body='{"detail":"unauthenticated"}') if r.request.url.endswith("/api/me") else r.continue_()))
+                page_401.goto(base_url, wait_until="domcontentloaded")
+                page_401.wait_for_timeout(600)
+                auth_state = page_401.evaluate("({ splashHidden: document.getElementById('splash').hidden, html: document.getElementById('splash-status').innerHTML, hasMe: !!window.__ESCO_ME })")
+                assert (not auth_state["splashHidden"]) and (not auth_state["hasMe"]) and ("Iniciar sesi" in auth_state["html"]), f"401 did not fail closed: {auth_state}"
+                ctx_401.close()
 
             browser.close()
     finally:

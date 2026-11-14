@@ -2,17 +2,21 @@
 """Professional local pre-flight, OneDrive export, and CI-gated GitHub release tool."""
 import argparse
 import base64
+import hashlib
+import http.server
 import json
 import os
 import pathlib
 import re
 import shutil
+import struct
 import subprocess
 import sys
 import time
 import urllib.error
 import urllib.request
 import zipfile
+import zlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 ONEDRIVE_DIR = pathlib.Path(os.environ.get("ESCO_EXPORT_DIR") or (pathlib.Path.home() / "OneDrive" / "Documents" / "Spanish app"))
@@ -48,6 +52,10 @@ def run_local_checks():
 
 
 def public_repo_files():
+    gitlab_only = {
+        "api", "sync.js", "nginx.conf", "Dockerfile", "docker-compose.yml",
+        ".gitlab-ci.yml", ".dockerignore", "tools", "build.txt",
+    }
     return sorted(
         p for p in ROOT.rglob("*")
         if p.is_file()
@@ -55,6 +63,19 @@ def public_repo_files():
         and "__pycache__" not in p.parts
         and ".pytest_cache" not in p.parts
         and p.name != "AGENTS.md"
+        and p.relative_to(ROOT).parts[0] not in gitlab_only
+    )
+
+
+def gitlab_repo_files():
+    excluded_top = {".git", "__pycache__", ".pytest_cache", ".github", "AGENTS.md"}
+    return sorted(
+        p for p in ROOT.rglob("*")
+        if p.is_file()
+        and ".git" not in p.parts
+        and "__pycache__" not in p.parts
+        and ".pytest_cache" not in p.parts
+        and p.relative_to(ROOT).parts[0] not in excluded_top
     )
 
 
@@ -203,9 +224,150 @@ def release_to_github(version, files, message):
     print("==> LIVE OK: GitHub Pages is serving the verified release.")
 
 
+def find_gitlab_remote_and_key():
+    url = os.environ.get("GITLAB_REMOTE_URL", "").strip()
+    if not url:
+        cfg = ROOT / ".git" / "config"
+        if cfg.exists():
+            m = re.search(r'\[remote\s+"origin"\][^\[]*\burl\s*=\s*(\S+)', cfg.read_text(encoding="utf-8"))
+            if m:
+                url = m.group(1).strip()
+    key = os.environ.get("GES_API_KEY", "").strip()
+    if not key:
+        cfg_dir = pathlib.Path.home() / ".config" / "opencode"
+        if cfg_dir.exists():
+            for p in sorted(cfg_dir.glob("*.key")):
+                txt = p.read_text(encoding="utf-8").strip()
+                if txt:
+                    key = txt.splitlines()[0].strip()
+                    break
+    return url.rstrip("/"), key
+
+
+def _git_obj(obj_type, data):
+    raw = f"{obj_type} {len(data)}\0".encode("utf-8") + data
+    return hashlib.sha1(raw).digest(), data
+
+
+def _build_tree_rec(node, objs):
+    entries = []
+    for name, val in sorted(node.items(), key=lambda kv: kv[0] + "/" if isinstance(kv[1], dict) else kv[0]):
+        if isinstance(val, dict):
+            sub_sha = _build_tree_rec(val, objs)
+            entries.append((f"40000 {name}\0").encode("utf-8") + sub_sha)
+        else:
+            sha_b, raw_b = _git_obj("blob", val)
+            objs.setdefault(sha_b, (3, raw_b))
+            entries.append((f"100644 {name}\0").encode("utf-8") + sha_b)
+    tree_sha, tree_data = _git_obj("tree", b"".join(entries))
+    objs.setdefault(tree_sha, (2, tree_data))
+    return tree_sha
+
+
+def _encode_pack(objs):
+    chunks = [b"PACK" + struct.pack(">II", 2, len(objs))]
+    for _sha, (otype, data) in objs.items():
+        size = len(data)
+        hdr = bytearray()
+        b0 = (otype << 4) | (size & 0x0F)
+        size >>= 4
+        if size:
+            b0 |= 0x80
+        hdr.append(b0)
+        while size:
+            nxt = size & 0x7F
+            size >>= 7
+            if size:
+                nxt |= 0x80
+            hdr.append(nxt)
+        chunks.append(bytes(hdr) + zlib.compress(data))
+    body = b"".join(chunks)
+    return body + hashlib.sha1(body).digest()
+
+
+def _pkt_line(text_bytes):
+    return f"{len(text_bytes) + 4:04x}".encode("ascii") + text_bytes
+
+
+def release_to_gitlab(version, files, message):
+    remote_url, ges_key = find_gitlab_remote_and_key()
+    if not remote_url or not ges_key:
+        raise RuntimeError("Missing GitLab remote URL in .git/config or GES_API_KEY credential.")
+    ver_num = version.lstrip("v")
+
+    # Fetch remote main ref via Smart Git HTTP
+    req_refs = urllib.request.Request(
+        f"{remote_url}/info/refs?service=git-receive-pack",
+        headers={"X-GES-Key": ges_key, "User-Agent": "git/2.45.0"},
+    )
+    with urllib.request.urlopen(req_refs, timeout=30) as resp:
+        refs_raw = resp.read()
+    m_ref = re.search(rb"([0-9a-f]{40})\s+refs/heads/main\b", refs_raw)
+    if not m_ref:
+        raise RuntimeError(f"Could not find refs/heads/main in remote refs: {refs_raw[:300]!r}")
+    parent_sha = m_ref.group(1).decode("ascii")
+
+    # Build directory tree mapping; swap index.html entrypoint to sync.js for portal mode only
+    root_map = {}
+    for src in files:
+        rel_parts = src.relative_to(ROOT).parts
+        content = src.read_bytes()
+        if rel_parts == ("index.html",):
+            html_str = content.decode("utf-8")
+            html_str = html_str.replace('<div id="splash" hidden', '<div id="splash"', 1)
+            html_str = html_str.replace(
+                f'<script type="module" src="src/main.js?v={ver_num}"></script>',
+                f'<script src="sync.js?v={ver_num}"></script>',
+                1,
+            )
+            content = html_str.encode("utf-8")
+        cur = root_map
+        for part in rel_parts[:-1]:
+            cur = cur.setdefault(part, {})
+        cur[rel_parts[-1]] = content
+
+    objs = {}
+    tree_sha = _build_tree_rec(root_map, objs)
+    ts = int(time.time())
+    commit_text = (
+        f"tree {tree_sha.hex()}\n"
+        f"parent {parent_sha}\n"
+        f"author {GIT_AUTHOR['name']} <{GIT_AUTHOR['email']}> {ts} +0000\n"
+        f"committer {GIT_AUTHOR['name']} <{GIT_AUTHOR['email']}> {ts} +0000\n\n"
+        f"{message or f'{version}: verified release'}\n"
+    ).encode("utf-8")
+    commit_sha_b, commit_raw = _git_obj("commit", commit_text)
+    objs[commit_sha_b] = (1, commit_raw)
+    new_sha = commit_sha_b.hex()
+
+    pack_bytes = _encode_pack(objs)
+    cmd = f"{parent_sha} {new_sha} refs/heads/main\0 report-status\n".encode("utf-8")
+    payload = _pkt_line(cmd) + b"0000" + pack_bytes
+
+    req_push = urllib.request.Request(
+        f"{remote_url}/git-receive-pack",
+        data=payload,
+        method="POST",
+        headers={
+            "X-GES-Key": ges_key,
+            "User-Agent": "git/2.45.0",
+            "Content-Type": "application/x-git-receive-pack-request",
+            "Accept": "application/x-git-receive-pack-result",
+        },
+    )
+    with urllib.request.urlopen(req_push, timeout=120) as resp:
+        push_res = resp.read().decode("utf-8", errors="replace")
+    if "unpack ok" not in push_res or "ok refs/heads/main" not in push_res:
+        raise RuntimeError(f"GitLab push rejected: {push_res!r}")
+    print(f"==> Step 8: Pushed GitLab main {new_sha[:8]} ({len(files)} files, portal sync enabled; CI build queued)")
+    return new_sha
+
+
 def main():
     parser = argparse.ArgumentParser(description="Validate, export, and CI-gate release Español · Colombia")
     parser.add_argument("--check-only", action="store_true", help="Run local static + Playwright checks only")
+    parser.add_argument("--github-only", action="store_true", help="Release to OneDrive + GitHub Pages only")
+    parser.add_argument("--gitlab-only", action="store_true", help="Release to private GitLab mirror only")
     parser.add_argument("--message", "-m", default="", help="Commit/PR title")
     args = parser.parse_args()
 
@@ -214,9 +376,14 @@ def main():
     if args.check_only:
         print(f"ALL CHECKS PASSED for {ver} (check-only mode, nothing uploaded).")
         return 0
-    files = public_repo_files()
-    export_onedrive(ver, files)
-    release_to_github(ver, files, args.message or f"{ver}: verified release")
+    msg = args.message or f"{ver}: verified release"
+    if not args.gitlab_only:
+        gh_files = public_repo_files()
+        export_onedrive(ver, gh_files)
+        release_to_github(ver, gh_files, msg)
+    if not args.github_only:
+        gl_files = gitlab_repo_files()
+        release_to_gitlab(ver, gl_files, msg)
     return 0
 
 

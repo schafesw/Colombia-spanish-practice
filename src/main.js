@@ -114,7 +114,7 @@ function showPwaUpdateBanner() {
   toast.className = "pwa-update-toast";
   toast.setAttribute("role", "status");
   toast.setAttribute("aria-live", "polite");
-  toast.innerHTML = `<span class="pwa-update-copy">🆕 App updated to v109.0</span><button type="button" class="pwa-update-btn">Refresh</button><button type="button" class="pwa-update-dismiss" aria-label="Dismiss update notification">✕</button>`;
+  toast.innerHTML = `<span class="pwa-update-copy">🆕 App updated to v110.0</span><button type="button" class="pwa-update-btn">Refresh</button><button type="button" class="pwa-update-dismiss" aria-label="Dismiss update notification">✕</button>`;
   toast.querySelector(".pwa-update-btn").onclick = () => location.reload();
   toast.querySelector(".pwa-update-dismiss").onclick = () => toast.remove();
   document.body.appendChild(toast);
@@ -122,9 +122,9 @@ function showPwaUpdateBanner() {
 
 function initPwaUpdater() {
   if (!("serviceWorker" in navigator) || !/^https?:$/i.test(location.protocol)) return;
-  window.addEventListener("load", () => {
+  const registerSw = () => {
     const hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register("sw.js?v=109.0").then(reg => {
+    navigator.serviceWorker.register("sw.js?v=110.0").then(reg => {
       if (!reg) return;
       reg.addEventListener("updatefound", () => {
         const nw = reg.installing;
@@ -136,10 +136,14 @@ function initPwaUpdater() {
         });
       });
     }).catch(() => {});
-  });
+  };
+  if (document.readyState === "complete") registerSw();
+  else window.addEventListener("load", registerSw);
 }
 
 // Deterministic startup bootstrap
+const splashEl = document.getElementById("splash");
+if (splashEl && !window.__ESCO_SYNC_BOOT) splashEl.remove();
 initTheme();
 buildProfileBar(attachProfileBackupControls);
 initVoiceEngine();
