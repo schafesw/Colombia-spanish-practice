@@ -11,14 +11,14 @@
 <meta name="build-rev" content="dev"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Public+Sans:wght@400;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet"/>
-  <link rel="manifest" href="manifest.json?v=111.0"/>
+  <link rel="manifest" href="manifest.json?v=111.1"/>
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png"/>
   <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png"/>
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png"/>
-  <link rel="stylesheet" href="styles/base.css?v=111.0"/>
-  <link rel="stylesheet" href="styles/polish.css?v=111.0"/>
-  <link rel="stylesheet" href="styles/labs.css?v=111.0"/>
-  <link rel="stylesheet" href="styles/shell.css?v=111.0"/>
+  <link rel="stylesheet" href="styles/base.css?v=111.1"/>
+  <link rel="stylesheet" href="styles/polish.css?v=111.1"/>
+  <link rel="stylesheet" href="styles/labs.css?v=111.1"/>
+  <link rel="stylesheet" href="styles/shell.css?v=111.1"/>
 </head>
 <body>
 <div id="splash" hidden role="status" aria-label="Loading Español Colombia">
@@ -240,7 +240,7 @@
     <div class="quiz-mode-row" id="qmode-wrap"></div>
   </div>
   <details class="quiz-customize" id="quiz-customize">
-    <summary><span>⚙️ Customize quiz</span><small>Topic + grammar</small></summary>
+    <summary><span>⚙️ Filters &amp; scenario blitz</span><small id="quiz-customize-summary">Topic + grammar</small></summary>
     <div class="quiz-customize-body">
       <div class="quiz-focus-wrap">
         <label class="quiz-control-label" for="qfocus-select">Grammar focus</label>
@@ -261,6 +261,7 @@
       <div class="quiz-cat-wrap" id="qcat-wrap"></div>
     </div>
   </details>
+  <div class="quiz-review-banner" id="quiz-review-banner" hidden></div>
   <div class="quiz-card">
     <div class="qc-label">Translate to English</div>
     <div class="qc-word" id="qc-word">—</div>
@@ -274,12 +275,11 @@
       <div class="quiz-help-text" id="quiz-help-text" hidden></div>
     </div>
   </div>
-  <div class="quiz-review-banner" id="quiz-review-banner" hidden></div>
-  <div class="quiz-review-launch" id="quiz-review-launch" hidden></div>
   <div class="quiz-feedback feedback-tray" id="quiz-fb"></div>
   <div class="quiz-reveal" id="quiz-reveal"></div>
   <div class="quiz-opts" id="quiz-opts"></div>
   <button class="quiz-next" id="quiz-next" onclick="nQ()">Next →</button>
+  <div class="quiz-review-launch" id="quiz-review-launch" hidden></div>
 </div>
 
 </div>
@@ -295,6 +295,6 @@
 </div>
 </div>
 
-  <script type="module" src="src/main.js?v=111.0"></script>
+  <script type="module" src="src/main.js?v=111.1"></script>
 </body>
 </html>

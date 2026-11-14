@@ -2,7 +2,7 @@ import { PICTURE_MATCH_BANK, NATURAL_EAR_CLIPS, GRINGO_TRAPS } from "../../data/
 import { appStorage } from "../state/storage.js";
 import { appState } from "../state/app-state.js";
 import { speak } from "../audio/voice-engine.js";
-import { escapeVocabHtml } from "../core/text-utils.js";
+import { escapeVocabHtml, applyQuizFitClasses } from "../core/text-utils.js";
 import { markPractice } from "../core/stores.js";
 import { attachMic } from "../core/speech-mic.js";
 import { RR_BANK } from "../core/quiz-bank.js";
@@ -191,6 +191,7 @@ export function renderQuizV102Hub(){
       spWrap.querySelector(".sprint-stop-pill").onclick=()=>{if(appState.spTimer){clearInterval(appState.spTimer);appState.spTimer=null;}appState.spRunning=false;appState.spLeft=60;spFb="";renderQuizV102Hub();};
       spWrap.querySelector(".sprint-hear-btn").onclick=()=>speak(q.subTts||q.tts,0.85);
       const oWrap=spWrap.querySelector(".sprint-opts");
+      applyQuizFitClasses(spWrap.querySelector(".sprint-cue-word"),oWrap,q.cue,q.opts);
       q.opts.forEach(opt=>{
         const b=document.createElement("button");b.type="button";b.className="qopt";b.textContent=opt;
         b.onclick=()=>{

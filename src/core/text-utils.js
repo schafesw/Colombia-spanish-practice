@@ -41,3 +41,22 @@ export function lpEl(cls,html){const d=document.createElement("div");d.className
 export function localDayKey(date=new Date()){
   return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
 }
+/**
+ * Apply responsive length classes to a quiz prompt and option grid so long
+ * items fit inside a single viewport without vertical scrolling.
+ */
+export function applyQuizFitClasses(promptEl,optsEl,promptText,optTexts){
+  if(promptEl){
+    const len=String(promptText||"").trim().length;
+    promptEl.classList.toggle("qc-med",len>=24&&len<50);
+    promptEl.classList.toggle("qc-long",len>=50&&len<82);
+    promptEl.classList.toggle("qc-xl",len>=82);
+  }
+  if(optsEl&&Array.isArray(optTexts)){
+    const lens=optTexts.map(t=>String(t||"").trim().length);
+    const maxLen=lens.length?Math.max(...lens):0;
+    const totalLen=lens.reduce((a,b)=>a+b,0);
+    optsEl.classList.toggle("opts-stack",maxLen>40||totalLen>120);
+    optsEl.classList.toggle("opts-dense",maxLen>72||totalLen>205);
+  }
+}

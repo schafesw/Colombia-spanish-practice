@@ -6,7 +6,7 @@ import { appStorage } from "../state/storage.js";
 import { appState } from "../state/app-state.js";
 import { effectiveLevel } from "../state/preferences.js";
 import { speak } from "../audio/voice-engine.js";
-import { escapeVocabHtml, lpEl, scrollAppTop, spanishStressHint, normalizeQuizText } from "../core/text-utils.js";
+import { escapeVocabHtml, lpEl, scrollAppTop, spanishStressHint, normalizeQuizText, applyQuizFitClasses } from "../core/text-utils.js";
 import {
   markPractice, practiced, lessonProgress, saveLessons,
   recordPracticeDay, recordSrs, recordSpeakingError, clearSpeakingError,
@@ -538,6 +538,7 @@ export function renderLessonStep(){
     if(q.autoTts)speak(q.autoTts,0.7);
     const fb=lpEl("lp-quiz-fb","");fb.classList.add("feedback-tray");
     const grid=lpEl("lp-grid lp-quiz-grid");
+    applyQuizFitClasses(body.querySelector(".lp-quiz-prompt"),grid,q.prompt,q.options);
     q.options.forEach(opt=>{
       const b=document.createElement("button");b.type="button";b.className="lp-opt";b.textContent=opt;
       b.onclick=()=>{

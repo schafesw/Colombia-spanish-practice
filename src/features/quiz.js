@@ -6,7 +6,7 @@ import { appStorage } from "../state/storage.js";
 import { appState } from "../state/app-state.js";
 import { userPrefs, saveUserPrefs, effectiveLevel, isBlindEarActive } from "../state/preferences.js";
 import { speak } from "../audio/voice-engine.js";
-import { escapeVocabHtml, normalizeDictation, normalizeQuizText, normalizeQuizPrompt, normalizeQuizAnswer, quizItemKey } from "../core/text-utils.js";
+import { escapeVocabHtml, normalizeDictation, normalizeQuizText, normalizeQuizPrompt, normalizeQuizAnswer, quizItemKey, applyQuizFitClasses } from "../core/text-utils.js";
 import { qStore, saveQ, srsStore, srsDue, srsNextLabel, recordSrs, recordSpeakingError, clearSpeakingError, markPractice, resetQAndSrs } from "../core/stores.js";
 import { attachMic } from "../core/speech-mic.js";
 import { aQ, RR_BANK, BLANK_EN, CONVERSATION_QUIZ, FILL_BLANK_QUIZ, storedMissedQuestionCount, spanishAnswer, englishAnswer, quizAcceptedAnswers, quizAnswerMatches } from "../core/quiz-bank.js";
@@ -48,6 +48,16 @@ export function syncQuizControls(){
   if(qfs){qfs.value=appState.qFocus;qfs.disabled=!focusSupported;}
   const note=document.getElementById("qfocus-note");
   if(note){note.textContent=focusSupported?"Choose a grammar pattern, or leave All patterns.":"Choose Mixed, Fill blank, or Conversation to use Grammar focus.";note.classList.toggle("active",focusSupported&&appState.qFocus!=="all");}
+  const sum=document.getElementById("quiz-customize-summary");
+  if(sum){
+    if(appState.qBlitzPack)sum.textContent=appState.qBlitzPack.label;
+    else if(appState.qCat!=="all"||appState.qFocus!=="all"){
+      const parts=[];
+      if(appState.qCat!=="all")parts.push((QC.find(c=>c.id===appState.qCat)||{}).label||appState.qCat);
+      if(appState.qFocus!=="all")parts.push((QUIZ_FOCUS.find(f=>f.id===appState.qFocus)||{}).label||appState.qFocus);
+      sum.textContent=parts.join(" · ");
+    }else sum.textContent="Topic + grammar";
+  }
 }
 export function quizPool(){
   let pool;
@@ -124,7 +134,7 @@ export function nQ(){
     if(reviewBanner){reviewBanner.hidden=false;reviewBanner.innerHTML="<span><strong>Missed questions</strong> — your retry queue is clear.</span><button type='button' class='quiz-review-exit'>Back to quiz</button>";reviewBanner.querySelector("button").onclick=exitMissedQueue;}
     return;
   }
-  if(reviewBanner){reviewBanner.hidden=false;reviewBanner.innerHTML="<span><strong>Missed questions</strong> · "+storedMissedQuestionCount()+" remaining. Correct answers leave the queue.</span><button type='button' class='quiz-review-exit'>Exit queue</button>";reviewBanner.querySelector("button").onclick=exitMissedQueue;}
+  if(reviewBanner&&appState.qMissedOnly){reviewBanner.hidden=false;reviewBanner.innerHTML="<span><strong>Missed questions</strong> · "+storedMissedQuestionCount()+" remaining. Correct answers leave the queue.</span><button type='button' class='quiz-review-exit'>Exit queue</button>";reviewBanner.querySelector("button").onclick=exitMissedQueue;}
   const roundKey=(appState.qMissedOnly?"missed|":"normal|")+appState.qMode+"|"+appState.qCat+"|"+appState.qFocus;
   if(roundKey!==appState.qRoundKey){appState.qRoundKey=roundKey;appState.qRoundSeen.clear();}
    let unseen=reviewBase.filter(q=>!appState.qRoundSeen.has(quizRoundPromptKey(q)));
@@ -147,9 +157,11 @@ export function nQ(){
     }
   }
   if(appState.qMode==="dictation"){
-    document.getElementById("qc-word").textContent="🎧";
+    const wordEl=document.getElementById("qc-word");
+    wordEl.textContent="🎧";
+    applyQuizFitClasses(wordEl,null,"🎧",null);
     document.querySelector(".qc-label").textContent="Listen, then type the Spanish";
-    const ow=document.getElementById("quiz-opts");ow.innerHTML="";
+    const ow=document.getElementById("quiz-opts");ow.innerHTML="";ow.classList.remove("opts-stack","opts-dense");
     const box=document.createElement("div");box.className="quiz-dictation";
     box.innerHTML="<div class='dictation-hint'>Listen first. Type the full Spanish sentence or phrase from memory.</div>";
     const input=document.createElement("input");input.type="text";input.className="dictation-input";input.placeholder="Escribe en español…";input.autocomplete="off";input.autocapitalize="sentences";
@@ -200,6 +212,7 @@ export function nQ(){
   for(const w of wrongPool){if(wrong.length>=3)break;if(!w.answer)continue;const wk=normalizeQuizText(w.answer);if(!wk||seen.has(wk))continue;seen.add(wk);wrong.push({answer:w.answer});}
   const opts=[appState.cQ,...wrong].sort(()=>Math.random()-0.5);
   const ow=document.getElementById("quiz-opts");ow.innerHTML="";
+  applyQuizFitClasses(document.getElementById("qc-word"),ow,document.getElementById("qc-word")?.textContent,opts.map(o=>o.answer));
   opts.forEach(opt=>{const b=document.createElement("button");b.className="qopt";b.textContent=opt.answer;
     b.onclick=()=>{if(appState.an)return;appState.an=true;appState.qT++;document.getElementById("q-total").textContent=appState.qT;
       renderQuizPromptAndBlind();
@@ -237,6 +250,7 @@ export function renderQuizPromptAndBlind(){
       peek.onclick=()=>{appState.qBlindPeek=!appState.qBlindPeek;renderQuizPromptAndBlind();};
     }
   }
+  applyQuizFitClasses(wordEl,null,wordEl?wordEl.textContent:"",null);
 }
 export function toggleQuizBlindEar(){
   const earOn=isBlindEarActive();
@@ -307,7 +321,9 @@ export function initQuiz() {
   if (qmw && qmw.parentElement && !document.getElementById("qblitz-wrap")) {
     const blitzWrap = document.createElement("div"); blitzWrap.className = "quiz-blitz-wrap";
     blitzWrap.innerHTML = `<div class="quiz-control-label">⚡ Real-Life Situation Blitz (1-tap scenario warmup)</div><div class="quiz-blitz-row" id="qblitz-wrap"></div>`;
-    qmw.parentElement.parentElement.insertBefore(blitzWrap, qmw.parentElement);
+    const custBody = document.querySelector("#quiz-customize .quiz-customize-body");
+    if (custBody) custBody.insertBefore(blitzWrap, custBody.firstChild);
+    else qmw.parentElement.parentElement.insertBefore(blitzWrap, qmw.parentElement);
     const qbw = blitzWrap.querySelector("#qblitz-wrap");
     SITUATION_BLITZ_PACKS.forEach(pack => {
       const b = document.createElement("button"); b.type = "button"; b.className = "qblitz-btn"; b.dataset.blitz = pack.id; b.textContent = pack.label;
