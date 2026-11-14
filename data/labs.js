@@ -555,6 +555,130 @@ export const COLOMBIAN_STORIES = [
         ]
       }
     ]
+  },
+  {
+    id: "st-aeropuerto",
+    title: "🛬 Llegada a El Dorado",
+    sub: "Narrate landing in Bogotá, clearing immigration smoothly, and catching your ride.",
+    parts: [
+      {
+        label: "1️⃣ Landing & Migración",
+        options: [
+          { es: "Acabamos de aterrizar en Bogotá después de un vuelo largo,", en: "We just landed in Bogotá after a long flight," },
+          { es: "Esta mañana pasé por Migración Colombia con mi pasaporte,", en: "This morning I went through Colombian Immigration with my passport," },
+          { es: "Recogí mi maleta de bodega sin problema en la banda tres,", en: "I picked up my checked suitcase smoothly at carousel three," }
+        ]
+      },
+      {
+        label: "2️⃣ Connector Bridge",
+        options: [
+          { es: "y cuando el agente me preguntó por mi estadía, entonces", en: "and when the officer asked about my stay, then" },
+          { es: "aunque la fila iba rápido, de todas formas", en: "even though the line moved fast, anyway" },
+          { es: "y apenas salí hacia la puerta cuatro,", en: "and as soon as I walked out toward gate four," }
+        ]
+      },
+      {
+        label: "3️⃣ Heading into the City",
+        options: [
+          { es: "pedí un carro por la aplicación y salimos para el hotel.", en: "I ordered a car in the app and we headed to the hotel." },
+          { es: "activé mi SIM card prepago y le avisé a mi familia por WhatsApp.", en: "I activated my prepaid SIM card and messaged my family on WhatsApp." },
+          { es: "cambié unos dólares para tener sencillo por si acaso.", en: "I exchanged a few dollars so I'd have small bills just in case." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "st-farmacia",
+    title: "💊 En la Droguería del Barrio",
+    sub: "Describe mild symptoms, ask for dosage advice, and pay naturally.",
+    parts: [
+      {
+        label: "1️⃣ Explaining What Happened",
+        options: [
+          { es: "Anoche me cogió un aguacero caminando y hoy amanecí con tos,", en: "Last night a downpour caught me walking and today I woke up with a cough," },
+          { es: "Desde ayer siento un poquito de dolor de garganta y fiebre,", en: "Since yesterday I've felt a bit of a sore throat and fever," },
+          { es: "Con tanto sol en la ciclovía me olvidé del bloqueador,", en: "With so much sun at ciclovía I forgot sunscreen," }
+        ]
+      },
+      {
+        label: "2️⃣ Connector Bridge",
+        options: [
+          { es: "así que bajé temprano a la droguería de la esquina y", en: "so I went down early to the corner pharmacy and" },
+          { es: "entonces entré a pedir recomendación al farmaceuta, quien", en: "so I stepped in to ask the pharmacist for advice, who" },
+          { es: "por eso decidí pasar por unas pastillas suaves; allí", en: "so I decided to stop by for mild tablets; there" }
+        ]
+      },
+      {
+        label: "3️⃣ Practical Takeaway",
+        options: [
+          { es: "me explicaron cada cuántas horas tomarlas y cancelé con datáfono.", en: "they explained how often to take them and I paid on the card terminal." },
+          { es: "compré un jarabe y repelente para el paseo de fin de semana.", en: "I bought cough syrup and repellent for the weekend trip." },
+          { es: "me tomé un té caliente con miel y ya me siento mucho mejor.", en: "I drank hot tea with honey and I already feel much better." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "st-porteria",
+    title: "🏢 Portería y Domicilio",
+    sub: "Coordinate building entry, Rappi deliveries, and neighborly manners.",
+    parts: [
+      {
+        label: "1️⃣ Buzzing the Citófono",
+        options: [
+          { es: "Esta tarde pedí mercado por Rappi mientras trabajaba desde casa,", en: "This afternoon I ordered groceries on Rappi while working from home," },
+          { es: "Al mediodía timbró el citófono porque llegó una encomienda,", en: "At noon the intercom rang because a package arrived," },
+          { es: "Cuando bajé por mi correo saludé al señor de la portería,", en: "When I went down for my mail I greeted the front-desk guard," }
+        ]
+      },
+      {
+        label: "2️⃣ Connector Bridge",
+        options: [
+          { es: "pero como estaba en una reunión importante, entonces", en: "but since I was in an important meeting, then" },
+          { es: "y muy amablemente me preguntó si autorizaba la subida, así que", en: "and he kindly asked if I authorized letting them up, so" },
+          { es: "y después de confirmar mi apartamento,", en: "and after confirming my apartment number," }
+        ]
+      },
+      {
+        label: "3️⃣ Smooth Wrap-Up",
+        options: [
+          { es: "le dije 'veci, ¿me colabora recibiéndolo en portería?' y bajé ahorita.", en: "I said 'neighbor, could you hold it at the desk?' and went down shortly after." },
+          { es: "di el código de verificación y agradecí con una sonrisa.", en: "I gave the verification code and thanked him with a smile." },
+          { es: "ya tenemos fruta fresca, aguacate y café para toda la semana.", en: "now we have fresh fruit, avocado, and coffee for the whole week." }
+        ]
+      }
+    ]
+  },
+  {
+    id: "st-terraza-musica",
+    title: "🎶 Parranda y Sancocho en Familia",
+    sub: "Mix coastal warmth, music, and future plans naturally.",
+    parts: [
+      {
+        label: "1️⃣ Porch Afternoon",
+        options: [
+          { es: "El domingo nos sentamos en las mecedoras de la terraza,", en: "On Sunday we sat in the rocking chairs on the front porch," },
+          { es: "Al caer la tarde empezó a sonar un acordeón en la cuadra,", en: "At dusk an accordion started playing down the block," },
+          { es: "Todo el mundo llegó a saludar apenas supieron que visitábamos,", en: "Everyone came by to say hi as soon as they knew we were visiting," }
+        ]
+      },
+      {
+        label: "2️⃣ Connector Bridge",
+        options: [
+          { es: "y mientras compartíamos empanadas y jugo frío,", en: "and while we shared empanadas and cold juice," },
+          { es: "aunque al principio me daba un poquito de pena hablar rápido,", en: "even though at first I felt a little shy speaking fast," },
+          { es: "y como todos tienen tanta chispa para contar historias,", en: "and since everyone has such sparkle telling stories," }
+        ]
+      },
+      {
+        label: "3️⃣ Warm Memory",
+        options: [
+          { es: "me sentí tan amañado que ya queremos planear el próximo puente.", en: "I felt so right at home that we already want to plan the next holiday weekend." },
+          { es: "terminamos brindando en familia y practicando español sin miedo.", en: "we ended up toasting with family and practicing Spanish without fear." },
+          { es: "entendí casi todo lo que decían los primos y fue una nota total.", en: "I understood almost everything the cousins said and it was an awesome vibe." }
+        ]
+      }
+    ]
   }
 ];
 
@@ -927,6 +1051,251 @@ export const COLOMBIA_CHATS = [
         ]
       }
     ]
+  },
+  {
+    id: "chat-aeropuerto",
+    title: "Migración El Dorado",
+    emoji: "🛬",
+    place: "Bogotá Airport · Arrivals",
+    partner: "Oficial Migración",
+    turns: [
+      {
+        botEs: "Buenas tardes. Pasaporte a la mano, por favor. ¿Cuál es el motivo de su viaje a Colombia?",
+        botEn: "Good afternoon. Passport in hand, please. What is the purpose of your trip to Colombia?",
+        tts: "Buenas tardes. Pasaporte a la mano, por favor. ¿Cuál es el motivo de su viaje a Colombia?",
+        options: [
+          { es: "Buenas tardes. Vengo de turismo y a visitar familia por dos semanas.", en: "Good afternoon. I'm visiting for tourism and to see family for two weeks.", quality: "natural", tag: "✅ Natural", note: "Clear, polite, and direct — answers exactly what immigration officers want to hear." },
+          { es: "Soy un extranjero temporal haciendo vacaciones recreativas.", en: "I am a temporary foreigner taking recreational holidays.", quality: "stiff", tag: "⚠️ Over-formal", note: "Keep it simple: 'Vengo de turismo' sounds crisp and relaxed." },
+          { es: "Con tarjeta a una cuota, por favor.", en: "Card, one installment, please.", quality: "wrong", tag: "❌ Off-topic", note: "Save payment answers for shops and restaurants!" }
+        ]
+      },
+      {
+        botEs: "¿En qué ciudad se va a hospedar y tiene ya dirección de hotel o casa?",
+        botEn: "Which city will you be staying in, and do you already have a hotel or home address?",
+        tts: "¿En qué ciudad se va a hospedar y tiene ya dirección de hotel o casa?",
+        options: [
+          { es: "Sí señor, primero me quedo en Bogotá, aquí en Chapinero, y luego voy a San Juan.", en: "Yes sir, first I'm staying in Bogotá, here in Chapinero, and then I'm going to San Juan.", quality: "natural", tag: "✅ Natural", note: "Naming your neighborhood ('Chapinero') + destination makes screening breeze right through." },
+          { es: "Habitaré temporalmente en una estructura habitacional urbana.", en: "I shall reside temporarily in an urban residential structure.", quality: "stiff", tag: "⚠️ Robotic", note: "Say 'me quedo en...' ('I'm staying in...')." },
+          { es: "No me regala un pitillo por favor.", en: "Could you not give me a straw please.", quality: "wrong", tag: "❌ Wrong scenario", note: "Answer with your hotel or family city!" }
+        ]
+      },
+      {
+        botEs: "Perfecto. Aquí tiene su sello de entrada por noventa días. ¿Tiene algo que declarar en aduana?",
+        botEn: "Perfect. Here is your 90-day entry stamp. Do you have anything to declare at customs?",
+        tts: "Perfecto. Aquí tiene su sello de entrada por noventa días. ¿Tiene algo que declarar en aduana?",
+        options: [
+          { es: "No señor, nada que declarar, solo ropa y cosas personales.", en: "No sir, nothing to declare, just clothes and personal items.", quality: "natural", tag: "✅ Natural", note: "'Nada que declarar' is the standard exact phrase at Colombian customs." },
+          { es: "Niego poseer mercancía gravable adicional.", en: "I deny possessing additional taxable merchandise.", quality: "stiff", tag: "⚠️ Legalese", note: "Nobody talks like a contract at arrivals! Just say 'Nada que declarar, gracias'." },
+          { es: "Sí, me gustaría el corrientazo con sopa.", en: "Yes, I'd like the daily lunch with soup.", quality: "wrong", tag: "❌ Food order", note: "Customs is asking about declared goods, not lunch." }
+        ]
+      },
+      {
+        botEs: "Listo, bienvenido a Colombia. Las bandas de equipaje quedan a mano izquierda.",
+        botEn: "All set, welcome to Colombia. Baggage claim belts are on the left.",
+        tts: "Listo, bienvenido a Colombia. Las bandas de equipaje quedan a mano izquierda.",
+        options: [
+          { es: "¡Muchas gracias, muy amable! Que tenga buena tarde.", en: "Thank you very much, very kind! Have a nice afternoon.", quality: "natural", tag: "✅ Natural", note: "Ending with 'muy amable' and 'buena tarde' starts your trip on a great Colombian note." },
+          { es: "Procedo hacia la izquierda ahora mismo.", en: "I proceed to the left right now.", quality: "stiff", tag: "⚠️ Stiff", note: "'¡Muchas gracias!' is warmer." },
+          { es: "Se saltaron los tacos de la luz.", en: "The circuit breakers tripped.", quality: "wrong", tag: "❌ Off-topic", note: "Wrong scenario!" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "chat-farmacia",
+    title: "La Droguería",
+    emoji: "💊",
+    place: "Corner pharmacy · Afternoon",
+    partner: "Doctora Ana",
+    turns: [
+      {
+        botEs: "Buenas tardes, a la orden. ¿Qué se le ofrece hoy?",
+        botEn: "Good afternoon, at your service. What can I help you with today?",
+        tts: "Buenas tardes, a la orden. ¿Qué se le ofrece hoy?",
+        options: [
+          { es: "Buenas, doctora. Me dio algo de tos seca y dolor de garganta desde ayer.", en: "Hi doctor. I've had a dry cough and sore throat since yesterday.", quality: "natural", tag: "✅ Natural", note: "Calling neighborhood pharmacists 'doctor/doctora' politely is everyday Colombian etiquette." },
+          { es: "Mi sistema respiratorio exhibe síntomas irritativos.", en: "My respiratory system exhibits irritative symptoms.", quality: "stiff", tag: "⚠️ Too clinical", note: "Simply say 'tengo tos / me duele la garganta'." },
+          { es: "Una bandeja paisa con aguacate.", en: "A bandeja paisa with avocado.", quality: "wrong", tag: "❌ Off-topic", note: "You're at the droguería (pharmacy), not a restaurant!" }
+        ]
+      },
+      {
+        botEs: "Entiendo. ¿Ha tenido fiebre o es alérgico a algún medicamento?",
+        botEn: "I understand. Have you had a fever or are you allergic to any medication?",
+        tts: "Entiendo. ¿Ha tenido fiebre o es alérgico a algún medicamento?",
+        options: [
+          { es: "Fiebre no he tenido, y no soy alérgico a nada que yo sepa.", en: "I haven't had a fever, and I'm not allergic to anything that I know of.", quality: "natural", tag: "✅ Natural", note: "'No soy alérgico a nada' covers both safety questions clearly." },
+          { es: "Mi temperatura corporal permanece estable sin alergias.", en: "My body temperature stays stable without allergies.", quality: "stiff", tag: "⚠️ Textbook", note: "'Sin fiebre y no tengo alergias' sounds much more conversational." },
+          { es: "Sí, déjelo en portería con el portero.", en: "Yes, leave it at the front desk with the guard.", quality: "wrong", tag: "❌ Delivery reply", note: "Answer about fever and allergies!" }
+        ]
+      },
+      {
+        botEs: "Le puedo dar este jarabe para la tos seca y un blíster de pastillas para la garganta.",
+        botEn: "I can give you this dry-cough syrup and a blister strip of throat lozenges.",
+        tts: "Le puedo dar este jarabe para la tos seca y un blíster de pastillas para la garganta.",
+        options: [
+          { es: "Súper, doctora. ¿Cada cuántas horas tomo el jarabe?", en: "Great, doctor. Every how many hours should I take the syrup?", quality: "natural", tag: "✅ Natural", note: "'¿Cada cuántas horas...?' is the key dosing question in Colombia." },
+          { es: "¿Cuál es la frecuencia horaria de administración?", en: "What is the hourly administration frequency?", quality: "stiff", tag: "⚠️ Clinical", note: "Use '¿Cada cuántas horas lo tomo?' instead." },
+          { es: "¿El jugo viene en agua o en leche?", en: "Does the juice come in water or milk?", quality: "wrong", tag: "❌ Bakery question", note: "Ask about dosage instructions!" }
+        ]
+      },
+      {
+        botEs: "Una cucharadita cada ocho horas después de comer. ¿Cancela en efectivo o con tarjeta?",
+        botEn: "One teaspoon every eight hours after eating. Paying in cash or by card?",
+        tts: "Una cucharadita cada ocho horas después de comer. ¿Cancela en efectivo o con tarjeta?",
+        options: [
+          { es: "Con tarjeta a una sola cuota, por favor. ¡Mil gracias!", en: "By card in one installment, please. Thanks so much!", quality: "natural", tag: "✅ Natural", note: "Remember 'cancela' = pays here, and 'a una cuota' = regular single card charge." },
+          { es: "No deseo cancelar mi compra, deseo pagarla.", en: "I don't wish to cancel my purchase, I wish to pay it.", quality: "stiff", tag: "⚠️ Gringo Trap!", note: "Watch out! At a Colombian counter, '¿Cancela?' means 'How are you paying?'." },
+          { es: "Quiero cancelar el bus de la terminal.", en: "I want to cancel the terminal bus.", quality: "wrong", tag: "❌ Wrong scenario", note: "Pay for your cough syrup and lozenges!" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "chat-porteria",
+    title: "Portería y Rappi",
+    emoji: "🏢",
+    place: "Apartment Lobby · Citófono",
+    partner: "Don Carlos (Portero)",
+    turns: [
+      {
+        botEs: "Buenas tardes, apartamento 502. Aquí en portería llegó un domicilio de Rappi para el señor Seth.",
+        botEn: "Good afternoon, apartment 502. A Rappi delivery for Mr. Seth just arrived at the front desk.",
+        tts: "Buenas tardes, apartamento quinientos dos. Aquí en portería llegó un domicilio de Rappi para el señor Seth.",
+        options: [
+          { es: "¡Hola don Carlos! ¿Será que me colabora recibiéndolo ahí en portería? Ya bajo.", en: "Hi Don Carlos! Could you help me out holding it there at the desk? I'm coming right down.", quality: "natural", tag: "✅ Natural", note: "'¿Me colabora...?' + 'ya bajo' is peak warm Colombian apartment etiquette." },
+          { es: "Mantenga el paquete en custodia hasta mi descenso.", en: "Keep the package in custody until my descent.", quality: "stiff", tag: "⚠️ Robotic", note: "Speak warmly with building staff: 'Déjelo en portería, ya mismo bajo'." },
+          { es: "Necesito una SIM card con pasaporte.", en: "I need a SIM card with passport.", quality: "wrong", tag: "❌ Off-topic", note: "He's calling on the intercom about your delivery!" }
+        ]
+      },
+      {
+        botEs: "Claro que sí, vecino, pero el domiciliario dice que falta darle un código de cuatro números.",
+        botEn: "Of course neighbor, though the driver says he still needs a four-digit verification code.",
+        tts: "Claro que sí, vecino, pero el domiciliario dice que falta darle un código de cuatro números.",
+        options: [
+          { es: "¡Uy, qué pena! El código es cuatro-ocho-uno-dos. Muchas gracias.", en: "Oh, sorry about that! The code is 4-8-1-2. Thank you very much.", quality: "natural", tag: "✅ Natural", note: "'¡Uy, qué pena!' + digits keeps delivery handoffs friendly and smooth." },
+          { es: "Proceda a transmitir los dígitos numéricos secuenciales.", en: "Proceed to transmit the sequential numeric digits.", quality: "stiff", tag: "⚠️ Way too stiff", note: "Simply say 'El código es...'." },
+          { es: "No, en agua sin azúcar por favor.", en: "No, in water without sugar please.", quality: "wrong", tag: "❌ Off-topic", note: "Give the Rappi delivery PIN code!" }
+        ]
+      },
+      {
+        botEs: "Listo, ya quedó entregado aquí en el mesón. También llegó un recibo de la luz para usted.",
+        botEn: "All set, it's checked in here on the counter. An electric bill also arrived for you.",
+        tts: "Listo, ya quedó entregado aquí en el mesón. También llegó un recibo de la luz para usted.",
+        options: [
+          { es: "¡Súper! En dos minuticos bajo por el domicilio y el recibo.", en: "Awesome! In two quick minutes I'll come down for the delivery and the bill.", quality: "natural", tag: "✅ Natural", note: "'En dos minuticos bajo' sounds warm and natural." },
+          { es: "Recogeré la correspondencia energética próximamente.", en: "I shall collect the energy correspondence soon.", quality: "stiff", tag: "⚠️ Robotic", note: "In Colombia a utility bill is simply 'el recibo (de la luz/agua)'." },
+          { es: "¿El metro va hasta el aeropuerto?", en: "Does the metro go to the airport?", quality: "wrong", tag: "❌ Off-topic", note: "Acknowledge your food and utility bill at the desk!" }
+        ]
+      },
+      {
+        botEs: "Con mucho gusto, vecino, aquí se los cuido hasta que baje.",
+        botEn: "With pleasure neighbor, I'll watch them for you until you come down.",
+        tts: "Con mucho gusto, vecino, aquí se los cuido hasta que baje.",
+        options: [
+          { es: "¡Muy amable, don Carlos! Ya nos vemos abajo.", en: "Very kind, Don Carlos! See you downstairs shortly.", quality: "natural", tag: "✅ Natural", note: "Friendly rapport with your portero makes daily life in Colombia noticeably easier." },
+          { es: "Le manifiesto gratitud por su vigilancia.", en: "I express gratitude for your vigilance.", quality: "stiff", tag: "⚠️ Too stiff", note: "Keep it easy: '¡Muchas gracias don Carlos!'." },
+          { es: "Me picó un zancudo en el avión.", en: "A mosquito bit me on the plane.", quality: "wrong", tag: "❌ Off-topic", note: "Say thanks before hanging up the citófono!" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "chat-pagos",
+    title: "Nequi y Datáfono",
+    emoji: "💳",
+    place: "Checkout Counter · Chapinero",
+    partner: "Cajera Sofía",
+    turns: [
+      {
+        botEs: "Serían cuarenta y ocho mil quinientos pesos, por favor. ¿Cómo desea cancelar?",
+        botEn: "That'll be 48,500 pesos, please. How would you like to pay?",
+        tts: "Serían cuarenta y ocho mil quinientos pesos, por favor. ¿Cómo desea cancelar?",
+        options: [
+          { es: "Con tarjeta sin contacto, por favor — aquí la acerco al datáfono.", en: "By contactless card, please — I'll tap it on the terminal here.", quality: "natural", tag: "✅ Natural", note: "Knowing 'datáfono' (card reader) and 'sin contacto' makes checkout instant." },
+          { es: "No cancelo, quiero mantener la compra activa.", en: "I am not canceling, I want to keep the purchase active.", quality: "stiff", tag: "⚠️ Gringo Trap!", note: "'Cancelar' at checkout ALWAYS means 'to pay'!" },
+          { es: "Apenas llegué en taxi desde la terminal.", en: "I just arrived by taxi from the bus station.", quality: "wrong", tag: "❌ Off-topic", note: "She asked how you'd like to pay." }
+        ]
+      },
+      {
+        botEs: "Perfecto. ¿Su tarjeta es de cuenta ahorros o corriente, y a cuántas cuotas?",
+        botEn: "Perfect. Is your card savings or checking, and how many installments?",
+        tts: "Perfecto. ¿Su tarjeta es de cuenta ahorros o corriente, y a cuántas cuotas?",
+        options: [
+          { es: "De crédito, a una sola cuota, por favor.", en: "Credit, just one installment, please.", quality: "natural", tag: "✅ Natural", note: "Almost every Colombian terminal prompts for cuotas on credit cards — always say 'una cuota'." },
+          { es: "Quiero cero cuotas y solo pagar completo.", en: "I want zero installments and only pay complete.", quality: "stiff", tag: "⚠️ Confusing locally", note: "Cashiers always enter `1` for full single payment ('una cuota')." },
+          { es: "Necesito otra cobija para el frío.", en: "I need another blanket for the cold.", quality: "wrong", tag: "❌ Hotel script", note: "Answer about card type and cuotas!" }
+        ]
+      },
+      {
+        botEs: "Listo, ahí pasó aprobado. ¿Necesita factura electrónica o consumidor final?",
+        botEn: "Great, it went through approved. Do you need an electronic invoice or final consumer receipt?",
+        tts: "Listo, ahí pasó aprobado. ¿Necesita factura electrónica o consumidor final?",
+        options: [
+          { es: "Consumidor final está perfecto, gracias. ¿Me regala copia del recibo?", en: "Final consumer is perfect, thanks. Could I get a copy of the receipt?", quality: "natural", tag: "✅ Natural", note: "'Consumidor final' skips having to spell your passport number & email at registers!" },
+          { es: "Soy un consumidor biológico final del producto.", en: "I am a final biological consumer of the product.", quality: "stiff", tag: "⚠️ Literal gag", note: "Just say 'Consumidor final, por favor'." },
+          { es: "Voy hacia la carrera séptima.", en: "I'm heading toward Carrera 7.", quality: "wrong", tag: "❌ Off-topic", note: "Pick your receipt type!" }
+        ]
+      },
+      {
+        botEs: "Claro que sí, aquí tiene su recibo y su bolsa. ¡Que tenga excelente día!",
+        botEn: "Of course, here is your receipt and bag. Have an excellent day!",
+        tts: "Claro que sí, aquí tiene su recibo y su bolsa. Que tenga excelente día.",
+        options: [
+          { es: "¡Igualmente, muchísimas gracias! Hasta luego.", en: "Same to you, thank you so much! See you later.", quality: "natural", tag: "✅ Natural", note: "'¡Igualmente!' ('Same to you!') is Colombia's warmest all-purpose sign-off." },
+          { es: "Agradezco la transacción financiera completada.", en: "I appreciate the completed financial transaction.", quality: "stiff", tag: "⚠️ Robotic", note: "Keep it friendly with '¡Igualmente, gracias!'." },
+          { es: "Tengo dolor de muela.", en: "I have a toothache.", quality: "wrong", tag: "❌ Off-topic", note: "Respond warmly and wrap up!" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "chat-corrientazo",
+    title: "Almuerzo Corrientazo",
+    emoji: "🍽️",
+    place: "Neighborhood Diner · 12:30 PM",
+    partner: "Mesero Camilo",
+    turns: [
+      {
+        botEs: "¡Buenas tardes! Bienvenidos. Hoy el corrientazo trae sopa de ajiaco o crema de ahuyama. ¿Cuál prefieren?",
+        botEn: "Good afternoon! Welcome. Today's daily lunch comes with ajiaco soup or pumpkin cream soup. Which do you prefer?",
+        tts: "Buenas tardes, bienvenidos. Hoy el corrientazo trae sopa de ajiaco o crema de ahuyama. ¿Cuál prefieren?",
+        options: [
+          { es: "Buenas tardes, Camilo. Con sopa de ajiaco, por favor, se ve buenísimo.", en: "Good afternoon, Camilo. With ajiaco soup please, it looks delicious.", quality: "natural", tag: "✅ Natural", note: "Every corrientazo starts with picking your soup (or swapping for fruit!)." },
+          { es: "Seleccionaré el líquido cálido tradicional de papas.", en: "I shall select the traditional warm potato liquid.", quality: "stiff", tag: "⚠️ Robotic", note: "Simply say 'Con ajiaco, por favor'." },
+          { es: "Ahorita bajo a la portería.", en: "I'm heading down to the lobby shortly.", quality: "wrong", tag: "❌ Off-topic", note: "Choose your starter soup!" }
+        ]
+      },
+      {
+        botEs: "Súper. De proteína tenemos pechuga a la plancha o carne asada, y de principio frijoles o lentejas.",
+        botEn: "Great. For protein we have grilled chicken breast or grilled beef, and for the side beans or lentils.",
+        tts: "Súper. De proteína tenemos pechuga a la plancha o carne asada, y de principio frijoles o lentejas.",
+        options: [
+          { es: "Deme pechuga a la plancha con frijoles, tajadas y aguacate, por favor.", en: "Give me grilled chicken breast with beans, sweet plantains, and avocado, please.", quality: "natural", tag: "✅ Natural", note: "Knowing 'principio' (bean/lentil side) and 'tajadas' lets you order like a local." },
+          { es: "Requiero proteína aviar y leguminosas oscuras.", en: "I require avian protein and dark legumes.", quality: "stiff", tag: "⚠️ Too stiff", note: "Order plainly: 'Pechuga con frijoles, por favor'." },
+          { es: "¿Me cambia este billete de cincuenta en la aduana?", en: "Can you break this 50 bill at customs?", quality: "wrong", tag: "❌ Off-topic", note: "Pick your protein and side dish!" }
+        ]
+      },
+      {
+        botEs: "Con mucho gusto. ¿Y de sobremesa prefiere jugo de lulo o maracuyá? ¿En agua o en leche?",
+        botEn: "With pleasure. And for the lunch drink, do you prefer lulo or passionfruit juice? In water or milk?",
+        tts: "Con mucho gusto. ¿Y de sobremesa prefiere jugo de lulo o maracuyá? ¿En agua o en leche?",
+        options: [
+          { es: "De lulo en agua y bajito de azúcar, por favor.", en: "Lulo in water and light on sugar, please.", quality: "natural", tag: "✅ Natural", note: "'Sobremesa' is the included lunch juice, and 'bajito de azúcar' keeps it refreshing." },
+          { es: "Deseo la bebida frutal posterior en medio acuoso.", en: "I desire the subsequent fruit beverage in aqueous medium.", quality: "stiff", tag: "⚠️ Robotic", note: "Just say 'lulo en agua'!" },
+          { es: "No soy alérgico al datáfono.", en: "I am not allergic to the card terminal.", quality: "wrong", tag: "❌ Nonsense", note: "Order your lunch juice!" }
+        ]
+      },
+      {
+        botEs: "Enseguida sale su almuerzo, ¡buen provecho!",
+        botEn: "Your lunch will be right out, enjoy your meal!",
+        tts: "Enseguida sale su almuerzo, buen provecho.",
+        options: [
+          { es: "¡Muchas gracias, Camilo! Todo huele delicioso.", en: "Thank you very much, Camilo! Everything smells delicious.", quality: "natural", tag: "✅ Natural", note: "Waiters say '¡Buen provecho!' across Colombia — a warm '¡Gracias!' is the perfect reply." },
+          { es: "Esperaré el arribo alimenticio.", en: "I shall await the nutritional arrival.", quality: "stiff", tag: "⚠️ Robotic", note: "Say '¡Gracias!' warmly." },
+          { es: "¿Por cuál plataforma sale el bus?", en: "From which platform does the bus leave?", quality: "wrong", tag: "❌ Off-topic", note: "Thank Camilo for your lunch!" }
+        ]
+      }
+    ]
   }
 ];
 
@@ -962,5 +1331,21 @@ export const NATURAL_EAR_CLIPS = [
   { id: "ne-ahorita", fast: "Ya mismo le caigo, espérame ahí.", clear: "En un momento voy hacia allá, espérame allí.", phonetic: "ya MEES-mo le KAI-go", en: "I'm heading right over, wait for me there.", choices: ["I'm heading right over, wait for me there.", "I tripped walking outside.", "I already paid earlier."], answer: "I'm heading right over, wait for me there.", tip: "'Caer' ('le caigo') is everyday Colombian slang for dropping by / coming over." },
   { id: "ne-una-cuota", fast: "Sí señor, a una sola cuotica, gracias.", clear: "Sí señor, en un solo pago sin cuotas, gracias.", phonetic: "a-OO-na SO-la kwo-TEE-ka", en: "Yes sir, in a single payment, thank you.", choices: ["Yes sir, in a single payment, thank you.", "Yes, split into four payments.", "Yes, cash only today."], answer: "Yes sir, in a single payment, thank you.", tip: "Adding '-ica' ('cuotica') softens 'una cuota' politely at card terminals." },
   { id: "ne-quedamos", fast: "Listo, así quedamos entonces, ¿sí o qué?", clear: "De acuerdo, quedamos en ese plan, ¿cierto?", phonetic: "a-SEE ke-DA-mos en-TON-ses · SYO-ke", en: "All set, that's the plan then, right?", choices: ["All set, that's the plan then, right?", "Sorry, we ran out of food.", "Where did we stay last night?"], answer: "All set, that's the plan then, right?", tip: "'¿Sí o qué?' at the end is a fast Colombian tag meaning 'right? / deal?'." },
-  { id: "ne-sinpapaya", fast: "Pilas pues, no dé papaya por la noche.", clear: "Tenga cuidado, no deje cosas de valor a la vista por la noche.", phonetic: "PEE-las pwes · no de pa-PA-ya", en: "Stay sharp, don't make yourself an easy target at night.", choices: ["Stay sharp, don't make yourself an easy target at night.", "Don't buy fruit at night.", "Hurry up or the bus leaves."], answer: "Stay sharp, don't make yourself an easy target at night.", tip: "'Pilas' means 'stay alert / heads up', and 'no dar papaya' means stay street-smart." }
+  { id: "ne-sinpapaya", fast: "Pilas pues, no dé papaya por la noche.", clear: "Tenga cuidado, no deje cosas de valor a la vista por la noche.", phonetic: "PEE-las pwes · no de pa-PA-ya", en: "Stay sharp, don't make yourself an easy target at night.", choices: ["Stay sharp, don't make yourself an easy target at night.", "Don't buy fruit at night.", "Hurry up or the bus leaves."], answer: "Stay sharp, don't make yourself an easy target at night.", tip: "'Pilas' means 'stay alert / heads up', and 'no dar papaya' means stay street-smart." },
+  { id: "ne-hagale", fast: "Hágale pues, de una, allá nos vemos.", clear: "Adelante, por supuesto, allí nos encontramos.", phonetic: "A-ga-le pwes · de OO-na", en: "Go for it, right away, see you there.", choices: ["Go for it, right away, see you there.", "Do it slowly tomorrow.", "Nobody came to the meeting."], answer: "Go for it, right away, see you there.", tip: "'Hágale pues' + 'de una' is the classic upbeat Colombian green light ('let's do it / right away!')." },
+  { id: "ne-trancon", fast: "Voy colgado por el trancón en la séptima.", clear: "Voy retrasado debido al tráfico pesado en la carrera séptima.", phonetic: "boy kol-GA-do por el tran-KON", en: "I'm running late because of the traffic jam on Carrera 7.", choices: ["I'm running late because of the traffic jam on Carrera 7.", "My phone fell out on the bus.", "The coffee shop closed early."], answer: "I'm running late because of the traffic jam on Carrera 7.", tip: "'Trancón' means gridlock traffic, and 'ir colgado' means running behind schedule." },
+  { id: "ne-vueltas", fast: "Espere le doy las devueltas del de cincuenta.", clear: "Espere un momento, le entrego el cambio del billete de cincuenta mil.", phonetic: "es-PE-re le doy las de-BWEL-tas", en: "Hold on, let me give you change from your 50-mil bill.", choices: ["Hold on, let me give you change from your 50-mil bill.", "We don't accept cards today.", "Come back around five."], answer: "Hold on, let me give you change from your 50-mil bill.", tip: "In fast speech, 'el de cincuenta' drops 'billete' completely and 'devueltas' means change back." },
+  { id: "ne-acomo", fast: "Veci, ¿a cómo tiene la libra de lulo?", clear: "Vecino, ¿cuál es el precio de una libra de lulo?", phonetic: "BE-si · a KO-mo TYE-ne", en: "Neighbor, how much are you selling a pound of lulo for?", choices: ["Neighbor, how much are you selling a pound of lulo for?", "Do you have cold water?", "Is the market closed now?"], answer: "Neighbor, how much are you selling a pound of lulo for?", tip: "At markets and tiendas, '¿A cómo...?' is much faster and more local than '¿Cuánto cuesta?'." },
+  { id: "ne-mecolabora", fast: "¿Será que me colabora abriendo la puerta?", clear: "¿Podría ayudarme abriendo la puerta, por favor?", phonetic: "se-RA ke me ko-la-BO-ra", en: "Could you help me out by opening the door?", choices: ["Could you help me out by opening the door?", "Are you leaving the building?", "Where is the elevator?"], answer: "Could you help me out by opening the door?", tip: "'¿Me colabora…?' is Colombia's warmest polite request when asking guards or clerks for help." },
+  { id: "ne-deje-porteria", fast: "Veci, déjelo ahí en portería que ya bajo.", clear: "Por favor déjelo en la recepción porque ya voy a bajar.", phonetic: "DE-he-lo en por-te-REE-a ke ya BA-ho", en: "Neighbor, leave it there at the front desk, I'm coming down now.", choices: ["Neighbor, leave it there at the front desk, I'm coming down now.", "Take it back to the store.", "Send it tomorrow afternoon."], answer: "Neighbor, leave it there at the front desk, I'm coming down now.", tip: "Colombians use 'ya bajo / ya subo' ('coming right down / up') constantly on intercoms." },
+  { id: "ne-amanecio", fast: "¿Ajá primo, cómo amaneció hoy la familia?", clear: "Hola primo, ¿cómo despertó y cómo está la familia hoy?", phonetic: "a-HA PREE-mo · KO-mo a-ma-ne-SYO", en: "Hey cousin, how is the family doing this morning?", choices: ["Hey cousin, how is the family doing this morning?", "What time are you flying back?", "Did it rain yesterday?"], answer: "Hey cousin, how is the family doing this morning?", tip: "'¿Cómo amaneció?' literally asks how someone woke up — standard morning warmth across Colombia." },
+  { id: "ne-terrazita", fast: "Pásese pa' la terraza y prenda el abanico.", clear: "Pase hacia la terraza y encienda el ventilador.", phonetic: "PA-se-se pa la te-RA-sa", en: "Step out onto the front porch and turn on the fan.", choices: ["Step out onto the front porch and turn on the fan.", "Close the front gate tightly.", "Grab an umbrella outside."], answer: "Step out onto the front porch and turn on the fan.", tip: "In San Juan & the Caribbean coast, 'pa' la' = 'para la', and 'abanico' = electric fan." },
+  { id: "ne-provoca", fast: "¿Qué te provoca ahorita, empanadita o tinto?", clear: "¿Qué tienes ganas de comer o tomar ahora, empanada o café?", phonetic: "ke te pro-BO-ka ao-REE-ta", en: "What sounds good right now, a little empanada or black coffee?", choices: ["What sounds good right now, a little empanada or black coffee?", "Are you feeling sick today?", "Why did you cancel lunch?"], answer: "What sounds good right now, a little empanada or black coffee?", tip: "'Provocar' + '-ita' diminutives ('empanadita', 'ahorita') are pure everyday Colombian rhythm." },
+  { id: "ne-quepena", fast: "¡Uy, qué pena con usted, se me pasó!", clear: "Disculpe mucho, se me olvidó por completo.", phonetic: "UY ke PE-na kon us-TE", en: "Oh, I'm so sorry about that, it completely slipped my mind!", choices: ["Oh, I'm so sorry about that, it completely slipped my mind!", "No problem, I already ate.", "You arrived way too early."], answer: "Oh, I'm so sorry about that, it completely slipped my mind!", tip: "'¡Qué pena con usted!' means 'Excuse me / I'm sorry to bother you' (never shame), and 'se me pasó' = slipped my mind." },
+  { id: "ne-alacargo", fast: "Tranquilo, yo le caigo tipo cinco y media.", clear: "No se preocupe, voy a llegar alrededor de las cinco y media.", phonetic: "yo le KAI-go TEE-po SEEN-ko", en: "Don't worry, I'll drop by around 5:30.", choices: ["Don't worry, I'll drop by around 5:30.", "I left work at three today.", "Let's pay half each."], answer: "Don't worry, I'll drop by around 5:30.", tip: "'Tipo cinco' ('around 5') is heard far more in casual speech than 'alrededor de las cinco'." },
+  { id: "ne-quevaina", fast: "¡Ay, qué embarrada! Se nos saltaron los tacos.", clear: "¡Qué mala suerte! Se dispararon los interruptores de la luz.", phonetic: "ke em-ba-RA-da · los TA-kos", en: "Oh man, what a bummer! The circuit breakers tripped on us.", choices: ["Oh man, what a bummer! The circuit breakers tripped on us.", "Great job fixing the kitchen!", "Let's order dinner early."], answer: "Oh man, what a bummer! The circuit breakers tripped on us.", tip: "'¡Qué embarrada!' expresses friendly sympathy ('what a bummer!'), and 'los tacos' = breakers." },
+  { id: "ne-sumerce", fast: "¿A su merced le pongo ají encima o aparte?", clear: "¿A usted le sirvo la salsa picante encima o por separado?", phonetic: "a su mer-SE le PON-go a-HEE", en: "Shall I put the spicy sauce on top for you or on the side?", choices: ["Shall I put the spicy sauce on top for you or on the side?", "Do you want to eat upstairs?", "Will you pay by Nequi?"], answer: "Shall I put the spicy sauce on top for you or on the side?", tip: "'Su merced' is affectionate, respectful highland Colombian ('Bogotá / Boyacá') for 'you'." },
+  { id: "ne-hacemosvaca", fast: "Hagamos vaca por Nequi pa' pedir la picada.", clear: "Juntemos dinero entre todos por Nequi para pedir el plato compartido.", phonetic: "a-GA-mos BA-ka por NE-ki", en: "Let's all chip in via Nequi to order the shared platter.", choices: ["Let's all chip in via Nequi to order the shared platter.", "Let's go visit a farm tomorrow.", "Only one person can pay cash."], answer: "Let's all chip in via Nequi to order the shared platter.", tip: "'Hacer vaca' means pooling money together as a group ('going Dutch / chipping in')." },
+  { id: "ne-enagua", fast: "El de maracuyá en agua y sin pita ni pitillo.", clear: "El jugo de maracuyá preparado en agua y sin popote, gracias.", phonetic: "el de ma-ra-ku-YA en A-gwa", en: "The passionfruit juice in water and without a straw.", choices: ["The passionfruit juice in water and without a straw.", "Hot soup with milk please.", "Bring the check without tip."], answer: "The passionfruit juice in water and without a straw.", tip: "Locally speakers drop 'jugo' and just say 'el de maracuyá en agua' + 'pitillo' for straw." },
+  { id: "ne-pongacuidado", fast: "Póngale cuidado: siga dos cuadras y voltea allá.", clear: "Preste atención: avance dos calles y doble en aquel punto.", phonetic: "PON-ga-le kwi-DA-o · bol-TE-a", en: "Pay close attention: go two blocks straight and turn over there.", choices: ["Pay close attention: go two blocks straight and turn over there.", "Drive slowly in the rain.", "Wait until the light turns red."], answer: "Pay close attention: go two blocks straight and turn over there.", tip: "'Póngale cuidado' ('listen closely / check this out') and 'voltear' ('turn') are classic street directions." }
 ];

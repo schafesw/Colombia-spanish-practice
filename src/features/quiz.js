@@ -43,6 +43,13 @@ export function syncQuizControls(){
   document.querySelectorAll(".qcat").forEach((x,i)=>x.classList.toggle("active",!appState.qBlitzPack&&QC[i].id===appState.qCat));
   document.querySelectorAll(".qmode").forEach((x,i)=>x.classList.toggle("active",QUIZ_MODES[i].id===appState.qMode));
   document.querySelectorAll(".qblitz-btn").forEach(x=>x.classList.toggle("active",!!(appState.qBlitzPack&&x.dataset.blitz===appState.qBlitzPack.id)));
+  const missedChip=document.querySelector(".qv102-missed-btn");
+  if(missedChip){
+    const mCount=storedMissedQuestionCount();
+    missedChip.textContent=`🎯 Missed (${mCount})`;
+    missedChip.classList.toggle("active",!!appState.qMissedOnly);
+    missedChip.setAttribute("aria-pressed",appState.qMissedOnly?"true":"false");
+  }
   const focusSupported=FOCUS_MODES.has(appState.qMode);
   if(!focusSupported)appState.qFocus="all";
   if(qfs){qfs.value=appState.qFocus;qfs.disabled=!focusSupported;}
@@ -111,7 +118,7 @@ export function clearMissedQuiz(q){
   if(qStore.missed[canonical])delete qStore.missed[canonical];
   if(legacy!==canonical&&qStore.missed[legacy])delete qStore.missed[legacy];
 }
-export function exitMissedQueue(){appState.qMissedOnly=false;appState.repasoLeft=0;resetQuizRound();nQ();}
+export function exitMissedQueue(){appState.qMissedOnly=false;appState.repasoLeft=0;resetQuizRound();syncQuizControls();nQ();}
 export function openMissedQueue(){appState.qBlitzPack=null;showPage("quiz");appState.qMissedOnly=true;appState.qMode="mixed";appState.qCat="all";appState.qFocus="all";appState.repasoLeft=0;resetQuizRound();syncQuizControls();nQ();}
 export function nQ(){
   appState.an=false;document.getElementById("quiz-next").style.display="none";const quizFb=document.getElementById("quiz-fb"),quizReveal=document.getElementById("quiz-reveal");quizFb.innerHTML="";if(quizReveal){quizFb.appendChild(quizReveal);quizReveal.innerHTML="";}quizFb.classList.remove("visible");actions.syncMissedQueueLauncher();

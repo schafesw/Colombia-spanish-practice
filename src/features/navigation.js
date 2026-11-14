@@ -22,6 +22,7 @@ export const actions = {
   buildGram: () => {},
   buildSpeakingGuide: () => {},
   openMissedQueue: () => {},
+  exitMissedQueue: () => {},
   openReviewSession: () => {},
   openUnifiedSrsReview: () => false,
   openQuizV102Tab: () => {},

@@ -1,4 +1,4 @@
-import { COLOMBIA_CHATS } from "../../data/index.js";
+import { COLOMBIA_CHATS, ROLEPLAY_IMAGES } from "../../data/index.js";
 import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml } from "../core/text-utils.js";
 import { markPractice, recordSrs } from "../core/stores.js";
@@ -13,8 +13,12 @@ export function mountColombiaChatsLab(parent){
   const sec=document.createElement("section");sec.className="bridge-trainer-card colombia-chats-card";
   const render=()=>{
     const ch=COLOMBIA_CHATS[chatIdx%COLOMBIA_CHATS.length];
+    const chatHero=(typeof ROLEPLAY_IMAGES!=="undefined"&&ROLEPLAY_IMAGES[ch.id])
+      ?`<div class="chat-hero-banner rp-hero-banner"><img src="${ROLEPLAY_IMAGES[ch.id]}" alt="${escapeVocabHtml(ch.title)} · ${escapeVocabHtml(ch.place)}"/><span class="region-hero-badge">${escapeVocabHtml(ch.place)}</span></div>`
+      :"";
     sec.innerHTML=`<div class="bridge-kicker">💬 COLOMBIA CHATS · REAL 4-TURN ROLEPLAY</div>
       <div class="chat-tabs" role="tablist" aria-label="Colombia chat scenarios"></div>
+      ${chatHero}
       <div class="chat-header">
         <div class="chat-partner"><span class="chat-partner-ico">${escapeVocabHtml(ch.emoji)}</span><div><strong>${escapeVocabHtml(ch.partner)} · ${escapeVocabHtml(ch.title)}</strong><small>${escapeVocabHtml(ch.place)}</small></div></div>
         <span class="chat-turn-pill">${chatTurn>=ch.turns.length?"4/4 ✓":`Turn ${chatTurn+1}/${ch.turns.length}`}</span>
@@ -44,7 +48,7 @@ export function mountColombiaChatsLab(parent){
     }
     if(chatTurn>=ch.turns.length){
       const done=document.createElement("div");done.className="chat-done-box";
-      done.innerHTML=`<strong>🎉 ¡Conversación completa!</strong><div>First-try natural replies: <strong>${chatFirstTryOk} / ${ch.turns.length}</strong></div><div class="bridge-actions"><button type="button" class="lp-nav-btn chat-replay-btn">↻ Replay</button><button type="button" class="lp-nav-btn primary chat-next-btn">Next Chat →</button></div>`;
+      done.innerHTML=`<strong>🎉 Conversation Complete! (¡Conversación completa!)</strong><div>First-try natural replies: <strong>${chatFirstTryOk} / ${ch.turns.length}</strong></div><div class="bridge-actions"><button type="button" class="lp-nav-btn chat-replay-btn">↻ Replay</button><button type="button" class="lp-nav-btn primary chat-next-btn">Next Chat →</button></div>`;
       done.querySelector(".chat-replay-btn").onclick=()=>{chatTurn=0;chatSolved=false;chatWrongIds=[];chatCoachMsg="";chatFirstTryOk=0;render();};
       done.querySelector(".chat-next-btn").onclick=()=>{chatIdx=(chatIdx+1)%COLOMBIA_CHATS.length;chatTurn=0;chatSolved=false;chatWrongIds=[];chatCoachMsg="";chatFirstTryOk=0;render();};
       thread.appendChild(done);

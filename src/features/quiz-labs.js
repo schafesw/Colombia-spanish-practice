@@ -5,8 +5,9 @@ import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml, applyQuizFitClasses } from "../core/text-utils.js";
 import { markPractice } from "../core/stores.js";
 import { attachMic } from "../core/speech-mic.js";
-import { RR_BANK } from "../core/quiz-bank.js";
+import { RR_BANK, storedMissedQuestionCount } from "../core/quiz-bank.js";
 import { pmFilteredPool, renderPictureMatchDeck } from "./picture-match.js";
+import { actions } from "./navigation.js";
 
 export function mountNaturalEarLab(parent){
   if(!parent||typeof NATURAL_EAR_CLIPS==="undefined"||!NATURAL_EAR_CLIPS.length)return;
@@ -118,14 +119,34 @@ export function renderQuizV102Hub(){
   const bar=document.createElement("div");bar.className="qv102-bar";
   const pmCount=typeof PICTURE_MATCH_BANK!=="undefined"?PICTURE_MATCH_BANK.length:20;
   [["off","📝 Standard Quiz"],["picture",`🖼️ Picture Match (${pmCount})`],["sprint","⏱️ 60s Fluency Sprint"]].forEach(([tid,lbl])=>{
-    const b=document.createElement("button");b.type="button";b.className="mf-chip"+(qV102Tab===tid?" active":"");
+    const b=document.createElement("button");b.type="button";b.className="mf-chip"+(qV102Tab===tid&&!appState.qMissedOnly?" active":"");
     b.textContent=lbl;
     b.onclick=()=>{
       if(tid!=="sprint"&&appState.spTimer){clearInterval(appState.spTimer);appState.spTimer=null;appState.spRunning=false;}
+      if(tid==="off"&&appState.qMissedOnly){actions.exitMissedQueue();}
       qV102Tab=tid;renderQuizV102Hub();
     };
     bar.appendChild(b);
   });
+  const mCount=storedMissedQuestionCount();
+  const mBtn=document.createElement("button");mBtn.type="button";
+  mBtn.className="mf-chip qv102-missed-btn"+(qV102Tab==="off"&&appState.qMissedOnly?" active":"");
+  mBtn.textContent=`🎯 Missed (${mCount})`;
+  mBtn.setAttribute("aria-pressed",qV102Tab==="off"&&appState.qMissedOnly?"true":"false");
+  mBtn.title=mCount?`Practice ${mCount} missed question(s)`:"No missed items right now — tap for SRS review";
+  mBtn.onclick=()=>{
+    if(appState.spTimer){clearInterval(appState.spTimer);appState.spTimer=null;appState.spRunning=false;}
+    if(qV102Tab==="off"&&appState.qMissedOnly){
+      actions.exitMissedQueue();
+      renderQuizV102Hub();
+      return;
+    }
+    qV102Tab="off";
+    if(storedMissedQuestionCount()>0)actions.openMissedQueue();
+    else actions.openReviewSession();
+    renderQuizV102Hub();
+  };
+  bar.appendChild(mBtn);
   host.appendChild(bar);
   if(qV102Tab==="picture"){
     const pmSlot=document.createElement("div");pmSlot.className="qv102-panel";
