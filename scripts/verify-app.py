@@ -198,10 +198,13 @@ def check_version_parity():
     ver_num = ver.lstrip("v")
 
     idx_txt = (ROOT / "index.html").read_text(encoding="utf-8")
-    for asset in ("manifest.json", "styles/base.css", "styles/polish.css", "styles/labs.css", "styles/shell.css", "src/main.js"):
+    for asset in ("manifest.json", "styles/base.css", "styles/polish.css", "styles/labs.css", "styles/shell.css"):
         needle = f"{asset}?v={ver_num}"
         if needle not in idx_txt:
             errors.append(f"index.html: missing versioned reference `{needle}` (expected {ver})")
+    has_sync_entry = (ROOT / "sync.js").exists() and f"sync.js?v={ver_num}" in idx_txt
+    if f"src/main.js?v={ver_num}" not in idx_txt and not has_sync_entry:
+        errors.append(f"index.html: missing versioned entrypoint (`src/main.js?v={ver_num}` or `sync.js?v={ver_num}`)")
 
     main_txt = (ROOT / "src" / "main.js").read_text(encoding="utf-8")
     for needle in (f"App updated to {ver}", f"sw.js?v={ver_num}"):

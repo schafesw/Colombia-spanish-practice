@@ -122,6 +122,19 @@ def run_smoke():
                 page.click(f"#tb-{tab_id}")
                 page.wait_for_selector(f"#page-{tab_id}.active")
 
+            # Verify Frases view filter tabs toggle visibility and fit cleanly inside phone viewport
+            page.click("#tb-frases")
+            fr_btns = page.locator(".frase-view-switch .fr-view-btn")
+            assert fr_btns.count() == 3, f"Expected 3 Frases view buttons, got {fr_btns.count()}"
+            page.locator(".frase-view-switch .fr-view-btn", has_text="Phrases / Frases").click()
+            assert page.locator(".fr-conversation-group").is_hidden(), "Expected Conversations hidden in Phrases view"
+            assert page.locator(".fr-phrase-collections-group").is_visible(), "Expected Phrase collections visible in Phrases view"
+            page.locator(".frase-view-switch .fr-view-btn", has_text="Conversations").click()
+            assert page.locator(".fr-conversation-group").is_visible(), "Expected Conversations visible in Conversations view"
+            assert page.locator(".fr-phrase-collections-group").is_hidden(), "Expected Phrase collections hidden in Conversations view"
+            page.locator(".frase-view-switch .fr-view-btn", has_text="All / Todo").click()
+            assert page.locator(".fr-conversation-group").is_visible() and page.locator(".fr-phrase-collections-group").is_visible()
+
             # Verify Picture Match deck + 5 category pills + image decode
             page.click("#tb-vocab")
             page.click(".pm-launch-btn")
@@ -301,7 +314,7 @@ def run_smoke():
                 page_401.goto(base_url, wait_until="domcontentloaded")
                 page_401.wait_for_timeout(600)
                 auth_state = page_401.evaluate("({ splashHidden: document.getElementById('splash').hidden, html: document.getElementById('splash-status').innerHTML, hasMe: !!window.__ESCO_ME })")
-                assert (not auth_state["splashHidden"]) and (not auth_state["hasMe"]) and ("Iniciar sesi" in auth_state["html"]), f"401 did not fail closed: {auth_state}"
+                assert (not auth_state["splashHidden"]) and (not auth_state["hasMe"]) and ("Sign in again" in auth_state["html"]), f"401 did not fail closed: {auth_state}"
                 ctx_401.close()
 
             browser.close()

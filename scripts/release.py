@@ -186,24 +186,33 @@ def release_to_github(version, files, message):
 
     print(f"==> Step 5: Waiting for GitHub Actions CI on PR #{pr_num} ({new_sha[:8]}) BEFORE merging main...")
     ci_ok = False
-    for attempt in range(40):
+    for attempt in range(45):
         time.sleep(5)
         st_runs, runs = gh_api(pat, "GET", f"/actions/runs?head_sha={new_sha}")
         assert st_runs == 200, (st_runs, runs)
         verify_runs = [r for r in runs.get("workflow_runs", []) if r.get("name") == "Verify Español · Colombia"]
-        if verify_runs:
-            run = verify_runs[0]
-            print(f"    CI poll {attempt + 1}: status={run.get('status')} conclusion={run.get('conclusion')}")
-            if run.get("status") == "completed":
-                if run.get("conclusion") != "success":
-                    raise RuntimeError(f"ABORTED MERGE: CI failed with conclusion={run.get('conclusion')}")
-                ci_ok = True
-                break
+        st_cr, cr = gh_api(pat, "GET", f"/commits/{new_sha}/check-runs")
+        verify_checks = [c for c in (cr.get("check_runs", []) if st_cr == 200 else []) if c.get("name") == "verify"]
+        if verify_runs and all(r.get("status") == "completed" for r in verify_runs) and (not verify_checks or all(c.get("status") == "completed" for c in verify_checks)):
+            bad = [r.get("conclusion") for r in verify_runs if r.get("conclusion") != "success"] + [c.get("conclusion") for c in verify_checks if c.get("conclusion") != "success"]
+            if bad:
+                raise RuntimeError(f"ABORTED MERGE: CI failed with conclusions={bad}")
+            ci_ok = True
+            print(f"    CI poll {attempt + 1}: all {len(verify_runs)} workflow run(s) & {len(verify_checks)} check-run(s) succeeded")
+            break
+        statuses = [r.get("status") for r in verify_runs] + [c.get("status") for c in verify_checks]
+        print(f"    CI poll {attempt + 1}: statuses={statuses or ['pending']}")
     if not ci_ok:
         raise RuntimeError("ABORTED MERGE: Timed out waiting for GitHub Actions CI")
 
-    st_mg, mg = gh_api(pat, "PUT", f"/pulls/{pr_num}/merge", {"merge_method": "merge"})
-    assert st_mg == 200, (st_mg, mg)
+    for mg_try in range(6):
+        st_mg, mg = gh_api(pat, "PUT", f"/pulls/{pr_num}/merge", {"merge_method": "merge"})
+        if st_mg == 200:
+            break
+        if st_mg == 405 and "in progress" in str(mg.get("message", "")).lower() and mg_try < 5:
+            time.sleep(5)
+            continue
+        assert st_mg == 200, (st_mg, mg)
     main_sha = mg["sha"]
     print(f"==> Step 6: CI passed! Merged PR #{pr_num} -> main {main_sha[:8]}")
 

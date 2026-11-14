@@ -31,7 +31,7 @@ function hasExistingSethData(){
   }catch(e){}
   return false;
 }
-export const APP_VERSION = "v110.0";
+export const APP_VERSION = "v111.0";
 const SYNC_EXCLUDED_KEYS = new Set(["esco-selected-voice-v45", "esco-selected-voice-v1", "esco-selected-voice-v3"]);
 const savedActiveBeforeInit=(()=>{try{return nativeStorage.getItem(ACTIVE_PROFILE_KEY);}catch(e){return null;}})();
 const portalPrincipal = (typeof window !== "undefined" && window.__ESCO_ME && window.__ESCO_ME.principal_id) ? window.__ESCO_ME : null;
@@ -97,7 +97,7 @@ function initialsOf(name){return String(name||"?").trim().split(/\s+/).slice(0,2
 function saveAvatar(avatar){
   fetch("/api/avatar",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({avatar})})
     .then(r=>{if(!r.ok)throw new Error("avatar");if(window.__ESCO_ME)window.__ESCO_ME.avatar=avatar;buildProfileBar();})
-    .catch(()=>alert("No se pudo guardar el avatar. Revisa tu conexión."));
+    .catch(()=>alert("Could not save avatar. Check your connection."));
 }
 if(typeof document!=="undefined"&&!window.__escoSyncListenerBound){
   window.__escoSyncListenerBound=true;
@@ -106,7 +106,7 @@ if(typeof document!=="undefined"&&!window.__escoSyncListenerBound){
 function buildAccountBar(host){
   host.innerHTML="";
   const me=window.__ESCO_ME;
-  const name=me.display_name||me.username||"Mi cuenta";
+  const name=me.display_name||me.username||"My Account";
   const drawer=document.createElement("details");drawer.className="top-utility-drawer profile-utility-drawer";
   const summary=document.createElement("summary");summary.className="top-utility-summary account-summary";
   const avSpan=document.createElement("span");avSpan.className="account-avatar";
@@ -114,20 +114,20 @@ function buildAccountBar(host){
   if(av.kind==="photo"&&av.data){const im=document.createElement("img");im.src=av.data;im.alt="";avSpan.appendChild(im);}
   else avSpan.textContent=av.kind==="emoji"?(av.value||"👤"):initialsOf(name);
   const nameSpan=document.createElement("span");nameSpan.className="account-name";nameSpan.textContent=name;
-  const dotSpan=document.createElement("small");dotSpan.className="sync-dot";dotSpan.id="sync-dot";dotSpan.title="Progreso sincronizado";dotSpan.textContent="●";
+  const dotSpan=document.createElement("small");dotSpan.className="sync-dot";dotSpan.id="sync-dot";dotSpan.title="Progress synced";dotSpan.textContent="●";
   if(window.__escoSyncState&&!window.__escoSyncState.online)dotSpan.style.color="var(--gold)";
   summary.append(avSpan,nameSpan,dotSpan);
   const utilityBody=document.createElement("div");utilityBody.className="top-utility-body";
   const pendingImport=typeof window!=="undefined"&&window.__ESCO_PENDING_LOCAL_IMPORT;
   if(pendingImport&&Object.keys(pendingImport).length){
     const impBanner=document.createElement("div");impBanner.className="import-legacy-banner";
-    const impText=document.createElement("span");impText.textContent=`Hay progreso local previo (${Object.keys(pendingImport).length} claves). ¿Importarlo a esta cuenta?`;
-    const impBtn=document.createElement("button");impBtn.type="button";impBtn.className="profile-reset";impBtn.textContent="📥 Importar progreso local";
+    const impText=document.createElement("span");impText.textContent=`Previous local progress found (${Object.keys(pendingImport).length} items). Import into this account?`;
+    const impBtn=document.createElement("button");impBtn.type="button";impBtn.className="profile-reset";impBtn.textContent="📥 Import local progress";
     impBtn.onclick=()=>{
       impBtn.disabled=true;
       fetch("/api/import",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items:pendingImport})})
         .then(r=>{if(!r.ok&&r.status!==409)throw new Error("import");const p=`esco-profile-${activeProfileId}-`;Object.entries(pendingImport).forEach(([k,v])=>{if(typeof v==="string")nativeStorage.setItem(p+k,v);});delete window.__ESCO_PENDING_LOCAL_IMPORT;location.reload();})
-        .catch(()=>{impBtn.disabled=false;alert("No se pudo importar el progreso.");});
+        .catch(()=>{impBtn.disabled=false;alert("Could not import progress.");});
     };
     impBanner.append(impText,impBtn);utilityBody.appendChild(impBanner);
   }
@@ -136,27 +136,27 @@ function buildAccountBar(host){
   who.textContent=(me.email||"")+(me.provider?(" · "+me.provider):"");
   const controls=[who];
   if(me.profile_url){
-    const portal=document.createElement("a");portal.className="profile-reset account-link";portal.href=me.profile_url;portal.textContent="Mi cuenta";portal.title="Ver tu perfil en el portal";
+    const portal=document.createElement("a");portal.className="profile-reset account-link";portal.href=me.profile_url;portal.target="_blank";portal.rel="noopener";portal.textContent="My Account";portal.title="View your Global Entry portal profile";
     controls.push(portal);
   }
-  const reset=document.createElement("button");reset.type="button";reset.className="profile-reset";reset.textContent="Reiniciar mi progreso";
+  const reset=document.createElement("button");reset.type="button";reset.className="profile-reset";reset.textContent="Reset progress";
   reset.onclick=()=>{
-    if(!confirm("¿Borrar tu progreso guardado? Solo se borra tu cuenta."))return;
+    if(!confirm("Clear your saved progress? Only your account will be reset."))return;
     const prefix=`esco-profile-${activeProfileId}-`;const keys=[];
     for(let i=0;i<nativeStorage.length;i++){const k=nativeStorage.key(i);if(k&&k.startsWith(prefix))keys.push(k);}
     keys.forEach(k=>{const rawKey=k.slice(prefix.length);if(window.__escoQueueSync&&!SYNC_EXCLUDED_KEYS.has(rawKey))window.__escoQueueSync(rawKey,null);nativeStorage.removeItem(k);});
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent=`${APP_VERSION} 🔊`;ver.title="Probar audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent=`${APP_VERSION} 🔊`;ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>audioTestHook("Hola, buenos días Colombia",0.82);
-  const themeBtn=document.createElement("button");themeBtn.type="button";themeBtn.id="theme-toggle-btn";themeBtn.className="profile-reset";themeBtn.textContent=(appStorage.getItem("esco-theme-v101")==="light"?"🌙 Dark":"☀️ Sun");themeBtn.title="Tema oscuro / claro";themeBtn.onclick=()=>themeToggleHook();
+  const themeBtn=document.createElement("button");themeBtn.type="button";themeBtn.id="theme-toggle-btn";themeBtn.className="profile-reset";themeBtn.textContent=(appStorage.getItem("esco-theme-v101")==="light"?"🌙 Dark":"☀️ Sun");themeBtn.title="Switch dark / sunlight theme";themeBtn.onclick=()=>themeToggleHook();
   const picker=document.createElement("div");picker.className="avatar-picker";
   const pLabel=document.createElement("span");pLabel.className="profile-label";pLabel.textContent="Avatar";
   ["🦉","🦜","☕","🌮","🚕","📚"].forEach(e=>{
-    const b=document.createElement("button");b.type="button";b.className="avatar-preset";b.textContent=e;b.title="Elegir avatar";
+    const b=document.createElement("button");b.type="button";b.className="avatar-preset";b.textContent=e;b.title="Choose avatar";
     b.onclick=()=>saveAvatar({kind:"emoji",value:e});picker.appendChild(b);
   });
-  const photoBtn=document.createElement("label");photoBtn.className="profile-reset avatar-photo";photoBtn.textContent="Subir foto";
+  const photoBtn=document.createElement("label");photoBtn.className="profile-reset avatar-photo";photoBtn.textContent="Upload photo";
   const file=document.createElement("input");file.type="file";file.accept="image/*";file.hidden=true;
   file.onchange=()=>{
     const f=file.files&&file.files[0];if(!f)return;
@@ -171,7 +171,7 @@ function buildAccountBar(host){
     img.src=url;
   };
   photoBtn.appendChild(file);
-  const initBtn=document.createElement("button");initBtn.type="button";initBtn.className="profile-reset";initBtn.textContent="Iniciales";
+  const initBtn=document.createElement("button");initBtn.type="button";initBtn.className="profile-reset";initBtn.textContent="Initials";
   initBtn.onclick=()=>saveAvatar({kind:"initials"});
   picker.prepend(pLabel);picker.append(photoBtn,initBtn);
   controls.push(reset,ver,themeBtn);
@@ -216,7 +216,7 @@ export function buildProfileBar(){
     keys.forEach(k=>nativeStorage.removeItem(k));
     location.reload();
   };
-  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v110.0 🔊";ver.title="Tap to test iPhone/computer audio";
+  const ver=document.createElement("button");ver.type="button";ver.className="profile-reset";ver.textContent="v111.0 🔊";ver.title="Tap to test iPhone/computer audio";
   ver.onclick=()=>audioTestHook("Hola, buenos días Colombia",0.82);const themeBtn=document.createElement("button");themeBtn.type="button";themeBtn.id="theme-toggle-btn";themeBtn.className="profile-reset";themeBtn.textContent=(appStorage.getItem("esco-theme-v101")==="light"?"🌙 Dark":"☀️ Sun");themeBtn.title="Switch dark / sunlight theme";themeBtn.onclick=()=>themeToggleHook();
   bar.append(label,select,addBtn,reset,ver,themeBtn);utilityBody.appendChild(bar);attachProfileBackupControls(utilityBody);drawer.append(summary,utilityBody);host.appendChild(drawer);
 }
@@ -239,7 +239,7 @@ export function attachProfileBackupControls(utilityBody){
         const k=nativeStorage.key(i);
         if(k&&k.startsWith(prefix))data[k.slice(prefix.length)]=nativeStorage.getItem(k);
       }
-      const payload=JSON.stringify({app:"espanol-colombia",version:"v110.0",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
+      const payload=JSON.stringify({app:"espanol-colombia",version:"v111.0",profile:activeProfileId,exportedAt:new Date().toISOString(),data},null,2);
       const blob=new Blob([payload],{type:"application/json"});
       const url=URL.createObjectURL(blob);
       const a=document.createElement("a");
