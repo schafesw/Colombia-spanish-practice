@@ -1,5 +1,5 @@
-/* Navigation network-first + stale-while-revalidate asset Service Worker for Español · Colombia PWA (v113.1) */
-const CACHE_NAME = "esco-pwa-v113.1";
+/* Navigation + JS/CSS network-first, static media stale-while-revalidate Service Worker for Español · Colombia PWA (v113.2) */
+const CACHE_NAME = "esco-pwa-v113.2";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -156,8 +156,9 @@ self.addEventListener("fetch", event => {
   if (sameOrigin && url.pathname.startsWith("/api/")) return;
   const isNav = req.mode === "navigate" || ((req.headers.get("accept") || "").includes("text/html"));
   const hasVersionQuery = sameOrigin && url.searchParams.has("v");
+  const isCodeOrStyle = sameOrigin && (url.pathname.endsWith(".js") || url.pathname.endsWith(".css"));
 
-  if (isNav || hasVersionQuery) {
+  if (isNav || hasVersionQuery || isCodeOrStyle) {
     event.respondWith(
       fetch(req)
         .then(res => {
