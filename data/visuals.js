@@ -11,14 +11,23 @@ export const REGION_IMAGES = {
 
 export const ROLEPLAY_IMAGES = {
   "rp-tienda-napa": "assets/scene-tienda.webp",
-  "rp-sanjuan-familia": "assets/region-sanjuan.webp",
+  "rp-sanjuan-familia": "assets/scene-terraza.webp",
   "rp-sanjuan-parranda": "assets/guide-sanjuan.webp",
-  "rp-corrientazo": "assets/guide-corrientazo.webp",
+  "rp-corrientazo": "assets/scene-restaurante.webp",
   "rp-taxi": "assets/scene-bogota-noche.webp",
-  "rp-uber": "assets/scene-bogota-noche.webp",
+  "rp-uber": "assets/scene-uber.webp",
   "rp-panaderia": "assets/scene-panaderia.webp",
-  "rp-drogueria": "assets/region-medellin.webp",
-  "rp-cita": "assets/region-cali.webp"
+  "rp-drogueria": "assets/scene-farmacia.webp",
+  "rp-cita": "assets/region-cali.webp",
+  "chat-panaderia": "assets/scene-panaderia.webp",
+  "chat-uber": "assets/scene-uber.webp",
+  "chat-tienda": "assets/scene-tienda.webp",
+  "chat-sanjuan": "assets/scene-terraza.webp",
+  "chat-aeropuerto": "assets/scene-aeropuerto.webp",
+  "chat-farmacia": "assets/scene-farmacia.webp",
+  "chat-porteria": "assets/scene-porteria.webp",
+  "chat-pagos": "assets/guide-pagos.webp",
+  "chat-corrientazo": "assets/scene-restaurante.webp"
 };
 
 export const VISUAL_GUIDES = [

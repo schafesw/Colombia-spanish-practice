@@ -616,3 +616,31 @@
   .lp-quiz-photo{width:116px;height:116px;}
   .lp-quiz-photo-wrap{margin:2px 0 8px;}
 }
+
+/* ── v112.0: English Lesson Subtitles, Global Finder & Chat Hero Scenes ── */
+.lesson-en-sub{font-size:0.75rem;color:var(--teal);font-weight:700;margin-top:2px;line-height:1.25;}
+:root[data-theme="light"] .lesson-en-sub{color:#0f766e;}
+.global-finder-card{margin:10px 0 12px;padding:12px 14px;border-radius:16px;background:var(--card);border:1px solid var(--border);display:flex;flex-direction:column;gap:8px;}
+.global-finder-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:6px;}
+.global-finder-head strong{font-size:0.9rem;color:var(--text);}
+.global-finder-head small{font-size:0.73rem;color:var(--muted);}
+.global-finder-input{width:100%;padding:9px 12px;border-radius:11px;border:1px solid var(--border-strong);background:var(--surface2);color:var(--text);font-size:0.86rem;font-family:inherit;}
+.global-finder-input::placeholder{color:var(--muted);}
+.global-finder-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.global-finder-results{display:flex;flex-direction:column;gap:6px;}
+.global-finder-hit{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:9px 11px;border-radius:12px;border:1px solid var(--border);background:var(--card-2);color:var(--text);cursor:pointer;transition:border-color .15s ease,background .15s ease;}
+.global-finder-hit:hover,.global-finder-hit:focus-visible{border-color:var(--teal);background:var(--surface2);}
+.gf-hit-ico{font-size:1.15rem;flex-shrink:0;}
+.gf-hit-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.gf-hit-copy strong{font-size:0.84rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gf-hit-copy small{font-size:0.73rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gf-hit-badge{flex-shrink:0;padding:3px 8px;border-radius:999px;font-size:0.67rem;font-weight:800;background:rgba(53,201,158,0.14);color:var(--teal);border:1px solid rgba(53,201,158,0.28);}
+.global-finder-empty{font-size:0.8rem;color:var(--muted);padding:6px 2px;}
+.chat-hero-banner{margin:6px 0 8px;}
+.chat-hero-banner img{height:132px;}
+:root[data-theme="light"] .global-finder-card{background:#ffffff;border-color:rgba(20,32,26,0.16);}
+:root[data-theme="light"] .global-finder-input{background:#f2f5f1;color:#14201a;border-color:rgba(20,32,26,0.22);}
+:root[data-theme="light"] .global-finder-hit{background:#f7f9f6;color:#14201a;border-color:rgba(20,32,26,0.14);}
+:root[data-theme="light"] .global-finder-hit:hover{background:#e7f3ee;border-color:#0f766e;}
+:root[data-theme="light"] .gf-hit-badge{background:rgba(15,118,110,0.12);color:#0f766e;border-color:rgba(15,118,110,0.3);}
+:root[data-theme="light"] .qv102-missed-btn.active{background:rgba(190,18,60,0.12);border-color:#be123c;color:#9f1239;}

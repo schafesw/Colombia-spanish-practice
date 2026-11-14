@@ -6,6 +6,7 @@ import {
   SPEAKING_FRAMES, SENTENCE_LADDERS, SLOT_SWAP_MATRICES,
   TONGUE_TWISTERS, SPEAKING_GUIDE, REGIONAL_SWITCHER,
   PICTURE_MATCH_BANK, COLOMBIA_CHATS, GRAMMAR, VERB_VERSATILITY_ENGINE,
+  VC, FRASES, VISUAL_GUIDES, COLOMBIANISMOS,
 } from "../../data/index.js";
 import { appStorage } from "../state/storage.js";
 import { appState } from "../state/app-state.js";
@@ -265,8 +266,14 @@ export function renderQuizAuditCard(root){
 }
 
 export function syncMissedQueueLauncher(){
-  const host=document.getElementById("quiz-review-launch");if(!host)return;
+  const missedChip=document.querySelector(".qv102-missed-btn");
   const count=storedMissedQuestionCount();
+  if(missedChip){
+    missedChip.textContent=`🎯 Missed (${count})`;
+    missedChip.classList.toggle("active",!!appState.qMissedOnly);
+    missedChip.setAttribute("aria-pressed",appState.qMissedOnly?"true":"false");
+  }
+  const host=document.getElementById("quiz-review-launch");if(!host)return;
   host.hidden=appState.qMissedOnly||count===0;
   if(host.hidden){host.innerHTML="";return;}
   host.innerHTML=`<span>🧠 <strong>${count} missed question${count===1?"":"s"}</strong> waiting for review</span><button type="button" class="quiz-review-launch-btn">Review missed →</button>`;
@@ -587,6 +594,75 @@ export function renderLessons(){
   };
   root.appendChild(focusStrip);
 
+  /* 3c. Global App Finder across Lessons, Phrases, Vocab & Visual Guides */
+  const foldFinder=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+  const runGlobalFinder=raw=>{
+    const q=foldFinder(raw).trim();
+    if(q.length<2)return [];
+    const hits=[];
+    LESSONS.forEach((l,li)=>{
+      if(foldFinder(`${l.title} ${l.sub} ${l.enSub||""} ${l.id} ${l.vocab}`).includes(q)){
+        hits.push({kind:"Lesson",ico:l.icon||"📚",title:`#${li+1} ${l.title}`,sub:l.enSub||l.sub,go:()=>openLesson(l)});
+      }
+    });
+    FRASES.forEach((sec,si)=>{
+      const matchSec=foldFinder(sec.section).includes(q);
+      const matchItem=(sec.items||[]).find(it=>foldFinder(`${it.es} ${it.en}`).includes(q));
+      if(matchSec||matchItem){
+        hits.push({kind:"Phrases",ico:"💬",title:sec.section,sub:matchItem?`${matchItem.es} — ${matchItem.en}`:`${(sec.items||[]).length} expressions`,go:()=>{showPage("frases");actions.renderFraseSection(si);}});
+      }
+    });
+    VC.forEach(cat=>{
+      const matchCat=foldFinder(`${cat.label} ${cat.id}`).includes(q);
+      let matchItem=(cat.items||[]).find(it=>foldFinder(`${it.word||it.es||""} ${it.en||""}`).includes(q));
+      if(!matchItem&&cat.id==="colombianismos"&&typeof COLOMBIANISMOS!=="undefined"){
+        matchItem=COLOMBIANISMOS.find(it=>foldFinder(`${it.word||""} ${it.en||""}`).includes(q));
+      }
+      if(matchCat||matchItem){
+        hits.push({kind:"Vocab",ico:"🗂️",title:cat.label,sub:matchItem?`${matchItem.word||matchItem.es} — ${matchItem.en}`:"Vocabulary flashcards",go:()=>{showPage("vocab");actions.sCat(cat.id);}});
+      }
+    });
+    (VISUAL_GUIDES||[]).forEach(vg=>{
+      if(foldFinder(`${vg.title} ${vg.sub} ${vg.region||""} ${vg.es||""} ${vg.en||""}`).includes(q)){
+        hits.push({kind:"Poster",ico:"🖼️",title:vg.title,sub:vg.sub||vg.en,go:()=>{showPage("gram");actions.showGramGroup("posters");}});
+      }
+    });
+    return hits.slice(0,8);
+  };
+  const finderCard=document.createElement("section");finderCard.className="global-finder-card";finderCard.dataset.lessonView="today";
+  finderCard.innerHTML=`<div class="global-finder-head"><strong>🔎 Global Finder</strong><small>Search lessons, phrases, vocab &amp; posters</small></div>
+    <div class="global-finder-bar"><input type="search" class="global-finder-input" placeholder="Try: airport, Nequi, pharmacy, tinto, slang…" aria-label="Search across lessons, phrases, vocabulary, and guides"/></div>
+    <div class="global-finder-chips"></div>
+    <div class="global-finder-results" aria-live="polite"></div>`;
+  const fInput=finderCard.querySelector(".global-finder-input");
+  const fChips=finderCard.querySelector(".global-finder-chips");
+  const fRes=finderCard.querySelector(".global-finder-results");
+  const renderFinder=val=>{
+    const q=String(val||"").trim();
+    fRes.innerHTML="";
+    if(q.length<2)return;
+    const rows=runGlobalFinder(q);
+    if(!rows.length){
+      const empty=document.createElement("div");empty.className="global-finder-empty";
+      empty.textContent=`No matches for "${q}" — try English or Spanish keywords like "uber", "nequi", or "familia".`;
+      fRes.appendChild(empty);
+      return;
+    }
+    rows.forEach(r=>{
+      const btn=document.createElement("button");btn.type="button";btn.className="global-finder-hit";
+      btn.innerHTML=`<span class="gf-hit-ico">${r.ico}</span><span class="gf-hit-copy"><strong>${escapeVocabHtml(r.title)}</strong><small>${escapeVocabHtml(r.sub||"")}</small></span><span class="gf-hit-badge">${escapeVocabHtml(r.kind)}</span>`;
+      btn.onclick=r.go;
+      fRes.appendChild(btn);
+    });
+  };
+  [["🚕 Uber","uber"],["☕ Bakery","panaderia"],["💳 Nequi","nequi"],["💊 Pharmacy","farmacia"],["❤️ Family","familia"]].forEach(([lbl,term])=>{
+    const c=document.createElement("button");c.type="button";c.className="mf-chip";c.textContent=lbl;
+    c.onclick=()=>{fInput.value=term;renderFinder(term);};
+    fChips.appendChild(c);
+  });
+  fInput.oninput=()=>renderFinder(fInput.value);
+  root.appendChild(finderCard);
+
   /* 4. Compact Stats + Secondary Practice Grid (collapsed for brand-new Starter learners) */
   if(lvlMode==="starter"&&done<3){
     const moreWrap=document.createElement("details");moreWrap.className="starter-more-tools";moreWrap.dataset.lessonView="today";
@@ -684,7 +760,7 @@ export function renderLessons(){
       lessonNum++;
       const recommended=nextLesson&&nextLesson.id===lesson.id;
       const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"")+(recommended?" recommended":"");card.dataset.lessonView="path";
-      card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div><div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div><div class="lesson-deeplinks"></div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
+      card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div>${lesson.enSub?`<div class="lesson-en-sub">${escapeVocabHtml(lesson.enSub)}</div>`:""}<div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div><div class="lesson-deeplinks"></div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
       const dlRow=card.querySelector(".lesson-deeplinks");
       [
         ["💬 Diálogo",()=>{showPage("frases");const d=lessonDialogue(lesson);if(d){appState.fraseReturnToLessons=true;actions.renderFraseDialogue(d);}}],
@@ -706,7 +782,7 @@ export function renderLessons(){
     lessonNum++;
     const recommended=nextLesson&&nextLesson.id===lesson.id;
     const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"")+(recommended?" recommended":"");card.dataset.lessonView="path";
-    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div><div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
+    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div>${lesson.enSub?`<div class="lesson-en-sub">${escapeVocabHtml(lesson.enSub)}</div>`:""}<div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
     card.onclick=()=>openLesson(lesson);
     card.querySelector(".lesson-check").onclick=(e)=>{e.stopPropagation();if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();};
     root.appendChild(card);
