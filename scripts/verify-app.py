@@ -217,9 +217,23 @@ def check_version_parity():
 
 
 def check_github_hygiene():
+    errors = []
     if os.environ.get("CI") == "true" and (ROOT / "AGENTS.md").exists():
-        return ["AGENTS.md must not exist in GitHub repository!"]
-    return []
+        errors.append("AGENTS.md must not exist in GitHub repository!")
+    sensitive_pats = [
+        (r"norvi\.tech", "private host reference"),
+        (r"github_pat_", "GitHub token literal"),
+        (r"ge-api\.key", "private API key filename"),
+    ]
+    scan_files = [ROOT / "README.md", ROOT / "index.html", ROOT / "sw.js"] + list((ROOT / "src").rglob("*.js")) + list((ROOT / "data").glob("*.js"))
+    for f in scan_files:
+        if not f.exists():
+            continue
+        txt = f.read_text(encoding="utf-8", errors="replace")
+        for pat, desc in sensitive_pats:
+            if re.search(pat, txt):
+                errors.append(f"{f.relative_to(ROOT).as_posix()}: contains disallowed {desc}")
+    return errors
 
 
 def main():

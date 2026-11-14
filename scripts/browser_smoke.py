@@ -143,6 +143,36 @@ def run_smoke():
                     else:
                         page.locator("#lesson-list .lp-opt").first.click()
             assert seen_photo_quiz, "Never reached photo mini-quiz question in Full lesson flow"
+
+            # Verify Service Worker registers cleanly and caches core assets
+            sw_info = page.evaluate(
+                """async () => {
+                    const reg = await navigator.serviceWorker.ready;
+                    const keys = await caches.keys();
+                    const cache = keys.length ? await caches.open(keys[0]) : null;
+                    const cachedUrls = cache ? await cache.keys() : [];
+                    return {
+                        state: reg && reg.active && reg.active.state,
+                        cacheCount: cachedUrls.length,
+                        keys,
+                    };
+                }"""
+            )
+            assert sw_info["state"] == "activated", f"Service Worker not activated: {sw_info}"
+            assert sw_info["cacheCount"] >= 50, f"Expected Service Worker cache populated, got {sw_info}"
+
+            # Exit lesson focus mode, then verify friend '+ New' local profile creation persists across reload cleanly
+            page.click("#lesson-list .lp-exit")
+            page.locator(".profile-utility-drawer summary").click()
+            page.once("dialog", lambda d: d.accept("María"))
+            with page.expect_navigation(wait_until="domcontentloaded"):
+                page.locator(".profile-bar button", has_text="+ New").click()
+            page.wait_for_selector(".profile-select", state="attached")
+            summary_new = page.locator(".top-utility-summary small").inner_text().strip()
+            active_new = page.evaluate("localStorage.getItem('esco-active-profile-v1')")
+            opt_vals_new = page.eval_on_selector_all(".profile-select option", "els => els.map(e => e.value)")
+            assert "María" in summary_new and active_new.startswith("mar"), f"Expected new María profile active, got {summary_new!r} ({active_new!r})"
+            assert "seth" not in opt_vals_new, f"Fresh friend device must never expose seth profile, got {opt_vals_new}"
             ctx.close()
 
             # 2. Pre-seeded Seth device preservation check
@@ -166,7 +196,7 @@ def run_smoke():
     assert not console_errors, f"Console errors: {console_errors}"
     assert not page_errors, f"Uncaught page errors: {page_errors}"
     assert not http_errors, f"HTTP >=400 errors: {http_errors}"
-    print("OK: Browser smoke passed (Guest default, Seth preservation, 6 tabs, Picture Match, Lesson photos & 4-opt quiz, 0 errors).")
+    print("OK: Browser smoke passed (Guest default, +New profile, SW cache, Seth preservation, 6 tabs, Picture Match, Lesson photos & 4-opt quiz, 0 errors).")
     return 0
 
 
