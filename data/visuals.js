@@ -20,6 +20,8 @@ export const ROLEPLAY_IMAGES = {
   "rp-drogueria": "assets/scene-farmacia.webp",
   "rp-cita": "assets/region-cali.webp",
   "chat-panaderia": "assets/scene-panaderia.webp",
+  "chat-taxi": "assets/scene-taxi.webp",
+  "chat-drogueria": "assets/scene-drogueria.webp",
   "chat-uber": "assets/scene-uber.webp",
   "chat-tienda": "assets/scene-tienda.webp",
   "chat-sanjuan": "assets/scene-terraza.webp",

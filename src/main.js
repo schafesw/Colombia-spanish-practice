@@ -8,7 +8,7 @@ import { closeMicPanel, micListen, micPlay, micStart, micStop } from "./core/spe
 import { runDataValidator } from "./core/validator.js";
 import { actions, registerPageInit, ensurePageInitialized, showPage, initTabSwipe } from "./features/navigation.js";
 import { initPhonetics, showPhonetic, sel, renderTongueTwisters, getDailyTwisterSelection } from "./features/phonetics.js";
-import { initVocab, showVocabHome, hideVerbDetail, sCat, vocabCount, renderVocabHome } from "./features/vocab.js";
+import { initVocab, showVocabHome, hideVerbDetail, openVerbByKey, sCat, vocabCount, renderVocabHome } from "./features/vocab.js";
 import { initPhrases, renderFraseMenu, renderFraseSection, renderFraseDialogue, returnFromFraseDialogue } from "./features/phrases.js";
 import { initGuides, buildGram, buildSpeakingGuide, showGram, showGramGroup } from "./features/guides.js";
 import { mountColombiaChatsLab } from "./features/colombia-chats.js";
@@ -36,6 +36,7 @@ Object.assign(actions, {
   stopActiveSprint,
   setLeccionesFocusMode,
   hideVerbDetail,
+  openVerbByKey: k => { ensurePageInitialized("vocab"); openVerbByKey(k); },
   showVocabHome,
   renderVocabHome: () => { ensurePageInitialized("vocab"); renderVocabHome(); },
   renderLessons,
@@ -115,7 +116,7 @@ function showPwaUpdateBanner() {
   toast.className = "pwa-update-toast";
   toast.setAttribute("role", "status");
   toast.setAttribute("aria-live", "polite");
-  toast.innerHTML = `<span class="pwa-update-copy">🆕 App updated to v112.0</span><button type="button" class="pwa-update-btn">Refresh</button><button type="button" class="pwa-update-dismiss" aria-label="Dismiss update notification">✕</button>`;
+  toast.innerHTML = `<span class="pwa-update-copy">🆕 App updated to v113.0</span><button type="button" class="pwa-update-btn">Refresh</button><button type="button" class="pwa-update-dismiss" aria-label="Dismiss update notification">✕</button>`;
   toast.querySelector(".pwa-update-btn").onclick = () => location.reload();
   toast.querySelector(".pwa-update-dismiss").onclick = () => toast.remove();
   document.body.appendChild(toast);
@@ -125,7 +126,7 @@ function initPwaUpdater() {
   if (!("serviceWorker" in navigator) || !/^https?:$/i.test(location.protocol)) return;
   const registerSw = () => {
     const hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register("sw.js?v=112.0").then(reg => {
+    navigator.serviceWorker.register("sw.js?v=113.0").then(reg => {
       if (!reg) return;
       reg.addEventListener("updatefound", () => {
         const nw = reg.installing;

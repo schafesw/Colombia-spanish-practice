@@ -84,6 +84,7 @@ export function mountGringoTrapLab(parent){
     attachMic(foot,g.tts,"phrases");
   };
   renderGt();
+  card.addEventListener("gt-jump",e=>{gtIdx=Number(e.detail)||0;renderGt();});
   parent.appendChild(card);
 }
 
