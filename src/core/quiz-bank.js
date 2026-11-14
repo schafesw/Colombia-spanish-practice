@@ -3,6 +3,7 @@ import {
   V60_CONVERSATION_QUIZ, V60_FILL_BLANK_QUIZ,
   VC, VOCALES_DATA, N130, NT, PQ, VERBS, COLOMBIANISMOS, SPECIAL_SOUNDS, SPEAKING_GUIDE, FRASES,
 } from "../../data/index.js";
+import { appStorage } from "../state/storage.js";
 import { appState } from "../state/app-state.js";
 import { normalizeQuizText, normalizeQuizPrompt, normalizeQuizAnswer } from "./text-utils.js";
 import { qStore, srsStore, srsDue } from "./stores.js";
@@ -99,7 +100,7 @@ export function quizAnswerMatches(q,value){
 }
 export function storedMissedQuestionCount(){
   try{
-    const raw=JSON.parse(localStorage.getItem("esco-quiz-v1")||"{}");
+    const raw=JSON.parse(appStorage.getItem("esco-quiz-v1")||"{}");
     const missed=raw&&raw.missed&&typeof raw.missed==="object"?raw.missed:{};
     return Object.values(missed).filter(value=>Number(value)>0).length;
   }catch(e){return 0;}

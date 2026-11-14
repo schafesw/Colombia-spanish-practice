@@ -176,6 +176,18 @@ def check_audio_freeze():
     return errors
 
 
+def check_profile_storage_isolation():
+    errors = []
+    for f in sorted((ROOT / "src").rglob("*.js")):
+        rel = f.relative_to(ROOT).as_posix()
+        if rel == "src/state/storage.js":
+            continue
+        t = re.sub(r"//.*?$|/\*[\s\S]*?\*/", "", f.read_text(encoding="utf-8"), flags=re.M)
+        if re.search(r"\blocalStorage\b", t):
+            errors.append(f"{rel}: direct `localStorage` usage bypasses profile-scoped `appStorage`")
+    return errors
+
+
 def check_github_hygiene():
     if os.environ.get("CI") == "true" and (ROOT / "AGENTS.md").exists():
         return ["AGENTS.md must not exist in GitHub repository!"]
@@ -190,6 +202,7 @@ def main():
     sw_errs, sw_count = check_service_worker()
     errs.extend(sw_errs)
     errs.extend(check_audio_freeze())
+    errs.extend(check_profile_storage_isolation())
     errs.extend(check_github_hygiene())
     if errs:
         print("VERIFICATION FAILED:")
