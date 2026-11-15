@@ -31,7 +31,7 @@ function rrQuestionPool(){
 }
 const RR_STATS_KEY="esco-rapid-stats-v1";
 let rrStats={attempts:0,got:0,practice:0,skipped:0};
-try{rrStats=Object.assign(rrStats,JSON.parse(appStorage.getItem(RR_STATS_KEY)||"{}"));}catch(e){}
+try{const rrs=JSON.parse(appStorage.getItem(RR_STATS_KEY)||"{}");if(rrs&&typeof rrs==="object"&&!Array.isArray(rrs))Object.assign(rrStats,rrs);}catch(e){}
 function saveRRStats(){try{appStorage.setItem(RR_STATS_KEY,JSON.stringify(rrStats));}catch(e){}}
 function rrClearRecording(){if(rrUrl){try{URL.revokeObjectURL(rrUrl);}catch(e){}rrUrl=null;}rrChunks=[];}
 function rrStopStream(){if(rrStream){rrStream.getTracks().forEach(t=>t.stop());rrStream=null;}}

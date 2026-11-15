@@ -54,7 +54,7 @@ export const ROUTINE_STEPS=[
   {id:"mission",icon:"🗣️",title:"Conversation mission",sub:"Answer in your own words out loud."}
 ];
 export let routineState={date:"",step:0};
-try{routineState=Object.assign(routineState,JSON.parse(appStorage.getItem(ROUTINE_KEY)||"{}"));}catch(e){}
+try{const rs=JSON.parse(appStorage.getItem(ROUTINE_KEY)||"{}");if(rs&&typeof rs==="object"&&!Array.isArray(rs))Object.assign(routineState,rs);}catch(e){}
 export function routineToday(){const today=new Date().toISOString().slice(0,10);if(routineState.date!==today){routineState={date:today,step:0};saveRoutine();}return routineState;}
 function saveRoutine(){try{appStorage.setItem(ROUTINE_KEY,JSON.stringify(routineState));}catch(e){}}
 export function routineOpen(id){

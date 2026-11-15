@@ -1,5 +1,5 @@
-/* Navigation + JS/CSS network-first, static media stale-while-revalidate Service Worker for Español · Colombia PWA (v113.2) */
-const CACHE_NAME = "esco-pwa-v113.2";
+/* Navigation + JS/CSS network-first, static media stale-while-revalidate Service Worker for Español · Colombia PWA (v113.3) */
+const CACHE_NAME = "esco-pwa-v113.3";
 const CORE_ASSETS = [
   "./",
   "./index.html",
