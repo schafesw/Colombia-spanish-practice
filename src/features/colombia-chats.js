@@ -4,19 +4,22 @@ import { escapeVocabHtml } from "../core/text-utils.js";
 import { markPractice, recordSrs } from "../core/stores.js";
 import { attachMic } from "../core/speech-mic.js";
 
-var chatIdx=0,chatTurn=0,chatSolved=false,chatWrongIds=[],chatCoachMsg="",chatFirstTryOk=0,chatShowEn=false;
+var chatIdx=0,chatTurn=0,chatSolved=false,chatWrongIds=[],chatCoachMsg="",chatFirstTryOk=0,chatShowEn=false,chatEarsFirst=false,chatBotRevealed=false;
 export function mountColombiaChatsLab(parent){
   if(!parent||typeof COLOMBIA_CHATS==="undefined"||!COLOMBIA_CHATS.length)return;
   chatIdx=Number(chatIdx)||0;chatTurn=Number(chatTurn)||0;chatFirstTryOk=Number(chatFirstTryOk)||0;
   if(!Array.isArray(chatWrongIds))chatWrongIds=[];
-  chatSolved=!!chatSolved;chatShowEn=!!chatShowEn;chatCoachMsg=chatCoachMsg||"";
+  chatSolved=!!chatSolved;chatShowEn=!!chatShowEn;chatEarsFirst=!!chatEarsFirst;chatBotRevealed=!!chatBotRevealed;chatCoachMsg=chatCoachMsg||"";
   const sec=document.createElement("section");sec.className="bridge-trainer-card colombia-chats-card";
   const render=()=>{
     const ch=COLOMBIA_CHATS[chatIdx%COLOMBIA_CHATS.length];
     const chatHero=(typeof ROLEPLAY_IMAGES!=="undefined"&&ROLEPLAY_IMAGES[ch.id])
       ?`<div class="chat-hero-banner rp-hero-banner"><img src="${ROLEPLAY_IMAGES[ch.id]}" alt="${escapeVocabHtml(ch.title)} · ${escapeVocabHtml(ch.place)}"/><span class="region-hero-badge">${escapeVocabHtml(ch.place)}</span></div>`
       :"";
-    sec.innerHTML=`<div class="bridge-kicker">💬 COLOMBIA CHATS · REAL 4-TURN ROLEPLAY</div>
+    sec.innerHTML=`<div class="brain-head-row">
+        <div class="bridge-kicker">💬 COLOMBIA CHATS · REAL 4-TURN ROLEPLAY</div>
+        <button type="button" class="brain-pill-toggle chat-ears-pill${chatEarsFirst?" active":""}" aria-pressed="${chatEarsFirst?"true":"false"}">🎧 Ears-First: ${chatEarsFirst?"ON":"OFF"}</button>
+      </div>
       <div class="chat-tabs" role="tablist" aria-label="Colombia chat scenarios"></div>
       ${chatHero}
       <div class="chat-header">
@@ -25,12 +28,19 @@ export function mountColombiaChatsLab(parent){
       </div>
       <div class="chat-thread"></div>
       <div class="chat-reply-zone"></div>`;
+    sec.querySelector(".chat-ears-pill").onclick=()=>{
+      chatEarsFirst=!chatEarsFirst;
+      chatBotRevealed=false;
+      const curTurn=ch.turns[chatTurn];
+      render();
+      if(chatEarsFirst&&curTurn)speak(curTurn.tts,0.82);
+    };
     const tabRow=sec.querySelector(".chat-tabs");
     COLOMBIA_CHATS.forEach((item,i)=>{
       const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(i===chatIdx?" active":"");
       b.setAttribute("role","tab");b.setAttribute("aria-selected",i===chatIdx?"true":"false");b.tabIndex=i===chatIdx?0:-1;
       b.textContent=`${item.emoji} ${item.title}`;
-      b.onclick=()=>{chatIdx=i;chatTurn=0;chatSolved=false;chatWrongIds=[];chatCoachMsg="";chatFirstTryOk=0;chatShowEn=false;render();};
+      b.onclick=()=>{chatIdx=i;chatTurn=0;chatSolved=false;chatWrongIds=[];chatCoachMsg="";chatFirstTryOk=0;chatShowEn=false;chatBotRevealed=false;render();};
       tabRow.appendChild(b);
     });
     tabRow.onkeydown=e=>{if(!["ArrowLeft","ArrowRight","Home","End"].includes(e.key))return;const tabs=Array.from(tabRow.querySelectorAll('[role="tab"]'));const i=tabs.indexOf(document.activeElement);if(i<0)return;e.preventDefault();const nxt=e.key==="Home"?0:e.key==="End"?tabs.length-1:(i+(e.key==="ArrowRight"?1:-1)+tabs.length)%tabs.length;tabs[nxt].click();sec.querySelectorAll('.chat-tabs [role="tab"]')[nxt]?.focus();};
@@ -49,19 +59,23 @@ export function mountColombiaChatsLab(parent){
     if(chatTurn>=ch.turns.length){
       const done=document.createElement("div");done.className="chat-done-box";
       done.innerHTML=`<strong>🎉 Conversation Complete! (¡Conversación completa!)</strong><div>First-try natural replies: <strong>${chatFirstTryOk} / ${ch.turns.length}</strong></div><div class="bridge-actions"><button type="button" class="lp-nav-btn chat-replay-btn">↻ Replay</button><button type="button" class="lp-nav-btn primary chat-next-btn">Next Chat →</button></div>`;
-      done.querySelector(".chat-replay-btn").onclick=()=>{chatTurn=0;chatSolved=false;chatWrongIds=[];chatCoachMsg="";chatFirstTryOk=0;render();};
-      done.querySelector(".chat-next-btn").onclick=()=>{chatIdx=(chatIdx+1)%COLOMBIA_CHATS.length;chatTurn=0;chatSolved=false;chatWrongIds=[];chatCoachMsg="";chatFirstTryOk=0;render();};
+      done.querySelector(".chat-replay-btn").onclick=()=>{chatTurn=0;chatSolved=false;chatWrongIds=[];chatCoachMsg="";chatFirstTryOk=0;chatBotRevealed=false;render();};
+      done.querySelector(".chat-next-btn").onclick=()=>{chatIdx=(chatIdx+1)%COLOMBIA_CHATS.length;chatTurn=0;chatSolved=false;chatWrongIds=[];chatCoachMsg="";chatFirstTryOk=0;chatBotRevealed=false;render();};
       thread.appendChild(done);
       return;
     }
     const t=ch.turns[chatTurn];
+    const hidePartnerText=chatEarsFirst&&!chatBotRevealed&&!chatSolved;
     const botB=document.createElement("div");botB.className="chat-bubble bot";
     botB.innerHTML=`<div class="chat-bubble-meta"><span>${escapeVocabHtml(ch.partner)}</span></div>
-      <div><strong>${escapeVocabHtml(t.botEs)}</strong></div>
-      ${chatShowEn?`<div class="chat-en-line">${escapeVocabHtml(t.botEn)}</div>`:""}
-      <div class="chat-bubble-tools"><button type="button" class="chat-mini-btn chat-hear-btn">🔊 Hear</button><button type="button" class="chat-mini-btn chat-en-btn">${chatShowEn?"🙈 Hide EN":"👁️ EN"}</button></div>`;
+      <div><strong>${hidePartnerText?"🎧 Listen first — tap Hear, then choose your reply":escapeVocabHtml(t.botEs)}</strong></div>
+      ${chatShowEn&&!hidePartnerText?`<div class="chat-en-line">${escapeVocabHtml(t.botEn)}</div>`:""}
+      <div class="chat-bubble-tools"><button type="button" class="chat-mini-btn chat-hear-btn">🔊 Hear</button>${hidePartnerText?'<button type="button" class="chat-mini-btn chat-peek-btn">👁️ Peek</button>':`<button type="button" class="chat-mini-btn chat-en-btn">${chatShowEn?"🙈 Hide EN":"👁️ EN"}</button>`}</div>`;
     botB.querySelector(".chat-hear-btn").onclick=()=>speak(t.tts,0.82);
-    botB.querySelector(".chat-en-btn").onclick=()=>{chatShowEn=!chatShowEn;render();};
+    const peekB=botB.querySelector(".chat-peek-btn");
+    if(peekB)peekB.onclick=()=>{chatBotRevealed=true;render();};
+    const enB=botB.querySelector(".chat-en-btn");
+    if(enB)enB.onclick=()=>{chatShowEn=!chatShowEn;render();};
     thread.appendChild(botB);
 
     const natOpt=t.options.find(o=>o.quality==="natural")||t.options[0];
@@ -75,7 +89,7 @@ export function mountColombiaChatsLab(parent){
       const nxt=document.createElement("button");nxt.type="button";nxt.className="lp-nav-btn primary";
       nxt.textContent=chatTurn+1>=ch.turns.length?"Finish Chat →":"Next Turn →";
       nxt.onclick=()=>{
-        chatTurn++;chatSolved=false;chatWrongIds=[];chatCoachMsg="";
+        chatTurn++;chatSolved=false;chatWrongIds=[];chatCoachMsg="";chatBotRevealed=false;
         render();
         if(chatTurn<ch.turns.length)speak(ch.turns[chatTurn].tts,0.82);
       };

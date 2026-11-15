@@ -1,5 +1,5 @@
-/* Navigation + JS/CSS network-first, static media stale-while-revalidate Service Worker for Español · Colombia PWA (v113.3) */
-const CACHE_NAME = "esco-pwa-v113.3";
+/* Navigation + JS/CSS network-first, static media stale-while-revalidate Service Worker for Español · Colombia PWA (v114.1) */
+const CACHE_NAME = "esco-pwa-v114.1";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -8,6 +8,8 @@ const CORE_ASSETS = [
   "./styles/labs.css",
   "./styles/polish.css",
   "./styles/shell.css",
+  "./styles/studio.css",
+  "./data/brain-drills.js",
   "./data/content.js",
   "./data/expansions.js",
   "./data/index.js",
@@ -21,6 +23,7 @@ const CORE_ASSETS = [
   "./src/core/stores.js",
   "./src/core/text-utils.js",
   "./src/core/validator.js",
+  "./src/features/brain-lab.js",
   "./src/features/colombia-chats.js",
   "./src/features/daily-flow.js",
   "./src/features/guides.js",
@@ -35,6 +38,7 @@ const CORE_ASSETS = [
   "./src/features/quiz.js",
   "./src/features/rapida.js",
   "./src/features/speaking-labs.js",
+  "./src/features/studio-shell.js",
   "./src/features/vocab.js",
   "./src/main.js",
   "./src/state/app-state.js",
@@ -131,10 +135,18 @@ const CORE_ASSETS = [
   "./assets/scene-uber.webp"
 ];
 
+function precacheAsset(cache, url) {
+  const isMutable = url === "./" || /\.(?:html|json|js|mjs|css)$/i.test(url);
+  const req = isMutable ? new Request(url, { cache: "no-cache" }) : url;
+  return fetch(req).then(res => {
+    if (res && res.ok) return cache.put(url, res);
+  }).catch(() => {});
+}
+
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => Promise.allSettled(CORE_ASSETS.map(url => cache.add(url).catch(() => {}))))
+      .then(cache => Promise.allSettled(CORE_ASSETS.map(url => precacheAsset(cache, url))))
       .then(() => self.skipWaiting())
   );
 });
@@ -156,11 +168,12 @@ self.addEventListener("fetch", event => {
   if (sameOrigin && url.pathname.startsWith("/api/")) return;
   const isNav = req.mode === "navigate" || ((req.headers.get("accept") || "").includes("text/html"));
   const hasVersionQuery = sameOrigin && url.searchParams.has("v");
-  const isCodeOrStyle = sameOrigin && (url.pathname.endsWith(".js") || url.pathname.endsWith(".css"));
+  const isCodeOrStyle = sameOrigin && /\.(?:js|mjs|css)$/i.test(url.pathname);
 
   if (isNav || hasVersionQuery || isCodeOrStyle) {
+    const netReq = req.mode === "navigate" ? req : new Request(req, { cache: "no-cache" });
     event.respondWith(
-      fetch(req)
+      fetch(netReq)
         .then(res => {
           if (res && res.status === 200 && res.type === "basic") {
             const copy = res.clone();

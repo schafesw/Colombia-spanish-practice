@@ -6,3 +6,4 @@ export * from "./content.js";
 export * from "./expansions.js";
 export * from "./visuals.js";
 export * from "./labs.js";
+export * from "./brain-drills.js";

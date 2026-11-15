@@ -5,7 +5,12 @@ import { lessonProgress } from "../core/stores.js";
 export const THEME_KEY="esco-theme-v101";
 export function applyAppTheme(t){
   const isLight=t==="light";
-  document.documentElement.setAttribute("data-theme",isLight?"light":"dark");
+  const mode=isLight?"light":"dark";
+  document.documentElement.setAttribute("data-theme",mode);
+  const csMeta=document.querySelector('meta[name="color-scheme"]');
+  if(csMeta)csMeta.setAttribute("content",mode);
+  const tcMeta=document.querySelector('meta[name="theme-color"]');
+  if(tcMeta)tcMeta.setAttribute("content",isLight?"#f6f8f7":"#0c1411");
   const btn=document.getElementById("theme-toggle-btn");
   if(btn)btn.textContent=isLight?"🌙 Dark":"☀️ Sun";
 }
@@ -16,13 +21,14 @@ export function toggleAppTheme(){
 }
 
 export const USER_PREFS_KEY="esco-user-prefs-v99";
-export let userPrefs={level:"auto",focus:"all",blindEar:false,hablarTab:"regions"};
+export let userPrefs={level:"auto",focus:"all",blindEar:false,recallFirst:false,hablarTab:"regions"};
 try{
   const rawP=JSON.parse(appStorage.getItem(USER_PREFS_KEY)||"null");
   if(rawP&&typeof rawP==="object"){
     if(["auto","starter","explorer","fluent"].includes(rawP.level))userPrefs.level=rawP.level;
     if(["all","sanjuan","travel","daily"].includes(rawP.focus))userPrefs.focus=rawP.focus;
     userPrefs.blindEar=!!rawP.blindEar;
+    userPrefs.recallFirst=!!rawP.recallFirst;
     if(["regions","visual","ear","trampas","all"].includes(rawP.hablarTab))userPrefs.hablarTab=rawP.hablarTab;
   }
 }catch(e){}

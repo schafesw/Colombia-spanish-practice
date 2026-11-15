@@ -19,6 +19,7 @@ export const appState = {
   qRoundSeen: new Set(),
   qBlindPeek: false,
   spRunning: false,
+  spPaused: false,
   spTimer: null,
   spLeft: 60,
 };
