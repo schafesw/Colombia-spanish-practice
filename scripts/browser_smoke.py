@@ -389,6 +389,8 @@ def run_smoke():
                 f"Expected fixed topbar + left vertical tab rail on 1280x800, got {desk}"
             )
             assert not desk["overflowX"], f"Desktop layout overflowed horizontally: {desk}"
+            tab_icons = page_desk.eval_on_selector_all(".tab-bar .tab-item .ti", "els => els.map(e => e.textContent.trim())")
+            assert tab_icons == ["🔤", "🎓", "📚", "💬", "🇨🇴", "🧪"], f"Expected classic colorful tab icons, got {tab_icons}"
             # Verify v114.0 Studio UI: Command Finder <dialog>, Sagittal Mouth SVG, and Lecciones Spotlight
             assert page_desk.locator("#lecciones-studio-aside .studio-specimen").is_visible(), "Expected Lecciones Spotlight visible on desktop"
             page_desk.click("#studio-search-trigger")

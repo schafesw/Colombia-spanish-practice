@@ -12,15 +12,15 @@
 <meta name="build-rev" content="dev"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&family=Nunito:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Public+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
-  <link rel="manifest" href="manifest.json?v=114.1"/>
+  <link rel="manifest" href="manifest.json?v=114.2"/>
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png"/>
   <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png"/>
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png"/>
-  <link rel="stylesheet" href="styles/base.css?v=114.1"/>
-  <link rel="stylesheet" href="styles/polish.css?v=114.1"/>
-  <link rel="stylesheet" href="styles/labs.css?v=114.1"/>
-  <link rel="stylesheet" href="styles/shell.css?v=114.1"/>
-  <link rel="stylesheet" href="styles/studio.css?v=114.1"/>
+  <link rel="stylesheet" href="styles/base.css?v=114.2"/>
+  <link rel="stylesheet" href="styles/polish.css?v=114.2"/>
+  <link rel="stylesheet" href="styles/labs.css?v=114.2"/>
+  <link rel="stylesheet" href="styles/shell.css?v=114.2"/>
+  <link rel="stylesheet" href="styles/studio.css?v=114.2"/>
 </head>
 <body>
 <div id="splash" hidden role="status" aria-label="Loading Español Colombia">
@@ -44,7 +44,7 @@
       <span class="studio-lento-label"><span class="studio-lento-word">Lento</span> <small class="tabular-nums">0.45×</small></span>
     </button>
     <button type="button" class="studio-search-trigger" id="studio-search-trigger" aria-label="Search lessons, verbs, phrases, and Colombian expressions">
-      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="20" y1="20" x2="16.2" y2="16.2"></line></svg>
+      <span aria-hidden="true">🔍</span>
       <span class="studio-search-copy">Buscar</span>
       <kbd class="studio-kbd">⌘K</kbd>
     </button>
@@ -312,32 +312,32 @@
 <!-- 6-Tab Studio Rail / Mobile Safe-Area Dock -->
 <nav class="tab-bar" aria-label="Salas de estudio">
   <button class="tab-item" id="tb-fonetica" onclick="navigatePage('fonetica')">
-    <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h2.5l2.2-6 3.6 12 3.4-9 2.4 3H22"></path></svg></span>
+    <span class="ti" aria-hidden="true">🔤</span>
     <span class="tab-label">Fonética</span>
     <kbd class="rail-kbd" aria-hidden="true">1</kbd>
   </button>
   <button class="tab-item active" id="tb-lecciones" aria-current="page" onclick="navigatePage('lecciones')">
-    <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path><path d="M9 7h6"></path><path d="M9 11h4"></path></svg></span>
+    <span class="ti" aria-hidden="true">🎓</span>
     <span class="tab-label">Lecciones</span>
     <kbd class="rail-kbd" aria-hidden="true">2</kbd>
   </button>
   <button class="tab-item" id="tb-vocab" onclick="navigatePage('vocab')">
-    <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"></rect><path d="M7 9h10"></path><path d="M7 13h6"></path><circle cx="16.5" cy="14.5" r="1.5"></circle></svg></span>
+    <span class="ti" aria-hidden="true">📚</span>
     <span class="tab-label">Vocab</span>
     <kbd class="rail-kbd" aria-hidden="true">3</kbd>
   </button>
   <button class="tab-item tfrases" id="tb-frases" onclick="navigatePage('frases')">
-    <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><path d="M8 9h8"></path><path d="M8 13h5"></path></svg></span>
+    <span class="ti" aria-hidden="true">💬</span>
     <span class="tab-label">Frases</span>
     <kbd class="rail-kbd" aria-hidden="true">4</kbd>
   </button>
   <button class="tab-item tgram" id="tb-gram" onclick="navigatePage('gram')">
-    <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polygon points="15.8 8.2 13.7 13.7 8.2 15.8 10.3 10.3 15.8 8.2"></polygon></svg></span>
+    <span class="ti" aria-hidden="true">🇨🇴</span>
     <span class="tab-label">Guías</span>
     <kbd class="rail-kbd" aria-hidden="true">5</kbd>
   </button>
   <button class="tab-item tquiz" id="tb-quiz" onclick="navigatePage('quiz')">
-    <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></span>
+    <span class="ti" aria-hidden="true">🧪</span>
     <span class="tab-label">Quiz</span>
     <kbd class="rail-kbd" aria-hidden="true">6</kbd>
   </button>
@@ -348,7 +348,7 @@
   <div class="studio-dialog-shell">
     <div class="studio-dialog-head">
       <div class="studio-dialog-title-wrap">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="20" y1="20" x2="16.2" y2="16.2"></line></svg>
+        <span aria-hidden="true">🔍</span>
         <h2 id="studio-command-title">Buscador del Estudio</h2>
       </div>
       <button type="button" class="studio-dialog-close" id="studio-command-close" aria-label="Close search dialog">Esc ✕</button>
@@ -360,6 +360,6 @@
   </div>
 </dialog>
 
-  <script type="module" src="src/main.js?v=114.1"></script>
+  <script type="module" src="src/main.js?v=114.2"></script>
 </body>
 </html>
