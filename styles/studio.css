@@ -315,7 +315,8 @@ textarea {
   justify-content: center;
   width: 24px;
   height: 24px;
-  font-size: 1rem;
+  font-size: 1.12rem;
+  line-height: 1;
 }
 .tab-item .ti svg {
   display: block;
@@ -397,8 +398,9 @@ textarea {
     border-radius: 12px;
   }
   .tab-item .ti {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
+    font-size: 1.05rem;
     flex-shrink: 0;
   }
   .tab-item:hover .ti,
