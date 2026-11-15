@@ -56,8 +56,13 @@ def wait_images_decoded(page, selector):
 
 def launch_browser(p):
     # GitHub/GitLab CI Linux Docker runners run as root without a user namespace.
-    if os.environ.get("CI") == "true" or os.environ.get("GITLAB_CI") == "true" or sys.platform != "win32":
+    if os.environ.get("CI") == "true" or os.environ.get("GITLAB_CI") == "true":
         return p.chromium.launch(headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
+    if sys.platform != "win32":
+        try:
+            return p.chromium.launch(headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
+        except Exception:
+            return p.chromium.launch(channel="chrome", headless=True)
     try:
         return p.chromium.launch(channel="msedge", headless=True)
     except Exception:
@@ -258,6 +263,12 @@ def run_smoke():
             assert page.locator(".fr-phrase-collections-group").is_hidden(), "Expected Phrase collections hidden in Conversations view"
             page.locator(".frase-view-switch .fr-view-btn", has_text="All / Todo").click()
             assert page.locator(".fr-conversation-group").is_visible() and page.locator(".fr-phrase-collections-group").is_visible()
+            ears_pill = page.locator(".chat-ears-pill").first
+            ears_pill.click()
+            assert "Ears-First: ON" in ears_pill.inner_text(), f"Expected Ears-First ON, got {ears_pill.inner_text()!r}"
+            assert page.locator(".chat-peek-btn").first.is_visible(), "Expected chat Peek button when Ears-First is ON"
+            ears_pill.click()
+            assert "Ears-First: OFF" in ears_pill.inner_text(), f"Expected Ears-First OFF, got {ears_pill.inner_text()!r}"
 
             # Verify Picture Match deck + 5 category pills + image decode
             page.click("#tb-vocab")
@@ -374,10 +385,38 @@ def run_smoke():
                     };
                 }"""
             )
-            assert desk["topbarH"] >= 50 and desk["tabLeft"] == 0 and desk["tabWidth"] <= 110 and desk["tabHeight"] >= 500, (
+            assert desk["topbarH"] >= 50 and desk["tabLeft"] == 0 and 88 <= desk["tabWidth"] <= 250 and desk["tabHeight"] >= 500, (
                 f"Expected fixed topbar + left vertical tab rail on 1280x800, got {desk}"
             )
             assert not desk["overflowX"], f"Desktop layout overflowed horizontally: {desk}"
+            # Verify v114.0 Studio UI: Command Finder <dialog>, Sagittal Mouth SVG, and Lecciones Spotlight
+            assert page_desk.locator("#lecciones-studio-aside .studio-specimen").is_visible(), "Expected Lecciones Spotlight visible on desktop"
+            page_desk.click("#studio-search-trigger")
+            page_desk.wait_for_selector("#studio-command-dialog[open]")
+            page_desk.fill("#studio-command-input", "tinto")
+            assert page_desk.locator("#studio-command-results .studio-cmd-item").count() >= 1, "Expected Command Finder hits for tinto"
+            page_desk.click("#studio-command-close")
+            page_desk.wait_for_function("() => !document.getElementById('studio-command-dialog').open")
+            page_desk.click("#tb-fonetica")
+            page_desk.wait_for_selector("#phonetic-mouth-studio svg")
+            page_desk.locator("#phonetic-mouth-studio [data-phoneme-id='nye']").click()
+            assert page_desk.locator("#phonetic-mouth-studio [data-phoneme-id='nye']").get_attribute("aria-pressed") == "true"
+            # Verify v114.1 Recall-First Quiz gate and Spanish Brain reflex lab
+            page_desk.click("#tb-quiz")
+            page_desk.wait_for_selector("#quiz-recall-toggle")
+            page_desk.click("#quiz-recall-toggle")
+            assert "Recall-First: ON" in page_desk.locator("#quiz-recall-toggle").inner_text()
+            assert page_desk.locator("#quiz-recall-gate").is_visible(), "Expected #quiz-recall-gate visible when Recall-First is ON"
+            assert page_desk.locator("#quiz-opts").is_hidden(), "Expected #quiz-opts hidden behind Recall-First gate"
+            page_desk.click("#quiz-recall-gate .quiz-recall-show")
+            assert page_desk.locator("#quiz-opts").is_visible(), "Expected #quiz-opts visible after clicking Reveal"
+            page_desk.click("#quiz-recall-toggle")
+            assert "Recall-First: OFF" in page_desk.locator("#quiz-recall-toggle").inner_text()
+            page_desk.locator("#quiz-v102-hub .mf-chip", has_text="Spanish Brain").click()
+            page_desk.wait_for_selector(".brain-lab-card .brain-cue-word")
+            page_desk.locator(".brain-opts .qopt").first.click()
+            assert "/1" in page_desk.locator(".brain-score-chip").inner_text(), "Expected .brain-score-chip to increment to /1"
+            page_desk.locator("#quiz-v102-hub .mf-chip", has_text="Standard Quiz").click()
             assert_quiz_no_scroll(page_desk, "Desktop 1280x800")
             ctx_desk.close()
 
@@ -585,6 +624,65 @@ def run_smoke():
                 assert lessons_hits["n"] >= 2, f"Expected sync.js to recover and re-fetch lessons.js, hits={lessons_hits['n']}"
                 assert "_cb=" not in page_stale.url, f"Expected _cb query param cleaned after recovery, got {page_stale.url}"
                 ctx_stale.close()
+
+                # Active legacy SWR Service Worker + poisoned CacheStorage recovery
+                ctx_sw_recover = browser.new_context(viewport={"width": 430, "height": 932})
+                page_sw_recover = ctx_sw_recover.new_page()
+                legacy_sw_js = """
+const OLD_CACHE = 'esco-pwa-v112.0';
+self.addEventListener('install', e => e.waitUntil(self.skipWaiting()));
+self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+self.addEventListener('fetch', e => {
+  const req = e.request;
+  if (req.method !== 'GET' || new URL(req.url).pathname.startsWith('/api/')) return;
+  e.respondWith(caches.open(OLD_CACHE).then(c => c.match(req).then(hit => {
+    const net = fetch(req).then(res => {
+      if (res && res.status === 200) c.put(req, res.clone());
+      return res;
+    });
+    return hit || net;
+  })));
+});
+"""
+                def route_sw_recover(route):
+                    url = route.request.url
+                    if url.endswith("/__seed_legacy_sw"):
+                        route.fulfill(status=200, content_type="text/html; charset=utf-8", body="<!doctype html><title>seed</title>")
+                    elif url.endswith("/legacy-sw.js"):
+                        route.fulfill(status=200, content_type="application/javascript", body=legacy_sw_js)
+                    elif url.endswith("/index.html") or "/?_cb=" in url or url.endswith("/"):
+                        route.fulfill(status=200, content_type="text/html; charset=utf-8", body=sync_html)
+                    elif url.endswith("/api/me"):
+                        route.fulfill(status=200, content_type="application/json", body=_json.dumps({
+                            "principal_id": 1, "username": "seth", "display_name": "Seth",
+                            "email": "seth@example.test", "provider": "portal", "avatar": {"kind": "initials"},
+                            "imported": True,
+                        }))
+                    elif url.endswith("/api/state"):
+                        route.fulfill(status=200, content_type="application/json", body='{"items":{}}')
+                    else:
+                        route.continue_()
+                ctx_sw_recover.route("https://fonts.**", lambda r: r.abort())
+                ctx_sw_recover.route("**/*", route_sw_recover)
+                page_sw_recover.goto(f"http://127.0.0.1:{port}/__seed_legacy_sw", wait_until="domcontentloaded")
+                page_sw_recover.evaluate("""async () => {
+                    const c = await caches.open('esco-pwa-v112.0');
+                    await c.put('/src/features/vocab.js', new Response('export const STALE_VOCAB_ONLY = 1;', {
+                        status: 200,
+                        headers: { 'Content-Type': 'application/javascript' },
+                    }));
+                    await navigator.serviceWorker.register('/legacy-sw.js', { scope: '/' });
+                    await navigator.serviceWorker.ready;
+                    if (!navigator.serviceWorker.controller) {
+                        await new Promise(res => navigator.serviceWorker.addEventListener('controllerchange', res, { once: true }));
+                    }
+                }""")
+                page_sw_recover.goto(base_url, wait_until="domcontentloaded")
+                page_sw_recover.wait_for_function("() => !document.getElementById('splash') && document.querySelector('.account-name')", timeout=15000)
+                rem_caches = page_sw_recover.evaluate("() => caches.keys()")
+                assert "esco-pwa-v112.0" not in rem_caches, f"Expected legacy cache deleted after recovery, got {rem_caches}"
+                assert "_cb=" not in page_sw_recover.url, f"Expected _cb cleaned after SW recovery, got {page_sw_recover.url}"
+                ctx_sw_recover.close()
 
             browser.close()
     finally:

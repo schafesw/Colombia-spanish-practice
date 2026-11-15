@@ -4,12 +4,20 @@ import { appStorage } from "../state/storage.js";
 let voices=[],selV=null;
 export const VOICE_KEY="esco-selected-voice-v45";
 export const VOICE_HOSTS=["fonetica","lecciones","vocab","frases","gram","quiz"];
+const speechListeners=new Set();
 let savedVoiceKey="";
 try{
   appStorage.removeItem("esco-selected-voice-v1");
   appStorage.removeItem("esco-selected-voice-v3");
   savedVoiceKey=appStorage.getItem(VOICE_KEY)||"";
 }catch(e){}
+export function subscribeSpeechActivity(fn){
+  if(typeof fn==="function")speechListeners.add(fn);
+  return ()=>speechListeners.delete(fn);
+}
+function notifySpeechActivity(speaking,text){
+  speechListeners.forEach(fn=>{try{fn({speaking,text:text||lastSpokenText||""});}catch(e){}});
+}
 export function voiceKey(v){return v?(v.voiceURI||`${v.name}::${v.lang}`):"";}
 export function voiceLabel(v){return `${v.lang||"es"} · ${(v.name||"Spanish voice").replace("com.apple.","").replace("voice.","")}`;}
 export function getSpanishVoices(){
@@ -65,43 +73,53 @@ export function buildVoiceBars(sp=getSpanishVoices()){
 }
 export function chV(key){const v=getSpanishVoices().find(x=>voiceKey(x)===key);if(v){rememberVoice(v);syncVoiceSelectors();}}
 export function speak(t,r,onEnd){
-  if(!window.speechSynthesis){if(onEnd)onEnd();return;}
+  if(!window.speechSynthesis){rememberSpoken(t);if(onEnd)onEnd();return;}
   const sp=getSpanishVoices();
-  const saved=savedVoiceKey&&sp.find(v=>voiceKey(v)===savedVoiceKey); /* saved pick wins the moment the list recovers */
+  const saved=savedVoiceKey&&sp.find(v=>voiceKey(v)===savedVoiceKey);
   const live=saved||(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang));
   const voice=live||chooseSpanishVoice(sp);
-  if(voice)selV=voice; /* use it, but do NOT persist — only an explicit dropdown pick (chV) saves, so a flaky iOS voice list can't overwrite the user's choice */
+  if(voice)selV=voice;
   speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(t);
-  if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX"; /* es-MX ships on every iPhone; bare es-CO with no matching voice falls back to English */
+  if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX";
   u.rate=r||0.8;
-  if(onEnd){let finished=false;const done=()=>{if(finished)return;finished=true;onEnd();};u.onend=done;u.onerror=done;}
+  let finished=false;
+  const finish=()=>{if(finished)return;finished=true;notifySpeechActivity(false,t);if(onEnd)onEnd();};
+  u.onend=finish;u.onerror=finish;
   speechSynthesis.speak(u);
   rememberSpoken(t);
+  notifySpeechActivity(true,t);
 }
 /* ── Lento (slow replay) ─────────────────────────────────────────────────────
-   Every speak() remembers its text; the floating 🐢 button replays it at 0.45x. */
+   Every speak() remembers its text; topbar Lento 0.45x & floating fallback replay it synchronously. */
 let lastSpokenText=null,lentoBtn=null;
+export function getLastSpokenText(){return lastSpokenText;}
+export function replayLastSpokenSlow(){
+  if(!lastSpokenText||!window.speechSynthesis)return;
+  const sp=getSpanishVoices();
+  const voice=(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang))||chooseSpanishVoice(sp);
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(lastSpokenText);
+  if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX";
+  u.rate=0.45;
+  let finished=false;
+  const done=()=>{if(finished)return;finished=true;notifySpeechActivity(false,lastSpokenText);};
+  u.onend=done;u.onerror=done;
+  speechSynthesis.speak(u);
+  notifySpeechActivity(true,lastSpokenText);
+}
 export function rememberSpoken(t){
   lastSpokenText=t;
+  notifySpeechActivity(false,t);
+  if(document.getElementById("studio-lento-btn"))return;
   if(!lentoBtn){
     lentoBtn=document.createElement("button");
     lentoBtn.className="lento-btn";
     lentoBtn.type="button";
-    lentoBtn.innerHTML="🐢";
-    lentoBtn.title="Repetir despacio";
+    lentoBtn.innerHTML="🐢 <span>0.45×</span>";
+    lentoBtn.title="Repetir despacio (0.45x)";
     lentoBtn.setAttribute("aria-label","Repetir la última frase despacio");
-    lentoBtn.onclick=()=>{
-      if(!lastSpokenText)return;
-      /* replay directly (not via speak) so it doesn't overwrite lastSpokenText rate context */
-      const sp=getSpanishVoices();
-      const voice=(selV&&sp.find(v=>v.name===selV.name&&v.lang===selV.lang))||chooseSpanishVoice(sp);
-      speechSynthesis.cancel();
-      const u=new SpeechSynthesisUtterance(lastSpokenText);
-      if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang="es-MX";
-      u.rate=0.45;
-      speechSynthesis.speak(u);
-    };
+    lentoBtn.onclick=()=>replayLastSpokenSlow();
     document.body.appendChild(lentoBtn);
   }
   lentoBtn.style.display="flex";

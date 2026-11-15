@@ -8,6 +8,7 @@ import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml } from "../core/text-utils.js";
 import { markPractice } from "../core/stores.js";
 import { openMicPanel } from "../core/speech-mic.js";
+import { actions } from "./navigation.js";
 
 // ── Build Letras ──────────────────────────────────────────────────────────────
 // Grids initialized in initPhonetics()
@@ -15,7 +16,7 @@ let aL=null;
 export function sel(l){
   if(aL){const p=document.getElementById("lc-"+aL);if(p)p.className="lc";}
   aL=l;const iv=VL.includes(l);document.getElementById("lc-"+l).className="lc "+(iv?"av":"ac");
-  speak(LI[l].tts,0.7);const c=iv?"var(--pink)":"var(--teal)";const i=LI[l];
+  speak(LI[l].tts,0.7);actions.syncMouthLetter(l);const c=iv?"var(--pink)":"var(--teal)";const i=LI[l];
   document.getElementById("detail-card").innerHTML=`<div class="dc" style="border:1px solid ${iv?"rgba(232,93,117,0.25)":"rgba(74,168,160,0.25)"}">
     <div class="dc-big" style="color:${c}">${l}</div><div class="dc-sub">Se llama</div><div class="dc-name">"${i.name}"</div>
     <div class="dc-phon">[${i.phonetic}]</div><div class="dc-badge">${iv?"🔴 Vocal — el alma de cada sílaba":"🔵 Consonante — se combina con vocales"}</div><br/>

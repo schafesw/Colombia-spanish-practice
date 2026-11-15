@@ -1,4 +1,4 @@
-import { PICTURE_MATCH_BANK, GRINGO_TRAPS, NATURAL_EAR_CLIPS } from "../../data/index.js";
+import { PICTURE_MATCH_BANK, GRINGO_TRAPS, NATURAL_EAR_CLIPS, SPANISH_BRAIN_DRILLS } from "../../data/index.js";
 import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml } from "../core/text-utils.js";
 import { markPractice, recordSrs, srsDue, srsStore } from "../core/stores.js";
@@ -32,6 +32,11 @@ export function buildSrsReviewDeck(){
       const ne=NATURAL_EAR_CLIPS.find(x=>x.id===key.slice(3));
       if(ne){
         cards.push({kind:"ear",kicker:"🎧 Due · Street Speed Ear",prompt:ne.fast,clear:ne.clear,tts:ne.fast,ans:ne.answer,hint:ne.tip,srsKey:key,opts:ne.choices.slice()});
+      }
+    }else if(key.startsWith("brain|")&&typeof SPANISH_BRAIN_DRILLS!=="undefined"){
+      const br=SPANISH_BRAIN_DRILLS.find(x=>x.id===key.slice(6));
+      if(br){
+        cards.push({kind:"quiz",kicker:`🧠 Due · ${br.badge}`,prompt:br.prompt,sub:br.question,subTts:br.tts,tts:br.tts,ans:br.answer,hint:br.tip,srsKey:key,opts:shuffledCopy(br.choices)});
       }
     }else if(key.startsWith("rr|")&&typeof RR_BANK!=="undefined"){
       const pref=key.slice(3);
@@ -87,6 +92,10 @@ export function buildDailyFlowDeck(){
   if(typeof NATURAL_EAR_CLIPS!=="undefined"&&NATURAL_EAR_CLIPS.length){
     const ne=NATURAL_EAR_CLIPS[Math.floor(Math.random()*NATURAL_EAR_CLIPS.length)];
     cards.push({kind:"ear",kicker:"🎧 Street Speed Ear",prompt:ne.fast,clear:ne.clear,tts:ne.fast,ans:ne.answer,hint:ne.tip,srsKey:"ne|"+ne.id,opts:ne.choices.slice()});
+  }
+  if(typeof SPANISH_BRAIN_DRILLS!=="undefined"&&SPANISH_BRAIN_DRILLS.length){
+    const br=SPANISH_BRAIN_DRILLS[Math.floor(Math.random()*SPANISH_BRAIN_DRILLS.length)];
+    cards.push({kind:"quiz",kicker:`🧠 ${br.badge}`,prompt:br.prompt,sub:br.question,subTts:br.tts,tts:br.tts,ans:br.answer,hint:br.tip,srsKey:"brain|"+br.id,opts:shuffledCopy(br.choices)});
   }
   return cards;
 }

@@ -3,22 +3,24 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="color-scheme" content="light dark"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Español CO"/>
-<meta name="theme-color" content="#0a0f0d"/>
+<meta name="theme-color" content="#0c1411"/>
 <meta name="referrer" content="no-referrer"/>
 <meta name="build-rev" content="dev"/>
 <title>Español · Colombia</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Public+Sans:wght@400;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet"/>
-  <link rel="manifest" href="manifest.json?v=113.3"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&family=Nunito:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Public+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="manifest" href="manifest.json?v=114.1"/>
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png"/>
   <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png"/>
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png"/>
-  <link rel="stylesheet" href="styles/base.css?v=113.3"/>
-  <link rel="stylesheet" href="styles/polish.css?v=113.3"/>
-  <link rel="stylesheet" href="styles/labs.css?v=113.3"/>
-  <link rel="stylesheet" href="styles/shell.css?v=113.3"/>
+  <link rel="stylesheet" href="styles/base.css?v=114.1"/>
+  <link rel="stylesheet" href="styles/polish.css?v=114.1"/>
+  <link rel="stylesheet" href="styles/labs.css?v=114.1"/>
+  <link rel="stylesheet" href="styles/shell.css?v=114.1"/>
+  <link rel="stylesheet" href="styles/studio.css?v=114.1"/>
 </head>
 <body>
 <div id="splash" hidden role="status" aria-label="Loading Español Colombia">
@@ -28,24 +30,41 @@
   <div class="splash-status" id="splash-status">Loading…</div>
   <div class="splash-bar" aria-hidden="true"><i></i></div>
 </div>
-<header id="topbar">
-  <div class="brand"><img id="app-logo" src="assets/logo.png" alt="Español Colombia" width="34" height="34"/>
-  <span class="brand-name">Español <em>·</em> Colombia</span></div>
-  <div id="profile-host"></div>
+<header id="topbar" class="studio-topbar">
+  <div class="brand">
+    <img id="app-logo" src="assets/logo.png" alt="Español Colombia" width="34" height="34"/>
+    <div class="brand-copy">
+      <span class="brand-name">Español <em>·</em> Colombia</span>
+      <span class="brand-crumb" id="topbar-crumb">Estudio · Tu ruta diaria</span>
+    </div>
+  </div>
+  <div class="studio-topbar-tools">
+    <button type="button" class="studio-lento-btn" id="studio-lento-btn" disabled aria-label="Replay last Spanish phrase slowly at 0.45x speed">
+      <span class="acoustic-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+      <span class="studio-lento-label"><span class="studio-lento-word">Lento</span> <small class="tabular-nums">0.45×</small></span>
+    </button>
+    <button type="button" class="studio-search-trigger" id="studio-search-trigger" aria-label="Search lessons, verbs, phrases, and Colombian expressions">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="20" y1="20" x2="16.2" y2="16.2"></line></svg>
+      <span class="studio-search-copy">Buscar</span>
+      <kbd class="studio-kbd">⌘K</kbd>
+    </button>
+    <div id="profile-host"></div>
+  </div>
 </header>
 <div id="app">
 <div class="scroll">
 
-<!-- FONÉTICA: letras + sílabas, with the existing syllable layout preserved -->
+<!-- FONÉTICA: letras + sílabas, with articulatory sagittal mouth studio -->
 <div class="page" id="page-fonetica">
-  <div class="ph"><div class="ph-label">Español Colombiano</div>
-    <div class="ph-title" style="color:var(--teal)">Fonética</div>
-    <div class="ph-sub">Listen, watch, and practice the sounds</div></div>
+  <div class="ph"><div class="ph-label">Laboratorio Acústico · Colombia</div>
+    <div class="ph-title ph-accent-teal" tabindex="-1">Fonética</div>
+    <div class="ph-sub">Listen, watch tongue placement, and practice Colombian sounds</div></div>
   <div class="phonetic-tabs">
     <button class="phonetic-tab active" id="pt-letters" onclick="showPhonetic('letters')">🔤 Letras</button>
     <button class="phonetic-tab" id="pt-syllables" onclick="showPhonetic('syllables')">🔡 Sílabas</button>
   </div>
   <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-fonetica"></div></details>
+  <section id="phonetic-mouth-studio" class="mouth-studio-host" aria-label="Interactive articulatory mouth diagram"></section>
   <div class="phonetic-panel active" id="phonetic-letters">
     <div class="sl" style="color:var(--pink)">Vocales</div>
     <div class="g5" id="vowel-grid"></div>
@@ -149,18 +168,21 @@
 
 <!-- LECCIONES -->
 <div class="page active" id="page-lecciones">
-  <div class="ph"><div class="ph-label">Your path</div>
-    <div class="ph-title" style="color:var(--gold)">Lecciones</div>
+  <div class="ph"><div class="ph-label">Estudio Curricular · Colombia</div>
+    <div class="ph-title ph-accent-gold" tabindex="-1">Lecciones</div>
     <div class="ph-sub">One short step toward a real conversation</div></div>
   <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-lecciones"></div></details>
-  <div id="lesson-list"></div>
+  <div class="lecciones-studio-grid">
+    <div id="lesson-list"></div>
+    <aside id="lecciones-studio-aside" class="lecciones-studio-aside" aria-label="Daily acoustic spotlight"></aside>
+  </div>
 </div>
 
 <!-- VOCAB -->
 <div class="page" id="page-vocab">
-  <div class="ph"><div class="ph-label">Español Colombiano</div>
-    <div class="ph-title" style="color:var(--teal)">Vocabulario</div>
-    <div class="ph-sub">Tap any word to hear it</div></div>
+  <div class="ph"><div class="ph-label">Léxico Visual &amp; 28 Verbos</div>
+    <div class="ph-title ph-accent-teal" tabindex="-1">Vocabulario</div>
+    <div class="ph-sub">Tap any word to hear it · Flip visual cards</div></div>
   <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-vocab"></div></details>
   <input class="content-search" id="vocab-search" type="search" placeholder="🔎 Search words, phrases, San Juan, trampas, lessons…" aria-label="Search vocabulary"/>
   <div class="vocab-home-jump" id="vocab-home-jump">
@@ -187,17 +209,17 @@
 
 <!-- FRASES -->
 <div class="page" id="page-frases">
-  <div class="ph"><div class="ph-label">Español Colombiano</div>
-    <div class="ph-title" style="color:var(--pink)">Frases</div>
-    <div class="ph-sub">Daily conversation · Tap to listen</div></div>
+  <div class="ph"><div class="ph-label">Colombia Chats &amp; Expresiones</div>
+    <div class="ph-title ph-accent-pink" tabindex="-1">Frases</div>
+    <div class="ph-sub">Daily conversation · Branching Colombian roleplay</div></div>
   <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-frases"></div></details>
   <div id="frases-list"></div>
 </div>
 
 <!-- GRAMÁTICA -->
 <div class="page" id="page-gram">
-  <div class="ph"><div class="ph-label">Español Colombiano</div>
-    <div class="ph-title" style="color:var(--purple)">Guías &amp; Gramática</div>
+  <div class="ph"><div class="ph-label">Atlas Regional &amp; Patrones</div>
+    <div class="ph-title ph-accent-purple" tabindex="-1">Guías &amp; Gramática</div>
     <div class="ph-sub">Regions · Visual posters · Patterns</div></div>
   <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-gram"></div></details>
   <div class="gram-groups">
@@ -227,7 +249,7 @@
 <!-- QUIZ -->
 <div class="page" id="page-quiz">
   <div class="ph"><div class="ph-label">Practice</div>
-    <div class="ph-title"><span style="color:var(--gold)">Quiz</span></div>
+    <div class="ph-title ph-accent-gold" tabindex="-1">Quiz</div>
     <div class="ph-sub">How much do you remember?</div></div>
   <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-quiz"></div></details>
   <div class="quiz-score-bar">
@@ -268,6 +290,7 @@
     <button class="qc-hear" onclick="quizHear()">🔊 Listen</button>
     <div class="quiz-blind-row" id="quiz-blind-row">
       <button type="button" class="blind-ear-chip" id="quiz-blind-toggle" onclick="toggleQuizBlindEar()">🎧 Blind-Ear: OFF</button>
+      <button type="button" class="blind-ear-chip" id="quiz-recall-toggle" onclick="toggleQuizRecallFirst()">🗣️ Recall-First: OFF</button>
       <button type="button" class="quiz-blind-peek-btn" id="quiz-blind-peek" hidden>👁️ Peek Spanish</button>
       <span class="quiz-kbd-hint" aria-hidden="true">⌨️ 1–4 pick · R replay · Enter next</span>
     </div>
@@ -278,6 +301,7 @@
   </div>
   <div class="quiz-feedback feedback-tray" id="quiz-fb"></div>
   <div class="quiz-reveal" id="quiz-reveal"></div>
+  <div class="quiz-recall-gate" id="quiz-recall-gate" hidden></div>
   <div class="quiz-opts" id="quiz-opts"></div>
   <button class="quiz-next" id="quiz-next" onclick="nQ()">Next →</button>
   <div class="quiz-review-launch" id="quiz-review-launch" hidden></div>
@@ -285,17 +309,57 @@
 
 </div>
 
-<!-- 6-Tab Bar -->
-<div class="tab-bar">
-  <button class="tab-item" id="tb-fonetica" onclick="showPage('fonetica')"><span class="ti">🔤</span><span>Fonética</span></button>
-  <button class="tab-item active" id="tb-lecciones" onclick="showPage('lecciones')"><span class="ti">🎓</span><span>Lecciones</span></button>
-  <button class="tab-item" id="tb-vocab" onclick="showPage('vocab')"><span class="ti">📚</span><span>Vocab</span></button>
-  <button class="tab-item tfrases" id="tb-frases" onclick="showPage('frases')"><span class="ti">💬</span><span>Frases</span></button>
-  <button class="tab-item tgram" id="tb-gram" onclick="showPage('gram')"><span class="ti">🇨🇴</span><span>Guías</span></button>
-  <button class="tab-item tquiz" id="tb-quiz" onclick="showPage('quiz')"><span class="ti">🧪</span><span>Quiz</span></button>
-</div>
+<!-- 6-Tab Studio Rail / Mobile Safe-Area Dock -->
+<nav class="tab-bar" aria-label="Salas de estudio">
+  <button class="tab-item" id="tb-fonetica" onclick="navigatePage('fonetica')">
+    <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h2.5l2.2-6 3.6 12 3.4-9 2.4 3H22"></path></svg></span>
+    <span class="tab-label">Fonética</span>
+    <kbd class="rail-kbd" aria-hidden="true">1</kbd>
+  </button>
+  <button class="tab-item active" id="tb-lecciones" aria-current="page" onclick="navigatePage('lecciones')">
+    <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path><path d="M9 7h6"></path><path d="M9 11h4"></path></svg></span>
+    <span class="tab-label">Lecciones</span>
+    <kbd class="rail-kbd" aria-hidden="true">2</kbd>
+  </button>
+  <button class="tab-item" id="tb-vocab" onclick="navigatePage('vocab')">
+    <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"></rect><path d="M7 9h10"></path><path d="M7 13h6"></path><circle cx="16.5" cy="14.5" r="1.5"></circle></svg></span>
+    <span class="tab-label">Vocab</span>
+    <kbd class="rail-kbd" aria-hidden="true">3</kbd>
+  </button>
+  <button class="tab-item tfrases" id="tb-frases" onclick="navigatePage('frases')">
+    <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><path d="M8 9h8"></path><path d="M8 13h5"></path></svg></span>
+    <span class="tab-label">Frases</span>
+    <kbd class="rail-kbd" aria-hidden="true">4</kbd>
+  </button>
+  <button class="tab-item tgram" id="tb-gram" onclick="navigatePage('gram')">
+    <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polygon points="15.8 8.2 13.7 13.7 8.2 15.8 10.3 10.3 15.8 8.2"></polygon></svg></span>
+    <span class="tab-label">Guías</span>
+    <kbd class="rail-kbd" aria-hidden="true">5</kbd>
+  </button>
+  <button class="tab-item tquiz" id="tb-quiz" onclick="navigatePage('quiz')">
+    <span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></span>
+    <span class="tab-label">Quiz</span>
+    <kbd class="rail-kbd" aria-hidden="true">6</kbd>
+  </button>
+</nav>
 </div>
 
-  <script type="module" src="src/main.js?v=113.3"></script>
+<dialog id="studio-command-dialog" class="studio-dialog" closedby="any" aria-labelledby="studio-command-title">
+  <div class="studio-dialog-shell">
+    <div class="studio-dialog-head">
+      <div class="studio-dialog-title-wrap">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="20" y1="20" x2="16.2" y2="16.2"></line></svg>
+        <h2 id="studio-command-title">Buscador del Estudio</h2>
+      </div>
+      <button type="button" class="studio-dialog-close" id="studio-command-close" aria-label="Close search dialog">Esc ✕</button>
+    </div>
+    <div class="studio-dialog-input-row">
+      <input id="studio-command-input" class="studio-dialog-input" type="search" placeholder="Busca lecciones, 28 verbos, modismos, ciudades o trampas…" autocomplete="off" aria-label="Search studio corpus"/>
+    </div>
+    <div id="studio-command-results" class="studio-dialog-results" role="region" aria-label="Search results"></div>
+  </div>
+</dialog>
+
+  <script type="module" src="src/main.js?v=114.1"></script>
 </body>
 </html>

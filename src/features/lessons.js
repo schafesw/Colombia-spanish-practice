@@ -841,6 +841,7 @@ export function renderLessons(){
   };
   bk.appendChild(b1);bk.appendChild(b2);root.appendChild(bk);
   setLessonView(lessonView);
+  actions.syncStudioChrome();
 }
 
 

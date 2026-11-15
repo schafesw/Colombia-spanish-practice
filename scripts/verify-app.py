@@ -198,7 +198,7 @@ def check_version_parity():
     ver_num = ver.lstrip("v")
 
     idx_txt = (ROOT / "index.html").read_text(encoding="utf-8")
-    for asset in ("manifest.json", "styles/base.css", "styles/polish.css", "styles/labs.css", "styles/shell.css"):
+    for asset in ("manifest.json", "styles/base.css", "styles/polish.css", "styles/labs.css", "styles/shell.css", "styles/studio.css"):
         needle = f"{asset}?v={ver_num}"
         if needle not in idx_txt:
             errors.append(f"index.html: missing versioned reference `{needle}` (expected {ver})")

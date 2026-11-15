@@ -8,7 +8,7 @@ import { userPrefs, saveUserPrefs, effectiveLevel, isBlindEarActive } from "../s
 import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml, normalizeDictation, normalizeQuizText, normalizeQuizPrompt, normalizeQuizAnswer, quizItemKey, applyQuizFitClasses } from "../core/text-utils.js";
 import { qStore, saveQ, srsStore, srsDue, srsNextLabel, recordSrs, recordSpeakingError, clearSpeakingError, markPractice, resetQAndSrs } from "../core/stores.js";
-import { attachMic } from "../core/speech-mic.js";
+import { attachMic, openMicPanel } from "../core/speech-mic.js";
 import { aQ, RR_BANK, BLANK_EN, CONVERSATION_QUIZ, FILL_BLANK_QUIZ, storedMissedQuestionCount, spanishAnswer, englishAnswer, quizAcceptedAnswers, quizAnswerMatches } from "../core/quiz-bank.js";
 import { actions, showPage } from "./navigation.js";
 import { renderQuizV102Hub } from "./quiz-labs.js";
@@ -218,10 +218,12 @@ export function nQ(){
   const wrongPool=appState.cQ.choices?appState.cQ.choices.map(answer=>({answer})):compatible.sort(()=>Math.random()-0.5);
   for(const w of wrongPool){if(wrong.length>=3)break;if(!w.answer)continue;const wk=normalizeQuizText(w.answer);if(!wk||seen.has(wk))continue;seen.add(wk);wrong.push({answer:w.answer});}
   const opts=[appState.cQ,...wrong].sort(()=>Math.random()-0.5);
-  const ow=document.getElementById("quiz-opts");ow.innerHTML="";
+  const ow=document.getElementById("quiz-opts");ow.innerHTML="";ow.hidden=false;
+  const rg=document.getElementById("quiz-recall-gate");if(rg){rg.hidden=true;rg.innerHTML="";}
   applyQuizFitClasses(document.getElementById("qc-word"),ow,document.getElementById("qc-word")?.textContent,opts.map(o=>o.answer));
   opts.forEach((opt,optIdx)=>{const b=document.createElement("button");b.className="qopt";b.textContent=opt.answer;b.dataset.kbd=String(optIdx+1);
     b.onclick=()=>{if(appState.an)return;appState.an=true;appState.qT++;document.getElementById("q-total").textContent=appState.qT;
+      if(rg){rg.hidden=true;}ow.hidden=false;
       renderQuizPromptAndBlind();
       const fb=document.getElementById("quiz-fb"),quizReveal=document.getElementById("quiz-reveal");
       const mk=appState.cQ.es+"|"+appState.cQ.answer,missKey=missedQuizKey(appState.cQ);
@@ -232,6 +234,34 @@ export function nQ(){
       if(quizReveal){quizReveal.innerHTML=`<div>🇨🇴 <strong>${spanishAnswer(appState.cQ)}</strong></div><div>🇺🇸 ${englishAnswer(appState.cQ)}</div>`;attachMic(quizReveal,spanishAnswer(appState.cQ));fb.appendChild(quizReveal);}
       qStore.c=appState.qC;qStore.t=appState.qT;qStore.s=appState.qS;saveQ();actions.syncMissedQueueLauncher();
       document.getElementById("quiz-next").style.display="block";};ow.appendChild(b);});
+  syncRecallFirstGate();
+}
+export function syncRecallFirstGate(){
+  const btn=document.getElementById("quiz-recall-toggle");
+  const rg=document.getElementById("quiz-recall-gate");
+  const ow=document.getElementById("quiz-opts");
+  const on=!!userPrefs.recallFirst;
+  if(btn){
+    btn.textContent=on?"🗣️ Recall-First: ON":"🗣️ Recall-First: OFF";
+    btn.classList.toggle("active",on);
+    btn.setAttribute("aria-pressed",on?"true":"false");
+  }
+  if(!rg||!ow)return;
+  if(!on||!appState.cQ||appState.an||appState.qMode==="dictation"){
+    rg.hidden=true;
+    ow.hidden=false;
+    return;
+  }
+  ow.hidden=true;
+  rg.hidden=false;
+  rg.innerHTML=`<div class="brain-recall-copy">Say or translate it from memory first — reveal choices once you've tried!</div><div class="bridge-actions"><button type="button" class="lp-nav-btn quiz-recall-mic">🎙️ Say Answer</button><button type="button" class="lp-nav-btn primary quiz-recall-show">👀 Show 4 Choices</button></div>`;
+  rg.querySelector(".quiz-recall-mic").onclick=()=>openMicPanel(spanishAnswer(appState.cQ),"phrases");
+  rg.querySelector(".quiz-recall-show").onclick=()=>{rg.hidden=true;ow.hidden=false;};
+}
+export function toggleQuizRecallFirst(){
+  userPrefs.recallFirst=!userPrefs.recallFirst;
+  saveUserPrefs();
+  syncRecallFirstGate();
 }
 export function renderQuizPromptAndBlind(){
   const wordEl=document.getElementById("qc-word");

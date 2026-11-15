@@ -416,7 +416,10 @@ export function renderLessonStep(){
       const box=lpEl("lp-typing");box.appendChild(lpEl("lp-typing-prompt",target.en));
       const input=document.createElement("input");input.type="text";input.className="lp-typing-input";input.placeholder="Escribe en español…";input.autocomplete="off";input.autocapitalize="sentences";
       const actions=lpEl("lp-typing-actions");const check=document.createElement("button");check.type="button";check.className="lp-nav-btn primary";check.textContent="Check answer";const hear=document.createElement("button");hear.type="button";hear.className="lp-nav-btn";hear.textContent="🔊 Hear model";hear.onclick=()=>speak(target.es,0.75);
-      const feedback=lpEl("lp-typing-feedback","");check.onclick=()=>{const ok=normalizeQuizText(input.value)===normalizeQuizText(target.es);if(ok){clearSpeakingError(target.es);feedback.innerHTML="✅ Correct — say it again without reading.";speak(target.es,0.75);}else{recordSpeakingError(target.es,"typed production");feedback.innerHTML=`Keep practicing. Model: <strong>${escapeVocabHtml(target.es)}</strong><small>Saved in your practice list.</small>`;}attachMic(feedback,target.es);};actions.append(check,hear);box.append(input,actions,feedback);body.appendChild(box);
+      const feedback=lpEl("lp-typing-feedback","");
+      const normTyped=s=>normalizeQuizText(s).replace(/^(?:yo|tu|usted|nosotros|nosotras)\s+/,"").replace(/\bpa\b/g,"para");
+      const accepted=Array.isArray(target.alts)?[target.es,...target.alts]:[target.es];
+      check.onclick=()=>{const userNorm=normTyped(input.value);const ok=!!userNorm&&accepted.some(cand=>normTyped(cand)===userNorm);if(ok){clearSpeakingError(target.es);feedback.innerHTML="✅ Correct — say it again without reading.";speak(target.es,0.75);}else{recordSpeakingError(target.es,"typed production");feedback.innerHTML=`Keep practicing. Model: <strong>${escapeVocabHtml(target.es)}</strong><small>Saved in your practice list.</small>`;}attachMic(feedback,target.es);};actions.append(check,hear);box.append(input,actions,feedback);body.appendChild(box);
     }else body.appendChild(lpEl("lp-hint","No typing prompt is available for this lesson yet."));
     navBtn("‹ Back",prev);navBtn("Next →",next,true);
   }

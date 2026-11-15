@@ -1,4 +1,4 @@
-import { PICTURE_MATCH_BANK, NATURAL_EAR_CLIPS, GRINGO_TRAPS } from "../../data/index.js";
+import { PICTURE_MATCH_BANK, NATURAL_EAR_CLIPS, GRINGO_TRAPS, SPANISH_BRAIN_DRILLS } from "../../data/index.js";
 import { appStorage } from "../state/storage.js";
 import { appState } from "../state/app-state.js";
 import { speak } from "../audio/voice-engine.js";
@@ -7,6 +7,7 @@ import { markPractice } from "../core/stores.js";
 import { attachMic } from "../core/speech-mic.js";
 import { RR_BANK, storedMissedQuestionCount } from "../core/quiz-bank.js";
 import { pmFilteredPool, renderPictureMatchDeck } from "./picture-match.js";
+import { renderSpanishBrainLab } from "./brain-lab.js";
 import { actions } from "./navigation.js";
 
 export function mountNaturalEarLab(parent){
@@ -119,7 +120,8 @@ export function renderQuizV102Hub(){
   host.innerHTML="";
   const bar=document.createElement("div");bar.className="qv102-bar";
   const pmCount=typeof PICTURE_MATCH_BANK!=="undefined"?PICTURE_MATCH_BANK.length:20;
-  [["off","📝 Standard Quiz"],["picture",`🖼️ Picture Match (${pmCount})`],["sprint","⏱️ 60s Fluency Sprint"]].forEach(([tid,lbl])=>{
+  const brCount=typeof SPANISH_BRAIN_DRILLS!=="undefined"?SPANISH_BRAIN_DRILLS.length:38;
+  [["off","📝 Standard Quiz"],["brain",`🧠 Spanish Brain (${brCount})`],["picture",`🖼️ Picture Match (${pmCount})`],["sprint","⏱️ 60s Fluency Sprint"]].forEach(([tid,lbl])=>{
     const b=document.createElement("button");b.type="button";b.className="mf-chip"+(qV102Tab===tid&&!appState.qMissedOnly?" active":"");
     b.textContent=lbl;
     b.onclick=()=>{
@@ -149,7 +151,11 @@ export function renderQuizV102Hub(){
   };
   bar.appendChild(mBtn);
   host.appendChild(bar);
-  if(qV102Tab==="picture"){
+  if(qV102Tab==="brain"){
+    const brSlot=document.createElement("div");brSlot.className="qv102-panel";
+    renderSpanishBrainLab(brSlot);
+    host.appendChild(brSlot);
+  }else if(qV102Tab==="picture"){
     const pmSlot=document.createElement("div");pmSlot.className="qv102-panel";
     renderPictureMatchDeck(pmSlot);
     host.appendChild(pmSlot);
@@ -169,10 +175,10 @@ export function renderQuizV102Hub(){
           <button type="button" class="quiz-next sprint-start-btn">▶ Start 60s Sprint</button>
         </div>`;
       spWrap.querySelector(".sprint-start-btn").onclick=()=>{
-        appState.spRunning=true;appState.spLeft=60;spScore=0;spTotal=0;spFb="";spItem=nextSprintQuestion();
+        appState.spRunning=true;appState.spPaused=false;appState.spLeft=60;spScore=0;spTotal=0;spFb="";spItem=nextSprintQuestion();
         if(appState.spTimer)clearInterval(appState.spTimer);
         appState.spTimer=setInterval(()=>{
-          appState.spLeft--;
+          if(appState.spPaused)return;appState.spLeft--;
           if(appState.spLeft<=0){clearInterval(appState.spTimer);appState.spTimer=null;appState.spRunning=false;if(spScore>best)try{appStorage.setItem(SPRINT_BEST_KEY,String(spScore));}catch(e){}}
           renderQuizV102Hub();
         },1000);
@@ -199,7 +205,7 @@ export function renderQuizV102Hub(){
           <div class="qs-item"><div class="qs-num${appState.spLeft<=10?" sprint-urgent":""}" style="color:var(--gold)">${appState.spLeft}s</div><div class="qs-label">Time Left</div></div>
           <div class="qs-item"><div class="qs-num" style="color:var(--teal)">${spScore}/${spTotal}</div><div class="qs-label">Score</div></div>
           <div class="qs-item"><div class="qs-num" style="color:var(--muted)">🏆 ${Math.max(best,spScore)}</div><div class="qs-label">Best</div></div>
-          <button type="button" class="sprint-stop-pill" aria-label="Stop 60s sprint">⏹ Stop</button>
+          <button type="button" class="sprint-pause-pill">${appState.spPaused?"▶ Resume":"⏸ Pause"}</button><button type="button" class="sprint-stop-pill" aria-label="Stop 60s sprint">⏹ Stop</button>
         </div>
         <div class="quiz-card sprint-quiz-card">
           <div class="qc-label">${escapeVocabHtml(q.kind)}</div>
@@ -210,7 +216,8 @@ export function renderQuizV102Hub(){
         </div>
         <div class="quiz-opts sprint-opts"></div>
         <div class="quiz-feedback sprint-fb" style="color:${fbTone}">${escapeVocabHtml(spFb)}</div>`;
-      spWrap.querySelector(".sprint-stop-pill").onclick=()=>{if(appState.spTimer){clearInterval(appState.spTimer);appState.spTimer=null;}appState.spRunning=false;appState.spLeft=60;spFb="";renderQuizV102Hub();};
+      spWrap.querySelector(".sprint-pause-pill").onclick=()=>{appState.spPaused=!appState.spPaused;renderQuizV102Hub();};
+      spWrap.querySelector(".sprint-stop-pill").onclick=()=>{if(appState.spTimer){clearInterval(appState.spTimer);appState.spTimer=null;}appState.spRunning=false;appState.spPaused=false;appState.spLeft=60;spFb="";renderQuizV102Hub();};
       spWrap.querySelector(".sprint-hear-btn").onclick=()=>speak(q.subTts||q.tts,0.85);
       const oWrap=spWrap.querySelector(".sprint-opts");
       applyQuizFitClasses(spWrap.querySelector(".sprint-cue-word"),oWrap,q.cue,q.opts);
@@ -242,6 +249,7 @@ export function stopActiveSprint() {
     appState.spTimer = null;
   }
   appState.spRunning = false;
+  appState.spPaused = false;
   appState.spLeft = 60;
   renderQuizV102Hub();
 }

@@ -1,8 +1,16 @@
-/** Page routing, swipe gestures, lazy page initialization & cross-feature action registry. */
+/** Page routing, View Transitions, swipe gestures, lazy page initialization & cross-feature action registry. */
 import { appState } from "../state/app-state.js";
 import { speak } from "../audio/voice-engine.js";
 
 export const PG = ["fonetica", "lecciones", "vocab", "frases", "gram", "quiz"];
+export const PAGE_CRUMBS = {
+  fonetica: "Fonética · Laboratorio Acústico",
+  lecciones: "Estudio · Ruta Colombiana",
+  vocab: "Léxico Visual · Memoria Activa",
+  frases: "Conversación · Colombia Chats",
+  gram: "Atlas Regional & Verbos",
+  quiz: "Arena de Práctica Adaptativa",
+};
 const pageInits = new Map();
 
 export const actions = {
@@ -46,6 +54,8 @@ export const actions = {
   sel: () => {},
   syncQuizControls: () => {},
   resetQuizRound: () => {},
+  syncStudioChrome: () => {},
+  syncMouthLetter: () => {},
 };
 
 export function registerPageInit(id, fn) {
@@ -69,8 +79,15 @@ export function showPage(id) {
   ensurePageInitialized(id);
   PG.forEach(p => {
     document.getElementById("page-" + p)?.classList.toggle("active", p === id);
-    document.getElementById("tb-" + p)?.classList.toggle("active", p === id);
+    const tb = document.getElementById("tb-" + p);
+    if (tb) {
+      tb.classList.toggle("active", p === id);
+      if (p === id) tb.setAttribute("aria-current", "page");
+      else tb.removeAttribute("aria-current");
+    }
   });
+  const crumb = document.getElementById("topbar-crumb");
+  if (crumb && PAGE_CRUMBS[id]) crumb.textContent = PAGE_CRUMBS[id];
   const scroller = document.querySelector(".scroll");
   if (scroller) scroller.scrollTop = 0;
   if (id !== "vocab") actions.hideVerbDetail();
@@ -81,13 +98,33 @@ export function showPage(id) {
   }
   if (id === "vocab" || id === "gram") actions.routineDockHide();
   if (id === "quiz") actions.resumeQuizListeningAudio(speak);
+  actions.syncStudioChrome();
+}
+
+export function navigatePage(id) {
+  const alreadyActive = document.getElementById("page-" + id)?.classList.contains("active");
+  const focusPageHeading = () => {
+    const heading = document.querySelector(`#page-${id} .ph-title[tabindex="-1"]`);
+    if (heading && !alreadyActive) heading.focus({ preventScroll: true });
+  };
+  ensurePageInitialized(id);
+  const allowMotion = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: no-preference)").matches;
+  if (!alreadyActive && typeof document !== "undefined" && document.startViewTransition && allowMotion) {
+    const transition = document.startViewTransition(() => {
+      showPage(id);
+    });
+    transition.finished.finally(focusPageHeading);
+    return;
+  }
+  showPage(id);
+  focusPageHeading();
 }
 
 export function initTabSwipe() {
   const scroller = document.querySelector(".scroll");
   if (!scroller) return;
   let start = null;
-  const interactive = "button,input,select,textarea,a,summary,[contenteditable='true'],.quiz-mode-row,.quiz-cat-row,.vocab-pills,.phrase-menu,.gram-tabs,.phonetic-tabs";
+  const interactive = "button,input,select,textarea,a,summary,dialog,[contenteditable='true'],.quiz-mode-row,.quiz-cat-row,.vocab-pills,.phrase-menu,.gram-tabs,.phonetic-tabs";
   scroller.addEventListener("touchstart", e => {
     if (e.touches.length !== 1 || e.target.closest(interactive)) { start = null; return; }
     const t = e.touches[0];
@@ -106,6 +143,6 @@ export function initTabSwipe() {
       return;
     }
     const next = active + (dx < 0 ? 1 : -1);
-    if (next >= 0 && next < PG.length) showPage(PG[next]);
+    if (next >= 0 && next < PG.length) navigatePage(PG[next]);
   }, { passive: true });
 }
