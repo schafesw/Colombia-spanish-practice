@@ -521,6 +521,71 @@ def run_smoke():
                 page_off.wait_for_function("() => !document.getElementById('splash') && window.__escoSyncState && window.__escoSyncState.online === false", timeout=10000)
                 ctx_off.close()
 
+                # Malformed/"null" hydrated /api/state values must not crash boot
+                ctx_bad = browser.new_context(viewport={"width": 430, "height": 932}, service_workers="block")
+                page_bad = ctx_bad.new_page()
+                attach_listeners(page_bad, use_static_html=False)
+                bad_state_body = _json.dumps({"items": {
+                    "esco-lesson-progress-v1": "null",
+                    "esco-days-v1": "null",
+                    "esco-quiz-v1": "null",
+                    "esco-routine-v3": "null",
+                    "esco-rapid-stats-v1": "null",
+                }})
+                def route_bad_state(route):
+                    url = route.request.url
+                    if url.endswith("/index.html") or url.endswith("/"):
+                        route.fulfill(status=200, content_type="text/html; charset=utf-8", body=sync_html)
+                    elif url.endswith("/api/me"):
+                        route.fulfill(status=200, content_type="application/json", body=_json.dumps({
+                            "principal_id": 1, "username": "seth", "display_name": "Seth",
+                            "email": "seth@example.test", "provider": "portal", "avatar": {"kind": "initials"},
+                            "imported": True,
+                        }))
+                    elif url.endswith("/api/state"):
+                        route.fulfill(status=200, content_type="application/json", body=bad_state_body)
+                    elif "/api/state/" in url and route.request.method in ("PUT", "DELETE"):
+                        route.fulfill(status=200, content_type="application/json", body='{"ok":true}')
+                    else:
+                        route.continue_()
+                page_bad.route("**/*", route_bad_state)
+                page_bad.goto(base_url, wait_until="domcontentloaded")
+                page_bad.wait_for_function("() => !document.getElementById('splash')", timeout=10000)
+                assert page_bad.locator(".account-name").inner_text().strip() == "Seth", "Expected Seth account bar on sanitized /api/state"
+                ctx_bad.close()
+
+                # Stale-cached ES module recovery: sync.js flushes cache and reloads once cleanly
+                ctx_stale = browser.new_context(viewport={"width": 430, "height": 932}, service_workers="block")
+                page_stale = ctx_stale.new_page()
+                lessons_hits = {"n": 0}
+                def route_stale_module(route):
+                    url = route.request.url
+                    if url.endswith("/index.html") or "/?_cb=" in url or url.endswith("/"):
+                        route.fulfill(status=200, content_type="text/html; charset=utf-8", body=sync_html)
+                    elif url.endswith("/api/me"):
+                        route.fulfill(status=200, content_type="application/json", body=_json.dumps({
+                            "principal_id": 1, "username": "seth", "display_name": "Seth",
+                            "email": "seth@example.test", "provider": "portal", "avatar": {"kind": "initials"},
+                            "imported": True,
+                        }))
+                    elif url.endswith("/api/state"):
+                        route.fulfill(status=200, content_type="application/json", body='{"items":{}}')
+                    elif "/src/features/lessons.js" in url:
+                        lessons_hits["n"] += 1
+                        if lessons_hits["n"] == 1:
+                            route.fulfill(status=200, content_type="application/javascript", headers={"Cache-Control": "max-age=3600"}, body="export const STALE_ONLY = true;\n")
+                        else:
+                            route.continue_()
+                    else:
+                        route.continue_()
+                page_stale.route("https://fonts.**", lambda r: r.abort())
+                page_stale.route("**/*", route_stale_module)
+                page_stale.goto(base_url, wait_until="domcontentloaded")
+                page_stale.wait_for_function("() => !document.getElementById('splash') && document.querySelector('.account-name')", timeout=12000)
+                assert lessons_hits["n"] >= 2, f"Expected sync.js to recover and re-fetch lessons.js, hits={lessons_hits['n']}"
+                assert "_cb=" not in page_stale.url, f"Expected _cb query param cleaned after recovery, got {page_stale.url}"
+                ctx_stale.close()
+
             browser.close()
     finally:
         httpd.shutdown()

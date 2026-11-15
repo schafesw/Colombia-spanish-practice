@@ -25,13 +25,13 @@ export function vocabKeys(cat){
 export function phraseProgress(items){return practicedCount("phrases",[...new Set((items||[]).map(i=>i.es))]);}
 export const LESSON_KEY="esco-lesson-progress-v1";
 export let lessonProgress={};
-try{lessonProgress=JSON.parse(appStorage.getItem(LESSON_KEY)||"{}");}catch(e){lessonProgress={};}
+try{const lp=JSON.parse(appStorage.getItem(LESSON_KEY)||"{}");lessonProgress=(lp&&typeof lp==="object"&&!Array.isArray(lp))?lp:{};}catch(e){lessonProgress={};}
 export function saveLessons(){try{appStorage.setItem(LESSON_KEY,JSON.stringify(lessonProgress));}catch(e){}}
 
 /* Racha de días — practice-day streak */
 export const DAY_KEY="esco-days-v1";
 export let dayInfo={last:"",streak:0};
-try{dayInfo=Object.assign(dayInfo,JSON.parse(appStorage.getItem(DAY_KEY)||"{}"));}catch(e){}
+try{const di=JSON.parse(appStorage.getItem(DAY_KEY)||"{}");if(di&&typeof di==="object"&&!Array.isArray(di))Object.assign(dayInfo,di);}catch(e){}
 export function recordPracticeDay(){
   const today=localDayKey();
   if(dayInfo.last===today)return;
@@ -123,7 +123,7 @@ try{readingProgress=JSON.parse(appStorage.getItem(READING_KEY)||"{}");if(!readin
 export function saveReadings(){try{appStorage.setItem(READING_KEY,JSON.stringify(readingProgress));}catch(e){}}
 export const QS_KEY="esco-quiz-v1";
 export let qStore={c:0,t:0,s:0,missed:{}};
-try{const raw=appStorage.getItem(QS_KEY);if(raw)qStore=Object.assign(qStore,JSON.parse(raw));}catch(e){}
+try{const raw=appStorage.getItem(QS_KEY);const parsed=raw?JSON.parse(raw):null;if(parsed&&typeof parsed==="object"&&!Array.isArray(parsed))Object.assign(qStore,parsed);if(!qStore.missed||typeof qStore.missed!=="object")qStore.missed={};}catch(e){}
 if(!Object.keys(srsStore).length&&qStore.missed){Object.keys(qStore.missed).forEach(key=>{srsStore[key]={reps:0,interval:0,lapses:0,due:Date.now()};});saveSrs();}
 export function saveQ(){try{appStorage.setItem(QS_KEY,JSON.stringify(qStore));}catch(e){}}
 
