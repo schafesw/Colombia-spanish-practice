@@ -26,7 +26,7 @@ export function sel(l){
 // ── Build Sílabas ─────────────────────────────────────────────────────────────
 const SYL_CONS=CN.flatMap(l=>l==="R"?[l,"RR"]:[l]);
 let aF=null;
-export function sF(l){document.getElementById(aF?"fb-"+aF:"fb-all").classList.remove("active");aF=l;document.getElementById(l?"fb-"+l:"fb-all").classList.add("active");}
+export function sF(l){document.getElementById(aF?"fb-"+aF:"fb-all").classList.remove("active");aF=l;document.getElementById(l?"fb-"+l:"fb-all").classList.add("active");rC();}
 export function rC(){
   const c=document.getElementById("combo-groups");c.innerHTML="";
   (aF?[aF]:SYL_CONS).forEach(con=>{

@@ -2,6 +2,7 @@
 export const appState = {
   initializedPages: new Set(),
   lpLesson: null,
+  lpPracticed: new Set(),
   fraseReturnToLessons: false,
   routineTwisterSelection: null,
   cQ: null,
