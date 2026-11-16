@@ -654,3 +654,20 @@
   #page-quiz .quiz-opts .qopt[data-kbd]::before{content:attr(data-kbd);display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;margin-right:7px;border-radius:6px;border:1px solid var(--border-strong);background:var(--surface2);color:var(--muted);font-size:0.68rem;font-weight:900;vertical-align:middle;}
   :root[data-theme="light"] .quiz-kbd-hint{background:#eef2ec;color:#334155;border-color:rgba(20,32,26,0.16);}
 }
+
+/* ── v115.1: Tighter Mobile Above-the-Fold & Segmented Layout ───────────────── */
+.fr-top-tools{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin:0 0 8px;}
+.fr-top-tools .content-search{margin:0;}
+.fr-top-tools .frase-jump{margin:0;min-width:150px;}
+@media (max-width: 560px){
+  .fr-top-tools{grid-template-columns:1fr;gap:6px;}
+  .mode-focus-bar{gap:5px;padding:8px 9px;margin:0 0 9px;}
+  .mf-pill,.mf-chip{padding:5px 9px;font-size:0.71rem;}
+  .welcome-lane-card{padding:10px 11px;margin:0 0 10px;}
+  .welcome-lane-btn{padding:7px 10px;}
+}
+.guides-fold{margin:0 0 12px;}
+.guides-fold>summary{list-style:none;cursor:pointer;}
+.guides-fold>summary::-webkit-details-marker{display:none;}
+.guides-fold[open]>summary{margin-bottom:10px;}
+.guides-fold .bridge-trainer-card{margin-bottom:0;}

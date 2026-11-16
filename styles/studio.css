@@ -351,7 +351,8 @@ textarea {
   .brand-crumb,
   .studio-search-trigger .studio-kbd,
   .studio-search-copy,
-  .studio-lento-word {
+  .studio-lento-word,
+  .ph-label {
     display: none;
   }
   .studio-search-trigger {
@@ -359,6 +360,23 @@ textarea {
   }
   .studio-lento-btn {
     padding: 5px 9px;
+  }
+  .ph {
+    margin-bottom: 8px;
+  }
+  .ph-title {
+    font-size: 1.55rem;
+    line-height: 1.08;
+  }
+  .ph-sub {
+    font-size: 0.72rem;
+    margin-top: 2px;
+  }
+  .voice-drawer-fold {
+    margin-bottom: 8px;
+  }
+  .voice-drawer-fold > summary {
+    padding: 6px 10px;
   }
 }
 
