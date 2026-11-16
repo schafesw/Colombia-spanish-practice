@@ -302,6 +302,7 @@ function renderModeFocusBar(root){
       saveUserPrefs();
       if(typeof actions.buildSpeakingGuide==="function")actions.buildSpeakingGuide();
       if(typeof actions.buildGram==="function"&&typeof GRAMMAR!=="undefined")actions.buildGram("presente",GRAMMAR.presente);
+      renderLessons();
     };
     lvlRow.appendChild(b);
   });
@@ -309,7 +310,7 @@ function renderModeFocusBar(root){
   focOpts.forEach(([id,lbl])=>{
     const b=document.createElement("button");b.type="button";b.className="mf-chip"+(userPrefs.focus===id?" active":"");
     b.textContent=lbl;b.setAttribute("aria-pressed",userPrefs.focus===id?"true":"false");
-    b.onclick=()=>{userPrefs.focus=id;saveUserPrefs();};
+    b.onclick=()=>{userPrefs.focus=id;saveUserPrefs();renderLessons();};
     focRow.appendChild(b);
   });
   const earBtn=document.createElement("button");earBtn.type="button";
@@ -323,6 +324,7 @@ function renderModeFocusBar(root){
     saveUserPrefs();
     if(typeof actions.buildSpeakingGuide==="function")actions.buildSpeakingGuide();
     if(typeof actions.buildGram==="function"&&typeof GRAMMAR!=="undefined")actions.buildGram("presente",GRAMMAR.presente);
+    renderLessons();
   };
   focRow.appendChild(earBtn);
   bar.append(lvlRow,focRow);root.appendChild(bar);
@@ -449,12 +451,12 @@ export function renderLessons(){
     const wCard=document.createElement("section");wCard.className="welcome-lane-card";wCard.dataset.lessonView="today";
     wCard.innerHTML=`<div class="welcome-lane-head"><span>🧭 <strong>Pick your starting lane</strong> <small>(you can switch anytime above)</small></span><button type="button" class="welcome-lane-close" aria-label="Dismiss welcome card">×</button></div><div class="welcome-lane-btns"></div>`;
     const wClose=wCard.querySelector(".welcome-lane-close");
-    const dismissWelcome=()=>{try{appStorage.setItem(WELCOME_DISMISS_KEY,"1");}catch(e){}};
+    const dismissWelcome=(targetView)=>{try{appStorage.setItem(WELCOME_DISMISS_KEY,"1");}catch(e){}renderLessons();if(targetView)setLessonView(targetView);};
     wClose.onclick=()=>{dismissWelcome();};
     const wBtns=wCard.querySelector(".welcome-lane-btns");
     [
       ["🌱 Brand new (A0)","Show Sound Basics & keep extra tools tucked away",()=>{userPrefs.level="starter";userPrefs.blindEar=false;saveUserPrefs();dismissWelcome();}],
-      ["🚀 Know basics (A1–A2)","Keep all drills open & unlock 5Q Stage Test-Outs",()=>{userPrefs.level="explorer";saveUserPrefs();dismissWelcome();setLessonView("path");}],
+      ["🚀 Know basics (A1–A2)","Keep all drills open & unlock 5Q Stage Test-Outs",()=>{userPrefs.level="explorer";saveUserPrefs();dismissWelcome("path");}],
       ["🔥 Wanna flow (B1+)","Turn on Blind-Ear listening challenge right away",()=>{userPrefs.level="fluent";userPrefs.blindEar=true;saveUserPrefs();dismissWelcome();}]
     ].forEach(([title,sub,fn])=>{
       const b=document.createElement("button");b.type="button";b.className="welcome-lane-btn";
@@ -765,6 +767,18 @@ export function renderLessons(){
   const tenseGrid=tenseRoadmap.querySelector(".tense-roadmap-grid");tenseTargets.forEach(([label,pattern,id,sub],i)=>{const b=document.createElement("button");b.type="button";b.className="tense-roadmap-item";b.innerHTML=`<span class='tense-roadmap-number'>${i+1}</span><span><strong>${label}</strong><small>${pattern} · ${sub}</small></span><span>›</span>`;b.onclick=()=>{const lesson=LESSONS.find(l=>l.id===id);if(lesson)openLesson(lesson);else{showPage("gram");actions.showGram(id);}};tenseGrid.appendChild(b);});
   root.appendChild(tenseRoadmap);
   let lessonNum=0;
+  const toggleLessonCheck=(e,lessonId)=>{
+    e.stopPropagation();
+    const sc=document.querySelector(".scroll");
+    const prevTop=sc?sc.scrollTop:0;
+    const openStages=[...root.querySelectorAll(".lesson-stage[open]")].map(s=>s.id);
+    if(lessonProgress[lessonId])delete lessonProgress[lessonId];
+    else lessonProgress[lessonId]=true;
+    saveLessons();
+    renderLessons();
+    openStages.forEach(id=>{const el=document.getElementById(id);if(el)el.open=true;});
+    if(sc)sc.scrollTop=prevTop;
+  };
   LESSON_STAGES.forEach((stage,stageIndex)=>{
     const stageLessons=stage.ids.map(id=>LESSONS.find(l=>l.id===id)).filter(Boolean);
     if(!stageLessons.length)return;
@@ -798,7 +812,7 @@ export function renderLessons(){
         dlRow.appendChild(b);
       });
       card.onclick=()=>openLesson(lesson);
-      card.querySelector(".lesson-check").onclick=(e)=>{e.stopPropagation();if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();};
+      card.querySelector(".lesson-check").onclick=(e)=>toggleLessonCheck(e,lesson.id);
       stageWrap.appendChild(card);
     });
   });
@@ -810,7 +824,7 @@ export function renderLessons(){
     const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"")+(recommended?" recommended":"");card.dataset.lessonView="path";
     card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div>${lesson.enSub?`<div class="lesson-en-sub">${escapeVocabHtml(lesson.enSub)}</div>`:""}<div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
     card.onclick=()=>openLesson(lesson);
-    card.querySelector(".lesson-check").onclick=(e)=>{e.stopPropagation();if(lessonProgress[lesson.id])delete lessonProgress[lesson.id];else lessonProgress[lesson.id]=true;saveLessons();};
+    card.querySelector(".lesson-check").onclick=(e)=>toggleLessonCheck(e,lesson.id);
     root.appendChild(card);
   });
   /* Progress backup lives at the bottom — rare-use utility (v22) */

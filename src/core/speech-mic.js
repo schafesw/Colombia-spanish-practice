@@ -1,4 +1,5 @@
 import { speak } from "../audio/voice-engine.js";
+import { appState } from "../state/app-state.js";
 import { escapeVocabHtml } from "./text-utils.js";
 import { markPractice, refreshVocabProgress, recordSpeakingError, clearSpeakingError } from "./stores.js";
 
@@ -131,7 +132,7 @@ export function micListen(){
 }
 export function markPracticed(target){
   try{
-    lpPracticed.add(target);
+    appState.lpPracticed.add(target);
     document.querySelectorAll(".pronun-row").forEach(r=>{
       if(r.dataset.mt===target){r.classList.add("done");const ck=r.querySelector(".pronun-check");if(ck)ck.textContent="✅";}
     });

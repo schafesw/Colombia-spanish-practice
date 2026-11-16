@@ -53,7 +53,7 @@ def run_local_checks():
 
 def public_repo_files():
     gitlab_only = {
-        "api", "sync.js", "nginx.conf", "Dockerfile", "docker-compose.yml",
+        "api", "portal", "sync.js", "nginx.conf", "Dockerfile", "docker-compose.yml",
         ".gitlab-ci.yml", ".dockerignore", "tools", "build.txt",
     }
     return sorted(

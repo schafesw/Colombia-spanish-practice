@@ -16,7 +16,7 @@ import { attachMic, openMicPanel } from "../core/speech-mic.js";
 import { PHRASE_DIALOGUES, aQ, quizAcceptedAnswers, quizAnswerMatches } from "../core/quiz-bank.js";
 import { actions, showPage } from "./navigation.js";
 
-let lpSteps=[],lpStep=0,lpScore=0,lpQs=[],lpQi=0,lpAnswered=false,lpPracticed=new Set();
+let lpSteps=[],lpStep=0,lpScore=0,lpQs=[],lpQi=0,lpAnswered=false;
 let lpFullMode=false,lpLadderStep=1,lpRoleSim=true,lpRoleTurn=0;
 export function lessonDialogue(lesson){return PHRASE_DIALOGUES.find(x=>x.title===lesson.dialogue);}
 function lessonPictures(lesson){
@@ -69,7 +69,7 @@ function buildLessonSteps(lesson,c,full){
   return ["objetivo","estructura","palabras","escalera","escucha",...(hasResp?["respuesta"]:[]),"frases","matching","building","typing","hablaA","hablaB","pronun","lectura","quiz","mision","fin"];
 }
 export function openLesson(lesson,fullMode){
-  appState.lpLesson=lesson;lpStep=0;lpScore=0;lpQi=0;lpAnswered=false;lpPracticed=new Set();
+  appState.lpLesson=lesson;lpStep=0;lpScore=0;lpQi=0;lpAnswered=false;appState.lpPracticed=new Set();
   lpLadderStep=1;lpRoleSim=true;lpRoleTurn=0;
   if(typeof fullMode==="boolean")lpFullMode=fullMode;
   const c=LESSON_CONTENT[lesson.id];
@@ -516,7 +516,7 @@ export function renderLessonStep(){
     title.textContent="🎙️ Pronunciation — say each phrase, then record & compare";
     const items=[{es:c.goal.es,en:c.goal.en},...c.phrases];
     items.forEach(p=>{
-      const done=lpPracticed.has(p.es);
+      const done=appState.lpPracticed.has(p.es);
       const row=lpEl("pronun-row"+(done?" done":""));
       row.dataset.mt=p.es;
       row.innerHTML="<div class='pronun-check'>"+(done?"✅":"⭕")+"</div><div class='pronun-copy'><div class='pronun-es'>"+p.es+"</div><div class='pronun-en'>"+p.en+"</div></div>";
@@ -606,7 +606,7 @@ export function renderLessonStep(){
   else{
     title.textContent="🎉 Lesson complete!";
     const completion=lpEl("lp-completion-hero");
-    completion.innerHTML=`<div class="lp-completion-emoji">🎉</div><strong>¡Muy bien!</strong><span>You completed this lesson.</span><div class="lp-completion-stats"><span><b>${lpPracticed.size}</b><small>spoken</small></span><span><b>${lpFullMode&&lpQs.length?`${lpScore}/${lpQs.length}`:"—"}</b><small>quiz</small></span><span><b>🔥</b><small>keep going</small></span></div>`;
+    completion.innerHTML=`<div class="lp-completion-emoji">🎉</div><strong>¡Muy bien!</strong><span>You completed this lesson.</span><div class="lp-completion-stats"><span><b>${appState.lpPracticed.size}</b><small>spoken</small></span><span><b>${lpFullMode&&lpQs.length?`${lpScore}/${lpQs.length}`:"—"}</b><small>quiz</small></span><span><b>🔥</b><small>keep going</small></span></div>`;
     body.appendChild(completion);
     if(lpFullMode&&lpQs.length)body.appendChild(lpEl("lp-goal-es","Mini-quiz: "+lpScore+" of "+lpQs.length));
     if(c){body.appendChild(lpEl("lp-hint","You can now say:"));body.appendChild(lpEl("lp-goal-es",c.goal.es));body.appendChild(lpSpeakBtn(c.goal.es));attachMic(body,c.goal.es);}
