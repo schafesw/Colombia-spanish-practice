@@ -11,7 +11,7 @@ export function resetRrSession(){rrSession=0;}
 export function getRrStats(){return rrStats;}
 
 let rrTimer=null,rrCurrent=null,rrSession=0,rrPromptToken=0;
-let rrRecorder=null,rrStream=null,rrChunks=[],rrUrl=null,rrSilenceTimer=null,rrMaxTimer=null,rrAudioContext=null,rrAnalyser=null,rrRated=false;
+let rrRecorder=null,rrStream=null,rrChunks=[],rrUrl=null,rrBlob=null,rrSilenceTimer=null,rrMaxTimer=null,rrAudioContext=null,rrAnalyser=null,rrRated=false;
 const RR_DIFFICULTY_KEY="esco-rapid-difficulty-v1";
 const RR_DIFFICULTIES={
   easy:{label:"Easy",seconds:8,description:"More time · shorter prompts"},
@@ -33,7 +33,7 @@ const RR_STATS_KEY="esco-rapid-stats-v1";
 let rrStats={attempts:0,got:0,practice:0,skipped:0};
 try{const rrs=JSON.parse(appStorage.getItem(RR_STATS_KEY)||"{}");if(rrs&&typeof rrs==="object"&&!Array.isArray(rrs))Object.assign(rrStats,rrs);}catch(e){}
 function saveRRStats(){try{appStorage.setItem(RR_STATS_KEY,JSON.stringify(rrStats));}catch(e){}}
-function rrClearRecording(){if(rrUrl){try{URL.revokeObjectURL(rrUrl);}catch(e){}rrUrl=null;}rrChunks=[];}
+function rrClearRecording(){if(rrUrl){try{URL.revokeObjectURL(rrUrl);}catch(e){}rrUrl=null;}rrBlob=null;rrChunks=[];}
 function rrStopStream(){if(rrStream){rrStream.getTracks().forEach(t=>t.stop());rrStream=null;}}
 function rrCloseAudio(){if(rrAudioContext){try{rrAudioContext.close();}catch(e){}rrAudioContext=null;}rrAnalyser=null;}
 function rrCancelRecording(){
@@ -70,10 +70,11 @@ async function rrBeginRecording(token){
     rrStream=await navigator.mediaDevices.getUserMedia({audio:true});
     if(token!==rrPromptToken){rrStopStream();return;}
     rrChunks=[];
-    rrRecorder=new MediaRecorder(rrStream);
+    try{rrRecorder=new MediaRecorder(rrStream,{audioBitsPerSecond:24000});}catch(e){rrRecorder=new MediaRecorder(rrStream);}
     rrRecorder.ondataavailable=e=>{if(e.data&&e.data.size)rrChunks.push(e.data);};
     rrRecorder.onstop=()=>{
       const blob=new Blob(rrChunks,{type:(rrRecorder&&rrRecorder.mimeType)||"audio/mp4"});
+      rrBlob=blob;
       rrUrl=URL.createObjectURL(blob);
       rrRecorder=null;rrStopStream();rrCloseAudio();
       if(rrSilenceTimer){clearInterval(rrSilenceTimer);rrSilenceTimer=null;}
@@ -215,6 +216,9 @@ function rrReveal(reason){
   card.appendChild(row2);
   root.appendChild(card);
   speak(rrCurrent.aTts,0.75);
+  if(reason==="recorded"&&rrBlob){
+    window.dispatchEvent(new CustomEvent("esco:rapida-recorded",{detail:{blob:rrBlob,qEs:rrCurrent.qEs||"",qEn:rrCurrent.qEn||"",aEs:rrCurrent.aEs||"",card}}));
+  }
 }
 function rrRate(kind){
   if(!rrRated){rrRated=true;rrStats.attempts++;if(kind==="got")rrStats.got++;if(kind==="practice")rrStats.practice++;if(kind==="skipped")rrStats.skipped++;saveRRStats();}
