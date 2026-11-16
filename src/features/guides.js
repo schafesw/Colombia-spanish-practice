@@ -444,7 +444,10 @@ export function buildSpeakingGuide(){
       });
     };
     renderAtlas();
-    sec.appendChild(atlasCard);
+    const atlasFold=document.createElement("details");atlasFold.className="lesson-stage guides-fold";atlasFold.dataset.hablarGroup="regions";
+    atlasFold.innerHTML=`<summary class="stage-label guides-fold-summary"><div class="stage-label-main"><span>🗺️ Regional Accent &amp; Slang Atlas</span><span class="stage-count">${REGIONAL_ATLAS.length} regions</span></div><div class="stage-sub">San Juan del Cesar, Guajira, Paisa, Rolos &amp; more — tap to expand</div></summary>`;
+    atlasFold.appendChild(atlasCard);
+    sec.appendChild(atlasFold);
   }
   if(typeof REGIONAL_SWITCHER!=="undefined"&&REGIONAL_SWITCHER.length){
     let swIdx=0;
@@ -482,7 +485,10 @@ export function buildSpeakingGuide(){
       });
     };
     renderSwitcher();
-    sec.appendChild(swCard);
+    const swFold=document.createElement("details");swFold.className="lesson-stage guides-fold";swFold.dataset.hablarGroup="regions";
+    swFold.innerHTML=`<summary class="stage-label guides-fold-summary"><div class="stage-label-main"><span>🧭 Comparador Regional</span><span class="stage-count">${REGIONAL_SWITCHER.length} cards</span></div><div class="stage-sub">Compare Tú / Usted / Vos side-by-side — tap to expand</div></summary>`;
+    swFold.appendChild(swCard);
+    sec.appendChild(swFold);
   }
   if(typeof VISUAL_GUIDES!=="undefined"&&VISUAL_GUIDES.length){
     const vgCard=document.createElement("section");vgCard.className="bridge-trainer-card visual-guides-card";vgCard.dataset.hablarGroup="visual";

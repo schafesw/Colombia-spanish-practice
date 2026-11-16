@@ -15,7 +15,7 @@ import { actions, showPage } from "./navigation.js";
 let fl=null;
 /* Each menu entry keeps its versions separate so Ahora / Planes / Ayer all display */
 let fraseSearchTerm="";
-let fraseView="all";
+let fraseView="conversations";
 
 const TENSE_BADGE={
   "Ahora":{txt:"⚡ Ahora · presente",css:"color:var(--teal);background:rgba(74,168,160,0.12);border:1px solid rgba(74,168,160,0.25)"},
@@ -211,19 +211,21 @@ export function renderFraseMenu(){
     else if(v[0]==="s")renderFraseSection(idx);
   };
   jump.appendChild(sel);
-  fl.appendChild(jump);
-  const navNote=document.createElement("details");navNote.className="phrase-help";
-  navNote.innerHTML="<summary><span>ⓘ How to use Frases</span><small>Start with a situation</small></summary><div class='phrase-help-body'><strong>Start with a situation, then practice the phrases you need.</strong><span>Spanish stays first for speaking practice; English subtitles help you find the right section.</span></div>";
-  fl.appendChild(navNote);
-  renderRecentPhrase(fl);
   const viewSwitch=document.createElement("div");viewSwitch.className="frase-view-switch";viewSwitch.setAttribute("aria-label","Filter phrase content");
   [["all","All / Todo"],["phrases","Phrases / Frases"],["conversations","Conversations"]].forEach(([view,label])=>{
     const b=document.createElement("button");b.type="button";b.className="fr-view-btn"+(fraseView===view?" active":"");b.textContent=label;
     b.onclick=()=>{fraseView=view;renderFraseMenu();};viewSwitch.appendChild(b);
   });
   fl.appendChild(viewSwitch);
+  const topTools=document.createElement("div");topTools.className="fr-top-tools";
   const search=document.createElement("input");search.type="search";search.className="content-search";search.placeholder="🔎 Search phrases or conversation lines…";search.setAttribute("aria-label","Search phrases");search.value=fraseSearchTerm;
-  const results=document.createElement("div");results.className="search-results";fl.appendChild(search);fl.appendChild(results);
+  topTools.append(search,jump);
+  fl.appendChild(topTools);
+  const results=document.createElement("div");results.className="search-results";fl.appendChild(results);
+  const navNote=document.createElement("details");navNote.className="phrase-help";
+  navNote.innerHTML="<summary><span>ⓘ How to use Frases</span><small>Start with a situation</small></summary><div class='phrase-help-body'><strong>Start with a situation, then practice the phrases you need.</strong><span>Spanish stays first for speaking practice; English subtitles help you find the right section.</span></div>";
+  fl.appendChild(navNote);
+  renderRecentPhrase(fl);
   const h1=document.createElement("div");h1.className="fr-home-label";h1.textContent=`💬 Conversations (${PHRASE_DIALOGUES.length}) · grouped by situation`;
   const g1=document.createElement("div");g1.className="fr-dialogue-groups";
   const dlgOrder=["travel","food","daily","social"];

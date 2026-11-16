@@ -447,24 +447,6 @@ export function renderLessons(){
   const lvlMode=effectiveLevel();
   let welcomeDismissed=false;
   try{welcomeDismissed=appStorage.getItem(WELCOME_DISMISS_KEY)==="1";}catch(e){}
-  if(!welcomeDismissed){
-    const wCard=document.createElement("section");wCard.className="welcome-lane-card";wCard.dataset.lessonView="today";
-    wCard.innerHTML=`<div class="welcome-lane-head"><span>🧭 <strong>Pick your starting lane</strong> <small>(you can switch anytime above)</small></span><button type="button" class="welcome-lane-close" aria-label="Dismiss welcome card">×</button></div><div class="welcome-lane-btns"></div>`;
-    const wClose=wCard.querySelector(".welcome-lane-close");
-    const dismissWelcome=(targetView)=>{try{appStorage.setItem(WELCOME_DISMISS_KEY,"1");}catch(e){}renderLessons();if(targetView)setLessonView(targetView);};
-    wClose.onclick=()=>{dismissWelcome();};
-    const wBtns=wCard.querySelector(".welcome-lane-btns");
-    [
-      ["🌱 Brand new (A0)","Show Sound Basics & keep extra tools tucked away",()=>{userPrefs.level="starter";userPrefs.blindEar=false;saveUserPrefs();dismissWelcome();}],
-      ["🚀 Know basics (A1–A2)","Keep all drills open & unlock 5Q Stage Test-Outs",()=>{userPrefs.level="explorer";saveUserPrefs();dismissWelcome("path");}],
-      ["🔥 Wanna flow (B1+)","Turn on Blind-Ear listening challenge right away",()=>{userPrefs.level="fluent";userPrefs.blindEar=true;saveUserPrefs();dismissWelcome();}]
-    ].forEach(([title,sub,fn])=>{
-      const b=document.createElement("button");b.type="button";b.className="welcome-lane-btn";
-      b.innerHTML=`<strong>${title}</strong><small>${sub}</small>`;
-      b.onclick=fn;wBtns.appendChild(b);
-    });
-    root.appendChild(wCard);
-  }
   const pathLevel=percent<0.16?"A0 · Foundations":percent<0.38?"A1 · Everyday basics":percent<0.68?"A2 · Connected speech":"B1 · Conversational";
   const resume=loadResume();
   const resLesson=resume&&LESSONS.find(l=>l.id===resume.id);
@@ -508,6 +490,25 @@ export function renderLessons(){
   }
 
   root.appendChild(hero);
+
+  if(!welcomeDismissed){
+    const wCard=document.createElement("section");wCard.className="welcome-lane-card";wCard.dataset.lessonView="today";
+    wCard.innerHTML=`<div class="welcome-lane-head"><span>🧭 <strong>Pick your starting lane</strong> <small>(you can switch anytime above)</small></span><button type="button" class="welcome-lane-close" aria-label="Dismiss welcome card">×</button></div><div class="welcome-lane-btns"></div>`;
+    const wClose=wCard.querySelector(".welcome-lane-close");
+    const dismissWelcome=(targetView)=>{try{appStorage.setItem(WELCOME_DISMISS_KEY,"1");}catch(e){}renderLessons();if(targetView)setLessonView(targetView);};
+    wClose.onclick=()=>{dismissWelcome();};
+    const wBtns=wCard.querySelector(".welcome-lane-btns");
+    [
+      ["🌱 Brand new (A0)","Show Sound Basics & keep extra tools tucked away",()=>{userPrefs.level="starter";userPrefs.blindEar=false;saveUserPrefs();dismissWelcome();}],
+      ["🚀 Know basics (A1–A2)","Keep all drills open & unlock 5Q Stage Test-Outs",()=>{userPrefs.level="explorer";saveUserPrefs();dismissWelcome("path");}],
+      ["🔥 Wanna flow (B1+)","Turn on Blind-Ear listening challenge right away",()=>{userPrefs.level="fluent";userPrefs.blindEar=true;saveUserPrefs();dismissWelcome();}]
+    ].forEach(([title,sub,fn])=>{
+      const b=document.createElement("button");b.type="button";b.className="welcome-lane-btn";
+      b.innerHTML=`<strong>${title}</strong><small>${sub}</small>`;
+      b.onclick=fn;wBtns.appendChild(b);
+    });
+    root.appendChild(wCard);
+  }
 
   /* 2. Guided 10-Min Daily Speaking Routine directly below Hero */
   renderRoutineCard(root);
