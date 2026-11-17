@@ -12,7 +12,7 @@ import { appStorage } from "../state/storage.js";
 import { appState } from "../state/app-state.js";
 import { userPrefs, saveUserPrefs, effectiveLevel, isBlindEarActive } from "../state/preferences.js";
 import { speak } from "../audio/voice-engine.js";
-import { escapeVocabHtml, lpEl, scrollAppTop, spanishStressHint, normalizeQuizText, normalizeQuizPrompt, normalizeQuizAnswer, localDayKey } from "../core/text-utils.js";
+import { escapeVocabHtml, lpEl, scrollAppTop, spanishStressHint, normalizeQuizText, normalizeQuizPrompt, normalizeQuizAnswer, localDayKey, showAppToast } from "../core/text-utils.js";
 import {
   practiceStore, markPractice, practiced,
   lessonProgress, saveLessons, recordPracticeDay, practiceStreak, dayInfo,
@@ -828,18 +828,17 @@ export function renderLessons(){
     card.querySelector(".lesson-check").onclick=(e)=>toggleLessonCheck(e,lesson.id);
     root.appendChild(card);
   });
-  /* Progress backup lives at the bottom — rare-use utility (v22) */
+  /* Progress backup lives tucked cleanly at the bottom (use Profile -> Export/Import .json for devices) */
   renderQuizAuditCard(root);
-  const bkLabel=document.createElement("div");bkLabel.className="fr-home-label";bkLabel.dataset.lessonView="practice";bkLabel.textContent="💾 Progress backup";
-  root.appendChild(bkLabel);
-  /* Backup / restore progress (v17) */
-  const bk=document.createElement("div");bk.className="backup-row";bk.dataset.lessonView="practice";
+  const bkFold=document.createElement("details");bkFold.className="starter-more-tools";bkFold.dataset.lessonView="practice";
+  bkFold.innerHTML="<summary><span>💾 Legacy text backup</span><small>Use Profile drawer for .json file backup</small></summary>";
+  const bk=document.createElement("div");bk.className="backup-row";
   const BK_KEYS=["esco-quiz-v1","esco-srs-v1","esco-speaking-errors-v1","esco-lesson-progress-v1","esco-mission-progress-v1","esco-reading-progress-v1","esco-routine-v1","esco-routine-v2","esco-routine-v3","esco-practice-v1","esco-days-v1"];
   const b1=document.createElement("button");b1.type="button";b1.className="backup-btn";b1.textContent="💾 Copy backup";
   b1.onclick=()=>{
     const data={};BK_KEYS.forEach(k=>{const v=appStorage.getItem(k);if(v)data[k]=v;});
     const txt="ESCO-BACKUP:"+JSON.stringify(data);
-    const done=()=>{b1.textContent="✅ Copied";setTimeout(()=>{b1.textContent="💾 Copy backup";},2000);};
+    const done=()=>{b1.textContent="✅ Copied";showAppToast("✅ Backup copied to clipboard","ok");setTimeout(()=>{b1.textContent="💾 Copy backup";},2000);};
     if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,()=>prompt("Copy this text and save it somewhere safe:",txt));
     else prompt("Copy this text and save it somewhere safe:",txt);
   };
@@ -850,11 +849,11 @@ export function renderLessons(){
     try{
       const data=JSON.parse(txt.replace(/^ESCO-BACKUP:/,""));
       Object.keys(data).forEach(k=>{if(BK_KEYS.includes(k))appStorage.setItem(k,data[k]);});
-      alert("✅ Backup restored. The app will reload.");
-      location.reload();
-    }catch(e){alert("⚠️ That does not look like a valid backup.");}
+      showAppToast("✅ Backup restored — reloading…","ok");
+      setTimeout(()=>location.reload(),600);
+    }catch(e){showAppToast("⚠️ Invalid backup text — use a valid ESCO-BACKUP string.","warn");}
   };
-  bk.appendChild(b1);bk.appendChild(b2);root.appendChild(bk);
+  bk.append(b1,b2);bkFold.appendChild(bk);root.appendChild(bkFold);
   setLessonView(lessonView);
   actions.syncStudioChrome();
 }

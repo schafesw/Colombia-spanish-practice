@@ -1221,3 +1221,92 @@ body.lesson-focus-active .scroll {
   }
 }
 
+/* ── v116.3: Toast Notifications, Slim Segmented Tabs & Interactive Polish ── */
+.app-status-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--tab-h) + var(--safe-bottom) + 16px);
+  transform: translateX(-50%);
+  z-index: 1200;
+  max-width: min(92vw, 420px);
+  padding: 10px 15px;
+  border-radius: 999px;
+  background: rgba(15, 23, 32, 0.96);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.app-status-toast[hidden] { display: none !important; }
+.app-status-toast.ok { border-color: rgba(16, 185, 129, 0.55); color: #6ee7b7; }
+.app-status-toast.warn { border-color: rgba(245, 196, 81, 0.55); color: #fcd34d; }
+:root[data-theme="light"] .app-status-toast {
+  background: #ffffff;
+  color: #102019;
+  border-color: rgba(16, 32, 25, 0.22);
+}
+:root[data-theme="light"] .app-status-toast.ok { color: #0f5c3d; border-color: #1c8566; }
+:root[data-theme="light"] .app-status-toast.warn { color: #8a5b00; border-color: #c58b0c; }
+
+.lp-opt,
+.qopt,
+.lp-prod,
+.lp-word,
+.lp-match-btn,
+.ladder-choice-btn,
+.lesson-card,
+.fr-home-card,
+.vocab-home-card,
+.today-quick-tile,
+.lp-nav-btn,
+.lesson-view-tab,
+.mf-pill,
+.mf-chip,
+.blind-ear-chip,
+.reg-tab-btn,
+.ggroup,
+.gtab {
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lp-opt:focus-visible,
+.qopt:focus-visible,
+.lp-nav-btn:focus-visible,
+.lesson-card:focus-visible,
+.fr-home-card:focus-visible,
+.vocab-home-card:focus-visible,
+.mf-pill:focus-visible,
+.mf-chip:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+.voice-drawer-fold {
+  border-radius: 10px;
+}
+
+@media (max-width: 680px) {
+  .lesson-view-tabs {
+    padding: 3px;
+    gap: 5px;
+    margin-bottom: 8px;
+  }
+  .lesson-view-tab {
+    min-height: 36px;
+    padding: 5px 6px;
+    gap: 1px;
+  }
+  .lesson-view-tab small {
+    font-size: 0.49rem;
+  }
+}
+

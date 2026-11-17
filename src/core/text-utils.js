@@ -60,3 +60,20 @@ export function applyQuizFitClasses(promptEl,optsEl,promptText,optTexts){
     optsEl.classList.toggle("opts-dense",maxLen>72||totalLen>205);
   }
 }
+let appToastTimer=null;
+export function showAppToast(message,tone="info"){
+  if(typeof document==="undefined"||!document.body)return;
+  let el=document.getElementById("app-status-toast");
+  if(!el){
+    el=document.createElement("div");
+    el.id="app-status-toast";
+    el.setAttribute("role","status");
+    el.setAttribute("aria-live","polite");
+    document.body.appendChild(el);
+  }
+  el.className=`app-status-toast ${tone}`;
+  el.textContent=String(message||"");
+  el.hidden=false;
+  clearTimeout(appToastTimer);
+  appToastTimer=setTimeout(()=>{el.hidden=true;},3200);
+}
