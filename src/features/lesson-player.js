@@ -16,7 +16,7 @@ import { attachMic, openMicPanel } from "../core/speech-mic.js";
 import { PHRASE_DIALOGUES, aQ, quizAcceptedAnswers, quizAnswerMatches } from "../core/quiz-bank.js";
 import { actions, showPage } from "./navigation.js";
 
-let lpSteps=[],lpStep=0,lpScore=0,lpQs=[],lpQi=0,lpAnswered=false;
+let lpSteps=[],lpStep=0,lpScore=0,lpQs=[],lpQi=0,lpAnswered=false,lpFbIdx=0;
 let lpFullMode=false,lpLadderStep=1,lpRoleSim=true,lpRoleTurn=0;
 export function lessonDialogue(lesson){return PHRASE_DIALOGUES.find(x=>x.title===lesson.dialogue);}
 function lessonPictures(lesson){
@@ -64,12 +64,12 @@ function buildLessonSteps(lesson,c,full){
   if(!c)return ["fin"];
   const hasResp=!!lessonResponsePair(lesson,c);
   if(!full){
-    return ["objetivo","estructura","palabras","escalera","escucha",...(hasResp?["respuesta"]:[]),"hablaA","mision","fin"];
+    return ["objetivo","estructura","palabras","fillblank","building",...(hasResp?["respuesta"]:[]),"typing","quiz","fin"];
   }
-  return ["objetivo","estructura","palabras","escalera","escucha",...(hasResp?["respuesta"]:[]),"frases","matching","building","typing","hablaA","hablaB","pronun","lectura","quiz","mision","fin"];
+  return ["objetivo","estructura","palabras","fillblank","escalera","escucha",...(hasResp?["respuesta"]:[]),"frases","matching","building","typing","hablaA","hablaB","pronun","lectura","quiz","mision","fin"];
 }
 export function openLesson(lesson,fullMode){
-  appState.lpLesson=lesson;lpStep=0;lpScore=0;lpQi=0;lpAnswered=false;appState.lpPracticed=new Set();
+  appState.lpLesson=lesson;lpStep=0;lpScore=0;lpQi=0;lpAnswered=false;lpFbIdx=0;appState.lpPracticed=new Set();
   lpLadderStep=1;lpRoleSim=true;lpRoleTurn=0;
   if(typeof fullMode==="boolean")lpFullMode=fullMode;
   const c=LESSON_CONTENT[lesson.id];
@@ -161,8 +161,8 @@ export function renderLessonStep(){
   card.appendChild(title);card.appendChild(body);root.appendChild(card);
   const nav=lpEl("lp-nav");root.appendChild(nav);
   const navBtn=(label,fn,primary)=>{const b=document.createElement("button");b.type="button";b.className="lp-nav-btn"+(primary?" primary":"");b.textContent=label;b.onclick=fn;nav.appendChild(b);return b;};
-  const next=()=>{lpStep++;lpAnswered=false;lpRoleTurn=0;renderLessonStep();};
-  const prev=()=>{if(lpStep>0){lpStep--;lpRoleTurn=0;renderLessonStep();}};
+  const next=()=>{lpStep++;lpAnswered=false;lpFbIdx=0;lpRoleTurn=0;renderLessonStep();};
+  const prev=()=>{if(lpStep>0){lpStep--;lpAnswered=false;lpFbIdx=0;lpRoleTurn=0;renderLessonStep();}};
   if(step==="objetivo"){
     title.textContent="🎯 Goal — by the end you will be able to say:";
     const goalEs=lpEl("lp-goal-es",c.goal.es);
@@ -273,65 +273,182 @@ export function renderLessonStep(){
     if(lines.length)body.appendChild(lpSpeakBtn(lines.map(l=>l.tts).join(". "),"▶️ Play all"));
     navBtn("‹ Back",prev);navBtn("Next →",next,true);
   }
+  else if(step==="fillblank"){
+    const items=[];
+    const candidates=[...(c.phrases||[]),...(c.goal?[{es:c.goal.es,en:c.goal.en}]:[])].filter(p=>p&&p.es&&p.en);
+    const localWords=[];
+    candidates.forEach(p=>{String(p.es).split(/\s+/).forEach(tok=>{const clean=tok.replace(/^[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+|[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+$/g,"");if(clean.length>=3)localWords.push(clean);});});
+    (c.words||[]).forEach(w=>{String(w.es||"").split(/\s+/).forEach(tok=>{const clean=tok.replace(/^[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+|[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+$/g,"");if(clean.length>=3)localWords.push(clean);});});
+    const fallbackPool=["tengo","puedo","quiero","necesito","mercado","mañana","tarde","buenas","gracias","dinero","casa","amigo","favor","despacio"];
+    candidates.forEach(p=>{
+      if(items.length>=2)return;
+      const rawToks=String(p.es).split(/\s+/).map(t=>t.replace(/^[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+|[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+$/g,"")).filter(Boolean);
+      const longToks=rawToks.filter(t=>t.length>=4);
+      const pickPool=longToks.length?longToks:rawToks.filter(t=>t.length>=2);
+      if(!pickPool.length)return;
+      const targetWord=pickPool.slice().sort((a,b)=>b.length-a.length)[0];
+      const escaped=targetWord.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+      const masked=p.es.replace(new RegExp("(^|[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ])"+escaped+"(?=$|[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ])"),"$1______");
+      if(masked===p.es)return;
+      const seen=new Set([normalizeQuizText(targetWord)]);
+      const opts=[targetWord];
+      [...localWords,...fallbackPool].forEach(cand=>{
+        if(opts.length>=4)return;
+        const norm=normalizeQuizText(cand);
+        if(!norm||seen.has(norm))return;
+        seen.add(norm);
+        opts.push(cand);
+      });
+      items.push({masked,fullEs:p.es,en:p.en,answer:targetWord,options:opts.sort(()=>Math.random()-0.5)});
+    });
+    if(!items.length){
+      title.textContent="✏️ Complete the sentence";
+      body.appendChild(lpEl("lp-hint","No fill-in-the-blank items for this lesson."));
+      navBtn("‹ Back",prev);navBtn("Next →",next,true);
+    }else{
+      const fb=items[lpFbIdx%items.length];
+      title.textContent=`✏️ Fill in the blank (${(lpFbIdx%items.length)+1} of ${items.length})`;
+      body.appendChild(lpEl("lp-activity-note","Complete the missing Spanish word by tapping a choice or typing it below."));
+      const box=lpEl("lp-fillblank-card");
+      const maskedHtml=escapeVocabHtml(fb.masked).replace("______","<span class=\"lp-blank-slot\">______</span>");
+      box.innerHTML=`<div class="lp-fillblank-en">🇺🇸 ${escapeVocabHtml(fb.en)}</div><div class="lp-fillblank-es">${maskedHtml}</div>`;
+      body.appendChild(box);
+      const grid=lpEl("lp-grid lp-quiz-grid");
+      const fbMsg=lpEl("lp-quiz-fb","");fbMsg.classList.add("feedback-tray");
+      const typeRow=lpEl("lp-typing-actions");
+      const blankInput=document.createElement("input");blankInput.type="text";blankInput.className="lp-typing-input";blankInput.placeholder="Or type the missing word…";blankInput.autocomplete="off";
+      const blankCheckBtn=document.createElement("button");blankCheckBtn.type="button";blankCheckBtn.className="lp-nav-btn";blankCheckBtn.textContent="Check word";
+      navBtn("‹ Back",prev);
+      const nextBtn=navBtn(lpFbIdx+1<items.length?"Next blank →":"Next →",()=>{
+        if(lpFbIdx+1<items.length){lpFbIdx++;renderLessonStep();}
+        else next();
+      },true);
+      nextBtn.hidden=true;
+      let solved=false;
+      const solveBlank=(pickedWord,btn)=>{
+        if(solved)return;
+        const ok=normalizeQuizText(pickedWord)===normalizeQuizText(fb.answer);
+        if(ok){
+          solved=true;
+          if(btn)btn.classList.add("correct");
+          const slot=box.querySelector(".lp-blank-slot");
+          if(slot){slot.textContent=fb.answer;slot.classList.add("filled");}
+          clearSpeakingError(fb.fullEs);
+          markPractice("phrases",fb.fullEs);
+          fbMsg.innerHTML=`✅ <strong>${escapeVocabHtml(fb.fullEs)}</strong>`;
+          fbMsg.classList.add("visible");
+          nextBtn.hidden=false;
+          speak(fb.fullEs,0.75);
+          attachMic(fbMsg,fb.fullEs,"phrases");
+        }else{
+          if(btn)btn.classList.add("wrong");
+          recordSpeakingError(fb.fullEs,"fill blank");
+          fbMsg.textContent="❌ Not quite — check the English clue and try another word.";
+          fbMsg.classList.add("visible");
+        }
+      };
+      fb.options.forEach(opt=>{
+        const b=document.createElement("button");b.type="button";b.className="lp-opt";b.textContent=opt;
+        b.onclick=()=>solveBlank(opt,b);
+        grid.appendChild(b);
+      });
+      blankCheckBtn.onclick=()=>{if(blankInput.value.trim())solveBlank(blankInput.value.trim());};
+      blankInput.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();blankCheckBtn.click();}};
+      typeRow.append(blankInput,blankCheckBtn);
+      body.append(grid,typeRow,fbMsg);
+    }
+  }
   else if(step==="respuesta"){
     const pair=lessonResponsePair(appState.lpLesson,c);
-    title.textContent="🎧 Listen → respond — move from understanding to speaking";
+    title.textContent="🎧 Listen → respond — complete your reply";
     if(!pair){body.appendChild(lpEl("lp-hint","No response prompt is available for this lesson yet."));navBtn("‹ Back",prev);navBtn("Next →",next,true);}
     else{
-      body.appendChild(lpEl("lp-activity-note","Listen for the idea, not every word. First use help, then hide the text and answer out loud in your own words."));
+      body.appendChild(lpEl("lp-activity-note","Listen to what the local says, then pick or type the natural Colombian response to unlock the next step."));
       const rail=lpEl("lp-response-rail");
-      const stages=[["1","Slow + help"],["2","Normal speed"],["3","Respond"],["4","Compare"]];
+      const stages=[["1","Listen"],["2","Choose / Reply"],["3","Compare"]];
       stages.forEach(([number,label])=>{const item=lpEl("lp-response-stage",`<span>${number}</span><small>${label}</small>`);rail.appendChild(item);});
       body.appendChild(rail);
       const promptBox=lpEl("lp-response-prompt");
       const promptEs=lpEl("lp-response-es",escapeVocabHtml(pair.questionEs));
       const promptEn=lpEl("lp-response-en",escapeVocabHtml(pair.questionEn));
       promptBox.append(promptEs,promptEn);body.appendChild(promptBox);
-      const status=lpEl("lp-response-status","Step 1 · Listen slowly and notice the main idea.");status.setAttribute("aria-live","polite");body.appendChild(status);
+      const status=lpEl("lp-response-status","Listen, then choose the natural Colombian answer (or type your own).");status.setAttribute("aria-live","polite");body.appendChild(status);
       const actions=lpEl("lp-response-actions");
       const slow=document.createElement("button");slow.type="button";slow.className="lp-nav-btn";slow.textContent="🐢 Hear slowly";slow.onclick=()=>speak(pair.questionTts,0.55);
       const normal=document.createElement("button");normal.type="button";normal.className="lp-nav-btn";normal.textContent="🔊 Hear normally";normal.onclick=()=>speak(pair.questionTts,0.75);
-      const hide=document.createElement("button");hide.type="button";hide.className="lp-nav-btn primary";hide.textContent="I understand the idea →";
-      const help=document.createElement("button");help.type="button";help.className="lp-english-help";help.textContent="💡 Hide English help";
-      help.setAttribute("aria-expanded","true");
-      let stage=1,english=true,modelShown=false;
-      const setStage=n=>{
-        stage=n;
-        rail.querySelectorAll(".lp-response-stage").forEach((item,i)=>item.classList.toggle("on",i<n));
-        promptEs.hidden=n>=3;
-        // Hide the translation when it is time to answer, but leave it
-        // available through the English-help button if the learner needs it.
-        if(n>=3)english=false;
-        // Keep the English-help toggle authoritative at every response stage.
-        // Stage 3 hides the Spanish prompt so the learner answers from memory,
-        // but the learner must still be able to reveal the English help text.
-        promptEn.hidden=!english;
-        help.textContent=english?"🙈 Hide English help":"💡 Show English help";
-        if(n===2)status.textContent="Step 2 · Hear it at normal speed. Then hide the text.";
-        if(n===3)status.textContent="Step 3 · Answer out loud now. You can use any natural answer that fits.";
-        if(n>=4)status.textContent="Step 4 · Compare with a natural model answer. Your wording can be different.";
-      };
-      hide.onclick=()=>{setStage(2);speak(pair.questionTts,0.75);};
+      const help=document.createElement("button");help.type="button";help.className="lp-english-help";help.textContent="💡 Show English help";
+      let english=false;promptEn.hidden=true;
       help.onclick=()=>{english=!english;promptEn.hidden=!english;help.textContent=english?"🙈 Hide English help":"💡 Show English help";help.setAttribute("aria-expanded",String(english));};
-      actions.append(slow,normal,hide);body.appendChild(actions);body.appendChild(help);
-      const responseActions=lpEl("lp-response-actions");
-      const answerBtn=document.createElement("button");answerBtn.type="button";answerBtn.className="lp-nav-btn primary";answerBtn.textContent="🎙️ Record my response";answerBtn.disabled=true;
-      answerBtn.onclick=()=>{setStage(3);openMicPanel(pair.answerEs);};
-      const reveal=document.createElement("button");reveal.type="button";reveal.className="lp-nav-btn";reveal.textContent="Reveal model answer";reveal.disabled=true;
-      reveal.onclick=()=>{modelShown=true;setStage(4);models.hidden=false;reveal.hidden=true;};
-      responseActions.append(answerBtn,reveal);body.appendChild(responseActions);
+      actions.append(slow,normal,help);body.appendChild(actions);
+
+      const distractorPool=[
+        ...(c.phrases||[]).map(p=>p.es),
+        ...aQ.filter(q=>q&&q.es).slice(0,20).map(q=>q.es)
+      ].filter(es=>es&&normalizeQuizText(es)!==normalizeQuizText(pair.answerEs));
+      const seenResp=new Set([normalizeQuizText(pair.answerEs)]);
+      const respOpts=[pair.answerEs];
+      distractorPool.sort(()=>Math.random()-0.5).forEach(cand=>{
+        if(respOpts.length>=4)return;
+        const nk=normalizeQuizText(cand);
+        if(!seenResp.has(nk)){seenResp.add(nk);respOpts.push(cand);}
+      });
+      const respGrid=lpEl("lp-grid lp-quiz-grid");
+      body.appendChild(lpEl("lp-resp-quiz-label","Choose the natural Colombian reply:"));
+      body.appendChild(respGrid);
+
+      const customWrap=lpEl("lp-typing");
+      const customIn=document.createElement("input");customIn.type="text";customIn.className="lp-typing-input";customIn.placeholder="Or write your own Spanish response…";customIn.autocomplete="off";
+      const customAct=lpEl("lp-typing-actions");
+      const customBtn=document.createElement("button");customBtn.type="button";customBtn.className="lp-nav-btn";customBtn.textContent="Check my reply";
+      customAct.appendChild(customBtn);
+      attachMic(customAct,pair.answerEs,"phrases");
+      customWrap.append(customIn,customAct);
+      body.appendChild(customWrap);
+
       const models=lpEl("lp-response-models");models.hidden=true;
       const addModel=(model,label)=>{if(!model)return;const row=lpEl("lp-response-model",`<small>${label}</small><strong>${escapeVocabHtml(model.es)}</strong><em>${escapeVocabHtml(model.en||"")}</em>`);row.onclick=()=>speak(model.tts||model.es,0.75);attachMic(row,model.tts||model.es);models.appendChild(row);};
       addModel({es:pair.answerEs,en:pair.answerEn,tts:pair.answerTts},"Natural option 1");
       if(pair.alternate)addModel(pair.alternate,"Natural option 2");
       body.appendChild(models);
-      const rating=lpEl("lp-response-rating");
-      [["understood","✅ I understood"],["replay","🔁 Need replay"],["practice","🗣️ Need more practice"]].forEach(([kind,label])=>{const b=document.createElement("button");b.type="button";b.textContent=label;b.onclick=()=>{rating.querySelectorAll("button").forEach(x=>x.classList.toggle("selected",x===b));status.textContent=kind==="understood"?"Nice — keep answering without translating word by word.":kind==="replay"?"Replay slowly, then normally, and try again.":"Good choice. Repeat the model once, then answer again in your own words.";};rating.appendChild(b);});
-      body.appendChild(rating);
-      const unlock=()=>{answerBtn.disabled=false;reveal.disabled=false;};
-      hide.addEventListener("click",unlock);normal.addEventListener("click",()=>{if(stage>=2)unlock();});
-      setStage(1);speak(pair.questionTts,0.55);
-      navBtn("‹ Back",prev);navBtn("Next →",next,true);
+
+      navBtn("‹ Back",prev);
+      const nextBtn=navBtn("Next →",next,true);
+      nextBtn.hidden=true;
+      let respSolved=false;
+      const unlockResp=(msg)=>{
+        respSolved=true;
+        rail.querySelectorAll(".lp-response-stage").forEach(item=>item.classList.add("on"));
+        models.hidden=false;
+        status.textContent=msg;
+        nextBtn.hidden=false;
+      };
+      respOpts.sort(()=>Math.random()-0.5).forEach(opt=>{
+        const b=document.createElement("button");b.type="button";b.className="lp-opt";b.textContent=opt;
+        b.onclick=()=>{
+          if(respSolved)return;
+          if(opt===pair.answerEs){
+            b.classList.add("correct");
+            clearSpeakingError(pair.answerEs);markPractice("phrases",pair.answerEs);
+            speak(pair.answerTts,0.75);
+            unlockResp("✅ ¡Exacto! Say that reply out loud, then tap Next.");
+          }else{
+            b.classList.add("wrong");
+            recordSpeakingError(pair.answerEs,"listen respond");
+            status.textContent="❌ Doesn't fit the question — try another response.";
+          }
+        };
+        respGrid.appendChild(b);
+      });
+      customBtn.onclick=()=>{
+        const typed=customIn.value.trim();
+        if(!typed||respSolved)return;
+        clearSpeakingError(pair.answerEs);markPractice("phrases",pair.answerEs);
+        speak(pair.answerTts,0.75);
+        unlockResp("✅ Response submitted! Compare with the natural Colombian model below, then tap Next.");
+      };
+      customIn.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();customBtn.click();}};
+      rail.querySelectorAll(".lp-response-stage").forEach((item,i)=>item.classList.toggle("on",i===0));
+      speak(pair.questionTts,0.75);
     }
   }
   else if(step==="palabras"){
@@ -393,35 +510,50 @@ export function renderLessonStep(){
     navBtn("‹ Back",prev);navBtn("Next →",next,true);
   }
   else if(step==="building"){
-    title.textContent="🧱 Build a sentence — then say it";
+    title.textContent="🧱 Complete the sentence — put the pieces in order";
     const target=(c.phrases||[])[0];
+    navBtn("‹ Back",prev);
     if(target){
-      body.appendChild(lpEl("lp-activity-note","Read the English idea, tap the Spanish pieces in order, then check yourself. This is a bridge to speaking — not a typing test."));
-      const builder=lpEl("lp-builder");builder.appendChild(lpEl("lp-builder-target",target.en));
+      const nextBtn=navBtn("Next →",next,true);nextBtn.hidden=true;
+      body.appendChild(lpEl("lp-activity-note","Tap the Spanish pieces in order to match the English prompt, then tap Check sentence."));
+      const builder=lpEl("lp-builder");builder.dataset.answer=target.es;builder.appendChild(lpEl("lp-builder-target",target.en));
       const output=lpEl("lp-builder-output","Your sentence will appear here…");const chips=lpEl("lp-builder-chips");const feedback=lpEl("lp-builder-feedback","");
       const pieces=target.es.trim().split(/\s+/).map((word,i)=>({word,i})).sort(()=>Math.random()-0.5);const chosen=[];
       const redraw=()=>{output.textContent=chosen.length?chosen.map(x=>x.word).join(" "):"Your sentence will appear here…";chips.querySelectorAll("button").forEach(b=>b.disabled=chosen.some(x=>String(x.i)===b.dataset.i));};
       pieces.forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp-builder-chip";b.textContent=p.word;b.dataset.i=String(p.i);b.onclick=()=>{chosen.push(p);redraw();};chips.appendChild(b);});
       const actions=lpEl("lp-builder-actions");const clear=document.createElement("button");clear.type="button";clear.className="lp-nav-btn";clear.textContent="↩ Clear";clear.onclick=()=>{chosen.length=0;feedback.textContent="";redraw();};
-      const check=document.createElement("button");check.type="button";check.className="lp-nav-btn primary";check.textContent="Check sentence";check.onclick=()=>{const answer=chosen.map(x=>x.word).join(" ");const ok=normalizeQuizText(answer)===normalizeQuizText(target.es);if(ok){clearSpeakingError(target.es);feedback.textContent="✅ Correct — now say it out loud.";speak(target.es,0.75);}else{recordSpeakingError(target.es,"sentence builder");feedback.textContent="Keep adjusting the order, then try again. It is saved in your practice list.";}};
+      let tries=0;
+      const check=document.createElement("button");check.type="button";check.className="lp-nav-btn primary";check.textContent="Check sentence";check.onclick=()=>{
+        const answer=chosen.map(x=>x.word).join(" ");const ok=normalizeQuizText(answer)===normalizeQuizText(target.es);
+        if(ok){clearSpeakingError(target.es);markPractice("phrases",target.es);feedback.textContent="✅ Correct — say it out loud, then tap Next!";nextBtn.hidden=false;speak(target.es,0.75);}
+        else{tries++;recordSpeakingError(target.es,"sentence builder");feedback.textContent=tries>=1?`❌ Try again. Hint: starts with “${target.es.split(/\s+/).slice(0,2).join(" ")}…”`:`Keep adjusting the order, then check again.`;}
+      };
       const hear=document.createElement("button");hear.type="button";hear.className="lp-nav-btn";hear.textContent="🔊 Hear model";hear.onclick=()=>speak(target.es,0.75);actions.append(clear,check,hear);builder.append(output,chips,feedback,actions);body.appendChild(builder);attachMic(body,target.es);
-    }else body.appendChild(lpEl("lp-hint","No sentence is available for this lesson yet."));
-    navBtn("‹ Back",prev);navBtn("Next →",next,true);
+    }else{body.appendChild(lpEl("lp-hint","No sentence is available for this lesson yet."));navBtn("Next →",next,true);}
   }
   else if(step==="typing"){
-    title.textContent="⌨️ Produce the Spanish — type it, then say it";
+    title.textContent="⌨️ Write the sentence — translate & check";
     const target=(c.phrases||[])[1]||(c.phrases||[])[0];
+    navBtn("‹ Back",prev);
     if(target){
-      body.appendChild(lpEl("lp-activity-note","Start from the English meaning. Type the Spanish sentence you would say, then compare and speak it."));
-      const box=lpEl("lp-typing");box.appendChild(lpEl("lp-typing-prompt",target.en));
+      const nextBtn=navBtn("Next →",next,true);nextBtn.hidden=true;
+      body.appendChild(lpEl("lp-activity-note","Type the Spanish sentence below and tap Check answer to continue."));
+      const box=lpEl("lp-typing");box.dataset.answer=target.es;box.appendChild(lpEl("lp-typing-prompt",target.en));
       const input=document.createElement("input");input.type="text";input.className="lp-typing-input";input.placeholder="Escribe en español…";input.autocomplete="off";input.autocapitalize="sentences";
       const actions=lpEl("lp-typing-actions");const check=document.createElement("button");check.type="button";check.className="lp-nav-btn primary";check.textContent="Check answer";const hear=document.createElement("button");hear.type="button";hear.className="lp-nav-btn";hear.textContent="🔊 Hear model";hear.onclick=()=>speak(target.es,0.75);
       const feedback=lpEl("lp-typing-feedback","");
       const normTyped=s=>normalizeQuizText(s).replace(/^(?:yo|tu|usted|nosotros|nosotras)\s+/,"").replace(/\bpa\b/g,"para");
       const accepted=Array.isArray(target.alts)?[target.es,...target.alts]:[target.es];
-      check.onclick=()=>{const userNorm=normTyped(input.value);const ok=!!userNorm&&accepted.some(cand=>normTyped(cand)===userNorm);if(ok){clearSpeakingError(target.es);feedback.innerHTML="✅ Correct — say it again without reading.";speak(target.es,0.75);}else{recordSpeakingError(target.es,"typed production");feedback.innerHTML=`Keep practicing. Model: <strong>${escapeVocabHtml(target.es)}</strong><small>Saved in your practice list.</small>`;}attachMic(feedback,target.es);};actions.append(check,hear);box.append(input,actions,feedback);body.appendChild(box);
-    }else body.appendChild(lpEl("lp-hint","No typing prompt is available for this lesson yet."));
-    navBtn("‹ Back",prev);navBtn("Next →",next,true);
+      let tries=0;
+      check.onclick=()=>{
+        const userNorm=normTyped(input.value);const ok=!!userNorm&&accepted.some(cand=>normTyped(cand)===userNorm);
+        if(ok){clearSpeakingError(target.es);markPractice("phrases",target.es);feedback.innerHTML="✅ Correct — say it again without reading, then tap Next!";nextBtn.hidden=false;speak(target.es,0.75);}
+        else{tries++;recordSpeakingError(target.es,"typed production");feedback.innerHTML=tries>=1?`❌ Not quite. Model: <strong>${escapeVocabHtml(target.es)}</strong><small>Fix your sentence and tap Check answer (or practice saying it below).</small>`:`Type your Spanish sentence above, then tap Check answer.`;}
+        attachMic(feedback,target.es);
+      };
+      input.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();check.click();}};
+      actions.append(check,hear);box.append(input,actions,feedback);body.appendChild(box);
+    }else{body.appendChild(lpEl("lp-hint","No typing prompt is available for this lesson yet."));navBtn("Next →",next,true);}
   }
   else if(step==="estructura"){
     title.textContent="🧱 Understand the pattern first — how sentences snap together";
@@ -606,15 +738,16 @@ export function renderLessonStep(){
   else{
     title.textContent="🎉 Lesson complete!";
     const completion=lpEl("lp-completion-hero");
-    completion.innerHTML=`<div class="lp-completion-emoji">🎉</div><strong>¡Muy bien!</strong><span>You completed this lesson.</span><div class="lp-completion-stats"><span><b>${appState.lpPracticed.size}</b><small>spoken</small></span><span><b>${lpFullMode&&lpQs.length?`${lpScore}/${lpQs.length}`:"—"}</b><small>quiz</small></span><span><b>🔥</b><small>keep going</small></span></div>`;
+    completion.innerHTML=`<div class="lp-completion-emoji">🎉</div><strong>¡Muy bien!</strong><span>You completed this lesson.</span><div class="lp-completion-stats"><span><b>${appState.lpPracticed.size}</b><small>spoken</small></span><span><b>${lpQs.length?`${lpScore}/${lpQs.length}`:"—"}</b><small>quiz</small></span><span><b>🔥</b><small>keep going</small></span></div>`;
     body.appendChild(completion);
-    if(lpFullMode&&lpQs.length)body.appendChild(lpEl("lp-goal-es","Mini-quiz: "+lpScore+" of "+lpQs.length));
+    if(lpQs.length)body.appendChild(lpEl("lp-goal-es","Mini-quiz: "+lpScore+" of "+lpQs.length));
     if(c){body.appendChild(lpEl("lp-hint","You can now say:"));body.appendChild(lpEl("lp-goal-es",c.goal.es));body.appendChild(lpSpeakBtn(c.goal.es));attachMic(body,c.goal.es);}
     lessonProgress[appState.lpLesson.id]=true;saveLessons();
     if(c){
       const bonus=lpEl("lp-explore","<div class='lp-hint'>➕ Optional bonus drills for this lesson:</div><div class='lp-bonus-grid'></div>");
       const bGrid=bonus.querySelector(".lp-bonus-grid");
       [
+        ["✏️ Fill-in-blank","fillblank"],
         ["🗣️ Flash phrases","frases"],
         ["🧩 Match pairs","matching"],
         ["🧱 Word chips","building"],

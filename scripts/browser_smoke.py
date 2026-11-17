@@ -288,7 +288,12 @@ def run_smoke():
             page.locator("#lesson-list .lp-nav-btn.primary").click()  # estructura -> palabras
             wait_images_decoded(page, "#lesson-list .lp-visual-card img")
 
-            # Switch to Full mode and step to photo mini-quiz question
+            # Verify interactive fill-in-blank check in Core mode is gated until solved
+            page.locator("#lesson-list .lp-nav .lp-nav-btn.primary").click()  # palabras -> fillblank
+            page.wait_for_selector("#lesson-list .lp-fillblank-card", timeout=4000)
+            assert page.locator("#lesson-list .lp-nav .lp-nav-btn.primary:not([hidden])").count() == 0, "Expected fillblank Next gated before answering"
+
+            # Switch to Full mode and solve interactive steps to photo mini-quiz question
             page.locator("#lesson-list .lp-mode-btn", has_text="Full").click()
             seen_photo_quiz = False
             for _ in range(45):
@@ -299,15 +304,26 @@ def run_smoke():
                     page.locator("#lesson-list .lp-opt").first.click()
                     seen_photo_quiz = True
                     break
-                next_btns = page.locator("#lesson-list .lp-nav-btn.primary", has_text="Next")
+                next_btns = page.locator("#lesson-list .lp-nav .lp-nav-btn.primary:not([hidden])")
                 if next_btns.count() > 0:
                     next_btns.first.click()
-                else:
-                    finish_btns = page.locator("#lesson-list .lp-nav-btn.primary", has_text="Finish")
-                    if finish_btns.count() > 0:
-                        finish_btns.first.click()
-                    else:
-                        page.locator("#lesson-list .lp-opt").first.click()
+                    continue
+                if page.locator("#lesson-list .lp-typing[data-answer]").count() > 0:
+                    ans = page.locator("#lesson-list .lp-typing").get_attribute("data-answer") or ""
+                    page.fill("#lesson-list .lp-typing-input", ans)
+                    page.locator("#lesson-list .lp-typing-actions .lp-nav-btn.primary").click()
+                    continue
+                if page.locator("#lesson-list .lp-builder[data-answer]").count() > 0:
+                    ans = page.locator("#lesson-list .lp-builder").get_attribute("data-answer") or ""
+                    for word in ans.split():
+                        page.locator("#lesson-list .lp-builder-chip:not([disabled])", has_text=word).first.click()
+                    page.locator("#lesson-list .lp-builder-actions .lp-nav-btn.primary").click()
+                    continue
+                opts = page.locator("#lesson-list .lp-opt:not(.wrong)")
+                if opts.count() > 0:
+                    opts.first.click()
+                    continue
+                raise AssertionError("Stuck in lesson player with no unlocked Next button or interactive check")
             assert seen_photo_quiz, "Never reached photo mini-quiz question in Full lesson flow"
 
             # Verify Service Worker registers cleanly and caches core assets
