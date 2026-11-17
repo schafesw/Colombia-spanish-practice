@@ -284,6 +284,9 @@ def run_smoke():
             page.click(".lesson-view-tab[data-view='path']")
             page.fill(".lesson-path-search", "Panadería")
             page.locator(".lesson-card", has_text="Panadería, café y jugos").click()
+            assert page.locator(".studio-topbar").is_hidden(), "Expected topbar hidden in full-screen lesson focus mode"
+            assert page.locator("#page-lecciones > .voice-drawer-fold").is_hidden(), "Expected voice drawer hidden in lesson focus mode"
+            assert page.locator(".tab-bar").is_hidden(), "Expected tab bar hidden in lesson focus mode"
             page.locator("#lesson-list .lp-nav .lp-nav-btn.primary").click()  # objetivo -> palabras
             wait_images_decoded(page, "#lesson-list .lp-visual-card img")
 
@@ -364,6 +367,7 @@ def run_smoke():
 
             # Exit lesson focus mode, then verify friend '+ New' local profile creation persists across reload cleanly
             page.click("#lesson-list .lp-exit")
+            assert page.locator(".studio-topbar").is_visible(), "Expected topbar restored after exiting lesson"
             page.locator(".profile-utility-drawer summary").click()
             page.once("dialog", lambda d: d.accept("María"))
             with page.expect_navigation(wait_until="domcontentloaded"):
