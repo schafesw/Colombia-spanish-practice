@@ -681,3 +681,6 @@
 .lp-resp-quiz-label{font-size:0.78rem;font-weight:800;color:var(--muted);margin:6px 0 4px;}
 :root[data-theme="light"] .lp-fillblank-card{background:#f3f7f4;border-color:rgba(16,32,25,0.18);}
 :root[data-theme="light"] .lp-blank-slot.filled{color:#0f5c3d;border-color:#1c8566;background:#dff3ea;}
+.lp-nav-btn[hidden]{display:none !important;}
+.lp-gate-pill{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px 12px;border-radius:13px;border:1px dashed rgba(245,196,81,0.45);background:rgba(245,196,81,0.08);color:var(--gold);font-size:0.76rem;font-weight:800;min-height:48px;}
+:root[data-theme="light"] .lp-gate-pill{background:#fef6df;border-color:#c58b0c;color:#8a5b00;}

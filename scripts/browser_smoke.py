@@ -284,19 +284,19 @@ def run_smoke():
             page.click(".lesson-view-tab[data-view='path']")
             page.fill(".lesson-path-search", "Panadería")
             page.locator(".lesson-card", has_text="Panadería, café y jugos").click()
-            page.locator("#lesson-list .lp-nav-btn.primary").click()  # objetivo -> estructura
-            page.locator("#lesson-list .lp-nav-btn.primary").click()  # estructura -> palabras
+            page.locator("#lesson-list .lp-nav .lp-nav-btn.primary").click()  # objetivo -> palabras
             wait_images_decoded(page, "#lesson-list .lp-visual-card img")
 
             # Verify interactive fill-in-blank check in Core mode is gated until solved
             page.locator("#lesson-list .lp-nav .lp-nav-btn.primary").click()  # palabras -> fillblank
             page.wait_for_selector("#lesson-list .lp-fillblank-card", timeout=4000)
             assert page.locator("#lesson-list .lp-nav .lp-nav-btn.primary:not([hidden])").count() == 0, "Expected fillblank Next gated before answering"
+            assert page.locator("#lesson-list .lp-gate-pill").is_visible(), "Expected visible lock pill explaining gate"
 
             # Switch to Full mode and solve interactive steps to photo mini-quiz question
             page.locator("#lesson-list .lp-mode-btn", has_text="Full").click()
             seen_photo_quiz = False
-            for _ in range(45):
+            for _ in range(80):
                 if page.locator("#lesson-list .lp-quiz-photo").count() > 0:
                     wait_images_decoded(page, "#lesson-list .lp-quiz-photo")
                     opt_count = page.locator("#lesson-list .lp-opt").count()
@@ -307,6 +307,25 @@ def run_smoke():
                 next_btns = page.locator("#lesson-list .lp-nav .lp-nav-btn.primary:not([hidden])")
                 if next_btns.count() > 0:
                     next_btns.first.click()
+                    continue
+                if page.locator("#lesson-list .ladder-choice-btn:not(.wrong)").count() > 0:
+                    page.locator("#lesson-list .ladder-choice-btn:not(.wrong)").first.click()
+                    continue
+                if page.locator("#lesson-list .lp-prod .lp-blur").count() > 0:
+                    page.locator("#lesson-list .lp-prod .lp-blur").first.locator("..").click()
+                    continue
+                if page.locator("#lesson-list .lp-match-col").count() == 2:
+                    en_txt = page.locator("#lesson-list .lp-match-col").nth(0).locator(".lp-match-btn:not([disabled])").first.inner_text()
+                    es_texts = page.locator("#lesson-list .lp-match-col").nth(1).locator(".lp-match-btn:not([disabled])").all_inner_texts()
+                    for es_t in es_texts:
+                        en_btn = page.locator("#lesson-list .lp-match-col").nth(0).locator(".lp-match-btn", has_text=en_txt).first
+                        if en_btn.is_disabled():
+                            break
+                        en_btn.click()
+                        page.locator("#lesson-list .lp-match-col").nth(1).locator(".lp-match-btn", has_text=es_t).first.click()
+                    continue
+                if page.locator("#lesson-list .lp-sim-turn-nav .lp-nav-btn.primary").count() > 0:
+                    page.locator("#lesson-list .lp-sim-turn-nav .lp-nav-btn.primary").first.click()
                     continue
                 if page.locator("#lesson-list .lp-typing[data-answer]").count() > 0:
                     ans = page.locator("#lesson-list .lp-typing").get_attribute("data-answer") or ""
