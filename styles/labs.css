@@ -671,3 +671,13 @@
 .guides-fold>summary::-webkit-details-marker{display:none;}
 .guides-fold[open]>summary{margin-bottom:10px;}
 .guides-fold .bridge-trainer-card{margin-bottom:0;}
+
+/* ── v116.0: Lesson Fill-in-Blank & Active Response Checks ─────────────────── */
+.lp-fillblank-card{background:var(--card-2);border:1px solid var(--border);border-radius:14px;padding:14px;display:grid;gap:8px;margin-bottom:4px;}
+.lp-fillblank-en{font-size:0.82rem;color:var(--gold);font-weight:700;}
+.lp-fillblank-es{font-size:1.1rem;font-weight:800;line-height:1.45;color:var(--text);}
+.lp-blank-slot{display:inline-block;padding:1px 8px;border-radius:8px;border-bottom:2px dashed var(--teal);background:rgba(45,212,191,0.14);color:var(--teal);font-weight:900;}
+.lp-blank-slot.filled{border-bottom-style:solid;background:rgba(16,185,129,0.2);color:#34d399;border-color:#34d399;}
+.lp-resp-quiz-label{font-size:0.78rem;font-weight:800;color:var(--muted);margin:6px 0 4px;}
+:root[data-theme="light"] .lp-fillblank-card{background:#f3f7f4;border-color:rgba(16,32,25,0.18);}
+:root[data-theme="light"] .lp-blank-slot.filled{color:#0f5c3d;border-color:#1c8566;background:#dff3ea;}
