@@ -1144,3 +1144,80 @@ dialog.studio-dialog::backdrop {
   display: none !important;
 }
 
+/* ── v116.2: Dedicated Full-Screen Duolingo-Style Lesson Stage ─────────────── */
+body.lesson-focus-active .studio-topbar,
+body.lesson-focus-active .tab-bar,
+body.lesson-focus-active #page-lecciones > .ph,
+body.lesson-focus-active #page-lecciones > .voice-drawer-fold {
+  display: none !important;
+}
+
+body.lesson-focus-active #app {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+body.lesson-focus-active .scroll {
+  padding-top: max(10px, env(safe-area-inset-top));
+  padding-left: 14px;
+  padding-right: 14px;
+  padding-bottom: calc(var(--safe-bottom) + 124px);
+}
+
+#page-lecciones.lesson-focus-mode #lesson-list {
+  max-width: 660px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+#page-lecciones.lesson-focus-mode .lp-focus-top {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--bg);
+  padding: 10px 2px 12px;
+  margin: 0 0 16px;
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+}
+
+#page-lecciones.lesson-focus-mode .lp-focus-progress {
+  height: 11px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.18);
+}
+
+#page-lecciones.lesson-focus-mode .lp-focus-progress span {
+  background: linear-gradient(90deg, #10b981, var(--teal), var(--gold));
+}
+
+#page-lecciones.lesson-focus-mode .lp-exit {
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+#page-lecciones.lesson-focus-mode .lp-card {
+  padding: 20px 18px;
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+}
+
+:root[data-theme="light"] #page-lecciones.lesson-focus-mode .lp-focus-top {
+  background: #f6f8f7;
+}
+
+:root[data-theme="light"] #page-lecciones.lesson-focus-mode .lp-exit {
+  background: #ffffff;
+  color: #102019;
+  border-color: rgba(16, 32, 25, 0.2);
+}
+
+@media (max-width: 480px) {
+  #page-lecciones.lesson-focus-mode .lp-card {
+    padding: 16px 14px;
+    border-radius: 18px;
+  }
+}
+
