@@ -749,3 +749,20 @@
 :root[data-theme="light"] .lesson-status-badge{background:rgba(20,32,26,0.06);color:#475569;}
 :root[data-theme="light"] .lesson-card.complete .lesson-status-badge{background:rgba(15,118,110,0.14);color:#0f766e;}
 :root[data-theme="light"] .stage-locked-fold{background:rgba(20,32,26,0.03);border-color:rgba(20,32,26,0.16);}
+
+/* ── v121.0: Saved Phrasebook, Chip Dictation, 7-Day Row & Custom Chat ───── */
+.week-streak-row{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:7px 0 8px;}
+.week-dot{display:flex;align-items:center;justify-content:center;height:22px;border-radius:7px;font-size:0.65rem;font-weight:900;background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid var(--border);}
+.week-dot.active{background:rgba(52,211,153,0.18);color:#34d399;border-color:rgba(52,211,153,0.4);}
+.week-dot.today{outline:1.5px solid var(--gold);color:var(--gold);}
+.saved-add-bar{display:grid;gap:7px;background:var(--card-2);border:1px solid var(--border);border-radius:14px;padding:11px;margin:6px 0 10px;}
+.saved-add-acts{display:flex;gap:8px;flex-wrap:wrap;}
+.saved-items-list{display:flex;flex-direction:column;gap:8px;}
+.frase-card-tools{display:flex;align-items:center;gap:4px;margin-right:4px;}
+.dictation-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.dictation-chip{font-size:0.78rem;padding:5px 10px;}
+.hl-custom-topic-row{margin:6px 0 4px;}
+.hl-custom-topic-in{width:100%;}
+.qv102-saved-btn.active{background:rgba(245,196,81,0.22);border-color:var(--gold);color:var(--gold);}
+:root[data-theme="light"] .week-dot{background:rgba(20,32,26,0.05);color:#64748b;}
+:root[data-theme="light"] .week-dot.active{background:#dcfce7;color:#15803d;border-color:#86efac;}

@@ -3,7 +3,7 @@ import { appStorage } from "../state/storage.js";
 import { appState } from "../state/app-state.js";
 import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml, applyQuizFitClasses } from "../core/text-utils.js";
-import { markPractice } from "../core/stores.js";
+import { markPractice, getStarredPhrases } from "../core/stores.js";
 import { attachMic } from "../core/speech-mic.js";
 import { RR_BANK, storedMissedQuestionCount } from "../core/quiz-bank.js";
 import { pmFilteredPool, renderPictureMatchDeck } from "./picture-match.js";
@@ -122,11 +122,11 @@ export function renderQuizV102Hub(){
   const pmCount=typeof PICTURE_MATCH_BANK!=="undefined"?PICTURE_MATCH_BANK.length:20;
   const brCount=typeof SPANISH_BRAIN_DRILLS!=="undefined"?SPANISH_BRAIN_DRILLS.length:38;
   [["off","📝 Standard Quiz"],["brain",`🧠 Spanish Brain (${brCount})`],["picture",`🖼️ Picture Match (${pmCount})`],["sprint","⏱️ 60s Fluency Sprint"]].forEach(([tid,lbl])=>{
-    const b=document.createElement("button");b.type="button";b.className="mf-chip"+(qV102Tab===tid&&!appState.qMissedOnly?" active":"");
+    const b=document.createElement("button");b.type="button";b.className="mf-chip"+(qV102Tab===tid&&!appState.qMissedOnly&&!appState.qSavedOnly?" active":"");
     b.textContent=lbl;
     b.onclick=()=>{
       if(tid!=="sprint"&&appState.spTimer){clearInterval(appState.spTimer);appState.spTimer=null;appState.spRunning=false;}
-      if(tid==="off"&&appState.qMissedOnly){actions.exitMissedQueue();}
+      if(tid==="off"&&(appState.qMissedOnly||appState.qSavedOnly)){appState.qSavedOnly=false;actions.exitMissedQueue();}
       qV102Tab=tid;renderQuizV102Hub();
     };
     bar.appendChild(b);
@@ -139,6 +139,7 @@ export function renderQuizV102Hub(){
   mBtn.title=mCount?`Practice ${mCount} missed question(s)`:"No missed items right now — tap for SRS review";
   mBtn.onclick=()=>{
     if(appState.spTimer){clearInterval(appState.spTimer);appState.spTimer=null;appState.spRunning=false;}
+    appState.qSavedOnly=false;
     if(qV102Tab==="off"&&appState.qMissedOnly){
       actions.exitMissedQueue();
       renderQuizV102Hub();
@@ -150,6 +151,21 @@ export function renderQuizV102Hub(){
     renderQuizV102Hub();
   };
   bar.appendChild(mBtn);
+  const sCount=getStarredPhrases().length;
+  const sBtn=document.createElement("button");sBtn.type="button";
+  sBtn.className="mf-chip qv102-saved-btn"+(qV102Tab==="off"&&appState.qSavedOnly?" active":"");
+  sBtn.textContent=`⭐ Saved (${sCount})`;
+  sBtn.setAttribute("aria-pressed",qV102Tab==="off"&&appState.qSavedOnly?"true":"false");
+  sBtn.title=sCount?`Quiz only your ${sCount} saved phrases`:"Pin phrases with ☆ first to quiz your personal deck";
+  sBtn.onclick=()=>{
+    if(appState.spTimer){clearInterval(appState.spTimer);appState.spTimer=null;appState.spRunning=false;}
+    appState.qMissedOnly=false;
+    if(qV102Tab==="off"&&appState.qSavedOnly){
+      appState.qSavedOnly=false;actions.resetQuizRound();actions.syncQuizControls();actions.nQ();renderQuizV102Hub();return;
+    }
+    qV102Tab="off";appState.qSavedOnly=true;actions.resetQuizRound();actions.syncQuizControls();actions.nQ();renderQuizV102Hub();
+  };
+  bar.appendChild(sBtn);
   host.appendChild(bar);
   if(qV102Tab==="brain"){
     const brSlot=document.createElement("div");brSlot.className="qv102-panel";
