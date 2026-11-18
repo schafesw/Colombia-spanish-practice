@@ -684,3 +684,23 @@
 .lp-nav-btn[hidden]{display:none !important;}
 .lp-gate-pill{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px 12px;border-radius:13px;border:1px dashed rgba(245,196,81,0.45);background:rgba(245,196,81,0.08);color:var(--gold);font-size:0.76rem;font-weight:800;min-height:48px;}
 :root[data-theme="light"] .lp-gate-pill{background:#fef6df;border-color:#c58b0c;color:#8a5b00;}
+
+/* ── v117.0: Sequential Unlock Path, Jump Dropdown & Mastery Retry ────────── */
+.lesson-roadmap-controls{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-bottom:8px;}
+.lesson-roadmap-controls .lesson-path-search{margin:0;}
+.lesson-jump-select{min-height:40px;padding:7px 11px;border-radius:11px;border:1px solid var(--border-strong);background:var(--surface2);color:var(--text);font-size:0.78rem;font-weight:700;max-width:230px;cursor:pointer;}
+@media (max-width:560px){
+  .lesson-roadmap-controls{grid-template-columns:1fr;gap:6px;}
+  .lesson-jump-select{max-width:none;width:100%;}
+}
+.lesson-stage.locked>.stage-label{opacity:0.82;}
+.lesson-card.locked{opacity:0.64;border-style:dashed;}
+.lesson-card.locked:hover{opacity:0.86;}
+.lesson-status-badge{width:31px;height:31px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);color:var(--muted);font-size:0.95rem;font-weight:900;flex-shrink:0;}
+.lesson-card.complete .lesson-status-badge{background:rgba(52,211,153,0.16);color:#34d399;}
+.lesson-card.recommended .lesson-status-badge{background:rgba(245,196,81,0.18);color:var(--gold);}
+.lp-retry-card{margin:10px 0 4px;display:flex;justify-content:center;}
+.lp-retry-card .lp-nav-btn.primary{width:100%;}
+:root[data-theme="light"] .lesson-jump-select{background:#f2f5f1;color:#14201a;border-color:rgba(20,32,26,0.2);}
+:root[data-theme="light"] .lesson-status-badge{background:rgba(20,32,26,0.06);color:#475569;}
+:root[data-theme="light"] .lesson-card.complete .lesson-status-badge{background:rgba(15,118,110,0.14);color:#0f766e;}

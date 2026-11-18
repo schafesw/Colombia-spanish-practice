@@ -442,6 +442,14 @@ export function renderLessonStep(){
       customBtn.onclick=()=>{
         const typed=customIn.value.trim();
         if(!typed||respSolved)return;
+        const typedWords=normalizeQuizText(typed).split(" ").filter(w=>w.length>=2&&/[a-z]/.test(w));
+        const targetWords=normalizeQuizText(pair.answerEs).split(" ").filter(w=>w.length>=3);
+        const hitsTarget=targetWords.some(w=>typedWords.includes(w));
+        if(typed.replace(/[^a-záéíóúüñ]/gi,"").length<4||(typedWords.length<2&&!hitsTarget)){
+          status.textContent="❌ Write a short Spanish phrase (2+ words) or pick an option above.";
+          customIn.focus();
+          return;
+        }
         clearSpeakingError(pair.answerEs);markPractice("phrases",pair.answerEs);
         speak(pair.answerTts,0.75);
         unlockResp("✅ Response submitted! Compare with the natural Colombian model below, then tap Next.");
@@ -754,13 +762,24 @@ export function renderLessonStep(){
     if(!missionGate)navBtn("Finish lesson →",next,true);
   }
   else{
-    title.textContent="🎉 Lesson complete!";
+    const passNeed=lpQs.length?Math.ceil(lpQs.length*0.75):0;
+    const passed=!lpQs.length||lpScore>=passNeed;
+    if(passed){lessonProgress[appState.lpLesson.id]=true;saveLessons();}
+    title.textContent=passed?"🎉 Lesson complete!":"💪 Almost there — pass quiz to earn ✓";
     const completion=lpEl("lp-completion-hero");
-    completion.innerHTML=`<div class="lp-completion-emoji">🎉</div><strong>¡Muy bien!</strong><span>You completed this lesson.</span><div class="lp-completion-stats"><span><b>${appState.lpPracticed.size}</b><small>spoken</small></span><span><b>${lpQs.length?`${lpScore}/${lpQs.length}`:"—"}</b><small>quiz</small></span><span><b>🔥</b><small>keep going</small></span></div>`;
+    completion.innerHTML=passed
+      ?`<div class="lp-completion-emoji">🎉</div><strong>¡Muy bien!</strong><span>You completed this lesson (${lpQs.length?`${lpScore}/${lpQs.length}`:"100%"}).</span><div class="lp-completion-stats"><span><b>${appState.lpPracticed.size}</b><small>spoken</small></span><span><b>${lpQs.length?`${lpScore}/${lpQs.length}`:"—"}</b><small>quiz</small></span><span><b>✓</b><small>earned</small></span></div>`
+      :`<div class="lp-completion-emoji">💪</div><strong>Keep going!</strong><span>Score at least ${passNeed}/${lpQs.length} (75%) on the quiz to earn ✓ completion.</span><div class="lp-completion-stats"><span><b>${appState.lpPracticed.size}</b><small>spoken</small></span><span><b>${lpScore}/${lpQs.length}</b><small>need ${passNeed}+</small></span><span><b>🔒</b><small>not saved yet</small></span></div>`;
     body.appendChild(completion);
-    if(lpQs.length)body.appendChild(lpEl("lp-goal-es","Mini-quiz: "+lpScore+" of "+lpQs.length));
+    if(lpQs.length)body.appendChild(lpEl("lp-goal-es",`Mini-quiz: ${lpScore} of ${lpQs.length} (pass target: ${passNeed})`));
+    if(!passed&&lpSteps.includes("quiz")){
+      const retryWrap=lpEl("lp-retry-card");
+      const retryBtn=document.createElement("button");retryBtn.type="button";retryBtn.className="lp-nav-btn primary";retryBtn.textContent=`🔄 Retry quiz check (${passNeed}/${lpQs.length} needed)`;
+      retryBtn.onclick=()=>{lpStep=lpSteps.indexOf("quiz");lpQi=0;lpScore=0;lpAnswered=false;renderLessonStep();};
+      retryWrap.appendChild(retryBtn);
+      body.appendChild(retryWrap);
+    }
     if(c){body.appendChild(lpEl("lp-hint","You can now say:"));body.appendChild(lpEl("lp-goal-es",c.goal.es));body.appendChild(lpSpeakBtn(c.goal.es));attachMic(body,c.goal.es);}
-    lessonProgress[appState.lpLesson.id]=true;saveLessons();
     if(c){
       const bonus=lpEl("lp-explore","<div class='lp-hint'>➕ Optional bonus drills for this lesson:</div><div class='lp-bonus-grid'></div>");
       const bGrid=bonus.querySelector(".lp-bonus-grid");
