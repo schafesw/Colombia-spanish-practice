@@ -6,8 +6,8 @@ import { appStorage } from "../state/storage.js";
 import { appState } from "../state/app-state.js";
 import { userPrefs, saveUserPrefs, isBlindEarActive } from "../state/preferences.js";
 import { speak } from "../audio/voice-engine.js";
-import { escapeVocabHtml, lpEl } from "../core/text-utils.js";
-import { markPractice, practiced, phraseProgress, recordSrs, attachStarBtn } from "../core/stores.js";
+import { escapeVocabHtml, lpEl, showAppToast } from "../core/text-utils.js";
+import { markPractice, practiced, phraseProgress, recordSrs, attachStarBtn, getStarredPhrases, addCustomSavedPhrase, toggleStarPhrase } from "../core/stores.js";
 import { attachMic, openMicPanel } from "../core/speech-mic.js";
 import { PHRASE_DIALOGUES } from "../core/quiz-bank.js";
 import { actions, showPage } from "./navigation.js";
@@ -211,8 +211,9 @@ export function renderFraseMenu(){
     else if(v[0]==="s")renderFraseSection(idx);
   };
   jump.appendChild(sel);
+  const savedListInit=getStarredPhrases();
   const viewSwitch=document.createElement("div");viewSwitch.className="frase-view-switch";viewSwitch.setAttribute("aria-label","Filter phrase content");
-  [["all","All / Todo"],["phrases","Phrases / Frases"],["conversations","Conversations"]].forEach(([view,label])=>{
+  [["all","All / Todo"],["phrases","Phrases / Frases"],["conversations","Conversations"],["saved",`⭐ Saved (${savedListInit.length})`]].forEach(([view,label])=>{
     const b=document.createElement("button");b.type="button";b.className="fr-view-btn"+(fraseView===view?" active":"");b.textContent=label;
     b.onclick=()=>{fraseView=view;renderFraseMenu();};viewSwitch.appendChild(b);
   });
@@ -460,16 +461,55 @@ export function renderFraseMenu(){
   groupOrder.forEach(id=>{const block=groups.get(id);if(block){g2.appendChild(block);}});
   g2.appendChild(titleGroup);
   const phraseCollectionsGroup=document.createElement("section");phraseCollectionsGroup.className="fr-phrase-collections-group";phraseCollectionsGroup.append(h2,g2);
+  const savedGroup=document.createElement("section");savedGroup.className="fr-saved-group";
+  const renderSavedBox=()=>{
+    const items=getStarredPhrases();
+    const savedTabBtn=viewSwitch.querySelectorAll(".fr-view-btn")[3];
+    if(savedTabBtn)savedTabBtn.textContent=`⭐ Saved (${items.length})`;
+    savedGroup.innerHTML=`<div class="fr-home-label">⭐ My Saved Phrasebook (${items.length})</div>
+      <div class="saved-add-bar">
+        <input type="text" class="lp-typing-input saved-es-in" placeholder="Add Spanish phrase (e.g. ¿Qué más pues?)" aria-label="Spanish phrase to save"/>
+        <input type="text" class="lp-typing-input saved-en-in" placeholder="English meaning (optional)" aria-label="English meaning optional"/>
+        <div class="saved-add-acts"><button type="button" class="lp-nav-btn primary saved-add-btn">+ Save ⭐</button>${items.length?`<button type="button" class="lp-nav-btn saved-quiz-btn">🧪 Quiz ⭐ (${items.length})</button>`:""}</div>
+      </div>
+      <div class="saved-items-list"></div>`;
+    const esIn=savedGroup.querySelector(".saved-es-in"),enIn=savedGroup.querySelector(".saved-en-in");
+    savedGroup.querySelector(".saved-add-btn").onclick=()=>{
+      const es=esIn.value.trim();if(!es){esIn.focus();return;}
+      addCustomSavedPhrase(es,enIn.value.trim(),"My Phrasebook");
+      showAppToast("⭐ Phrase saved to your phrasebook!","ok");
+      renderSavedBox();
+    };
+    const qzBtn=savedGroup.querySelector(".saved-quiz-btn");
+    if(qzBtn)qzBtn.onclick=()=>{showPage("quiz");appState.qMissedOnly=false;appState.qSavedOnly=true;appState.qMode="mixed";actions.resetQuizRound();actions.syncQuizControls();actions.nQ();};
+    const listEl=savedGroup.querySelector(".saved-items-list");
+    if(!items.length){listEl.appendChild(lpEl("lp-hint","Tap ☆ or 📌 Save anywhere in Frases, Habla Libre, or Lesson drills — or add your own Colombian phrases above."));return;}
+    items.forEach(item=>{
+      const card=document.createElement("div");card.className="frase-card";
+      card.innerHTML=`<div class="frase-txt"><div class="f-es">${escapeVocabHtml(item.text)}</div>${item.en?`<div class="f-en">${escapeVocabHtml(item.en)}</div>`:""}<span class="f-register">${escapeVocabHtml(item.source||"Pinned")}</span></div><span class="f-spk">🔊</span>`;
+      const acts=document.createElement("div");acts.className="frase-card-tools";
+      const unpin=document.createElement("button");unpin.type="button";unpin.className="star-pin-btn starred";unpin.textContent="⭐";unpin.title="Remove from Saved";
+      unpin.onclick=e=>{e.stopPropagation();toggleStarPhrase(item.text,item.source);renderSavedBox();};
+      acts.appendChild(unpin);
+      attachMic(acts,item.text,"phrases");
+      card.insertBefore(acts,card.querySelector(".f-spk"));
+      card.onclick=()=>{markPractice("phrases",item.text);speak(item.text,0.78);};
+      listEl.appendChild(card);
+    });
+  };
+  renderSavedBox();
   /* Put the speaking-first material first; collections remain immediately
      below it for lookup and targeted study. */
   fl.appendChild(conversationGroup);
   fl.appendChild(phraseCollectionsGroup);
-  const blocks=[phraseCollectionsGroup,conversationGroup];
+  fl.appendChild(savedGroup);
+  const blocks=[phraseCollectionsGroup,conversationGroup,savedGroup];
   function applyFraseView(){
     const q=fraseSearchTerm.trim();
     if(q){blocks.forEach(el=>{el.hidden=true;});return;}
-    const showConversations=fraseView!=="phrases";const showPhrases=fraseView!=="conversations";
-    conversationGroup.hidden=!showConversations;phraseCollectionsGroup.hidden=!showPhrases;
+    conversationGroup.hidden=!(fraseView==="conversations"||fraseView==="all");
+    phraseCollectionsGroup.hidden=!(fraseView==="phrases"||fraseView==="all");
+    savedGroup.hidden=(fraseView!=="saved");
   }
   function refreshPhraseSearch(){
     const q=fraseSearchTerm.trim().toLowerCase();const active=!!q;results.innerHTML="";results.hidden=!active;applyFraseView();if(!active)return;

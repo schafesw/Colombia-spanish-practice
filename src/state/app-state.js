@@ -12,6 +12,7 @@ export const appState = {
   qFocus: "all",
   qBlitzPack: null,
   qMissedOnly: false,
+  qSavedOnly: false,
   repasoLeft: 0,
   qC: 0,
   qT: 0,

@@ -7,7 +7,7 @@ import { appState } from "../state/app-state.js";
 import { userPrefs, saveUserPrefs, effectiveLevel, isBlindEarActive } from "../state/preferences.js";
 import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml, normalizeDictation, normalizeQuizText, normalizeQuizPrompt, normalizeQuizAnswer, quizItemKey, applyQuizFitClasses } from "../core/text-utils.js";
-import { qStore, saveQ, srsStore, srsDue, srsNextLabel, recordSrs, recordSpeakingError, clearSpeakingError, markPractice, resetQAndSrs } from "../core/stores.js";
+import { qStore, saveQ, srsStore, srsDue, srsNextLabel, recordSrs, recordSpeakingError, clearSpeakingError, markPractice, resetQAndSrs, getStarredPhrases } from "../core/stores.js";
 import { attachMic, openMicPanel } from "../core/speech-mic.js";
 import { aQ, RR_BANK, BLANK_EN, CONVERSATION_QUIZ, FILL_BLANK_QUIZ, storedMissedQuestionCount, spanishAnswer, englishAnswer, quizAcceptedAnswers, quizAnswerMatches } from "../core/quiz-bank.js";
 import { actions, showPage } from "./navigation.js";
@@ -67,6 +67,19 @@ export function syncQuizControls(){
   }
 }
 export function quizPool(){
+  if(appState.qSavedOnly){
+    const starred=getStarredPhrases();
+    const mapped=starred.map(s=>{
+      const norm=normalizeQuizText(s.text);
+      const match=aQ.find(x=>normalizeQuizText(x.es)===norm);
+      const en=s.en||(match&&match.en)||"";
+      if(appState.qMode==="dictation")return{es:s.text,en,tts:s.text,answer:s.text,prompt:"🎧",dictation:true,cat:"frases"};
+      if(appState.qMode==="listening"||!en)return{es:s.text,en:en||"Saved Colombian phrase",tts:s.text,answer:s.text,prompt:"🎧",kind:"listening",cat:"frases"};
+      if(appState.qMode==="en-es")return{es:s.text,en,tts:s.text,answer:s.text,prompt:en,cat:"frases"};
+      return{es:s.text,en,tts:s.text,answer:en,prompt:s.text,kind:"meaning",cat:"frases"};
+    });
+    return cleanQuizPool(mapped);
+  }
   let pool;
   if(appState.qMode==="blank")pool=FILL_BLANK_QUIZ.map(q=>({...q,answer:q.en,prompt:q.quizPrompt||q.es}));
   else if(appState.qMode==="conversation")pool=CONVERSATION_QUIZ.map(q=>({...q,answer:q.en,prompt:q.es}));
@@ -118,18 +131,23 @@ export function clearMissedQuiz(q){
   if(qStore.missed[canonical])delete qStore.missed[canonical];
   if(legacy!==canonical&&qStore.missed[legacy])delete qStore.missed[legacy];
 }
-export function exitMissedQueue(){appState.qMissedOnly=false;appState.repasoLeft=0;resetQuizRound();syncQuizControls();nQ();}
-export function openMissedQueue(){appState.qBlitzPack=null;showPage("quiz");appState.qMissedOnly=true;appState.qMode="mixed";appState.qCat="all";appState.qFocus="all";appState.repasoLeft=0;resetQuizRound();syncQuizControls();nQ();}
+export function exitMissedQueue(){appState.qMissedOnly=false;appState.qSavedOnly=false;appState.repasoLeft=0;resetQuizRound();syncQuizControls();nQ();}
+export function openMissedQueue(){appState.qBlitzPack=null;appState.qSavedOnly=false;showPage("quiz");appState.qMissedOnly=true;appState.qMode="mixed";appState.qCat="all";appState.qFocus="all";appState.repasoLeft=0;resetQuizRound();syncQuizControls();nQ();}
 export function nQ(){
   appState.an=false;document.getElementById("quiz-next").style.display="none";const quizFb=document.getElementById("quiz-fb"),quizReveal=document.getElementById("quiz-reveal");quizFb.innerHTML="";if(quizReveal){quizFb.appendChild(quizReveal);quizReveal.innerHTML="";}quizFb.classList.remove("visible");actions.syncMissedQueueLauncher();
   const helpRow=document.getElementById("quiz-help-row"),helpBtn=document.getElementById("quiz-help"),helpText=document.getElementById("quiz-help-text");
   if(helpRow){helpRow.hidden=true;if(helpText){helpText.hidden=true;helpText.textContent="";}if(helpBtn){helpBtn.textContent="💡 Show English help";helpBtn.onclick=null;}}
   const reviewBanner=document.getElementById("quiz-review-banner");
-  if(reviewBanner){reviewBanner.hidden=!appState.qMissedOnly;reviewBanner.innerHTML="";}
+  if(reviewBanner){reviewBanner.hidden=!(appState.qMissedOnly||appState.qSavedOnly);reviewBanner.innerHTML="";}
   const base=quizPool();
   if(!base.length){
-    document.querySelector(".qc-label").textContent="No matching questions";
-    document.getElementById("qc-word").textContent="Try All topics or All patterns";
+    if(appState.qSavedOnly&&reviewBanner){
+      reviewBanner.hidden=false;
+      reviewBanner.innerHTML="<span><strong>⭐ Saved phrases</strong> — pin any phrase with ☆ first to quiz your custom list.</span><button type='button' class='quiz-review-exit'>Back to quiz</button>";
+      reviewBanner.querySelector("button").onclick=exitMissedQueue;
+    }
+    document.querySelector(".qc-label").textContent=appState.qSavedOnly?"No saved phrases yet":"No matching questions";
+    document.getElementById("qc-word").textContent=appState.qSavedOnly?"⭐":"Try All topics or All patterns";
     document.getElementById("quiz-opts").innerHTML="";
     return;
   }
@@ -142,7 +160,8 @@ export function nQ(){
     return;
   }
   if(reviewBanner&&appState.qMissedOnly){reviewBanner.hidden=false;reviewBanner.innerHTML="<span><strong>Missed questions</strong> · "+storedMissedQuestionCount()+" remaining. Correct answers leave the queue.</span><button type='button' class='quiz-review-exit'>Exit queue</button>";reviewBanner.querySelector("button").onclick=exitMissedQueue;}
-  const roundKey=(appState.qMissedOnly?"missed|":"normal|")+appState.qMode+"|"+appState.qCat+"|"+appState.qFocus;
+  else if(reviewBanner&&appState.qSavedOnly){reviewBanner.hidden=false;reviewBanner.innerHTML=`<span><strong>⭐ Saved Phrasebook</strong> · quizzing ${base.length} personal phrase${base.length===1?"":"s"}.</span><button type='button' class='quiz-review-exit'>Exit ⭐</button>`;reviewBanner.querySelector("button").onclick=exitMissedQueue;}
+  const roundKey=(appState.qMissedOnly?"missed|":appState.qSavedOnly?"saved|":"normal|")+appState.qMode+"|"+appState.qCat+"|"+appState.qFocus;
   if(roundKey!==appState.qRoundKey){appState.qRoundKey=roundKey;appState.qRoundSeen.clear();}
    let unseen=reviewBase.filter(q=>!appState.qRoundSeen.has(quizRoundPromptKey(q)));
   if(!unseen.length){appState.qRoundSeen.clear();unseen=reviewBase;}
@@ -167,11 +186,22 @@ export function nQ(){
     const wordEl=document.getElementById("qc-word");
     wordEl.textContent="🎧";
     applyQuizFitClasses(wordEl,null,"🎧",null);
-    document.querySelector(".qc-label").textContent="Listen, then type the Spanish";
+    document.querySelector(".qc-label").textContent="Listen, then tap words or type Spanish";
     const ow=document.getElementById("quiz-opts");ow.innerHTML="";ow.classList.remove("opts-stack","opts-dense");
     const box=document.createElement("div");box.className="quiz-dictation";
-    box.innerHTML="<div class='dictation-hint'>Listen first. Type the full Spanish sentence or phrase from memory.</div>";
-    const input=document.createElement("input");input.type="text";input.className="dictation-input";input.placeholder="Escribe en español…";input.autocomplete="off";input.autocapitalize="sentences";
+    box.innerHTML="<div class='dictation-hint'>Listen first — tap tiles below in order or type manually.</div>";
+    const input=document.createElement("input");input.type="text";input.className="dictation-input";input.placeholder="Tap words below or write en español…";input.autocomplete="off";input.autocapitalize="sentences";
+    const targetWords=String(appState.cQ.answer||appState.cQ.es).trim().split(/\s+/).filter(Boolean);
+    const chipBank=document.createElement("div");chipBank.className="dictation-chips";
+    const extras=["para","muy","con","por","pues","aquí"].filter(w=>!targetWords.some(tw=>normalizeQuizText(tw)===w)).slice(0,2);
+    [...targetWords,...extras].sort(()=>Math.random()-0.5).forEach(w=>{
+      const t=document.createElement("button");t.type="button";t.className="lp-builder-chip dictation-chip";t.textContent=w;
+      t.onclick=()=>{if(appState.an)return;input.value=(input.value.trim()?input.value.trim()+" ":"")+w;t.disabled=true;};
+      chipBank.appendChild(t);
+    });
+    const clearTiles=document.createElement("button");clearTiles.type="button";clearTiles.className="lp-builder-chip dictation-chip-clear";clearTiles.textContent="↩ Clear";
+    clearTiles.onclick=()=>{if(appState.an)return;input.value="";chipBank.querySelectorAll(".dictation-chip").forEach(c=>c.disabled=false);};
+    chipBank.appendChild(clearTiles);
     const submit=document.createElement("button");submit.type="button";submit.className="dictation-submit";submit.textContent="Check →";
     const finish=()=>{
       if(appState.an)return;
@@ -196,7 +226,7 @@ export function nQ(){
       document.getElementById("quiz-next").style.display="block";
     };
     submit.onclick=finish;input.onkeydown=e=>{if(e.key==="Enter")finish();};
-    box.append(input,submit);ow.appendChild(box);if(document.getElementById("page-quiz")?.classList.contains("active")){setTimeout(()=>input.focus(),50);speak(appState.cQ.tts,0.7);}
+    box.append(chipBank,input,submit);ow.appendChild(box);if(document.getElementById("page-quiz")?.classList.contains("active")){speak(appState.cQ.tts,0.7);}
     return;
   }
   /* Listening questions must not show the Spanish text — hide it and auto-play */
@@ -214,7 +244,7 @@ export function nQ(){
      versa); that makes some questions look like they have multiple answers. */
   const questionFamily=q=>q.kind||"vocab";
   let compatible=base.filter(q=>q!==appState.cQ&&questionFamily(q)===questionFamily(appState.cQ));
-  if(compatible.length<3)compatible=base.filter(q=>q!==appState.cQ&&typeof q.answer===typeof appState.cQ.answer);
+  if(compatible.length<3)compatible=[...base,...(appState.qSavedOnly?aQ:[])].filter(q=>q!==appState.cQ&&typeof q.answer===typeof appState.cQ.answer);
   const wrongPool=appState.cQ.choices?appState.cQ.choices.map(answer=>({answer})):compatible.sort(()=>Math.random()-0.5);
   for(const w of wrongPool){if(wrong.length>=3)break;if(!w.answer)continue;const wk=normalizeQuizText(w.answer);if(!wk||seen.has(wk))continue;seen.add(wk);wrong.push({answer:w.answer});}
   const opts=[appState.cQ,...wrong].sort(()=>Math.random()-0.5);

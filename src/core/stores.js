@@ -36,17 +36,35 @@ export let stageMastery={};
 try{const sm=JSON.parse(appStorage.getItem(STAGE_MASTERY_KEY)||"{}");stageMastery=(sm&&typeof sm==="object"&&!Array.isArray(sm))?sm:{};}catch(e){stageMastery={};}
 export function saveStageMastery(){try{appStorage.setItem(STAGE_MASTERY_KEY,JSON.stringify(stageMastery));}catch(e){}}
 
-/* Racha de días — practice-day streak */
+/* Racha de días — practice-day streak + 7-day log */
 export const DAY_KEY="esco-days-v1";
+export const WEEK_DAYS_KEY="esco-week-days-v1";
 export let dayInfo={last:"",streak:0};
+export let weekDays=[];
 try{const di=JSON.parse(appStorage.getItem(DAY_KEY)||"{}");if(di&&typeof di==="object"&&!Array.isArray(di))Object.assign(dayInfo,di);}catch(e){}
+try{const wd=JSON.parse(appStorage.getItem(WEEK_DAYS_KEY)||"[]");if(Array.isArray(wd))weekDays=wd.filter(Boolean).slice(-14);}catch(e){weekDays=[];}
 export function recordPracticeDay(){
   const today=localDayKey();
+  if(!weekDays.includes(today)){
+    weekDays=[...weekDays,today].slice(-14);
+    try{appStorage.setItem(WEEK_DAYS_KEY,JSON.stringify(weekDays));}catch(e){}
+  }
   if(dayInfo.last===today)return;
   const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
   dayInfo.streak=dayInfo.last===localDayKey(yesterday)?Math.max(0,Number(dayInfo.streak)||0)+1:1;
   dayInfo.last=today;
   try{appStorage.setItem(DAY_KEY,JSON.stringify(dayInfo));}catch(e){}
+}
+export function getWeekActivity(){
+  const todayKey=localDayKey();
+  const days=[];
+  const labels=["S","M","T","W","T","F","S"];
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const k=localDayKey(d);
+    days.push({key:k,label:labels[d.getDay()],active:weekDays.includes(k),isToday:k===todayKey});
+  }
+  return days;
 }
 export function practiceStreak(){
   const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
@@ -108,6 +126,17 @@ export function toggleStarPhrase(target,source,btn){
   speakingErrors[id]={text:old.text||text,source:source||old.source||"starred",count:old.count||1,last:Date.now(),starred:true};
   saveSpeakingErrors();
   if(btn){btn.textContent="⭐";btn.classList.add("starred");btn.title="Pinned in your speaking practice list";}
+  return true;
+}
+export function getStarredPhrases(){
+  return Object.values(speakingErrors||{}).filter(e=>e&&e.starred&&e.text).sort((a,b)=>(b.last||0)-(a.last||0));
+}
+export function addCustomSavedPhrase(es,en,source){
+  const text=String(es||"").trim(),id=speakingErrorId(text);
+  if(!id)return false;
+  const old=speakingErrors[id]||{};
+  speakingErrors[id]={text,en:String(en||old.en||"").trim(),source:source||old.source||"My Phrasebook",count:old.count||1,last:Date.now(),starred:true};
+  saveSpeakingErrors();
   return true;
 }
 export function attachStarBtn(container,target,source){

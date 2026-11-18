@@ -254,7 +254,9 @@ def run_smoke():
             # Verify Frases view filter tabs toggle visibility and fit cleanly inside phone viewport
             page.click("#tb-frases")
             fr_btns = page.locator(".frase-view-switch .fr-view-btn")
-            assert fr_btns.count() == 3, f"Expected 3 Frases view buttons, got {fr_btns.count()}"
+            assert fr_btns.count() == 4, f"Expected 4 Frases view buttons, got {fr_btns.count()}"
+            page.locator(".frase-view-switch .fr-view-btn", has_text="Saved").click()
+            assert page.locator(".fr-saved-group").is_visible(), "Expected Saved group visible in Saved view"
             page.locator(".frase-view-switch .fr-view-btn", has_text="Phrases / Frases").click()
             assert page.locator(".fr-conversation-group").is_hidden(), "Expected Conversations hidden in Phrases view"
             assert page.locator(".fr-phrase-collections-group").is_visible(), "Expected Phrase collections visible in Phrases view"
