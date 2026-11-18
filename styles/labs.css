@@ -722,6 +722,12 @@
 .stage-testout-bar.boss{border-color:rgba(245,196,81,0.35);background:rgba(245,196,81,0.07);}
 :root[data-theme="light"] .lesson-score-pill{background:rgba(15,118,110,0.12);color:#0f766e;}
 :root[data-theme="light"] .lesson-card.crowned .lesson-score-pill{background:#fef3c7;color:#92400e;}
+.lesson-review-pill{display:inline-block;margin-left:5px;padding:1px 6px;border-radius:999px;background:rgba(245,158,11,0.16);color:#fbbf24;font-size:0.64rem;font-weight:900;vertical-align:middle;}
+.lesson-card.needs-review{border-color:rgba(245,158,11,0.45);}
+.lesson-card.needs-review .lesson-status-badge{background:rgba(245,158,11,0.18);color:#fbbf24;}
+.weak-spots-cta{margin-top:6px;border-color:rgba(245,158,11,0.4) !important;background:rgba(245,158,11,0.1) !important;}
+.lp-word.tapped{border-color:rgba(52,211,153,0.45);background:rgba(52,211,153,0.08);}
+:root[data-theme="light"] .lesson-review-pill{background:#fef3c7;color:#b45309;}
 .lesson-status-badge{width:31px;height:31px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);color:var(--muted);font-size:0.95rem;font-weight:900;flex-shrink:0;}
 .lesson-card.complete .lesson-status-badge{background:rgba(52,211,153,0.16);color:#34d399;}
 .lesson-card.recommended .lesson-status-badge{background:rgba(245,196,81,0.18);color:var(--gold);}

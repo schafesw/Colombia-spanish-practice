@@ -18,7 +18,7 @@ import {
   lessonProgress, saveLessons, lessonScores, saveLessonScores,
   stageMastery, saveStageMastery, recordPracticeDay, practiceStreak, dayInfo,
   srsStore, saveSrs, srsDue, srsDueCount, recordSrs, SRS_INTERVALS,
-  speakingErrors, clearSpeakingError, recordSpeakingError, attachStarBtn,
+  speakingErrors, clearSpeakingError, recordSpeakingError, speakingErrorId, attachStarBtn,
   missionProgress, saveMissions, readingProgress, saveReadings,
 } from "../core/stores.js";
 import { attachMic, openMicPanel } from "../core/speech-mic.js";
@@ -461,6 +461,22 @@ export function renderLessons(){
   const focusedNext=focusIds?focusIds.map(id=>LESSONS.find(l=>l.id===id)).find(l=>l&&!lessonProgress[l.id]):null;
   const nextLesson=focusedNext||LESSONS.find(l=>!lessonProgress[l.id]);
 
+  const dueHome=srsDueCount();
+  const missedHome=storedMissedQuestionCount();
+  const lessonDueCount=lesson=>{
+    if(!lessonProgress[lesson.id])return 0;
+    const c=typeof LESSON_CONTENT!=="undefined"&&LESSON_CONTENT[lesson.id];
+    if(!c)return 0;
+    const keys=new Set();
+    (c.phrases||[]).forEach(p=>{if(p&&p.es)keys.add(p.es);});
+    (c.words||[]).forEach(w=>{if(w&&w.es)keys.add(w.es.replace(/\.\.\./g,"").trim());});
+    let count=0;
+    keys.forEach(k=>{
+      const err=speakingErrors[speakingErrorId(k)];
+      if((err&&!err.starred)||srsDue(k))count++;
+    });
+    return count;
+  };
   const streakDays=practiceStreak();
   const crownedCount=LESSONS.filter(x=>(lessonScores[x.id]||0)>=100).length;
 
@@ -475,6 +491,12 @@ export function renderLessons(){
   heroCta.innerHTML=`<div class="today-hero-cta-icon">${primaryLesson.icon||"🎓"}</div><div class="today-hero-cta-copy"><span class="today-hero-cta-kicker">${isResuming?`▶️ CONTINUE · STEP ${(resume.step|0)+1}`:(done===0?"🚀 START HERE · LESSON 1":`🎓 NEXT LESSON${focusTag?" · "+focusTag:""}`)}</span><strong>${escapeVocabHtml(primaryLesson.title)}</strong><small>${escapeVocabHtml(primaryLesson.sub)}</small></div><div class="today-hero-cta-badge">${isResuming?"Resume →":"Start →"}</div>`;
   heroCta.onclick=()=>{if(isResuming)openLessonAt(resLesson,resume.step,resume.qi,resume.score);else openLesson(primaryLesson);};
   hero.appendChild(heroCta);const flowBtn=document.createElement("button");flowBtn.type="button";flowBtn.className="daily-flow-cta";flowBtn.innerHTML=`<span class="df-cta-icon">⚡</span><span class="df-cta-copy"><strong>Today’s 5-Min Mixed Flow</strong><small>Due SRS · Pictures · Local Fixes · Street Ear (8 cards)</small></span><span class="df-cta-badge">Mix →</span>`;flowBtn.onclick=()=>{if(typeof actions.openDailyFlowSession==="function")actions.openDailyFlowSession();};hero.appendChild(flowBtn);
+  if(dueHome+missedHome>0){
+    const weakBtn=document.createElement("button");weakBtn.type="button";weakBtn.className="starter-sound-btn weak-spots-cta";
+    weakBtn.innerHTML=`<span>🔁 <strong>Fix Weak Spots</strong> <small>${missedHome?`${missedHome} missed`:""}${missedHome&&dueHome?" · ":""}${dueHome?`${dueHome} due`:""}</small></span><span>Drill →</span>`;
+    weakBtn.onclick=()=>{if(missedHome)actions.openMissedQueue();else actions.openReviewSession();};
+    hero.appendChild(weakBtn);
+  }
 
   if(lvlMode==="starter"&&done<3){
     const soundBtn=document.createElement("button");soundBtn.type="button";soundBtn.className="starter-sound-btn";
@@ -521,8 +543,6 @@ export function renderLessons(){
   }
 
   /* 2. Quick Speaking Tiles & 60s Warm-Up (tucked cleanly into expandable Hoy tray below Finder) */
-  const dueHome=srsDueCount();
-  const missedHome=storedMissedQuestionCount();
   const quickGrid=document.createElement("section");quickGrid.className="today-quick-grid";quickGrid.dataset.lessonView="today";
   [
     ["🎰","Slot-Swapper",`${typeof SLOT_SWAP_MATRICES!=="undefined"?SLOT_SWAP_MATRICES.length:9} sentence builders`,()=>renderFramePractice(false)],
@@ -758,8 +778,9 @@ export function renderLessons(){
       jumpIdx++;
       const opt=document.createElement("option");opt.value=l.id;
       const sc=Number(lessonScores[l.id])||0;
-      const ico=sc>=100?"👑":lessonProgress[l.id]?"✅":jumpIdx===1?"▶":"🔓";
-      opt.textContent=`${ico} #${jumpIdx} ${l.title}${sc?` (${sc}%)`:""}`;
+      const dueN=lessonDueCount(l);
+      const ico=dueN?"🔁":sc>=100?"👑":lessonProgress[l.id]?"✅":jumpIdx===1?"▶":"🔓";
+      opt.textContent=`${ico} #${jumpIdx} ${l.title}${sc?` (${sc}%)`:""}${dueN?` · ${dueN} due`:""}`;
       og.appendChild(opt);
     });
     if(og.children.length)jumpSelect.appendChild(og);
@@ -834,20 +855,22 @@ export function renderLessons(){
       lessonNum++;
       const isComplete=!!lessonProgress[lesson.id];
       const bestScore=Number(lessonScores[lesson.id])||0;
+      const dueN=lessonDueCount(lesson);
       const isCrowned=isComplete&&bestScore>=100;
       const cardUnlocked=isComplete||(stageUnlocked&&lesson.id===firstPendingId);
       const recommended=nextLesson&&nextLesson.id===lesson.id;
       const isActiveCard=cardUnlocked&&!isComplete;
       const card=document.createElement("article");
-      card.className="lesson-card"+(isComplete?" complete compact":"")+(isCrowned?" crowned":"")+(recommended?" recommended":"")+(!cardUnlocked?" locked compact":"");
+      card.className="lesson-card"+(isComplete?" complete compact":"")+(isCrowned?" crowned":"")+(dueN?" needs-review":"")+(recommended?" recommended":"")+(!cardUnlocked?" locked compact":"");
       card.dataset.lessonView="path";
-      const badgeSymbol=isCrowned?"👑":isComplete?"✅":cardUnlocked?"▶":"🔒";
-      const badgeLabel=isCrowned?"Perfected (100%)":isComplete?(bestScore?`Completed (${bestScore}%)`:"Completed"):cardUnlocked?"Ready to start":"Locked — finish lesson above or jump via dropdown";
+      const badgeSymbol=dueN?"🔁":isCrowned?"👑":isComplete?"✅":cardUnlocked?"▶":"🔒";
+      const badgeLabel=dueN?`Completed (${dueN} items due to refresh)`:isCrowned?"Perfected (100%)":isComplete?(bestScore?`Completed (${bestScore}%)`:"Completed"):cardUnlocked?"Ready to start":"Locked — finish lesson above or jump via dropdown";
       const shortSummary=escapeVocabHtml(lesson.enSub||lesson.sub||"");
       const scoreBadge=(isComplete&&bestScore)?` <span class='lesson-score-pill'>${bestScore}%</span>`:"";
+      const reviewBadge=dueN?` <span class='lesson-review-pill'>🔁 ${dueN} due</span>`:"";
       card.innerHTML=isActiveCard
         ?`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Next</span>":""}</div><div class="lesson-sub">${shortSummary}</div></div><span class="lesson-status-badge" title="${badgeLabel}" aria-label="${badgeLabel}">${badgeSymbol}</span></div>`
-        :`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${scoreBadge}</div></div><span class="lesson-status-badge" title="${badgeLabel}" aria-label="${badgeLabel}">${badgeSymbol}</span></div>`;
+        :`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${scoreBadge}${reviewBadge}</div></div><span class="lesson-status-badge" title="${badgeLabel}" aria-label="${badgeLabel}">${badgeSymbol}</span></div>`;
       card.onclick=()=>{
         if(!cardUnlocked&&!pathSearch.value.trim()){
           showAppToast("🔒 Finish the unlocked lesson above — or use ⚡ Test out / 📚 Jump to topic ▾","warn");

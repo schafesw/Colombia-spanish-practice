@@ -455,16 +455,36 @@ export function renderLessonStep(){
         unlockResp("✅ Response submitted! Compare with the natural Colombian model below, then tap Next.");
       };
       customIn.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();customBtn.click();}};
+      const onMicMatched=ev=>{
+        if(respSolved)return;
+        const tgt=ev&&ev.detail&&ev.detail.target;
+        if(tgt===pair.answerEs||tgt===pair.answerTts){
+          unlockResp("🎙️ Spoken & matched! Tap Next to continue.");
+          window.removeEventListener("esco:mic-matched",onMicMatched);
+        }
+      };
+      window.addEventListener("esco:mic-matched",onMicMatched);
       rail.querySelectorAll(".lp-response-stage").forEach((item,i)=>item.classList.toggle("on",i===0));
       speak(pair.questionTts,0.75);
     }
   }
   else if(step==="palabras"){
     title.textContent="🔑 Key building blocks — tap, listen, repeat out loud";
+    const totalW=(c.words||[]).length;
+    const wHeard=new Set();
+    const wStatus=lpEl("lp-hint",totalW?`Tap each word below to hear & repeat out loud (0 of ${totalW} heard)`:"");
+    if(totalW)body.appendChild(wStatus);
     const grid=lpEl("lp-grid");
-    c.words.forEach(w=>{
+    c.words.forEach((w,wi)=>{
       const wc=lpEl("lp-word","<div class='lp-word-es'>"+w.es+"</div><div class='lp-word-en'>"+w.en+"</div><span>🔊</span>");
-      wc.onclick=()=>{markPractice("phrases",w.es.replace(/\.\.\./g,""));speak(w.es.replace(/\.\.\./g,""),0.75);};attachMic(wc,w.es.replace(/\.\.\./g,""),"phrases");
+      wc.onclick=()=>{
+        markPractice("phrases",w.es.replace(/\.\.\./g,""));
+        speak(w.es.replace(/\.\.\./g,""),0.75);
+        wc.classList.add("tapped");
+        wHeard.add(wi);
+        wStatus.textContent=wHeard.size>=totalW?`✅ All ${totalW} building blocks heard — say each once more out loud!`:`Tap each word below to hear & repeat out loud (${wHeard.size} of ${totalW} heard)`;
+      };
+      attachMic(wc,w.es.replace(/\.\.\./g,""),"phrases");
       grid.appendChild(wc);
     });
     body.appendChild(grid);
