@@ -112,7 +112,7 @@ export function micListen(){
       done=true;
       const alts=[];for(let i=0;i<e.results[0].length;i++)alts.push(e.results[0][i].transcript);
       const heard=alts[0]||"";
-      if(micMatch(alts,micTarget)){clearSpeakingError(micTarget);if(micPracticeType)markPractice(micPracticeType,micTarget);markPracticed(micTarget);renderMicPanel("idle","✅ Understood! I heard: “"+heard+"”");}
+      if(micMatch(alts,micTarget)){clearSpeakingError(micTarget);if(micPracticeType)markPractice(micPracticeType,micTarget);markPracticed(micTarget);try{window.dispatchEvent(new CustomEvent("esco:mic-matched",{detail:{target:micTarget,heard}}));}catch(err){}renderMicPanel("idle","✅ Understood! I heard: “"+heard+"”");}
       else{recordSpeakingError(micTarget,"speech check");renderMicPanel("idle","❌ I heard: “"+(heard||"…nothing")+"” — try again, slower and louder. It is saved in your practice list.");}
     };
     rec.onerror=e=>{
