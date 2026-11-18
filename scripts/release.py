@@ -186,7 +186,7 @@ def release_to_github(version, files, message):
 
     print(f"==> Step 5: Waiting for GitHub Actions CI on PR #{pr_num} ({new_sha[:8]}) BEFORE merging main...")
     ci_ok = False
-    for attempt in range(45):
+    for attempt in range(90):
         time.sleep(5)
         st_runs, runs = gh_api(pat, "GET", f"/actions/runs?head_sha={new_sha}")
         assert st_runs == 200, (st_runs, runs)

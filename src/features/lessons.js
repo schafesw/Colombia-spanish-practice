@@ -287,7 +287,7 @@ const FOCUS_LESSON_SETS={
   daily:["presentate","cortesia-colombiana","casa","trabajo","oficina-real","cajero-sim-tramites","migracion-bancos-ce","porteria-domicilios","arriendo-airbnb","estratos-barrios","hogar-reparaciones","whatsapp-audios","barberia","viajes-finca"]
 };
 function renderModeFocusBar(root){
-  const bar=document.createElement("section");bar.className="mode-focus-bar";bar.setAttribute("aria-label","Learning level and life focus");
+  const bar=document.createElement("section");bar.className="mode-focus-bar";bar.dataset.lessonView="today";bar.setAttribute("aria-label","Learning level and life focus");
   const curLvl=effectiveLevel();
   const lvlOpts=[["starter","🌱 Starter A0"],["explorer","🚀 Explorer A1–A2"],["fluent","🔥 Fluent Flow B1+"]];
   const focOpts=[["all","🌎 All"],["sanjuan","🪗 San Juan"],["travel","✈️ Travel & Food"],["daily","🏠 Daily CO"]];
@@ -758,9 +758,7 @@ export function renderLessons(){
   };
   pathControls.append(pathSearch,jumpSelect);
   roadmap.appendChild(pathControls);
-  const roadmapRow=lpEl("lesson-roadmap-row");
-  LESSON_STAGES.forEach((stage,i)=>{const b=document.createElement("button");b.type="button";b.className="lesson-roadmap-btn";b.textContent=stage.name.replace(/^.*?Stage /,"Stage ");b.onclick=()=>{const target=document.getElementById("lesson-stage-"+i);if(target){target.open=true;target.scrollIntoView({behavior:"smooth",block:"start"});}};roadmapRow.appendChild(b);});
-  roadmap.appendChild(roadmapRow);root.appendChild(roadmap);
+  root.appendChild(roadmap);
   pathSearch.oninput=()=>{
     const q=pathSearch.value.trim().toLowerCase();
     root.querySelectorAll(".lesson-stage").forEach(st=>{
@@ -770,17 +768,16 @@ export function renderLessons(){
         card.style.display=hit?"":"none";
         if(hit)matchesInStage++;
       });
+      const lockedFold=st.querySelector(".stage-locked-fold");
+      if(lockedFold){
+        const foldHits=[...lockedFold.querySelectorAll(".lesson-card")].some(c=>c.style.display!=="none");
+        lockedFold.style.display=(!q||foldHits)?"":"none";
+        lockedFold.open=!!(q&&foldHits);
+      }
       st.style.display=(!q||matchesInStage>0)?"":"none";
       if(q&&matchesInStage>0)st.open=true;
     });
   };
-  const tenseRoadmap=document.createElement("details");tenseRoadmap.className="tense-roadmap tense-roadmap-fold";tenseRoadmap.dataset.lessonView="path";
-  tenseRoadmap.innerHTML="<summary class='tense-roadmap-summary'><span>🧭 <strong>Speaking Tense Roadmap</strong> <small>8 layers from Presente to Future Perfect</small></span><span class='tense-roadmap-chev'>⌄</span></summary><div class='tense-roadmap-body'><p>Learn the high-frequency patterns first, then add detail to your stories. The advanced forms are for recognition before production.</p><div class='tense-roadmap-grid'></div></div>";
-  const tenseTargets=[
-    ["Presente","Hablo / tengo","gram-presente","Core now"],["Near future","Voy a hacer","gram-futuro","Easy next step"],["Completed past","Fui / hice","gram-pasado","Tell what happened"],["Past contrast","Fui vs. iba","gram-pasado-contraste","Story detail"],["Present perfect","He hecho","gram-perfecto","Connected to now"],["Conditional","Me gustaría","gram-condicional","Polite and possible"],["Past perfect","Había hecho","gram-pasado-perfecto","Earlier past"],["Future perfect","Habré hecho","gram-futuro-perfecto","Advanced recognition"]
-  ];
-  const tenseGrid=tenseRoadmap.querySelector(".tense-roadmap-grid");tenseTargets.forEach(([label,pattern,id,sub],i)=>{const b=document.createElement("button");b.type="button";b.className="tense-roadmap-item";b.innerHTML=`<span class='tense-roadmap-number'>${i+1}</span><span><strong>${label}</strong><small>${pattern} · ${sub}</small></span><span>›</span>`;b.onclick=()=>{const lesson=LESSONS.find(l=>l.id===id);if(lesson)openLesson(lesson);else{showPage("gram");actions.showGram(id);}};tenseGrid.appendChild(b);});
-  root.appendChild(tenseRoadmap);
   let lessonNum=0;
   let prevStageDone=true;
   LESSON_STAGES.forEach((stage,stageIndex)=>{
@@ -793,36 +790,32 @@ export function renderLessons(){
     const isCurrentStage=!!(nextLesson&&stageLessons.some(l=>l.id===nextLesson.id));
     if(isCurrentStage||(!nextLesson&&stageIndex===0))stageWrap.open=true;
     const sh=document.createElement("summary");sh.className="stage-label";
-    sh.innerHTML=`<div class="stage-label-main"><span>${stageUnlocked?"":"🔒 "}${stage.name}</span><span class="stage-count">${sDone}/${stageLessons.length}</span></div><div class="stage-sub">${stageUnlocked?stage.sub:`Finish Stage ${stageIndex} (or ⚡ Test out / Jump to topic ▾) — ${stage.sub}`}</div><div class="stage-progress"><span style="width:${Math.round((sDone/Math.max(stageLessons.length,1))*100)}%"></span></div>`;
+    sh.innerHTML=`<div class="stage-label-main"><span>${stageUnlocked?"":"🔒 "}${stage.name}</span><span class="stage-count">${sDone}/${stageLessons.length}</span></div><div class="stage-sub">${stageUnlocked?stage.sub:`Finish Stage ${stageIndex} or use ⚡ Test out below`}</div><div class="stage-progress"><span style="width:${Math.round((sDone/Math.max(stageLessons.length,1))*100)}%"></span></div>`;
     stageWrap.appendChild(sh);
     if(stageIndex>=0&&stageIndex<=4&&sDone<stageLessons.length){
       const testBar=document.createElement("div");testBar.className="stage-testout-bar";
-      testBar.innerHTML=`<span>${stageUnlocked?"Know the basics in this stage?":"Ready to skip ahead to this stage?"}</span><button type="button" class="stage-testout-btn">⚡ Test out (5Q)</button>`;
+      testBar.innerHTML=`<span>${stageUnlocked?"Know this stage already?":"Skip ahead to this stage"}</span><button type="button" class="stage-testout-btn">⚡ Test out (5Q)</button>`;
       testBar.querySelector("button").onclick=()=>openStageTestOut(stage,stageLessons);
       stageWrap.appendChild(testBar);
     }
     root.appendChild(stageWrap);
+    let lockedVisibleCount=0;
+    const hiddenLockedCards=[];
     stageLessons.forEach(lesson=>{
       lessonNum++;
       const isComplete=!!lessonProgress[lesson.id];
       const cardUnlocked=isComplete||(stageUnlocked&&lesson.id===firstPendingId);
       const recommended=nextLesson&&nextLesson.id===lesson.id;
+      const isActiveCard=cardUnlocked&&!isComplete;
       const card=document.createElement("article");
-      card.className="lesson-card"+(isComplete?" complete":"")+(recommended?" recommended":"")+(!cardUnlocked?" locked":"");
+      card.className="lesson-card"+(isComplete?" complete compact":"")+(recommended?" recommended":"")+(!cardUnlocked?" locked compact":"");
       card.dataset.lessonView="path";
       const badgeSymbol=isComplete?"✅":cardUnlocked?"▶":"🔒";
       const badgeLabel=isComplete?"Completed":cardUnlocked?"Ready to start":"Locked — finish lesson above or jump via dropdown";
-      card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div>${lesson.enSub?`<div class="lesson-en-sub">${escapeVocabHtml(lesson.enSub)}</div>`:""}<div class="lesson-meta"><span>${lesson.difficulty}</span><span>${cardUnlocked?(lesson.prereq||"Next step"):"🔒 Unlocks next (or Jump ▾)"}</span></div><div class="lesson-deeplinks"></div></div><span class="lesson-status-badge" title="${badgeLabel}" aria-label="${badgeLabel}">${badgeSymbol}</span></div>`;
-      const dlRow=card.querySelector(".lesson-deeplinks");
-      [
-        ["💬 Diálogo",()=>{showPage("frases");const d=lessonDialogue(lesson);if(d){appState.fraseReturnToLessons=true;actions.renderFraseDialogue(d);}}],
-        ["📚 Vocab",()=>{showPage("vocab");if(typeof actions.sCat==="function")actions.sCat(lesson.vocab);}],
-        ["⚡ Quiz",()=>{showPage("quiz");appState.qBlitzPack=null;appState.qMissedOnly=false;appState.qCat=lesson.quizCat||"all";appState.qMode=lesson.quizMode||"mixed";appState.qFocus=lesson.quizFocus||"all";appState.repasoLeft=0;actions.resetQuizRound();actions.syncQuizControls();actions.nQ();}]
-      ].forEach(([lbl,fn])=>{
-        const b=document.createElement("button");b.type="button";b.className="lesson-deeplink-pill";b.textContent=lbl;
-        b.onclick=e=>{e.stopPropagation();fn();};
-        dlRow.appendChild(b);
-      });
+      const shortSummary=escapeVocabHtml(lesson.enSub||lesson.sub||"");
+      card.innerHTML=isActiveCard
+        ?`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Next</span>":""}</div><div class="lesson-sub">${shortSummary}</div></div><span class="lesson-status-badge" title="${badgeLabel}" aria-label="${badgeLabel}">${badgeSymbol}</span></div>`
+        :`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div></div><span class="lesson-status-badge" title="${badgeLabel}" aria-label="${badgeLabel}">${badgeSymbol}</span></div>`;
       card.onclick=()=>{
         if(!cardUnlocked&&!pathSearch.value.trim()){
           showAppToast("🔒 Finish the unlocked lesson above — or use ⚡ Test out / 📚 Jump to topic ▾","warn");
@@ -830,8 +823,21 @@ export function renderLessons(){
         }
         openLesson(lesson);
       };
-      stageWrap.appendChild(card);
+      if(!cardUnlocked){
+        lockedVisibleCount++;
+        if(lockedVisibleCount<=1)stageWrap.appendChild(card);
+        else hiddenLockedCards.push(card);
+      }else{
+        stageWrap.appendChild(card);
+      }
     });
+    if(hiddenLockedCards.length){
+      const lockedFold=document.createElement("details");lockedFold.className="stage-locked-fold";
+      const sum=document.createElement("summary");sum.textContent=`🔒 ${hiddenLockedCards.length} upcoming locked lesson${hiddenLockedCards.length===1?"":"s"} in ${stage.name.replace(/^.*?(Stage \d+).*$/,"$1")} ▾`;
+      lockedFold.appendChild(sum);
+      hiddenLockedCards.forEach(c=>lockedFold.appendChild(c));
+      stageWrap.appendChild(lockedFold);
+    }
     prevStageDone=(sDone===stageLessons.length);
   });
   /* Any lesson not assigned to a stage still shows (future-proofing weekly additions) */
@@ -840,11 +846,18 @@ export function renderLessons(){
     lessonNum++;
     const isComplete=!!lessonProgress[lesson.id];
     const recommended=nextLesson&&nextLesson.id===lesson.id;
-    const card=document.createElement("article");card.className="lesson-card"+(isComplete?" complete":"")+(recommended?" recommended":"");card.dataset.lessonView="path";
-    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div>${lesson.enSub?`<div class="lesson-en-sub">${escapeVocabHtml(lesson.enSub)}</div>`:""}<div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div></div><span class="lesson-status-badge" aria-label="${isComplete?"Completed":"Ready"}">${isComplete?"✅":"▶"}</span></div>`;
+    const card=document.createElement("article");card.className="lesson-card"+(isComplete?" complete compact":"")+(recommended?" recommended":"");card.dataset.lessonView="path";
+    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Next</span>":""}</div></div><span class="lesson-status-badge" aria-label="${isComplete?"Completed":"Ready"}">${isComplete?"✅":"▶"}</span></div>`;
     card.onclick=()=>openLesson(lesson);
     root.appendChild(card);
   });
+  const tenseRoadmap=document.createElement("details");tenseRoadmap.className="tense-roadmap tense-roadmap-fold";tenseRoadmap.dataset.lessonView="path";
+  tenseRoadmap.innerHTML="<summary class='tense-roadmap-summary'><span>🧭 <strong>Speaking Tense Roadmap</strong> <small>8 layers from Presente to Future Perfect</small></span><span class='tense-roadmap-chev'>⌄</span></summary><div class='tense-roadmap-body'><p>Learn the high-frequency patterns first, then add detail to your stories. The advanced forms are for recognition before production.</p><div class='tense-roadmap-grid'></div></div>";
+  const tenseTargets=[
+    ["Presente","Hablo / tengo","gram-presente","Core now"],["Near future","Voy a hacer","gram-futuro","Easy next step"],["Completed past","Fui / hice","gram-pasado","Tell what happened"],["Past contrast","Fui vs. iba","gram-pasado-contraste","Story detail"],["Present perfect","He hecho","gram-perfecto","Connected to now"],["Conditional","Me gustaría","gram-condicional","Polite and possible"],["Past perfect","Había hecho","gram-pasado-perfecto","Earlier past"],["Future perfect","Habré hecho","gram-futuro-perfecto","Advanced recognition"]
+  ];
+  const tenseGrid=tenseRoadmap.querySelector(".tense-roadmap-grid");tenseTargets.forEach(([label,pattern,id,sub],i)=>{const b=document.createElement("button");b.type="button";b.className="tense-roadmap-item";b.innerHTML=`<span class='tense-roadmap-number'>${i+1}</span><span><strong>${label}</strong><small>${pattern} · ${sub}</small></span><span>›</span>`;b.onclick=()=>{const lesson=LESSONS.find(l=>l.id===id);if(lesson)openLesson(lesson);else{showPage("gram");actions.showGram(id);}};tenseGrid.appendChild(b);});
+  root.appendChild(tenseRoadmap);
   /* Progress backup lives tucked cleanly at the bottom (use Profile -> Export/Import .json for devices) */
   renderQuizAuditCard(root);
   const bkFold=document.createElement("details");bkFold.className="starter-more-tools";bkFold.dataset.lessonView="practice";
