@@ -16,7 +16,7 @@ import { escapeVocabHtml, lpEl, scrollAppTop, spanishStressHint, normalizeQuizTe
 import {
   practiceStore, markPractice, practiced,
   lessonProgress, saveLessons, lessonScores, saveLessonScores,
-  stageMastery, saveStageMastery, recordPracticeDay, practiceStreak, getWeekActivity, dayInfo,
+  stageMastery, saveStageMastery, recordPracticeDay, practiceStreak, getWeekActivity, todayActionCount, dayInfo,
   srsStore, saveSrs, srsDue, srsDueCount, recordSrs, SRS_INTERVALS,
   speakingErrors, clearSpeakingError, recordSpeakingError, speakingErrorId, attachStarBtn,
   missionProgress, saveMissions, readingProgress, saveReadings,
@@ -478,12 +478,13 @@ export function renderLessons(){
     return count;
   };
   const streakDays=practiceStreak();
+  const todayCnt=todayActionCount();
   const crownedCount=LESSONS.filter(x=>(lessonScores[x.id]||0)>=100).length;
   const weekHtml=getWeekActivity().map(d=>`<span class="week-dot${d.active?" active":""}${d.isToday?" today":""}" title="${d.key}">${d.label}</span>`).join("");
 
   /* 1. Unified Hero Card — Status + Primary Lesson CTA + 1-Tap Session Launchers */
   const hero=document.createElement("section");hero.className="today-hero-card";hero.dataset.lessonView="today";
-  hero.innerHTML=`<div class="today-hero-status"><span class="hero-pill streak">🔥 ${streakDays}d streak</span><span class="hero-pill level">🧭 ${pathLevel}</span><span class="hero-pill count">${crownedCount?`👑 ${crownedCount} · `:""}${done}/${LESSONS.length} done</span></div><div class="lesson-progress"><span style="width:${Math.round(percent*100)}%"></span></div><div class="week-streak-row" aria-label="7-day practice activity">${weekHtml}</div>`;
+  hero.innerHTML=`<div class="today-hero-status"><span class="hero-pill streak">🔥 ${streakDays}d streak</span><span class="hero-pill ${todayCnt>=3?"goal-met":"level"}">🎯 ${todayCnt>=3?"Daily goal ✓":`${todayCnt}/3 today`}</span><span class="hero-pill count">${crownedCount?`👑 ${crownedCount} · `:""}${done}/${LESSONS.length} done</span></div><div class="lesson-progress"><span style="width:${Math.round(percent*100)}%"></span></div><div class="week-streak-row" aria-label="7-day practice activity">${weekHtml}</div>`;
 
   const primaryLesson=(resLesson&&!lessonProgress[resLesson.id]&&(!focusIds||focusIds.includes(resLesson.id)))?resLesson:(nextLesson||LESSONS[0]);
   const isResuming=!!(resLesson&&primaryLesson.id===resLesson.id&&!lessonProgress[resLesson.id]);
@@ -930,7 +931,7 @@ export function renderLessons(){
   const bkFold=document.createElement("details");bkFold.className="starter-more-tools";bkFold.dataset.lessonView="practice";
   bkFold.innerHTML="<summary><span>💾 Legacy text backup</span><small>Use Profile drawer for .json file backup</small></summary>";
   const bk=document.createElement("div");bk.className="backup-row";
-  const BK_KEYS=["esco-quiz-v1","esco-srs-v1","esco-speaking-errors-v1","esco-lesson-progress-v1","esco-lesson-scores-v1","esco-stage-mastery-v1","esco-mission-progress-v1","esco-reading-progress-v1","esco-routine-v1","esco-routine-v2","esco-routine-v3","esco-practice-v1","esco-days-v1","esco-week-days-v1"];
+  const BK_KEYS=["esco-quiz-v1","esco-srs-v1","esco-speaking-errors-v1","esco-lesson-progress-v1","esco-lesson-scores-v1","esco-stage-mastery-v1","esco-mission-progress-v1","esco-reading-progress-v1","esco-routine-v1","esco-routine-v2","esco-routine-v3","esco-practice-v1","esco-days-v1","esco-week-days-v1","esco-today-actions-v1"];
   const b1=document.createElement("button");b1.type="button";b1.className="backup-btn";b1.textContent="💾 Copy backup";
   b1.onclick=()=>{
     const data={};BK_KEYS.forEach(k=>{const v=appStorage.getItem(k);if(v)data[k]=v;});

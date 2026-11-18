@@ -10,7 +10,7 @@ export function practiceKey(value){return String(value||"").trim().toLowerCase()
 let vocabRefreshHook = () => {};
 export function setVocabRefreshHook(fn){ if(fn) vocabRefreshHook = fn; }
 export function refreshVocabProgress(){ vocabRefreshHook(); }
-export function markPractice(type,value){const key=practiceKey(value);if(!key)return;const bucket=practiceStore[type]||(practiceStore[type]={});bucket[key]=(bucket[key]||0)+1;savePractice();refreshVocabProgress();}
+export function markPractice(type,value){const key=practiceKey(value);if(!key)return;const bucket=practiceStore[type]||(practiceStore[type]={});bucket[key]=(bucket[key]||0)+1;savePractice();recordTodayAction();refreshVocabProgress();}
 export function practiced(type,value){return !!(practiceStore[type]&&practiceStore[type][practiceKey(value)]);}
 export function practicedCount(type,values){return (values||[]).filter(v=>practiced(type,v)).length;}
 export function vocabKeys(cat){
@@ -39,10 +39,22 @@ export function saveStageMastery(){try{appStorage.setItem(STAGE_MASTERY_KEY,JSON
 /* Racha de días — practice-day streak + 7-day log */
 export const DAY_KEY="esco-days-v1";
 export const WEEK_DAYS_KEY="esco-week-days-v1";
+export const TODAY_ACTIONS_KEY="esco-today-actions-v1";
 export let dayInfo={last:"",streak:0};
 export let weekDays=[];
+let todayActions={day:localDayKey(),count:0};
 try{const di=JSON.parse(appStorage.getItem(DAY_KEY)||"{}");if(di&&typeof di==="object"&&!Array.isArray(di))Object.assign(dayInfo,di);}catch(e){}
 try{const wd=JSON.parse(appStorage.getItem(WEEK_DAYS_KEY)||"[]");if(Array.isArray(wd))weekDays=wd.filter(Boolean).slice(-14);}catch(e){weekDays=[];}
+try{const ta=JSON.parse(appStorage.getItem(TODAY_ACTIONS_KEY)||"{}");if(ta&&ta.day===localDayKey())todayActions={day:ta.day,count:Number(ta.count)||0};}catch(e){}
+export function recordTodayAction(steps=1){
+  const today=localDayKey();
+  if(todayActions.day!==today)todayActions={day:today,count:0};
+  todayActions.count+=steps;
+  try{appStorage.setItem(TODAY_ACTIONS_KEY,JSON.stringify(todayActions));}catch(e){}
+}
+export function todayActionCount(){
+  return todayActions.day===localDayKey()?todayActions.count:0;
+}
 export function recordPracticeDay(){
   const today=localDayKey();
   if(!weekDays.includes(today)){

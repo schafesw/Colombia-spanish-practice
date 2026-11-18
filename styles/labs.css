@@ -766,3 +766,15 @@
 .qv102-saved-btn.active{background:rgba(245,196,81,0.22);border-color:var(--gold);color:var(--gold);}
 :root[data-theme="light"] .week-dot{background:rgba(20,32,26,0.05);color:#64748b;}
 :root[data-theme="light"] .week-dot.active{background:#dcfce7;color:#15803d;border-color:#86efac;}
+
+/* ── v122.0: Vocab 5Q Check, Today Goal Pill & Coach Fix Drill ───────────── */
+.hero-pill.goal-met{background:rgba(52,211,153,0.18);color:#34d399;border:1px solid rgba(52,211,153,0.35);}
+.vq-opts{display:grid;gap:8px;margin:10px 0;}
+.vq-fb{font-size:0.82rem;font-weight:800;min-height:20px;margin:4px 0 8px;}
+.hl-tips-drill-card{margin:6px 0 10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(245,196,81,0.35);background:rgba(245,196,81,0.08);display:flex;flex-direction:column;gap:6px;}
+.hl-tips-drill-card strong{font-size:0.95rem;color:var(--text);}
+.hl-tips-drill-acts{display:flex;gap:6px;flex-wrap:wrap;}
+@media (max-width:420px){
+  .today-hero-status{gap:5px;flex-wrap:wrap;}
+  .hero-pill{font-size:0.68rem;padding:4px 8px;}
+}
