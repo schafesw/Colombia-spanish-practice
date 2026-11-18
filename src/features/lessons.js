@@ -15,7 +15,8 @@ import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml, lpEl, scrollAppTop, spanishStressHint, normalizeQuizText, normalizeQuizPrompt, normalizeQuizAnswer, localDayKey, showAppToast } from "../core/text-utils.js";
 import {
   practiceStore, markPractice, practiced,
-  lessonProgress, saveLessons, recordPracticeDay, practiceStreak, dayInfo,
+  lessonProgress, saveLessons, lessonScores, saveLessonScores,
+  stageMastery, saveStageMastery, recordPracticeDay, practiceStreak, dayInfo,
   srsStore, saveSrs, srsDue, srsDueCount, recordSrs, SRS_INTERVALS,
   speakingErrors, clearSpeakingError, recordSpeakingError, attachStarBtn,
   missionProgress, saveMissions, readingProgress, saveReadings,
@@ -329,7 +330,7 @@ function renderModeFocusBar(root){
   focRow.appendChild(earBtn);
   bar.append(lvlRow,focRow);root.appendChild(bar);
 }
-export function openStageTestOut(stage,stageLessons){
+export function openStageTestOut(stage,stageLessons,bossMode=false){
   const root=document.getElementById("lesson-list");if(!root)return;
   setLeccionesFocusMode(true);
   scrollAppTop();
@@ -337,14 +338,15 @@ export function openStageTestOut(stage,stageLessons){
   stageLessons.forEach(l=>{
     const c=typeof LESSON_CONTENT!=="undefined"&&LESSON_CONTENT[l.id];
     if(!c)return;
-    const item=(c.examples&&c.examples[0])||c.goal;
-    if(item&&item.es&&item.en)poolItems.push({lesson:l,es:item.es,en:item.en});
+    const items=(bossMode&&Array.isArray(c.phrases)&&c.phrases.length)?c.phrases.slice(0,2):[(c.examples&&c.examples[0])||c.goal];
+    items.forEach(item=>{if(item&&item.es&&item.en)poolItems.push({lesson:l,es:item.es,en:item.en});});
   });
   if(poolItems.length<2){openLesson(stageLessons[0]);return;}
-  const stepN=Math.max(1,Math.floor(poolItems.length/5));
+  const targetCount=bossMode?6:5;
+  const stepN=Math.max(1,Math.floor(poolItems.length/targetCount));
   const picks=[];
-  for(let i=0;i<poolItems.length&&picks.length<5;i+=stepN)picks.push(poolItems[i]);
-  for(let i=0;picks.length<Math.min(5,poolItems.length)&&i<poolItems.length;i++){
+  for(let i=0;i<poolItems.length&&picks.length<targetCount;i+=stepN)picks.push(poolItems[i]);
+  for(let i=0;picks.length<Math.min(targetCount,poolItems.length)&&i<poolItems.length;i++){
     if(!picks.includes(poolItems[i]))picks.push(poolItems[i]);
   }
   const allDistractors=LESSONS.map(l=>LESSON_CONTENT[l.id]&&((LESSON_CONTENT[l.id].examples&&LESSON_CONTENT[l.id].examples[0])||LESSON_CONTENT[l.id].goal)).filter(x=>x&&x.es&&x.en);
@@ -373,23 +375,28 @@ export function openStageTestOut(stage,stageLessons){
     if(qi>=questions.length){
       const passed=score>=passNeed;
       if(passed){
-        stageLessons.forEach(l=>{lessonProgress[l.id]=true;});
-        saveLessons();
+        recordPracticeDay();
+        stageLessons.forEach(l=>{
+          lessonProgress[l.id]=true;
+          lessonScores[l.id]=Math.max(Number(lessonScores[l.id])||0,bossMode?100:80);
+        });
+        saveLessons();saveLessonScores();
+        if(bossMode){stageMastery[stage.name]=true;saveStageMastery();showAppToast("👑 Stage Mastered!","ok");}
       }
       const res=document.createElement("div");res.className="testout-result";
-      res.innerHTML=`<div class="testout-kicker">${passed?"🎉 STAGE TEST-OUT PASSED":"🧭 KEEP PRACTICING"}</div>
+      res.innerHTML=`<div class="testout-kicker">${passed?(bossMode?"👑 STAGE CROWN EARNED":"🎉 STAGE TEST-OUT PASSED"):"🧭 KEEP PRACTICING"}</div>
         <h3>${score}/${questions.length} Correct</h3>
-        <p>${passed?`All ${stageLessons.length} lessons in <strong>${escapeVocabHtml(stage.name)}</strong> are now marked complete!`:`Score ${passNeed}/${questions.length} to test out and unlock the next stage faster.`}</p>
+        <p>${passed?(bossMode?`<strong>${escapeVocabHtml(stage.name)}</strong> is now Crowned Mastered!`:`All ${stageLessons.length} lessons in <strong>${escapeVocabHtml(stage.name)}</strong> are now marked complete!`):`Score ${passNeed}/${questions.length} to ${bossMode?"crown this stage":"test out and unlock the next stage"}.`}</p>
         <div class="testout-acts"></div>`;
       const acts=res.querySelector(".testout-acts");
       if(passed){
-        const cont=document.createElement("button");cont.type="button";cont.className="lp-nav-btn primary";cont.textContent="Continue to Next Stage →";
+        const cont=document.createElement("button");cont.type="button";cont.className="lp-nav-btn primary";cont.textContent="Continue on Ruta →";
         cont.onclick=()=>{setLeccionesFocusMode(false);};
         acts.appendChild(cont);
       }else{
-        const retry=document.createElement("button");retry.type="button";retry.className="lp-nav-btn primary";retry.textContent="🔄 Retry Test-Out";
-        retry.onclick=()=>openStageTestOut(stage,stageLessons);
-        const startL=document.createElement("button");startL.type="button";startL.className="lp-nav-btn";startL.textContent="Start Lesson 1 →";
+        const retry=document.createElement("button");retry.type="button";retry.className="lp-nav-btn primary";retry.textContent=bossMode?"🔄 Retry Stage Boss":"🔄 Retry Test-Out";
+        retry.onclick=()=>openStageTestOut(stage,stageLessons,bossMode);
+        const startL=document.createElement("button");startL.type="button";startL.className="lp-nav-btn";startL.textContent="Practice Lesson 1 →";
         startL.onclick=()=>openLesson(stageLessons[0]);
         acts.append(retry,startL);
       }
@@ -397,7 +404,7 @@ export function openStageTestOut(stage,stageLessons){
     }
     const q=questions[qi];answered=false;
     const card=document.createElement("div");card.className="lp-card";
-    card.innerHTML=`<div class="lp-kicker">⚡ STAGE TEST-OUT · ${qi+1} OF ${questions.length} (NEED ${passNeed})</div>
+    card.innerHTML=`<div class="lp-kicker">${bossMode?"🏁 STAGE BOSS":"⚡ STAGE TEST-OUT"} · ${qi+1} OF ${questions.length} (NEED ${passNeed})</div>
       <div class="lp-step-sub">${escapeVocabHtml(stage.name)} · ${escapeVocabHtml(q.title)}</div>
       <div class="testout-prompt">${escapeVocabHtml(q.prompt)}</div>
       ${q.askEsToEn?'<button type="button" class="lp-nav-btn testout-hear">🔊 Listen</button>':""}
@@ -454,9 +461,12 @@ export function renderLessons(){
   const focusedNext=focusIds?focusIds.map(id=>LESSONS.find(l=>l.id===id)).find(l=>l&&!lessonProgress[l.id]):null;
   const nextLesson=focusedNext||LESSONS.find(l=>!lessonProgress[l.id]);
 
+  const streakDays=practiceStreak();
+  const crownedCount=LESSONS.filter(x=>(lessonScores[x.id]||0)>=100).length;
+
   /* 1. Unified Hero Card — Status + Primary Lesson CTA + 1-Tap Session Launchers */
   const hero=document.createElement("section");hero.className="today-hero-card";hero.dataset.lessonView="today";
-  hero.innerHTML=`<div class="today-hero-status"><span class="hero-pill streak">🔥 ${dayInfo.streak}d streak</span><span class="hero-pill level">🧭 ${pathLevel}</span><span class="hero-pill count">${done}/${LESSONS.length} lessons · ~4 min</span></div><div class="lesson-progress"><span style="width:${Math.round(percent*100)}%"></span></div>`;
+  hero.innerHTML=`<div class="today-hero-status"><span class="hero-pill streak">🔥 ${streakDays}d streak</span><span class="hero-pill level">🧭 ${pathLevel}</span><span class="hero-pill count">${crownedCount?`👑 ${crownedCount} · `:""}${done}/${LESSONS.length} done</span></div><div class="lesson-progress"><span style="width:${Math.round(percent*100)}%"></span></div>`;
 
   const primaryLesson=(resLesson&&!lessonProgress[resLesson.id]&&(!focusIds||focusIds.includes(resLesson.id)))?resLesson:(nextLesson||LESSONS[0]);
   const isResuming=!!(resLesson&&primaryLesson.id===resLesson.id&&!lessonProgress[resLesson.id]);
@@ -747,7 +757,9 @@ export function renderLessons(){
       const l=LESSONS.find(x=>x.id===id);if(!l)return;
       jumpIdx++;
       const opt=document.createElement("option");opt.value=l.id;
-      opt.textContent=`${lessonProgress[l.id]?"✅":jumpIdx===1?"▶":"🔓"} #${jumpIdx} ${l.title}`;
+      const sc=Number(lessonScores[l.id])||0;
+      const ico=sc>=100?"👑":lessonProgress[l.id]?"✅":jumpIdx===1?"▶":"🔓";
+      opt.textContent=`${ico} #${jumpIdx} ${l.title}${sc?` (${sc}%)`:""}`;
       og.appendChild(opt);
     });
     if(og.children.length)jumpSelect.appendChild(og);
@@ -796,17 +808,23 @@ export function renderLessons(){
     const sDone=stageLessons.filter(l=>lessonProgress[l.id]).length;
     const stageUnlocked=stageIndex===0||prevStageDone||sDone>0;
     const firstPendingId=(stageLessons.find(l=>!lessonProgress[l.id])||{}).id;
-    const stageWrap=document.createElement("details");stageWrap.className="lesson-stage"+(stageUnlocked?"":" locked");stageWrap.dataset.lessonView="path";stageWrap.id="lesson-stage-"+stageIndex;
+    const isMastered=!!stageMastery[stage.name];
+    const stageWrap=document.createElement("details");stageWrap.className="lesson-stage"+(stageUnlocked?"":" locked")+(isMastered?" crowned":"");stageWrap.dataset.lessonView="path";stageWrap.id="lesson-stage-"+stageIndex;
     const isCurrentStage=!!(nextLesson&&stageLessons.some(l=>l.id===nextLesson.id));
     if(isCurrentStage||(!nextLesson&&stageIndex===0))stageWrap.open=true;
     const sh=document.createElement("summary");sh.className="stage-label";
-    sh.innerHTML=`<div class="stage-label-main"><span>${stageUnlocked?"":"🔒 "}${stage.name}</span><span class="stage-count">${sDone}/${stageLessons.length}</span></div><div class="stage-sub">${stageUnlocked?stage.sub:`Finish Stage ${stageIndex} or use ⚡ Test out below`}</div><div class="stage-progress"><span style="width:${Math.round((sDone/Math.max(stageLessons.length,1))*100)}%"></span></div>`;
+    sh.innerHTML=`<div class="stage-label-main"><span>${isMastered?"👑 ":stageUnlocked?"":"🔒 "}${stage.name}</span><span class="stage-count">${sDone}/${stageLessons.length}${isMastered?" · Crowned":""}</span></div><div class="stage-sub">${stageUnlocked?stage.sub:`Finish Stage ${stageIndex} or use ⚡ Test out below`}</div><div class="stage-progress"><span style="width:${Math.round((sDone/Math.max(stageLessons.length,1))*100)}%"></span></div>`;
     stageWrap.appendChild(sh);
     if(stageIndex>=0&&stageIndex<=4&&sDone<stageLessons.length){
       const testBar=document.createElement("div");testBar.className="stage-testout-bar";
       testBar.innerHTML=`<span>${stageUnlocked?"Know this stage already?":"Skip ahead to this stage"}</span><button type="button" class="stage-testout-btn">⚡ Test out (5Q)</button>`;
-      testBar.querySelector("button").onclick=()=>openStageTestOut(stage,stageLessons);
+      testBar.querySelector("button").onclick=()=>openStageTestOut(stage,stageLessons,false);
       stageWrap.appendChild(testBar);
+    }else if(sDone===stageLessons.length&&!isMastered&&stageLessons.length>=2){
+      const bossBar=document.createElement("div");bossBar.className="stage-testout-bar boss";
+      bossBar.innerHTML=`<span>Stage finished — earn your mastery crown?</span><button type="button" class="stage-testout-btn">🏁 Stage Boss (6Q)</button>`;
+      bossBar.querySelector("button").onclick=()=>openStageTestOut(stage,stageLessons,true);
+      stageWrap.appendChild(bossBar);
     }
     if(stageUnlocked)root.appendChild(stageWrap);
     else{lockedStages.push(stageWrap);lockedLessonTotal+=stageLessons.length;}
@@ -815,18 +833,21 @@ export function renderLessons(){
     stageLessons.forEach(lesson=>{
       lessonNum++;
       const isComplete=!!lessonProgress[lesson.id];
+      const bestScore=Number(lessonScores[lesson.id])||0;
+      const isCrowned=isComplete&&bestScore>=100;
       const cardUnlocked=isComplete||(stageUnlocked&&lesson.id===firstPendingId);
       const recommended=nextLesson&&nextLesson.id===lesson.id;
       const isActiveCard=cardUnlocked&&!isComplete;
       const card=document.createElement("article");
-      card.className="lesson-card"+(isComplete?" complete compact":"")+(recommended?" recommended":"")+(!cardUnlocked?" locked compact":"");
+      card.className="lesson-card"+(isComplete?" complete compact":"")+(isCrowned?" crowned":"")+(recommended?" recommended":"")+(!cardUnlocked?" locked compact":"");
       card.dataset.lessonView="path";
-      const badgeSymbol=isComplete?"✅":cardUnlocked?"▶":"🔒";
-      const badgeLabel=isComplete?"Completed":cardUnlocked?"Ready to start":"Locked — finish lesson above or jump via dropdown";
+      const badgeSymbol=isCrowned?"👑":isComplete?"✅":cardUnlocked?"▶":"🔒";
+      const badgeLabel=isCrowned?"Perfected (100%)":isComplete?(bestScore?`Completed (${bestScore}%)`:"Completed"):cardUnlocked?"Ready to start":"Locked — finish lesson above or jump via dropdown";
       const shortSummary=escapeVocabHtml(lesson.enSub||lesson.sub||"");
+      const scoreBadge=(isComplete&&bestScore)?` <span class='lesson-score-pill'>${bestScore}%</span>`:"";
       card.innerHTML=isActiveCard
         ?`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Next</span>":""}</div><div class="lesson-sub">${shortSummary}</div></div><span class="lesson-status-badge" title="${badgeLabel}" aria-label="${badgeLabel}">${badgeSymbol}</span></div>`
-        :`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}</div></div><span class="lesson-status-badge" title="${badgeLabel}" aria-label="${badgeLabel}">${badgeSymbol}</span></div>`;
+        :`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${scoreBadge}</div></div><span class="lesson-status-badge" title="${badgeLabel}" aria-label="${badgeLabel}">${badgeSymbol}</span></div>`;
       card.onclick=()=>{
         if(!cardUnlocked&&!pathSearch.value.trim()){
           showAppToast("🔒 Finish the unlocked lesson above — or use ⚡ Test out / 📚 Jump to topic ▾","warn");
@@ -885,7 +906,7 @@ export function renderLessons(){
   const bkFold=document.createElement("details");bkFold.className="starter-more-tools";bkFold.dataset.lessonView="practice";
   bkFold.innerHTML="<summary><span>💾 Legacy text backup</span><small>Use Profile drawer for .json file backup</small></summary>";
   const bk=document.createElement("div");bk.className="backup-row";
-  const BK_KEYS=["esco-quiz-v1","esco-srs-v1","esco-speaking-errors-v1","esco-lesson-progress-v1","esco-mission-progress-v1","esco-reading-progress-v1","esco-routine-v1","esco-routine-v2","esco-routine-v3","esco-practice-v1","esco-days-v1"];
+  const BK_KEYS=["esco-quiz-v1","esco-srs-v1","esco-speaking-errors-v1","esco-lesson-progress-v1","esco-lesson-scores-v1","esco-stage-mastery-v1","esco-mission-progress-v1","esco-reading-progress-v1","esco-routine-v1","esco-routine-v2","esco-routine-v3","esco-practice-v1","esco-days-v1"];
   const b1=document.createElement("button");b1.type="button";b1.className="backup-btn";b1.textContent="💾 Copy backup";
   b1.onclick=()=>{
     const data={};BK_KEYS.forEach(k=>{const v=appStorage.getItem(k);if(v)data[k]=v;});

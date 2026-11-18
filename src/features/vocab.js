@@ -65,12 +65,19 @@ export function renderVocabHome(){
   phon.innerHTML="<span class='vocab-phonetic-icon'>🔤</span><span><strong>Fonética</strong><small>Vocales, consonantes, y sílabas</small></span><span class='vocab-home-arrow'>›</span>";
   phon.onclick=()=>{showPage("fonetica");actions.showPhonetic("letters");};vocabHome.appendChild(phon);
   if(typeof actions.mountPictureMatchEntry==="function")actions.mountPictureMatchEntry(vocabHome);
-  VOCAB_GROUPS.forEach(group=>{
-    const section=document.createElement("section");section.className="vocab-home-group";
-    section.innerHTML=`<div class="vocab-home-group-title">${group.title}</div><div class="vocab-home-group-sub">${group.sub}</div>`;
+  VOCAB_GROUPS.forEach((group,gi)=>{
+    const cats=group.ids.map(id=>VOCAB_CATS.find(cat=>cat.id===id)).filter(Boolean);
     const grid=document.createElement("div");grid.className="vocab-home-grid";
-    group.ids.map(id=>VOCAB_CATS.find(cat=>cat.id===id)).filter(Boolean).forEach(cat=>grid.appendChild(vocabCard(cat)));
-    section.appendChild(grid);vocabHome.appendChild(section);
+    cats.forEach(cat=>grid.appendChild(vocabCard(cat)));
+    if(gi===0){
+      const section=document.createElement("section");section.className="vocab-home-group";
+      section.innerHTML=`<div class="vocab-home-group-title">${group.title}</div><div class="vocab-home-group-sub">${group.sub}</div>`;
+      section.appendChild(grid);vocabHome.appendChild(section);
+    }else{
+      const fold=document.createElement("details");fold.className="starter-more-tools";
+      fold.innerHTML=`<summary><span>${group.title}</span><small>${cats.length} topics ▾</small></summary>`;
+      fold.appendChild(grid);vocabHome.appendChild(fold);
+    }
   });
 }
 export function showVocabHome(){
