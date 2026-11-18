@@ -785,3 +785,16 @@
 .stage-readiness-row .sr-bar span{display:block;height:100%;border-radius:99px;background:var(--teal);}
 .stage-readiness-row .sr-pct{font-size:0.68rem;font-weight:800;min-width:34px;text-align:right;}
 :root[data-theme="light"] .stage-readiness-row .sr-bar{background:rgba(20,32,26,0.1);}
+
+/* ── v124.0: Numbers Ear Lab & Lecturas Blind-Ear + Comprehension Gate ─── */
+.numbers-ear-card{margin-bottom:14px;}
+.numbers-ear-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px;}
+.numbers-ear-opts .bridge-opt{text-align:center;font-weight:800;letter-spacing:0.01em;}
+.reading-ctrl-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 10px;}
+.reading-ctrl-row .reading-play{flex:1 1 180px;margin:0;}
+.reading-blind-btn{border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.06);color:var(--text);padding:10px 13px;font-size:0.82rem;font-weight:700;cursor:pointer;transition:all 0.16s ease;}
+.reading-blind-btn.active{background:rgba(45,212,191,0.18);border-color:var(--teal);color:var(--teal);}
+:root[data-theme="light"] .reading-blind-btn{background:rgba(20,32,26,0.05);color:#14201a;}
+:root[data-theme="light"] .reading-blind-btn.active{background:#ccfbf1;border-color:#0f766e;color:#0f766e;}
+.reading-lines.reading-blind .reading-line:not(.revealed) .reading-es{filter:blur(6px);opacity:0.65;transition:filter 0.2s ease,opacity 0.2s ease;}
+.reading-card .lesson-start:disabled{opacity:0.55;cursor:not-allowed;filter:grayscale(0.3);}

@@ -225,32 +225,63 @@ export function renderReading(reading){
   const guide=lpEl("reading-guide","Read the Spanish aloud before revealing the English. Then listen and compare.");card.appendChild(guide);
   const readingText=reading.lines.map(line=>line.tts||line.es).join(". ");
   let readingRate=1;
+  let blindMode=false;
+  const qs=reading.questions||[];
+  const answeredQs=new Set();
   const speed=lpEl("reading-speed");speed.innerHTML="<span>Playback speed</span>";
   [[1,"Full speed"],[0.78,"Slower"],[0.6,"Very slow"]].forEach(([rate,label],i)=>{
     const b=document.createElement("button");b.type="button";b.className="reading-speed-btn";b.textContent=label;b.classList.toggle("selected",i===0);b.onclick=()=>{readingRate=rate;speed.querySelectorAll("button").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");speak(readingText,readingRate);};speed.appendChild(b);
   });
   card.appendChild(speed);
-  const play=document.createElement("button");play.type="button";play.className="lp-speak reading-play";play.textContent="▶️ Listen to the whole reading";play.onclick=()=>speak(readingText,readingRate);card.appendChild(play);
+  const ctrlRow=lpEl("reading-ctrl-row");
+  const play=document.createElement("button");play.type="button";play.className="lp-speak reading-play";play.textContent="▶️ Listen to the whole reading";play.onclick=()=>speak(readingText,readingRate);ctrlRow.appendChild(play);
+  const blindBtn=document.createElement("button");blindBtn.type="button";blindBtn.className="reading-blind-btn";blindBtn.textContent="🎧 Listen Blind: OFF";blindBtn.setAttribute("aria-pressed","false");
+  ctrlRow.appendChild(blindBtn);
+  card.appendChild(ctrlRow);
   const translation=document.createElement("details");translation.className="reading-translation";translation.innerHTML="<summary>📖 Show full English translation</summary><div class='reading-translation-copy'></div>";
   const translationCopy=translation.querySelector(".reading-translation-copy");
   reading.lines.forEach(line=>{const p=document.createElement("p");p.textContent=line.en||"";translationCopy.appendChild(p);});
   card.appendChild(translation);
   const lines=lpEl("reading-lines");
+  blindBtn.onclick=()=>{
+    blindMode=!blindMode;
+    blindBtn.textContent=blindMode?"🎧 Listen Blind: ON":"🎧 Listen Blind: OFF";
+    blindBtn.setAttribute("aria-pressed",blindMode?"true":"false");
+    blindBtn.classList.toggle("active",blindMode);
+    lines.classList.toggle("reading-blind",blindMode);
+  };
   reading.lines.forEach((line,i)=>{
     const row=document.createElement("article");row.className="reading-line";
     row.innerHTML=`<div class='reading-line-num'>${i+1}</div><div class='reading-line-copy'><button type='button' class='reading-es'>${escapeVocabHtml(line.es)}</button><button type='button' class='reading-en' hidden>${escapeVocabHtml(line.en)}</button></div><div class='reading-actions'></div>`;
     const es=row.querySelector(".reading-es"),en=row.querySelector(".reading-en");
-    es.onclick=()=>speak(line.tts||line.es,readingRate);en.onclick=()=>{en.hidden=!en.hidden;};
+    es.onclick=()=>{row.classList.add("revealed");speak(line.tts||line.es,readingRate);};en.onclick=()=>{en.hidden=!en.hidden;};
     const rec=document.createElement("button");rec.type="button";rec.className="reading-record";rec.textContent="🎙️";rec.title="Record yourself";rec.setAttribute("aria-label","Record yourself");rec.onclick=()=>openMicPanel(line.tts||line.es);
     row.querySelector(".reading-actions").appendChild(rec);lines.appendChild(row);
   });
   card.appendChild(lines);
-  (reading.questions||[]).forEach(q=>{
+  const done=document.createElement("button");done.type="button";done.className="lesson-start";
+  const syncReadingDone=()=>{
+    if(readingProgress[reading.id]){
+      done.disabled=false;
+      done.textContent="✅ Reading complete — practice again";
+      return;
+    }
+    const remaining=qs.length-answeredQs.size;
+    if(remaining>0){
+      done.disabled=true;
+      done.textContent=`🔒 Answer ${remaining} comprehension question${remaining===1?"":"s"} above to complete`;
+    }else{
+      done.disabled=false;
+      done.textContent="✅ I read & understood this";
+    }
+  };
+  qs.forEach((q,qi)=>{
     const box=lpEl("reading-question");box.appendChild(lpEl("reading-question-text",q.q));
     const opts=lpEl("reading-question-options");
     const feedback=lpEl("reading-question-feedback","");feedback.setAttribute("aria-live","polite");
-    q.choices.forEach(choice=>{const b=document.createElement("button");b.type="button";b.className="reading-choice";b.textContent=choice;b.onclick=()=>{opts.querySelectorAll("button").forEach(x=>x.disabled=true);const ok=choice===q.answer;b.classList.add(ok?"correct":"wrong");if(!ok)opts.querySelectorAll("button").forEach(x=>{if(x.textContent===q.answer)x.classList.add("reveal");});feedback.className="reading-question-feedback "+(ok?"correct":"wrong");feedback.textContent=ok?"✅ Correct — you understood it.":"❌ Not quite. Correct answer: "+q.answer;};opts.appendChild(b);});
+    q.choices.forEach(choice=>{const b=document.createElement("button");b.type="button";b.className="reading-choice";b.textContent=choice;b.onclick=()=>{opts.querySelectorAll("button").forEach(x=>x.disabled=true);const ok=choice===q.answer;b.classList.add(ok?"correct":"wrong");if(!ok)opts.querySelectorAll("button").forEach(x=>{if(x.textContent===q.answer)x.classList.add("reveal");});feedback.className="reading-question-feedback "+(ok?"correct":"wrong");feedback.textContent=ok?"✅ Correct — you understood it.":"❌ Not quite. Correct answer: "+q.answer;answeredQs.add(qi);recordSrs("read|"+reading.id+"|"+qi,ok);syncReadingDone();};opts.appendChild(b);});
     box.appendChild(opts);box.appendChild(feedback);card.appendChild(box);
   });
-  const done=document.createElement("button");done.type="button";done.className="lesson-start";done.textContent=readingProgress[reading.id]?"✅ Reading complete — practice again":"✅ I read this aloud";done.onclick=()=>{readingProgress[reading.id]=true;saveReadings();renderReading(reading);};card.appendChild(done);root.appendChild(card);
+  syncReadingDone();
+  done.onclick=()=>{readingProgress[reading.id]=true;saveReadings();markPractice("phrases",reading.title);renderReading(reading);};card.appendChild(done);root.appendChild(card);
 }

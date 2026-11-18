@@ -425,7 +425,63 @@ export function rCol(list){
   });
 }
 
+const NUMBERS_EAR_DRILLS=[
+  {tag:"COP Price",tts:"Eso vale quince mil quinientos pesos",es:"Eso vale quince mil quinientos pesos.",ans:"$15.500",en:"That costs 15,500 COP",dist:["$50.500","$15.050","$5.500"]},
+  {tag:"Bogotá Slang",tts:"Son cinco lucas por todo",es:"Son cinco lucas por todo.",ans:"$5.000",en:"5,000 COP (cinco lucas = 5 mil)",dist:["$50.000","$500","$15.000"]},
+  {tag:"COP Price",tts:"El menú del día cuesta dieciocho mil pesos",es:"El menú del día cuesta dieciocho mil pesos.",ans:"$18.000",en:"Daily lunch special: 18,000 COP",dist:["$28.000","$80.000","$18.500"]},
+  {tag:"COP Price",tts:"La carrera hasta Chapinero sale en veinticuatro mil quinientos",es:"La carrera hasta Chapinero sale en veinticuatro mil quinientos.",ans:"$24.500",en:"Taxi ride to Chapinero: 24,500 COP",dist:["$24.000","$42.500","$34.500"]},
+  {tag:"COP Price",tts:"Me cobraron ciento ochenta mil en la tienda",es:"Me cobraron ciento ochenta mil en la tienda.",ans:"$180.000",en:"They charged me 180,000 COP",dist:["$108.000","$80.000","$185.000"]},
+  {tag:"Rent / Big Bill",tts:"El arriendo está en dos millones quinientos mil al mes",es:"El arriendo está en dos millones quinientos mil al mes.",ans:"$2.500.000",en:"Rent is 2.5 million COP/month",dist:["$250.000","$2.050.000","$5.200.000"]},
+  {tag:"COP Change",tts:"Solo tengo un billete de cincuenta mil",es:"Solo tengo un billete de cincuenta mil.",ans:"$50.000",en:"I only have a 50,000 COP bill",dist:["$5.000","$15.000","$55.000"]},
+  {tag:"COP Price",tts:"Un tinto y un buñuelo valen seis mil doscientos",es:"Un tinto y un buñuelo valen seis mil doscientos.",ans:"$6.200",en:"Coffee + buñuelo: 6,200 COP",dist:["$16.200","$6.500","$7.200"]},
+  {tag:"Address",tts:"Queda en la Carrera quince número noventa y tres",es:"Queda en la Carrera 15 # 93.",ans:"Cra 15 # 93",en:"Carrera 15 # 93 (Bogotá street grid)",dist:["Cra 50 # 93","Cll 15 # 39","Cra 15 # 63"]},
+  {tag:"Address",tts:"Nos vemos en la Calle setenta y dos número once",es:"Nos vemos en la Calle 72 # 11.",ans:"Cll 72 # 11",en:"Calle 72 # 11",dist:["Cll 62 # 11","Cra 72 # 11","Cll 72 # 21"]},
+  {tag:"Apartment",tts:"Timbre en el apartamento cuatrocientos dos",es:"Timbre en el apartamento 402.",ans:"Apto 402",en:"Buzz apartment 402",dist:["Apto 420","Apto 204","Apto 412"]},
+  {tag:"Address",tts:"El edificio está en la Carrera séptima número sesenta y cinco",es:"El edificio está en la Carrera 7 # 65.",ans:"Cra 7 # 65",en:"Carrera 7 # 65",dist:["Cra 7 # 75","Cll 7 # 65","Cra 17 # 65"]},
+  {tag:"Time",tts:"La cita es a las dos y treinta de la tarde",es:"La cita es a las 2:30 PM.",ans:"2:30 PM",en:"Appointment at 2:30 PM",dist:["2:15 PM","3:30 PM","12:30 PM"]},
+  {tag:"Time",tts:"El bus sale a un cuarto para las cinco",es:"El bus sale a un cuarto para las cinco (4:45).",ans:"4:45",en:"Quarter to five (4:45)",dist:["5:15","4:15","5:45"]},
+  {tag:"Time",tts:"Abren a las ocho y quince de la mañana",es:"Abren a las 8:15 AM.",ans:"8:15 AM",en:"They open at 8:15 AM",dist:["8:50 AM","8:45 AM","9:15 AM"]},
+  {tag:"Bogotá Slang",tts:"Préstame veinte barras mientras llega la quincena",es:"Préstame veinte barras mientras llega la quincena.",ans:"$20.000",en:"20,000 COP (barras / lucas = mil)",dist:["$200.000","$2.000","$12.000"]}
+];
+
 export function rN(list){
+  const ear=document.createElement("div");ear.className="bridge-trainer-card numbers-ear-card";
+  let earIdx=0,earScore=0,earAnswered=0;
+  const earPool=[...NUMBERS_EAR_DRILLS].sort(()=>Math.random()-0.5);
+  const drawEar=()=>{
+    const q=earPool[earIdx%earPool.length];
+    const choices=[q.ans,...q.dist].sort(()=>Math.random()-0.5);
+    ear.innerHTML=`<div class="bridge-head"><div><div class="bridge-title">💵 Catch the Price & Address</div><div class="bridge-sub">Listen without reading, then tap the exact Colombian peso price, address, or time · ${escapeVocabHtml(q.tag)}</div></div><div class="bridge-score">${earScore}/${earAnswered}</div></div>`;
+    const controls=document.createElement("div");controls.className="bridge-controls";
+    const play=document.createElement("button");play.type="button";play.className="voc-flash-speak";play.textContent="🔊 Play audio";play.onclick=()=>speak(q.tts,0.95);
+    const slow=document.createElement("button");slow.type="button";slow.className="voc-flash-speak";slow.textContent="🐢 Slow";slow.onclick=()=>speak(q.tts,0.72);
+    controls.appendChild(play);controls.appendChild(slow);ear.appendChild(controls);
+    const grid=document.createElement("div");grid.className="bridge-opts numbers-ear-opts";
+    const fb=document.createElement("div");fb.className="bridge-fb";
+    const next=document.createElement("button");next.type="button";next.className="bridge-next";next.hidden=true;next.textContent="Next →";
+    next.onclick=()=>{earIdx++;drawEar();};
+    choices.forEach(c=>{
+      const b=document.createElement("button");b.type="button";b.className="bridge-opt";b.textContent=c;
+      b.onclick=()=>{
+        if(!next.hidden)return;
+        earAnswered++;
+        const ok=c===q.ans;
+        if(ok)earScore++;
+        b.classList.add(ok?"ok":"no");
+        if(!ok)grid.querySelectorAll(".bridge-opt").forEach(x=>{if(x.textContent===q.ans)x.classList.add("ok");});
+        grid.querySelectorAll(".bridge-opt").forEach(x=>x.disabled=true);
+        markPractice("vocab",q.tts);
+        recordSrs("num|"+q.ans,ok);
+        fb.textContent=(ok?"✅ ":"❌ ")+q.es+" ("+q.en+")";
+        const sc=ear.querySelector(".bridge-score");if(sc)sc.textContent=earScore+"/"+earAnswered;
+        next.hidden=false;
+      };
+      grid.appendChild(b);
+    });
+    ear.appendChild(grid);ear.appendChild(fb);ear.appendChild(next);
+  };
+  drawEar();
+  list.appendChild(ear);
   const cr=document.createElement("div");cr.className="counting-rules";
   cr.innerHTML=`<div class="cr-title">📖 Reglas para contar</div>
     <div class="cr-row"><div class="cr-ex">31 = treinta y uno</div><div class="cr-rule">30–90: [decena] + y + [unidad]</div></div>
