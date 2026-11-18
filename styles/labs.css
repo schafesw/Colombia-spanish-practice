@@ -728,6 +728,18 @@
 .weak-spots-cta{margin-top:6px;border-color:rgba(245,158,11,0.4) !important;background:rgba(245,158,11,0.1) !important;}
 .lp-word.tapped{border-color:rgba(52,211,153,0.45);background:rgba(52,211,153,0.08);}
 :root[data-theme="light"] .lesson-review-pill{background:#fef3c7;color:#b45309;}
+
+/* ── v120.0: Grammar Quick Checks, Phonetics Ear Quiz & Mission Gating ───── */
+.gram-qc-opts,.phonetic-ear-opts{display:grid;gap:8px;margin:8px 0;}
+.phonetic-ear-opts{grid-template-columns:repeat(2,minmax(0,1fr));}
+.phonetic-ear-opts .lp-opt{display:flex;flex-direction:column;align-items:center;gap:2px;padding:11px 8px;}
+.phonetic-ear-opts .lp-opt small{font-size:0.72rem;color:var(--muted);font-weight:700;}
+.phonetic-ear-controls{display:flex;gap:8px;margin:8px 0 4px;}
+.phonetic-ear-controls .lp-nav-btn{flex:1;}
+.gram-qc-done{display:flex;flex-direction:column;gap:3px;padding:10px 12px;border-radius:11px;background:rgba(52,211,153,0.1);margin:6px 0 10px;}
+.gram-guide-fold .speaking-guide-card{margin:8px 0 0;border:none;padding:0;background:transparent;box-shadow:none;}
+.mission-reply-box{margin:8px 0;}
+.lesson-start:disabled{opacity:0.55;cursor:not-allowed;}
 .lesson-status-badge{width:31px;height:31px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);color:var(--muted);font-size:0.95rem;font-weight:900;flex-shrink:0;}
 .lesson-card.complete .lesson-status-badge{background:rgba(52,211,153,0.16);color:#34d399;}
 .lesson-card.recommended .lesson-status-badge{background:rgba(245,196,81,0.18);color:var(--gold);}

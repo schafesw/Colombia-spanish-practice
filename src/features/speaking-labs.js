@@ -1,6 +1,6 @@
 import { SPEAKING_FRAMES, SLOT_SWAP_MATRICES, SPEAKING_GUIDE } from "../../data/index.js";
 import { speak } from "../audio/voice-engine.js";
-import { escapeVocabHtml, lpEl } from "../core/text-utils.js";
+import { escapeVocabHtml, lpEl, normalizeQuizText } from "../core/text-utils.js";
 import { markPractice, recordSrs, recordSpeakingError, clearSpeakingError, missionProgress, saveMissions, readingProgress, saveReadings } from "../core/stores.js";
 import { attachMic, openMicPanel } from "../core/speech-mic.js";
 import { actions } from "./navigation.js";
@@ -13,14 +13,55 @@ export function renderMission(mission){
   setLeccionesFocusMode(true);
   const back=document.createElement("button");back.type="button";back.className="phrase-back";back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=actions.renderLessons;root.appendChild(back);
   const card=lpEl("lp-card mission-card");card.appendChild(lpEl("lp-step-title","🗣️ Conversation mission"));card.appendChild(lpEl("mission-title",mission.title));card.appendChild(lpEl("mission-scenario",mission.scenario));card.appendChild(lpEl("mission-prompt",mission.prompt));
-  const say=lpEl("mission-say","Answer out loud before looking at the examples.");card.appendChild(say);
+  const say=lpEl("mission-say","Say or write your Spanish reply first, then compare with natural Colombian models:");card.appendChild(say);
+  const model0=(mission.models&&mission.models[0]&&mission.models[0].es)||"";
+  const replyWrap=lpEl("lp-typing mission-reply-box");
+  const replyIn=document.createElement("input");replyIn.type="text";replyIn.className="lp-typing-input";replyIn.placeholder="Write your Spanish reply (2+ words) or use 🎙️…";replyIn.autocomplete="off";
+  const replyAct=lpEl("lp-typing-actions");
+  const checkBtn=document.createElement("button");checkBtn.type="button";checkBtn.className="lp-nav-btn";checkBtn.textContent="Check reply";
+  const replyFb=lpEl("lp-typing-feedback","");
+  replyAct.appendChild(checkBtn);
+  if(model0)attachMic(replyAct,model0,"phrases");
+  replyWrap.append(replyIn,replyAct,replyFb);card.appendChild(replyWrap);
   const reveal=document.createElement("button");reveal.type="button";reveal.className="lp-nav-btn primary";reveal.textContent="👀 Reveal natural answers";
   const models=document.createElement("div");models.className="mission-models";models.hidden=true;
   reveal.onclick=()=>{say.textContent="Compare your idea with these natural Colombian answers:";reveal.remove();models.hidden=false;};card.appendChild(reveal);
   (mission.models||[]).forEach((m,i)=>{const row=document.createElement("div");row.className="mission-model";row.innerHTML=`<div class="mission-model-label">Natural option ${i+1}</div><div class="mission-model-es">${escapeVocabHtml(m.es)}</div><div class="mission-model-en">${escapeVocabHtml(m.en)}</div>`;row.onclick=()=>{markPractice("phrases",m.es);speak(m.tts||m.es,0.75);};attachMic(row,m.es);models.appendChild(row);});
   card.appendChild(models);
   const inRoutine=actions.routineToday().step===4;
-  const done=document.createElement("button");done.type="button";done.className="lesson-start";done.textContent=inRoutine?"✅ Finish today’s speaking path":(missionProgress[mission.id]?"✅ Mission completed — practice again":"✅ I answered out loud");done.onclick=()=>{missionProgress[mission.id]=true;saveMissions();if(inRoutine)actions.routineFinishMission();else renderMission(mission);};card.appendChild(done);root.appendChild(card);
+  let unlocked=!!missionProgress[mission.id];
+  const done=document.createElement("button");done.type="button";done.className="lesson-start";
+  const syncDoneBtn=()=>{
+    done.disabled=!unlocked;
+    done.textContent=!unlocked?"🔒 Check or speak your reply above to complete":(inRoutine?"✅ Finish today’s speaking path":(missionProgress[mission.id]?"✅ Mission completed — practice again":"✅ Complete mission ✓"));
+  };
+  const unlockMission=msg=>{
+    unlocked=true;models.hidden=false;if(reveal.parentNode)reveal.remove();
+    replyFb.textContent=msg;
+    if(model0){markPractice("phrases",model0);speak(model0,0.75);}
+    syncDoneBtn();
+  };
+  checkBtn.onclick=()=>{
+    const txt=replyIn.value.trim();
+    const words=normalizeQuizText(txt).split(" ").filter(w=>w.length>=2&&/[a-z]/.test(w));
+    if(txt.replace(/[^a-záéíóúüñ]/gi,"").length<4||words.length<2){
+      replyFb.textContent="❌ Write at least 2 real Spanish words first (or use the 🎙️ mic).";
+      replyIn.focus();
+      return;
+    }
+    unlockMission("✅ Great effort! Compare with the natural answers below, then tap Complete.");
+  };
+  replyIn.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();checkBtn.click();}};
+  const onMic=ev=>{
+    const tgt=ev&&ev.detail&&ev.detail.target;
+    if(tgt&&(mission.models||[]).some(m=>m.es===tgt||m.tts===tgt)){
+      unlockMission("🎙️ Spoken & matched! Tap Complete below.");
+      window.removeEventListener("esco:mic-matched",onMic);
+    }
+  };
+  window.addEventListener("esco:mic-matched",onMic);
+  syncDoneBtn();
+  done.onclick=()=>{if(!unlocked)return;missionProgress[mission.id]=true;saveMissions();if(inRoutine)actions.routineFinishMission();else renderMission(mission);};card.appendChild(done);root.appendChild(card);
 }
 
 /* v56 + v71: Sentence-frame trainer & Interactive 3-Column Slot-Swapper. */
