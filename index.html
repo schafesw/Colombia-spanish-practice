@@ -12,15 +12,15 @@
 <meta name="build-rev" content="dev"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&family=Nunito:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Public+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
-  <link rel="manifest" href="manifest.json?v=119.0"/>
+  <link rel="manifest" href="manifest.json?v=120.0"/>
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png"/>
   <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png"/>
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png"/>
-  <link rel="stylesheet" href="styles/base.css?v=119.0"/>
-  <link rel="stylesheet" href="styles/polish.css?v=119.0"/>
-  <link rel="stylesheet" href="styles/labs.css?v=119.0"/>
-  <link rel="stylesheet" href="styles/shell.css?v=119.0"/>
-  <link rel="stylesheet" href="styles/studio.css?v=119.0"/>
+  <link rel="stylesheet" href="styles/base.css?v=120.0"/>
+  <link rel="stylesheet" href="styles/polish.css?v=120.0"/>
+  <link rel="stylesheet" href="styles/labs.css?v=120.0"/>
+  <link rel="stylesheet" href="styles/shell.css?v=120.0"/>
+  <link rel="stylesheet" href="styles/studio.css?v=120.0"/>
 </head>
 <body>
 <div id="splash" hidden role="status" aria-label="Loading Español Colombia">
@@ -62,6 +62,7 @@
   <div class="phonetic-tabs">
     <button class="phonetic-tab active" id="pt-letters" onclick="showPhonetic('letters')">🔤 Letras</button>
     <button class="phonetic-tab" id="pt-syllables" onclick="showPhonetic('syllables')">🔡 Sílabas</button>
+    <button class="phonetic-tab" id="pt-ear" onclick="showPhonetic('ear')">👂 Ear Quiz</button>
   </div>
   <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-fonetica"></div></details>
   <section id="phonetic-mouth-studio" class="mouth-studio-host" aria-label="Interactive articulatory mouth diagram"></section>
@@ -118,9 +119,14 @@
         <button type="button" class="warmup-continue" onclick="routineFinishWarmup()">Done — continue →</button>
       </div>
     </section>
-    <div class="sl" style="color:var(--muted)">Filter by consonant</div>
-    <div class="fw" id="filter-wrap"></div>
-    <div id="combo-groups"></div>
+    <details class="phonetic-fold" id="phonetic-syllable-fold">
+      <summary><span>🔡 Syllable Grid (A–Z)</span><small>Filter by consonant ▾</small></summary>
+      <div class="phonetic-fold-body">
+        <div class="sl" style="color:var(--muted)">Filter by consonant</div>
+        <div class="fw" id="filter-wrap"></div>
+        <div id="combo-groups"></div>
+      </div>
+    </details>
     <div class="phonetic-practice-map">
       <div class="phonetic-map-kicker">🧭 GO DEEPER WHEN READY</div>
       <div class="phonetic-map-title">Your pronunciation toolkit</div>
@@ -163,6 +169,9 @@
       <summary><span>🗣️ Traba-lenguas</span><small>RR · Ñ · J · B/V</small></summary>
       <div class="phonetic-fold-body"><div class="tongue-twister-lab" id="tongue-twister-lab"></div></div>
     </details>
+  </div>
+  <div class="phonetic-panel" id="phonetic-ear">
+    <div id="phonetic-ear-quiz"></div>
   </div>
 </div>
 
@@ -360,6 +369,6 @@
   </div>
 </dialog>
 
-  <script type="module" src="src/main.js?v=119.0"></script>
+  <script type="module" src="src/main.js?v=120.0"></script>
 </body>
 </html>

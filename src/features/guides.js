@@ -118,6 +118,53 @@ export function buildVerbVersatilityLab(sec){
   renderLab();
   sec.appendChild(lab);
 }
+function appendGramQuickCheck(sec,items){
+  const valid=(items||[]).filter(x=>x&&x.es&&x.en);
+  if(valid.length<2)return;
+  const pool=valid.slice(0,6);
+  const picks=pool.slice(0,2);
+  let qi=0,score=0,answered=false;
+  const card=document.createElement("section");card.className="bridge-trainer-card gram-quick-check";
+  const draw=()=>{
+    if(qi>=picks.length){
+      card.innerHTML=`<div class="bridge-kicker">🧪 QUICK GRAMMAR CHECK</div>
+        <div class="gram-qc-done"><strong>${score}/${picks.length} Correct</strong><small>${score===picks.length?"¡Excelente! Pattern locked in.":"Review the pattern above and retry anytime."}</small></div>
+        <button type="button" class="lp-nav-btn primary">🔄 Try another 2 questions</button>`;
+      card.querySelector("button").onclick=()=>{qi=0;score=0;answered=false;draw();};
+      return;
+    }
+    const target=picks[qi];
+    const distractors=pool.filter(x=>x.es!==target.es).sort(()=>Math.random()-0.5).slice(0,2);
+    if(distractors.length<2&&typeof SPEAKING_GUIDE!=="undefined"){
+      SPEAKING_GUIDE.flatMap(g=>g.examples||[]).forEach(ex=>{if(distractors.length<2&&ex.es&&ex.es!==target.es)distractors.push(ex);});
+    }
+    const opts=[target,...distractors].slice(0,3).sort(()=>Math.random()-0.5);
+    answered=false;
+    card.innerHTML=`<div class="bridge-kicker">🧪 QUICK CHECK · ${qi+1} OF ${picks.length}</div>
+      <div class="bridge-context">Which Spanish sentence naturally expresses: <strong>“${escapeVocabHtml(target.en)}”</strong>?</div>
+      <div class="gram-qc-opts"></div>
+      <div class="bridge-feedback" aria-live="polite"></div>
+      <div class="bridge-actions"></div>`;
+    const oWrap=card.querySelector(".gram-qc-opts"),fb=card.querySelector(".bridge-feedback"),acts=card.querySelector(".bridge-actions");
+    opts.forEach(o=>{
+      const b=document.createElement("button");b.type="button";b.className="lp-opt";b.textContent=o.es;
+      b.onclick=()=>{
+        if(answered)return;answered=true;
+        const ok=o.es===target.es;
+        if(ok){score++;b.classList.add("correct");clearSpeakingError(target.es);markPractice("phrases",target.es);}
+        else{b.classList.add("wrong");recordSpeakingError(target.es,"grammar check");oWrap.querySelectorAll(".lp-opt").forEach(x=>{if(x.textContent===target.es)x.classList.add("reveal");});}
+        speak(target.tts||target.es,0.78);
+        fb.textContent=ok?`✅ ¡Correcto! ${target.es}`:`❌ Natural model: ${target.es}`;
+        const nxt=document.createElement("button");nxt.type="button";nxt.className="lp-nav-btn primary";nxt.textContent=qi+1<picks.length?"Next question →":"Finish check →";
+        nxt.onclick=()=>{qi++;draw();};
+        acts.appendChild(nxt);
+      };
+      oWrap.appendChild(b);
+    });
+  };
+  draw();
+  sec.appendChild(card);
+}
 export function buildGram(id,data){
   const sec=document.getElementById("gs-"+id);sec.innerHTML="";
   if(id==="trucos"){
@@ -160,6 +207,7 @@ export function buildGram(id,data){
   data.examples.forEach(ex=>{const card=document.createElement("div");card.className="example-card";
     card.innerHTML=`<div class="ex-info"><div class="ex-es">${ex.es}</div><div class="ex-en">${ex.en}</div></div><span class="ex-spk">🔊</span>`;
     card.onclick=()=>speak(ex.tts,0.75);sec.appendChild(card);});
+  appendGramQuickCheck(sec,data.examples);
 }
 export function buildPronombres(sec){
   const intro=document.createElement("div");intro.className="gram-intro";
@@ -181,6 +229,7 @@ export function buildPronombres(sec){
   PRONOMBRES.examples.forEach(ex=>{const card=document.createElement("div");card.className="example-card";
     card.innerHTML=`<div class="ex-info"><div class="ex-es">${ex.es}</div><div class="ex-en">${ex.en}</div></div><span class="ex-spk">🔊</span>`;
     card.onclick=()=>speak(ex.tts,0.75);sec.appendChild(card);});
+  appendGramQuickCheck(sec,PRONOMBRES.examples);
 }
 export function buildReflexivos(sec){
   const intro=document.createElement("div");intro.className="gram-intro";
@@ -204,6 +253,7 @@ export function buildReflexivos(sec){
       <div style="font-size:0.72rem;color:var(--muted);font-style:italic;margin-top:3px">${verb.example.en} 🔊</div>`;
     exDiv.onclick=()=>speak(verb.example.es,0.75);card.appendChild(exDiv);
     sec.appendChild(card);});
+  appendGramQuickCheck(sec,REFLEXIVOS.map(v=>v.example));
 }
 let bridgeDrillIdx=0;
 export function applyHablarTab(tabId){
@@ -706,10 +756,13 @@ export function buildSpeakingGuide(){
     sec.appendChild(trCard);
   }
   SPEAKING_GUIDE.forEach((g,i)=>{
-    const card=document.createElement("article");card.className="speaking-guide-card";card.dataset.hablarGroup="trampas";
-    card.innerHTML=`<div class='speaking-guide-number'>${i+1}</div><div class='speaking-guide-copy'><h3>${escapeVocabHtml(g.title)}</h3><div class='speaking-guide-formula'>${escapeVocabHtml(g.formula)}</div><p>${escapeVocabHtml(g.explain)}</p><div class='speaking-guide-mistake'>⚠️ ${escapeVocabHtml(g.mistake)}</div></div>`;
+    const fold=document.createElement("details");fold.className="starter-more-tools gram-guide-fold";fold.dataset.hablarGroup="trampas";
+    fold.innerHTML=`<summary><span><b>${i+1}.</b> ${escapeVocabHtml(g.title)}</span><small>${escapeVocabHtml(g.formula)}</small></summary>`;
+    const card=document.createElement("article");card.className="speaking-guide-card";
+    card.innerHTML=`<div class='speaking-guide-copy'><div class='speaking-guide-formula'>${escapeVocabHtml(g.formula)}</div><p>${escapeVocabHtml(g.explain)}</p><div class='speaking-guide-mistake'>⚠️ ${escapeVocabHtml(g.mistake)}</div></div>`;
     (g.examples||[]).forEach(ex=>{const row=document.createElement("button");row.type="button";row.className="speaking-guide-example";row.innerHTML=`<strong>${escapeVocabHtml(ex.es)}</strong><small>${escapeVocabHtml(ex.en)}</small><span>🔊</span>`;row.onclick=()=>speak(ex.tts||ex.es,0.75);card.appendChild(row);});
-    const drill=document.createElement("div");drill.className="speaking-guide-drill";drill.textContent="🗣️ Try it: "+g.exercise;card.appendChild(drill);sec.appendChild(card);
+    const drill=document.createElement("div");drill.className="speaking-guide-drill";drill.textContent="🗣️ Try it: "+g.exercise;card.appendChild(drill);
+    fold.appendChild(card);sec.appendChild(fold);
   });
   applyHablarTab(userPrefs.hablarTab||"regions");
 }
