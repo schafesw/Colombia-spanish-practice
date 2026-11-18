@@ -707,6 +707,14 @@
 .stage-locked-fold>summary::-webkit-details-marker{display:none;}
 .stage-locked-fold[open]{padding-bottom:6px;}
 .stage-locked-fold[open]>summary{margin-bottom:6px;color:var(--text);}
+.future-stages-fold{margin:12px 0 8px;border:1px dashed var(--border);border-radius:14px;background:rgba(255,255,255,0.02);padding:2px 10px;}
+.future-stages-fold>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 4px;font-size:0.78rem;color:var(--muted);}
+.future-stages-fold>summary::-webkit-details-marker{display:none;}
+.future-stages-fold>summary small{font-size:0.7rem;color:var(--muted);}
+.future-stages-fold[open]{padding-bottom:10px;}
+:root[data-theme="light"] .future-stages-fold{background:rgba(20,32,26,0.025);border-color:rgba(20,32,26,0.16);}
+.starter-more-tools .mission-grid,.starter-more-tools .reading-home-grid{margin-top:6px;}
+.starter-more-tools .quiz-audit-card{margin:6px 0 0;}
 .lesson-status-badge{width:31px;height:31px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);color:var(--muted);font-size:0.95rem;font-weight:900;flex-shrink:0;}
 .lesson-card.complete .lesson-status-badge{background:rgba(52,211,153,0.16);color:#34d399;}
 .lesson-card.recommended .lesson-status-badge{background:rgba(245,196,81,0.18);color:var(--gold);}
