@@ -1,16 +1,16 @@
 import { appStorage } from "../state/storage.js";
 import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml, lpEl } from "../core/text-utils.js";
-import { speakingErrors, recordSpeakingError, clearSpeakingError } from "../core/stores.js";
+import { speakingErrors, speakingErrorId, recordSpeakingError, clearSpeakingError } from "../core/stores.js";
 import { openMicPanel } from "../core/speech-mic.js";
 import { RR_BANK } from "../core/quiz-bank.js";
 import { actions } from "./navigation.js";
 import { setLeccionesFocusMode } from "./lesson-player.js";
 
-export function resetRrSession(){rrSession=0;}
+export function resetRrSession(){rrSession=0;rrSessionMisses=[];}
 export function getRrStats(){return rrStats;}
 
-let rrTimer=null,rrCurrent=null,rrSession=0,rrPromptToken=0;
+let rrTimer=null,rrCurrent=null,rrSession=0,rrPromptToken=0,rrSessionMisses=[];
 let rrRecorder=null,rrStream=null,rrChunks=[],rrUrl=null,rrBlob=null,rrSilenceTimer=null,rrMaxTimer=null,rrAudioContext=null,rrAnalyser=null,rrRated=false;
 const RR_DIFFICULTY_KEY="esco-rapid-difficulty-v1";
 const RR_DIFFICULTIES={
@@ -25,9 +25,17 @@ function rrDifficultyConfig(){return RR_DIFFICULTIES[rrDifficulty]||RR_DIFFICULT
 let rrPack="all";
 function rrQuestionPool(){
   const level=rrDifficulty;
-  const source=rrPack==="service"?RR_BANK.filter(item=>item.service):RR_BANK;
+  const txt=it=>`${it.qEs||""} ${it.qEn||""} ${it.aEs||""}`;
+  let source=RR_BANK;
+  if(rrPack==="service")source=RR_BANK.filter(item=>item.service);
+  else if(rrPack==="travel")source=RR_BANK.filter(it=>/taxi|uber|aeropuerto|direcci|cuadra|hotel|bus|calle|cajero|pagar|tarjeta|nequi/i.test(txt(it)));
+  else if(rrPack==="social")source=RR_BANK.filter(it=>/familia|san juan|amigo|rumba|fiesta|invit|fútbol|café|tinto|gust/i.test(txt(it)));
+  else if(rrPack==="misses"){
+    source=rrSessionMisses.length?rrSessionMisses:RR_BANK.filter(it=>!!speakingErrors[speakingErrorId(it.qEs)]);
+  }
+  if(!source.length)source=RR_BANK;
   const matching=source.filter(item=>item.level===level);
-  return matching.length>=3?matching:source;
+  return matching.length>=2?matching:source;
 }
 const RR_STATS_KEY="esco-rapid-stats-v1";
 let rrStats={attempts:0,got:0,practice:0,skipped:0};
@@ -133,7 +141,8 @@ export function renderRapida(keepSame,questionRate){
   const packRow=lpEl("rr-pack-row");
   packRow.appendChild(lpEl("rr-pack-label","Choose a prompt pack"));
   const packButtons=lpEl("rr-pack-buttons");
-  [["all","All conversation prompts"],["service","🇨🇴 Colombian counter reflexes"]].forEach(([key,label])=>{
+  const missCount=rrSessionMisses.length||RR_BANK.filter(it=>!!speakingErrors[speakingErrorId(it.qEs)]).length;
+  [["all","All"],["service","🇨🇴 Counter"],["travel","🚕 Travel & Pay"],["social","🤝 Social & Coffee"],...(missCount?[["misses",`🔁 Weak (${missCount})`]]:[])].forEach(([key,label])=>{
     const b=document.createElement("button");b.type="button";b.className="rr-pack-btn"+(key===rrPack?" selected":"");b.textContent=label;
     b.onclick=()=>{if(key===rrPack)return;rrPack=key;rrCurrent=null;renderRapida(false);};packButtons.appendChild(b);
   });
@@ -210,6 +219,11 @@ function rrReveal(reason){
   const row2=lpEl("lp-nav");
   const sameB=document.createElement("button");sameB.type="button";sameB.className="lp-nav-btn";sameB.textContent="🔁 Try again";
   sameB.onclick=()=>renderRapida(true);
+  if(rrSessionMisses.length&&rrPack!=="misses"){
+    const mBtn=document.createElement("button");mBtn.type="button";mBtn.className="lp-nav-btn";mBtn.textContent=`🎯 Replay misses (${rrSessionMisses.length})`;
+    mBtn.onclick=()=>{rrPack="misses";rrCurrent=rrSessionMisses[0];renderRapida(true);};
+    row2.appendChild(mBtn);
+  }
   const nextB=document.createElement("button");nextB.type="button";nextB.className="lp-nav-btn primary";nextB.textContent="➡️ Next question";
   nextB.onclick=()=>renderRapida(false);
   row2.appendChild(sameB);row2.appendChild(nextB);
@@ -222,8 +236,13 @@ function rrReveal(reason){
 }
 function rrRate(kind){
   if(!rrRated){rrRated=true;rrStats.attempts++;if(kind==="got")rrStats.got++;if(kind==="practice")rrStats.practice++;if(kind==="skipped")rrStats.skipped++;saveRRStats();}
-  if(kind==="got")clearSpeakingError(rrCurrent&&rrCurrent.qEs);
-  else if(kind==="practice"||kind==="skipped")recordSpeakingError(rrCurrent&&rrCurrent.qEs,"rapid response");
+  if(kind==="got"){
+    clearSpeakingError(rrCurrent&&rrCurrent.qEs);
+    if(rrCurrent)rrSessionMisses=rrSessionMisses.filter(x=>x.qEs!==rrCurrent.qEs);
+  }else if(kind==="practice"||kind==="skipped"){
+    recordSpeakingError(rrCurrent&&rrCurrent.qEs,"rapid response");
+    if(rrCurrent&&!rrSessionMisses.some(x=>x.qEs===rrCurrent.qEs))rrSessionMisses.push(rrCurrent);
+  }
   document.querySelectorAll(".rr-rating button").forEach(b=>b.classList.toggle("selected",b.dataset.rate===kind));
   const status=document.querySelector(".rr-rate-status");
   if(status)status.textContent=kind==="got"?"Nice — keep that response available for real conversation.":kind==="practice"?"Good choice. Try the same question again and say it a little more smoothly.":"No problem. Listen to the model, then take the next question when ready.";

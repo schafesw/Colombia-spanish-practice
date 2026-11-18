@@ -6,7 +6,7 @@ import { appStorage } from "../state/storage.js";
 import { appState } from "../state/app-state.js";
 import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml, lpEl } from "../core/text-utils.js";
-import { markPractice, practiced, practicedCount, vocabKeys, refreshVocabProgress, setVocabRefreshHook, attachStarBtn } from "../core/stores.js";
+import { markPractice, practiced, practicedCount, vocabKeys, refreshVocabProgress, setVocabRefreshHook, attachStarBtn, recordSrs } from "../core/stores.js";
 import { attachMic } from "../core/speech-mic.js";
 import { LESSONS } from "./lessons-meta.js";
 import { actions, showPage } from "./navigation.js";
@@ -172,7 +172,16 @@ export function addVocabExample(card,item,catId,index){
    KILL SWITCH: set SPEECH_CHECK_ENABLED=false to remove Tier 2 everywhere.
    Tier 2 also auto-hides if the device doesn't support recognition.
    ═══════════════════════════════════════════════════════════════════════════ */
-let vocabFlashMode=false,vocabFlashIdx=0,vocabFlashFlipped=false;
+let vocabViewMode="list",vocabFlashIdx=0,vocabFlashFlipped=false;
+let vocabQuizQs=[],vocabQuizIdx=0,vocabQuizScore=0,vocabQuizAnswered=false;
+function startVocabQuickQuiz(flashItems){
+  const pool=flashItems.slice().sort(()=>Math.random()-0.5).slice(0,5);
+  vocabQuizQs=pool.map(item=>{
+    const dist=flashItems.filter(x=>x.es!==item.es).sort(()=>Math.random()-0.5).slice(0,3).map(x=>x.es);
+    return{en:item.en,es:item.es,tts:item.tts,opts:[item.es,...dist].sort(()=>Math.random()-0.5)};
+  });
+  vocabQuizIdx=0;vocabQuizScore=0;vocabQuizAnswered=false;vocabViewMode="quiz";
+}
 function getVocabFlashItems(cat){
   if(!cat)return[];
   if(cat.type==="basic")return(cat.items||[]).map(it=>({es:it.word,en:it.en,ph:it.ph||"",tts:it.tts||it.word}));
@@ -187,12 +196,56 @@ export function rV(){
   const flashItems=getVocabFlashItems(cat);
   if(flashItems.length>=3){
     const mBar=document.createElement("div");mBar.className="vocab-mode-toggle";
-    const listB=document.createElement("button");listB.type="button";listB.className="mf-chip"+(!vocabFlashMode?" active":"");listB.textContent="📋 Word List";
-    listB.onclick=()=>{vocabFlashMode=false;rV();};
-    const flB=document.createElement("button");flB.type="button";flB.className="mf-chip"+(vocabFlashMode?" active":"");flB.textContent=`🃏 Flashcards (${flashItems.length})`;
-    flB.onclick=()=>{vocabFlashMode=true;vocabFlashIdx=0;vocabFlashFlipped=false;rV();};
-    mBar.append(listB,flB);list.appendChild(mBar);
-    if(vocabFlashMode){
+    const listB=document.createElement("button");listB.type="button";listB.className="mf-chip"+(vocabViewMode==="list"?" active":"");listB.textContent="📋 Word List";
+    listB.onclick=()=>{vocabViewMode="list";rV();};
+    const flB=document.createElement("button");flB.type="button";flB.className="mf-chip"+(vocabViewMode==="flash"?" active":"");flB.textContent=`🃏 Flashcards (${flashItems.length})`;
+    flB.onclick=()=>{vocabViewMode="flash";vocabFlashIdx=0;vocabFlashFlipped=false;rV();};
+    mBar.append(listB,flB);
+    if(flashItems.length>=4){
+      const qB=document.createElement("button");qB.type="button";qB.className="mf-chip"+(vocabViewMode==="quiz"?" active":"");qB.textContent="🧪 Quiz (5Q)";
+      qB.onclick=()=>{startVocabQuickQuiz(flashItems);rV();};
+      mBar.appendChild(qB);
+    }
+    list.appendChild(mBar);
+    if(vocabViewMode==="quiz"){
+      const fc=document.createElement("section");fc.className="flash-card vocab-quiz-card";
+      if(vocabQuizIdx>=vocabQuizQs.length){
+        const pct=Math.round((vocabQuizScore/Math.max(vocabQuizQs.length,1))*100);
+        fc.innerHTML=`<div class="flash-head"><span>🧪 Set Check Complete</span><small>${escapeVocabHtml(cat.label)}</small></div>
+          <div class="flash-en">${vocabQuizScore}/${vocabQuizQs.length} (${pct}%)</div>
+          <div class="flash-hint">${pct>=80?"👑 Set mastered! Keep going or review another topic.":"Review missed cards in Flashcards or try another 5 questions."}</div>
+          <div class="flash-acts"><button type="button" class="lp-nav-btn primary vq-retry">🔄 New 5Q Check</button><button type="button" class="lp-nav-btn vq-back">📋 Word List</button></div>`;
+        fc.querySelector(".vq-retry").onclick=()=>{startVocabQuickQuiz(flashItems);rV();};
+        fc.querySelector(".vq-back").onclick=()=>{vocabViewMode="list";rV();};
+      }else{
+        const q=vocabQuizQs[vocabQuizIdx];
+        fc.innerHTML=`<div class="flash-head"><span>🧪 Question ${vocabQuizIdx+1} of ${vocabQuizQs.length}</span><small>${vocabQuizScore} correct</small></div>
+          <div class="flash-prompt-label">How do you say this in Spanish?</div>
+          <div class="flash-en">${escapeVocabHtml(q.en)}</div>
+          <div class="vq-opts"></div>
+          <div class="vq-fb" aria-live="polite"></div>
+          <div class="flash-acts"></div>`;
+        const oWrap=fc.querySelector(".vq-opts"),fb=fc.querySelector(".vq-fb"),acts=fc.querySelector(".flash-acts");
+        q.opts.forEach(opt=>{
+          const b=document.createElement("button");b.type="button";b.className="lp-opt";b.textContent=opt;
+          b.onclick=()=>{
+            if(vocabQuizAnswered)return;vocabQuizAnswered=true;
+            const ok=opt===q.es;
+            if(ok){vocabQuizScore++;b.classList.add("correct");markPractice("vocab",q.tts);}
+            else{b.classList.add("wrong");oWrap.querySelectorAll(".lp-opt").forEach(x=>{if(x.textContent===q.es)x.classList.add("reveal");});}
+            if(typeof recordSrs==="function")recordSrs("vq|"+q.tts,ok);
+            speak(q.tts,0.78);
+            fb.textContent=ok?`✅ ¡Correcto! ${q.es}`:`❌ Answer: ${q.es}`;
+            const nxt=document.createElement("button");nxt.type="button";nxt.className="lp-nav-btn primary";nxt.textContent=vocabQuizIdx+1<vocabQuizQs.length?"Next question →":"See Score →";
+            nxt.onclick=()=>{vocabQuizIdx++;vocabQuizAnswered=false;rV();};
+            acts.appendChild(nxt);
+          };
+          oWrap.appendChild(b);
+        });
+      }
+      list.appendChild(fc);return;
+    }
+    if(vocabViewMode==="flash"){
       const cur=flashItems[vocabFlashIdx%flashItems.length];
       const fc=document.createElement("section");fc.className="flash-card";
       fc.innerHTML=`<div class="flash-head"><span>🃏 Card ${(vocabFlashIdx%flashItems.length)+1} of ${flashItems.length}</span><small>${escapeVocabHtml(cat.label)}</small></div>
