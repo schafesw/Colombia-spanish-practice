@@ -510,10 +510,7 @@ export function renderLessons(){
     root.appendChild(wCard);
   }
 
-  /* 2. Guided 10-Min Daily Speaking Routine directly below Hero */
-  renderRoutineCard(root);
-
-  /* 3. Clean 2x2 Quick Speaking Grid */
+  /* 2. Quick Speaking Tiles & 60s Warm-Up (tucked cleanly into expandable Hoy tray below Finder) */
   const dueHome=srsDueCount();
   const missedHome=storedMissedQuestionCount();
   const quickGrid=document.createElement("section");quickGrid.className="today-quick-grid";quickGrid.dataset.lessonView="today";
@@ -595,7 +592,6 @@ export function renderLessons(){
     coachPlayIdx=(coachPlayIdx+1)%focusPicks.length;
     playAllBtn.textContent=`🔊 Next (${coachPlayIdx+1}/${focusPicks.length})`;
   };
-  root.appendChild(focusStrip);
 
   /* 3c. Global App Finder across Lessons, Phrases, Vocab & Visual Guides */
   const foldFinder=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
@@ -692,19 +688,15 @@ export function renderLessons(){
   fInput.oninput=()=>renderFinder(fInput.value);
   root.appendChild(finderCard);
 
-  /* 4. Compact Stats + Secondary Practice Grid (collapsed for brand-new Starter learners) */
-  if(lvlMode==="starter"&&done<3){
-    const moreWrap=document.createElement("details");moreWrap.className="starter-more-tools";moreWrap.dataset.lessonView="today";
-    moreWrap.innerHTML="<summary><span>🧰 More drills, stats &amp; error journal</span><small>Slot-Swapper · Review Cards</small></summary>";
-    moreWrap.appendChild(quickGrid);
-    renderProgressDashboard(moreWrap,done);
-    renderSpeakingErrorJournal(moreWrap);
-    root.appendChild(moreWrap);
-  }else{
-    root.appendChild(quickGrid);
-    renderProgressDashboard(root,done);
-    renderSpeakingErrorJournal(root);
-  }
+  /* 4. Calm Hoy tray: fold secondary drills, daily routine, stats & error journal */
+  const moreWrap=document.createElement("details");moreWrap.className="starter-more-tools";moreWrap.dataset.lessonView="today";
+  moreWrap.innerHTML="<summary><span>🧰 More drills, daily routine, stats &amp; error journal</span><small>10-Min Routine · Slot-Swapper · Stats</small></summary>";
+  renderRoutineCard(moreWrap);
+  moreWrap.appendChild(quickGrid);
+  moreWrap.appendChild(focusStrip);
+  renderProgressDashboard(moreWrap,done);
+  renderSpeakingErrorJournal(moreWrap);
+  root.appendChild(moreWrap);
   /* Daily practice — one compact row (v22) */
   const daily=document.createElement("div");daily.className="daily-row";daily.dataset.lessonView="practice";
   const dr1=document.createElement("button");dr1.type="button";dr1.className="daily-card";
@@ -742,8 +734,30 @@ export function renderLessons(){
   ];
   const roadmap=lpEl("lesson-roadmap");
   roadmap.dataset.lessonView="path";
-  const pathSearch=document.createElement("input");pathSearch.type="search";pathSearch.className="content-search lesson-path-search";pathSearch.placeholder=`🔎 Search ${LESSONS.length} lessons (e.g. Uber, Nequi, pasado, barbería…)`;pathSearch.setAttribute("aria-label","Search lessons");
-  roadmap.appendChild(pathSearch);
+  const pathControls=lpEl("lesson-roadmap-controls");
+  const pathSearch=document.createElement("input");pathSearch.type="search";pathSearch.className="content-search lesson-path-search";pathSearch.placeholder=`🔎 Search ${LESSONS.length} lessons (e.g. Uber, Nequi, pasado…)`;pathSearch.setAttribute("aria-label","Search lessons");
+  const jumpSelect=document.createElement("select");jumpSelect.className="voice-select lesson-jump-select";jumpSelect.setAttribute("aria-label","Jump to any lesson topic");
+  const defOpt=document.createElement("option");defOpt.value="";defOpt.textContent=`📚 Jump to any topic (${LESSONS.length}) ▾`;jumpSelect.appendChild(defOpt);
+  let jumpIdx=0;
+  LESSON_STAGES.forEach(st=>{
+    const og=document.createElement("optgroup");og.label=st.name;
+    st.ids.forEach(id=>{
+      const l=LESSONS.find(x=>x.id===id);if(!l)return;
+      jumpIdx++;
+      const opt=document.createElement("option");opt.value=l.id;
+      opt.textContent=`${lessonProgress[l.id]?"✅":jumpIdx===1?"▶":"🔓"} #${jumpIdx} ${l.title}`;
+      og.appendChild(opt);
+    });
+    if(og.children.length)jumpSelect.appendChild(og);
+  });
+  jumpSelect.onchange=()=>{
+    const id=jumpSelect.value;if(!id)return;
+    const target=LESSONS.find(x=>x.id===id);
+    jumpSelect.value="";
+    if(target)openLesson(target);
+  };
+  pathControls.append(pathSearch,jumpSelect);
+  roadmap.appendChild(pathControls);
   const roadmapRow=lpEl("lesson-roadmap-row");
   LESSON_STAGES.forEach((stage,i)=>{const b=document.createElement("button");b.type="button";b.className="lesson-roadmap-btn";b.textContent=stage.name.replace(/^.*?Stage /,"Stage ");b.onclick=()=>{const target=document.getElementById("lesson-stage-"+i);if(target){target.open=true;target.scrollIntoView({behavior:"smooth",block:"start"});}};roadmapRow.appendChild(b);});
   roadmap.appendChild(roadmapRow);root.appendChild(roadmap);
@@ -768,40 +782,37 @@ export function renderLessons(){
   const tenseGrid=tenseRoadmap.querySelector(".tense-roadmap-grid");tenseTargets.forEach(([label,pattern,id,sub],i)=>{const b=document.createElement("button");b.type="button";b.className="tense-roadmap-item";b.innerHTML=`<span class='tense-roadmap-number'>${i+1}</span><span><strong>${label}</strong><small>${pattern} · ${sub}</small></span><span>›</span>`;b.onclick=()=>{const lesson=LESSONS.find(l=>l.id===id);if(lesson)openLesson(lesson);else{showPage("gram");actions.showGram(id);}};tenseGrid.appendChild(b);});
   root.appendChild(tenseRoadmap);
   let lessonNum=0;
-  const toggleLessonCheck=(e,lessonId)=>{
-    e.stopPropagation();
-    const sc=document.querySelector(".scroll");
-    const prevTop=sc?sc.scrollTop:0;
-    const openStages=[...root.querySelectorAll(".lesson-stage[open]")].map(s=>s.id);
-    if(lessonProgress[lessonId])delete lessonProgress[lessonId];
-    else lessonProgress[lessonId]=true;
-    saveLessons();
-    renderLessons();
-    openStages.forEach(id=>{const el=document.getElementById(id);if(el)el.open=true;});
-    if(sc)sc.scrollTop=prevTop;
-  };
+  let prevStageDone=true;
   LESSON_STAGES.forEach((stage,stageIndex)=>{
     const stageLessons=stage.ids.map(id=>LESSONS.find(l=>l.id===id)).filter(Boolean);
     if(!stageLessons.length)return;
     const sDone=stageLessons.filter(l=>lessonProgress[l.id]).length;
-    const stageWrap=document.createElement("details");stageWrap.className="lesson-stage";stageWrap.dataset.lessonView="path";stageWrap.id="lesson-stage-"+stageIndex;
+    const stageUnlocked=stageIndex===0||prevStageDone||sDone>0;
+    const firstPendingId=(stageLessons.find(l=>!lessonProgress[l.id])||{}).id;
+    const stageWrap=document.createElement("details");stageWrap.className="lesson-stage"+(stageUnlocked?"":" locked");stageWrap.dataset.lessonView="path";stageWrap.id="lesson-stage-"+stageIndex;
     const isCurrentStage=!!(nextLesson&&stageLessons.some(l=>l.id===nextLesson.id));
     if(isCurrentStage||(!nextLesson&&stageIndex===0))stageWrap.open=true;
     const sh=document.createElement("summary");sh.className="stage-label";
-    sh.innerHTML=`<div class="stage-label-main"><span>${stage.name}</span><span class="stage-count">${sDone}/${stageLessons.length}</span></div><div class="stage-sub">${stage.sub}</div><div class="stage-progress"><span style="width:${Math.round((sDone/Math.max(stageLessons.length,1))*100)}%"></span></div>`;
+    sh.innerHTML=`<div class="stage-label-main"><span>${stageUnlocked?"":"🔒 "}${stage.name}</span><span class="stage-count">${sDone}/${stageLessons.length}</span></div><div class="stage-sub">${stageUnlocked?stage.sub:`Finish Stage ${stageIndex} (or ⚡ Test out / Jump to topic ▾) — ${stage.sub}`}</div><div class="stage-progress"><span style="width:${Math.round((sDone/Math.max(stageLessons.length,1))*100)}%"></span></div>`;
     stageWrap.appendChild(sh);
-    if(stageIndex>=0&&stageIndex<=3&&sDone<stageLessons.length){
+    if(stageIndex>=0&&stageIndex<=4&&sDone<stageLessons.length){
       const testBar=document.createElement("div");testBar.className="stage-testout-bar";
-      testBar.innerHTML=`<span>Know the basics in this stage?</span><button type="button" class="stage-testout-btn">⚡ Test out (5Q)</button>`;
+      testBar.innerHTML=`<span>${stageUnlocked?"Know the basics in this stage?":"Ready to skip ahead to this stage?"}</span><button type="button" class="stage-testout-btn">⚡ Test out (5Q)</button>`;
       testBar.querySelector("button").onclick=()=>openStageTestOut(stage,stageLessons);
       stageWrap.appendChild(testBar);
     }
     root.appendChild(stageWrap);
     stageLessons.forEach(lesson=>{
       lessonNum++;
+      const isComplete=!!lessonProgress[lesson.id];
+      const cardUnlocked=isComplete||(stageUnlocked&&lesson.id===firstPendingId);
       const recommended=nextLesson&&nextLesson.id===lesson.id;
-      const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"")+(recommended?" recommended":"");card.dataset.lessonView="path";
-      card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div>${lesson.enSub?`<div class="lesson-en-sub">${escapeVocabHtml(lesson.enSub)}</div>`:""}<div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div><div class="lesson-deeplinks"></div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
+      const card=document.createElement("article");
+      card.className="lesson-card"+(isComplete?" complete":"")+(recommended?" recommended":"")+(!cardUnlocked?" locked":"");
+      card.dataset.lessonView="path";
+      const badgeSymbol=isComplete?"✅":cardUnlocked?"▶":"🔒";
+      const badgeLabel=isComplete?"Completed":cardUnlocked?"Ready to start":"Locked — finish lesson above or jump via dropdown";
+      card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div>${lesson.enSub?`<div class="lesson-en-sub">${escapeVocabHtml(lesson.enSub)}</div>`:""}<div class="lesson-meta"><span>${lesson.difficulty}</span><span>${cardUnlocked?(lesson.prereq||"Next step"):"🔒 Unlocks next (or Jump ▾)"}</span></div><div class="lesson-deeplinks"></div></div><span class="lesson-status-badge" title="${badgeLabel}" aria-label="${badgeLabel}">${badgeSymbol}</span></div>`;
       const dlRow=card.querySelector(".lesson-deeplinks");
       [
         ["💬 Diálogo",()=>{showPage("frases");const d=lessonDialogue(lesson);if(d){appState.fraseReturnToLessons=true;actions.renderFraseDialogue(d);}}],
@@ -812,20 +823,26 @@ export function renderLessons(){
         b.onclick=e=>{e.stopPropagation();fn();};
         dlRow.appendChild(b);
       });
-      card.onclick=()=>openLesson(lesson);
-      card.querySelector(".lesson-check").onclick=(e)=>toggleLessonCheck(e,lesson.id);
+      card.onclick=()=>{
+        if(!cardUnlocked&&!pathSearch.value.trim()){
+          showAppToast("🔒 Finish the unlocked lesson above — or use ⚡ Test out / 📚 Jump to topic ▾","warn");
+          return;
+        }
+        openLesson(lesson);
+      };
       stageWrap.appendChild(card);
     });
+    prevStageDone=(sDone===stageLessons.length);
   });
   /* Any lesson not assigned to a stage still shows (future-proofing weekly additions) */
   const staged=new Set(LESSON_STAGES.flatMap(s=>s.ids));
   LESSONS.filter(l=>!staged.has(l.id)).forEach(lesson=>{
     lessonNum++;
+    const isComplete=!!lessonProgress[lesson.id];
     const recommended=nextLesson&&nextLesson.id===lesson.id;
-    const card=document.createElement("article");card.className="lesson-card"+(lessonProgress[lesson.id]?" complete":"")+(recommended?" recommended":"");card.dataset.lessonView="path";
-    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div>${lesson.enSub?`<div class="lesson-en-sub">${escapeVocabHtml(lesson.enSub)}</div>`:""}<div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div></div><button type="button" class="lesson-check" aria-label="Mark lesson complete">${lessonProgress[lesson.id]?"✓":"○"}</button></div>`;
+    const card=document.createElement("article");card.className="lesson-card"+(isComplete?" complete":"")+(recommended?" recommended":"");card.dataset.lessonView="path";
+    card.innerHTML=`<div class="lesson-card-top"><div class="lesson-number">${lessonNum}</div><div class="lesson-icon">${lesson.icon}</div><div class="lesson-copy"><div class="lesson-title">${lesson.title}${recommended?" <span class='lesson-recommended'>▶ Recommended next</span>":""}</div><div class="lesson-sub">${lesson.sub}</div>${lesson.enSub?`<div class="lesson-en-sub">${escapeVocabHtml(lesson.enSub)}</div>`:""}<div class="lesson-meta"><span>${lesson.difficulty}</span><span>${lesson.prereq||"Next step"}</span></div></div><span class="lesson-status-badge" aria-label="${isComplete?"Completed":"Ready"}">${isComplete?"✅":"▶"}</span></div>`;
     card.onclick=()=>openLesson(lesson);
-    card.querySelector(".lesson-check").onclick=(e)=>toggleLessonCheck(e,lesson.id);
     root.appendChild(card);
   });
   /* Progress backup lives tucked cleanly at the bottom (use Profile -> Export/Import .json for devices) */
