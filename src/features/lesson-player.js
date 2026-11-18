@@ -8,15 +8,15 @@ import { effectiveLevel } from "../state/preferences.js";
 import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml, lpEl, scrollAppTop, spanishStressHint, normalizeQuizText, applyQuizFitClasses } from "../core/text-utils.js";
 import {
-  markPractice, practiced, lessonProgress, saveLessons,
-  recordPracticeDay, recordSrs, recordSpeakingError, clearSpeakingError,
+  markPractice, practiced, lessonProgress, saveLessons, lessonScores, saveLessonScores,
+  recordPracticeDay, practiceStreak, recordSrs, recordSpeakingError, clearSpeakingError,
   attachStarBtn, missionProgress, saveMissions, readingProgress, saveReadings,
 } from "../core/stores.js";
 import { attachMic, openMicPanel } from "../core/speech-mic.js";
 import { PHRASE_DIALOGUES, aQ, quizAcceptedAnswers, quizAnswerMatches } from "../core/quiz-bank.js";
 import { actions, showPage } from "./navigation.js";
 
-let lpSteps=[],lpStep=0,lpScore=0,lpQs=[],lpQi=0,lpAnswered=false,lpFbIdx=0;
+let lpSteps=[],lpStep=0,lpScore=0,lpQs=[],lpQi=0,lpAnswered=false,lpFbIdx=0,lpTypeIdx=0;
 let lpFullMode=false,lpLadderStep=1,lpRoleSim=true,lpRoleTurn=0;
 export function lessonDialogue(lesson){return PHRASE_DIALOGUES.find(x=>x.title===lesson.dialogue);}
 function lessonPictures(lesson){
@@ -69,7 +69,7 @@ function buildLessonSteps(lesson,c,full){
   return ["objetivo","palabras","fillblank","estructura","escalera","escucha",...(hasResp?["respuesta"]:[]),"frases","matching","building","typing","hablaA","hablaB","pronun","lectura","quiz","mision","fin"];
 }
 export function openLesson(lesson,fullMode){
-  appState.lpLesson=lesson;lpStep=0;lpScore=0;lpQi=0;lpAnswered=false;lpFbIdx=0;appState.lpPracticed=new Set();
+  appState.lpLesson=lesson;lpStep=0;lpScore=0;lpQi=0;lpAnswered=false;lpFbIdx=0;lpTypeIdx=0;appState.lpPracticed=new Set();
   lpLadderStep=1;lpRoleSim=true;lpRoleTurn=0;
   if(typeof fullMode==="boolean")lpFullMode=fullMode;
   const c=LESSON_CONTENT[lesson.id];
@@ -547,11 +547,16 @@ export function renderLessonStep(){
     }else{body.appendChild(lpEl("lp-hint","No sentence is available for this lesson yet."));navBtn("Next →",next,true);}
   }
   else if(step==="typing"){
-    title.textContent="⌨️ Write the sentence — translate & check";
-    const target=(c.phrases||[])[1]||(c.phrases||[])[0];
+    const typePool=(c.phrases||[]).slice(1,3).length?(c.phrases||[]).slice(1,3):[(c.phrases||[])[0]].filter(Boolean);
+    const tIdx=lpTypeIdx%Math.max(typePool.length,1);
+    const target=typePool[tIdx];
+    title.textContent=typePool.length>1?`⌨️ Write the sentence (${tIdx+1} of ${typePool.length})`:`⌨️ Write the sentence — translate & check`;
     navBtn("‹ Back",prev);
     if(target){
-      const gate=gateNext("Next →",next,"🔒 Type & check sentence to continue");
+      const gate=gateNext(tIdx+1<typePool.length?"Next sentence →":"Next →",()=>{
+        if(tIdx+1<typePool.length){lpTypeIdx++;renderLessonStep();}
+        else next();
+      },"🔒 Type & check sentence to continue");
       body.appendChild(lpEl("lp-activity-note","Type the Spanish sentence below and tap Check answer to continue."));
       const box=lpEl("lp-typing");box.dataset.answer=target.es;box.appendChild(lpEl("lp-typing-prompt",target.en));
       const input=document.createElement("input");input.type="text";input.className="lp-typing-input";input.placeholder="Escribe en español…";input.autocomplete="off";input.autocapitalize="sentences";
@@ -764,11 +769,18 @@ export function renderLessonStep(){
   else{
     const passNeed=lpQs.length?Math.ceil(lpQs.length*0.75):0;
     const passed=!lpQs.length||lpScore>=passNeed;
-    if(passed){lessonProgress[appState.lpLesson.id]=true;saveLessons();}
-    title.textContent=passed?"🎉 Lesson complete!":"💪 Almost there — pass quiz to earn ✓";
+    const quizPct=lpQs.length?Math.round((lpScore/lpQs.length)*100):100;
+    if(passed){
+      recordPracticeDay();
+      lessonProgress[appState.lpLesson.id]=true;saveLessons();
+      lessonScores[appState.lpLesson.id]=Math.max(Number(lessonScores[appState.lpLesson.id])||0,quizPct);saveLessonScores();
+    }
+    const streakDays=Math.max(1,practiceStreak());
+    const perfect=passed&&quizPct>=100;
+    title.textContent=perfect?"👑 Lesson perfected!":passed?"🎉 Lesson complete!":"💪 Almost there — pass quiz to earn ✓";
     const completion=lpEl("lp-completion-hero");
     completion.innerHTML=passed
-      ?`<div class="lp-completion-emoji">🎉</div><strong>¡Muy bien!</strong><span>You completed this lesson (${lpQs.length?`${lpScore}/${lpQs.length}`:"100%"}).</span><div class="lp-completion-stats"><span><b>${appState.lpPracticed.size}</b><small>spoken</small></span><span><b>${lpQs.length?`${lpScore}/${lpQs.length}`:"—"}</b><small>quiz</small></span><span><b>✓</b><small>earned</small></span></div>`
+      ?`<div class="lp-completion-emoji">${perfect?"👑":"🎉"}</div><strong>${perfect?"¡100% Crowned!":"¡Muy bien!"}</strong><span>You completed this lesson (${lpQs.length?`${lpScore}/${lpQs.length} · ${quizPct}%`:"100%"}).</span><div class="lp-completion-stats"><span><b>${appState.lpPracticed.size}</b><small>spoken</small></span><span><b>${lpQs.length?`${quizPct}%`:"100%"}</b><small>quiz</small></span><span><b>🔥 ${streakDays}d</b><small>streak</small></span></div>`
       :`<div class="lp-completion-emoji">💪</div><strong>Keep going!</strong><span>Score at least ${passNeed}/${lpQs.length} (75%) on the quiz to earn ✓ completion.</span><div class="lp-completion-stats"><span><b>${appState.lpPracticed.size}</b><small>spoken</small></span><span><b>${lpScore}/${lpQs.length}</b><small>need ${passNeed}+</small></span><span><b>🔒</b><small>not saved yet</small></span></div>`;
     body.appendChild(completion);
     if(lpQs.length)body.appendChild(lpEl("lp-goal-es",`Mini-quiz: ${lpScore} of ${lpQs.length} (pass target: ${passNeed})`));

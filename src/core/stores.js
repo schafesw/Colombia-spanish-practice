@@ -27,6 +27,14 @@ export const LESSON_KEY="esco-lesson-progress-v1";
 export let lessonProgress={};
 try{const lp=JSON.parse(appStorage.getItem(LESSON_KEY)||"{}");lessonProgress=(lp&&typeof lp==="object"&&!Array.isArray(lp))?lp:{};}catch(e){lessonProgress={};}
 export function saveLessons(){try{appStorage.setItem(LESSON_KEY,JSON.stringify(lessonProgress));}catch(e){}}
+export const LESSON_SCORES_KEY="esco-lesson-scores-v1";
+export let lessonScores={};
+try{const ls=JSON.parse(appStorage.getItem(LESSON_SCORES_KEY)||"{}");lessonScores=(ls&&typeof ls==="object"&&!Array.isArray(ls))?ls:{};}catch(e){lessonScores={};}
+export function saveLessonScores(){try{appStorage.setItem(LESSON_SCORES_KEY,JSON.stringify(lessonScores));}catch(e){}}
+export const STAGE_MASTERY_KEY="esco-stage-mastery-v1";
+export let stageMastery={};
+try{const sm=JSON.parse(appStorage.getItem(STAGE_MASTERY_KEY)||"{}");stageMastery=(sm&&typeof sm==="object"&&!Array.isArray(sm))?sm:{};}catch(e){stageMastery={};}
+export function saveStageMastery(){try{appStorage.setItem(STAGE_MASTERY_KEY,JSON.stringify(stageMastery));}catch(e){}}
 
 /* Racha de días — practice-day streak */
 export const DAY_KEY="esco-days-v1";
