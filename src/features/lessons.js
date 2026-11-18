@@ -713,15 +713,17 @@ export function renderLessons(){
   daily.appendChild(dr1);daily.appendChild(dr2);
   root.appendChild(daily);
 
-  const missionLabel=document.createElement("div");missionLabel.className="fr-home-label";missionLabel.dataset.lessonView="practice";missionLabel.textContent=`🗣️ Conversation missions · ${Object.keys(missionProgress).length}/${CONVERSATION_MISSIONS.length} completed`;root.appendChild(missionLabel);
-  const missionGrid=document.createElement("div");missionGrid.className="mission-grid";missionGrid.dataset.lessonView="practice";
+  const missionFold=document.createElement("details");missionFold.className="starter-more-tools";missionFold.dataset.lessonView="practice";
+  missionFold.innerHTML=`<summary><span>🗣️ Conversation missions</span><small>${Object.keys(missionProgress).length}/${CONVERSATION_MISSIONS.length} completed ▾</small></summary>`;
+  const missionGrid=document.createElement("div");missionGrid.className="mission-grid";
   CONVERSATION_MISSIONS.forEach(m=>{const b=document.createElement("button");b.type="button";b.className="mission-home-card";b.innerHTML=`<span class="mission-home-icon">${missionProgress[m.id]?"✅":"🗣️"}</span><span class="mission-home-copy"><strong>${m.title}</strong><small>${m.scenario}</small></span>`;b.onclick=()=>renderMission(m);missionGrid.appendChild(b);});
-  root.appendChild(missionGrid);
+  missionFold.appendChild(missionGrid);root.appendChild(missionFold);
 
-  const readingLabel=document.createElement("div");readingLabel.className="fr-home-label";readingLabel.dataset.lessonView="practice";readingLabel.textContent=`📖 Lecturas · ${Object.keys(readingProgress).length}/${READINGS.length} completed`;root.appendChild(readingLabel);
-  const readingGrid=document.createElement("div");readingGrid.className="reading-home-grid";readingGrid.dataset.lessonView="practice";
+  const readingFold=document.createElement("details");readingFold.className="starter-more-tools";readingFold.dataset.lessonView="practice";
+  readingFold.innerHTML=`<summary><span>📖 Lecturas / Readings</span><small>${Object.keys(readingProgress).length}/${READINGS.length} completed ▾</small></summary>`;
+  const readingGrid=document.createElement("div");readingGrid.className="reading-home-grid";
   READINGS.forEach(reading=>{const b=document.createElement("button");b.type="button";b.className="reading-home-card";b.innerHTML=`<span class='reading-home-icon'>${readingProgress[reading.id]?"✅":"📖"}</span><span><strong>${reading.title}</strong><small>${reading.level} · ${reading.intro}</small></span><span>›</span>`;b.onclick=()=>renderReading(reading);readingGrid.appendChild(b);});
-  root.appendChild(readingGrid);
+  readingFold.appendChild(readingGrid);root.appendChild(readingFold);
 
   /* Lessons grouped into a speaking-first progression */
   const LESSON_STAGES=[
@@ -777,9 +779,17 @@ export function renderLessons(){
       st.style.display=(!q||matchesInStage>0)?"":"none";
       if(q&&matchesInStage>0)st.open=true;
     });
+    const futureFold=root.querySelector(".future-stages-fold");
+    if(futureFold){
+      const futureHits=[...futureFold.querySelectorAll(".lesson-stage")].some(st=>st.style.display!=="none");
+      futureFold.style.display=(!q||futureHits)?"":"none";
+      futureFold.open=!!(q&&futureHits);
+    }
   };
   let lessonNum=0;
   let prevStageDone=true;
+  const lockedStages=[];
+  let lockedLessonTotal=0;
   LESSON_STAGES.forEach((stage,stageIndex)=>{
     const stageLessons=stage.ids.map(id=>LESSONS.find(l=>l.id===id)).filter(Boolean);
     if(!stageLessons.length)return;
@@ -798,7 +808,8 @@ export function renderLessons(){
       testBar.querySelector("button").onclick=()=>openStageTestOut(stage,stageLessons);
       stageWrap.appendChild(testBar);
     }
-    root.appendChild(stageWrap);
+    if(stageUnlocked)root.appendChild(stageWrap);
+    else{lockedStages.push(stageWrap);lockedLessonTotal+=stageLessons.length;}
     let lockedVisibleCount=0;
     const hiddenLockedCards=[];
     stageLessons.forEach(lesson=>{
@@ -840,6 +851,14 @@ export function renderLessons(){
     }
     prevStageDone=(sDone===stageLessons.length);
   });
+  if(lockedStages.length){
+    const futureFold=document.createElement("details");futureFold.className="future-stages-fold";futureFold.dataset.lessonView="path";
+    const sum=document.createElement("summary");
+    sum.innerHTML=`<span>🔒 <strong>${lockedStages.length} future stage${lockedStages.length===1?"":"s"} locked</strong> <small>(${lockedLessonTotal} lessons)</small></span><small>Test out or peek ▾</small>`;
+    futureFold.appendChild(sum);
+    lockedStages.forEach(sw=>futureFold.appendChild(sw));
+    root.appendChild(futureFold);
+  }
   /* Any lesson not assigned to a stage still shows (future-proofing weekly additions) */
   const staged=new Set(LESSON_STAGES.flatMap(s=>s.ids));
   LESSONS.filter(l=>!staged.has(l.id)).forEach(lesson=>{
@@ -851,15 +870,18 @@ export function renderLessons(){
     card.onclick=()=>openLesson(lesson);
     root.appendChild(card);
   });
-  const tenseRoadmap=document.createElement("details");tenseRoadmap.className="tense-roadmap tense-roadmap-fold";tenseRoadmap.dataset.lessonView="path";
+  const tenseRoadmap=document.createElement("details");tenseRoadmap.className="tense-roadmap tense-roadmap-fold";tenseRoadmap.dataset.lessonView="practice";
   tenseRoadmap.innerHTML="<summary class='tense-roadmap-summary'><span>🧭 <strong>Speaking Tense Roadmap</strong> <small>8 layers from Presente to Future Perfect</small></span><span class='tense-roadmap-chev'>⌄</span></summary><div class='tense-roadmap-body'><p>Learn the high-frequency patterns first, then add detail to your stories. The advanced forms are for recognition before production.</p><div class='tense-roadmap-grid'></div></div>";
   const tenseTargets=[
     ["Presente","Hablo / tengo","gram-presente","Core now"],["Near future","Voy a hacer","gram-futuro","Easy next step"],["Completed past","Fui / hice","gram-pasado","Tell what happened"],["Past contrast","Fui vs. iba","gram-pasado-contraste","Story detail"],["Present perfect","He hecho","gram-perfecto","Connected to now"],["Conditional","Me gustaría","gram-condicional","Polite and possible"],["Past perfect","Había hecho","gram-pasado-perfecto","Earlier past"],["Future perfect","Habré hecho","gram-futuro-perfecto","Advanced recognition"]
   ];
   const tenseGrid=tenseRoadmap.querySelector(".tense-roadmap-grid");tenseTargets.forEach(([label,pattern,id,sub],i)=>{const b=document.createElement("button");b.type="button";b.className="tense-roadmap-item";b.innerHTML=`<span class='tense-roadmap-number'>${i+1}</span><span><strong>${label}</strong><small>${pattern} · ${sub}</small></span><span>›</span>`;b.onclick=()=>{const lesson=LESSONS.find(l=>l.id===id);if(lesson)openLesson(lesson);else{showPage("gram");actions.showGram(id);}};tenseGrid.appendChild(b);});
   root.appendChild(tenseRoadmap);
-  /* Progress backup lives tucked cleanly at the bottom (use Profile -> Export/Import .json for devices) */
-  renderQuizAuditCard(root);
+  /* Progress backup & content audit live tucked cleanly at the bottom */
+  const auditFold=document.createElement("details");auditFold.className="starter-more-tools";auditFold.dataset.lessonView="practice";
+  auditFold.innerHTML="<summary><span>🧪 Quiz quality check</span><small>Validate question pool ▾</small></summary>";
+  renderQuizAuditCard(auditFold);
+  root.appendChild(auditFold);
   const bkFold=document.createElement("details");bkFold.className="starter-more-tools";bkFold.dataset.lessonView="practice";
   bkFold.innerHTML="<summary><span>💾 Legacy text backup</span><small>Use Profile drawer for .json file backup</small></summary>";
   const bk=document.createElement("div");bk.className="backup-row";
