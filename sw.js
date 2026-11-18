@@ -1,5 +1,5 @@
-/* Navigation + JS/CSS network-first, static media stale-while-revalidate Service Worker for Español · Colombia PWA (v122.0) */
-const CACHE_NAME = "esco-pwa-v122.0";
+/* Navigation + JS/CSS network-first, static media stale-while-revalidate Service Worker for Español · Colombia PWA (v123.0) */
+const CACHE_NAME = "esco-pwa-v123.0";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -60,10 +60,12 @@ const CORE_ASSETS = [
   "./assets/icon-512.png",
   "./assets/logo.png",
   "./assets/pm-abanico.webp",
+  "./assets/pm-acordeon.webp",
   "./assets/pm-aguacate.webp",
   "./assets/pm-aguacero.webp",
   "./assets/pm-anden.webp",
   "./assets/pm-arepa.webp",
+  "./assets/pm-barberia.webp",
   "./assets/pm-billete.webp",
   "./assets/pm-bloqueador.webp",
   "./assets/pm-bunuelo.webp",
@@ -74,12 +76,14 @@ const CORE_ASSETS = [
   "./assets/pm-candado.webp",
   "./assets/pm-caneca.webp",
   "./assets/pm-chicharron.webp",
+  "./assets/pm-ciclovia.webp",
   "./assets/pm-citofono.webp",
   "./assets/pm-cobija.webp",
   "./assets/pm-corrientazo.webp",
   "./assets/pm-crema-dental.webp",
   "./assets/pm-datafono.webp",
   "./assets/pm-desodorante.webp",
+  "./assets/pm-domicilio.webp",
   "./assets/pm-drogueria.webp",
   "./assets/pm-empanada.webp",
   "./assets/pm-enchufe.webp",

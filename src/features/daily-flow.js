@@ -1,4 +1,4 @@
-import { PICTURE_MATCH_BANK, GRINGO_TRAPS, NATURAL_EAR_CLIPS, SPANISH_BRAIN_DRILLS } from "../../data/index.js";
+import { PICTURE_MATCH_BANK, GRINGO_TRAPS, NATURAL_EAR_CLIPS, SPANISH_BRAIN_DRILLS, VC, VERBS, PQ, COLOMBIANISMOS } from "../../data/index.js";
 import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml } from "../core/text-utils.js";
 import { markPractice, recordSrs, srsDue, srsStore } from "../core/stores.js";
@@ -46,6 +46,20 @@ export function buildSrsReviewDeck(){
         for(const c of shuffledCopy(rrPool)){if(opts.length>=4)break;if(!opts.includes(c))opts.push(c);}
         while(opts.length<4)opts.push(["¡De una!","Con mucho gusto","A la orden"][opts.length%3]);
         cards.push({kind:"quiz",kicker:"⚡ Due · Reflex",prompt:r.qEn||r.qEs,sub:r.qEs,subTts:r.q||r.qEs,tts:r.aTts||r.aEs,ans:r.aEs,hint:r.aEn||r.qEs,srsKey:key,opts:shuffledCopy(opts)});
+      }
+    }else if(key.startsWith("vf|")||key.startsWith("vq|")){
+      const target=key.slice(3).trim();
+      const allV=[];
+      (VC||[]).forEach(c=>(c.items||[]).forEach(it=>{if(it&&(it.word||it.tts)&&it.en)allV.push({word:it.word||it.tts,en:it.en,tts:it.tts||it.word});}));
+      Object.entries(VERBS||{}).forEach(([w,v])=>{if(v&&v.en)allV.push({word:w,en:v.en,tts:w});});
+      (typeof PQ!=="undefined"?PQ:[]).forEach(p=>{if(p&&p.en)allV.push({word:p.word,en:p.en,tts:p.tts||p.word});});
+      (typeof COLOMBIANISMOS!=="undefined"?COLOMBIANISMOS:[]).forEach(c=>{if(c&&c.en)allV.push({word:c.word,en:c.en,tts:c.tts||c.word});});
+      const hit=allV.find(x=>x.tts===target||x.word===target);
+      if(hit){
+        const opts=[hit.word];
+        for(const c of shuffledCopy(allV)){if(opts.length>=4)break;if(c.word&&!opts.includes(c.word))opts.push(c.word);}
+        while(opts.length<4)opts.push(["El tinto","Con gusto","De una"][opts.length%3]);
+        cards.push({kind:"quiz",kicker:"🔁 Due · Vocabulario",prompt:hit.en,tts:hit.tts,ans:hit.word,hint:`${hit.word} — ${hit.en}`,srsKey:key,opts:shuffledCopy(opts)});
       }
     }else if(key.includes("|")){
       const sep=key.indexOf("|");
