@@ -277,7 +277,7 @@ def run_smoke():
             page.click(".pm-launch-btn")
             set_texts = page.eval_on_selector_all(".pm-set-row button", "els => els.map(e => e.textContent.trim())")
             assert len(set_texts) == 6, f"Expected 6 set filter buttons (All + 5 sets), got {set_texts}"
-            assert "All (58)" in set_texts[0], f"Expected All (58) Picture Match scenes, got {set_texts[0]!r}"
+            assert "All (62)" in set_texts[0], f"Expected All (62) Picture Match scenes, got {set_texts[0]!r}"
             page.locator(".pm-set-row button", has_text="Home").click()
             wait_images_decoded(page, ".pm-grid img")
 

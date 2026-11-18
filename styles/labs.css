@@ -778,3 +778,10 @@
   .today-hero-status{gap:5px;flex-wrap:wrap;}
   .hero-pill{font-size:0.68rem;padding:4px 8px;}
 }
+.stage-readiness-list{display:flex;flex-direction:column;gap:5px;margin:8px 0 4px;}
+.stage-readiness-row{display:grid;grid-template-columns:minmax(0,1.4fr) 1fr auto;align-items:center;gap:8px;font-size:0.72rem;color:var(--muted);}
+.stage-readiness-row .sr-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);font-weight:700;}
+.stage-readiness-row .sr-bar{height:6px;border-radius:99px;background:rgba(255,255,255,0.08);overflow:hidden;}
+.stage-readiness-row .sr-bar span{display:block;height:100%;border-radius:99px;background:var(--teal);}
+.stage-readiness-row .sr-pct{font-size:0.68rem;font-weight:800;min-width:34px;text-align:right;}
+:root[data-theme="light"] .stage-readiness-row .sr-bar{background:rgba(20,32,26,0.1);}
