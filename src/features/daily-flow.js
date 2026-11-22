@@ -97,7 +97,15 @@ export function buildSrsReviewDeck(){
           cards.push({kind:"quiz",kicker:`🎯 Due · Verb (${vKey})`,prompt:`${pro} · ${hit.lbl} — "${hit.en}"`,tts:hit.ans,ans:hit.ans,hint:`${vKey}: ${pro} → ${hit.ans}`,srsKey:key,opts:shuffledCopy(opts)});
         }
       }
-    }else if(key.includes("|")&&!/^(?:pm|gt|ne|brain|rr|vf|vq|num|frq|verb|read|voseo)\|/.test(key)){
+    }else if(key.startsWith("col|")&&typeof COLOMBIANISMOS!=="undefined"){
+      const word=key.slice(4);
+      const colHit=COLOMBIANISMOS.find(x=>x&&x.word===word);
+      if(colHit){
+        const opts=[colHit.word];
+        for(const d of shuffledCopy(COLOMBIANISMOS)){if(opts.length>=4)break;if(d&&d.word&&!opts.includes(d.word))opts.push(d.word);}
+        cards.push({kind:"quiz",kicker:"🇨🇴 Due · Colombianismo",prompt:colHit.en,tts:colHit.example||colHit.tts||colHit.word,ans:colHit.word,hint:`${colHit.word} — ${colHit.example||colHit.usage}`,srsKey:key,opts:shuffledCopy(opts)});
+      }
+    }else if(key.includes("|")&&!/^(?:pm|gt|ne|brain|rr|vf|vq|num|frq|verb|read|voseo|col|contraste|subj)\|/.test(key)){
       const sep=key.indexOf("|");
       const es=key.slice(0,sep),ans=key.slice(sep+1);
       if(es&&ans){
@@ -194,8 +202,9 @@ export function renderDailyFlowSession(){
     card.innerHTML=`<div class="qc-label">${escapeVocabHtml(c.kicker)}</div>
       <div class="qc-word sprint-cue-word">${escapeVocabHtml(c.prompt)}</div>
       ${c.sub?`<div class="sprint-subcue">Asked: «${escapeVocabHtml(c.sub)}»</div>`:""}
-      <button type="button" class="qc-hear df-hear-btn">🔊 Hear</button>`;
-    card.querySelector(".df-hear-btn").onclick=()=>speak(c.subTts||c.tts,0.82);
+      <div class="bridge-actions"><button type="button" class="qc-hear df-hear-btn">🔊 Clear (0.72×)</button><button type="button" class="qc-hear df-street-btn">⚡ Street (1.05×)</button></div>`;
+    card.querySelector(".df-hear-btn").onclick=()=>speak(c.subTts||c.tts,0.72);
+    card.querySelector(".df-street-btn").onclick=()=>speak(c.subTts||c.tts,1.05);
   }
   wrap.appendChild(card);
 

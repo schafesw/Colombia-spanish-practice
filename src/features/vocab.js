@@ -373,6 +373,7 @@ function registerBadge(item){
   return item&&item.register?'<span class="f-register register-'+registerTone(item)+'">'+escapeVocabHtml(item.register)+'</span>':"";
 }
 let colRegionFilter="all";
+let colViewMode="cards";
 const COL_REGIONS=[
   ["all","🇨🇴 All Colombia"],
   ["costa","🪗 San Juan, Guajira & Costa"],
@@ -405,6 +406,17 @@ export function rCol(list){
   });
   list.appendChild(filterBar);
   const filtered=COLOMBIANISMOS.filter(item=>matchColRegion(item,colRegionFilter));
+  const modeBar=document.createElement("div");modeBar.className="vf-mode-bar";modeBar.style.marginBottom="10px";
+  [["cards","📋 Cards"],["blitz","🧪 Slang Blitz (5Q)"]].forEach(([mId,mLbl])=>{
+    const mb=document.createElement("button");mb.type="button";mb.className="vf-mode-btn"+(colViewMode===mId?" active":"");mb.textContent=mLbl;
+    mb.onclick=()=>{colViewMode=mId;rV();};
+    modeBar.appendChild(mb);
+  });
+  list.appendChild(modeBar);
+  if(colViewMode==="blitz"){
+    renderColombianismosQuiz(list,filtered);
+    return;
+  }
   filtered.forEach(item=>{
     const card=document.createElement("div");card.className="col-card";
     card.setAttribute("role","button");card.setAttribute("tabindex","0");
@@ -423,6 +435,55 @@ export function rCol(list){
     card.onkeydown=e=>{if((e.key==="Enter"||e.key===" ")&&!e.target.closest(".star-pin-btn")){e.preventDefault();playCol();}};
     list.appendChild(card);
   });
+}
+
+function renderColombianismosQuiz(list,filtered){
+  const items=(filtered&&filtered.length?filtered:COLOMBIANISMOS).filter(x=>x&&x.word&&x.en);
+  if(items.length<2)return;
+  const regionName=COL_REGION_LABELS[colRegionFilter]||"🇨🇴 Colombia";
+  const deck=items.slice().sort(()=>Math.random()-0.5).slice(0,Math.min(5,items.length));
+  let qi=0,score=0;
+  const host=document.createElement("div");host.className="bridge-trainer-card col-blitz-card";
+  const draw=()=>{
+    if(qi>=deck.length){
+      host.innerHTML=`<div class="bridge-head"><div><div class="bridge-title">🎉 Slang Blitz Complete!</div><div class="bridge-sub">${escapeVocabHtml(regionName)} · Score ${score}/${deck.length}</div></div></div><div class="bridge-actions"><button type="button" class="lp-nav-btn primary">↻ 5 More Slang</button></div>`;
+      host.querySelector("button").onclick=()=>renderColombianismosQuiz(list,filtered);
+      return;
+    }
+    const q=deck[qi];
+    const opts=[q.word];
+    for(const d of items.slice().sort(()=>Math.random()-0.5)){if(opts.length>=4)break;if(!opts.includes(d.word))opts.push(d.word);}
+    for(const d of COLOMBIANISMOS.slice().sort(()=>Math.random()-0.5)){if(opts.length>=4)break;if(!opts.includes(d.word))opts.push(d.word);}
+    host.innerHTML=`<div class="bridge-head"><div><div class="bridge-title">🇨🇴 Slang Blitz · ${qi+1}/${deck.length}</div><div class="bridge-sub">${escapeVocabHtml(regionName)} · 🇺🇸 "${escapeVocabHtml(q.en)}"</div></div><div class="bridge-score">${score}/${qi}</div></div>`;
+    const ctrl=document.createElement("div");ctrl.className="bridge-controls";
+    const hear=document.createElement("button");hear.type="button";hear.className="voc-flash-speak";hear.textContent="🔊 Hear example";hear.onclick=()=>speak(q.example||q.tts||q.word,0.8);
+    ctrl.appendChild(hear);host.appendChild(ctrl);
+    const grid=document.createElement("div");grid.className="bridge-opts vq-opts";
+    const fb=document.createElement("div");fb.className="bridge-fb";
+    const nxt=document.createElement("button");nxt.type="button";nxt.className="bridge-next";nxt.hidden=true;nxt.textContent=qi+1<deck.length?"Next →":"Finish →";
+    nxt.onclick=()=>{qi++;draw();};
+    opts.sort(()=>Math.random()-0.5).forEach(opt=>{
+      const b=document.createElement("button");b.type="button";b.className="bridge-opt";b.textContent=opt;
+      b.onclick=()=>{
+        if(!nxt.hidden)return;
+        const ok=opt===q.word;
+        if(ok)score++;
+        b.classList.add(ok?"ok":"no");
+        if(!ok)grid.querySelectorAll(".bridge-opt").forEach(x=>{if(x.textContent===q.word)x.classList.add("ok");});
+        grid.querySelectorAll(".bridge-opt").forEach(x=>x.disabled=true);
+        markPractice("vocab",q.tts||q.word);
+        recordSrs("col|"+q.word,ok);
+        speak(q.example||q.tts||q.word,0.8);
+        fb.textContent=(ok?"✅ ":"❌ ")+q.word+(q.example?" — "+q.example:"");
+        const sc=host.querySelector(".bridge-score");if(sc)sc.textContent=score+"/"+(qi+1);
+        nxt.hidden=false;
+      };
+      grid.appendChild(b);
+    });
+    host.append(grid,fb,nxt);
+  };
+  draw();
+  list.appendChild(host);
 }
 
 export const NUMBERS_EAR_DRILLS=[

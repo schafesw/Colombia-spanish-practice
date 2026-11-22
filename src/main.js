@@ -21,7 +21,7 @@ import { openLesson, setLeccionesFocusMode } from "./features/lesson-player.js";
 import { rrStop } from "./features/rapida.js";
 import { renderReading } from "./features/speaking-labs.js";
 import { openDailyFlowSession, openUnifiedSrsReview } from "./features/daily-flow.js";
-import { initQuiz, nQ, quizHear, toggleQuizBlindEar, toggleQuizRecallFirst, syncQuizControls, resetQuizRound, openMissedQueue, exitMissedQueue, openReviewSession, resumeQuizListeningAudio } from "./features/quiz.js";
+import { initQuiz, nQ, quizHear, toggleQuizBlindEar, toggleQuizRecallFirst, toggleQuizSpeed, syncQuizControls, resetQuizRound, openMissedQueue, exitMissedQueue, openReviewSession, resumeQuizListeningAudio } from "./features/quiz.js";
 import { mountPictureMatchEntry, openVocabPictureMatch, pmSrsRank, pmChoicesFor } from "./features/picture-match.js";
 import { openQuizV102Tab, stopActiveSprint, mountNaturalEarLab, mountGringoTrapLab } from "./features/quiz-labs.js";
 import { initStudioShell, syncStudioChrome, syncMouthLetter, openCommandFinder } from "./features/studio-shell.js";
@@ -105,6 +105,7 @@ Object.assign(window, {
   quizHear: () => { ensurePageInitialized("quiz"); quizHear(); },
   toggleQuizBlindEar: () => { ensurePageInitialized("quiz"); toggleQuizBlindEar(); },
   toggleQuizRecallFirst: () => { ensurePageInitialized("quiz"); toggleQuizRecallFirst(); },
+  toggleQuizSpeed: () => { ensurePageInitialized("quiz"); toggleQuizSpeed(); },
   routineBack,
   routineFinishWarmup,
   routineFinishTwisters,
@@ -122,7 +123,7 @@ function showPwaUpdateBanner() {
   toast.className = "pwa-update-toast";
   toast.setAttribute("role", "status");
   toast.setAttribute("aria-live", "polite");
-  toast.innerHTML = `<span class="pwa-update-copy">🆕 App updated to v125.0</span><button type="button" class="pwa-update-btn">Refresh</button><button type="button" class="pwa-update-dismiss" aria-label="Dismiss update notification">✕</button>`;
+  toast.innerHTML = `<span class="pwa-update-copy">🆕 App updated to v126.0</span><button type="button" class="pwa-update-btn">Refresh</button><button type="button" class="pwa-update-dismiss" aria-label="Dismiss update notification">✕</button>`;
   toast.querySelector(".pwa-update-btn").onclick = () => location.reload();
   toast.querySelector(".pwa-update-dismiss").onclick = () => toast.remove();
   document.body.appendChild(toast);
@@ -132,7 +133,7 @@ function initPwaUpdater() {
   if (!("serviceWorker" in navigator) || !/^https?:$/i.test(location.protocol)) return;
   const registerSw = () => {
     const hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register("sw.js?v=125.0").then(reg => {
+    navigator.serviceWorker.register("sw.js?v=126.0").then(reg => {
       if (!reg) return;
       reg.addEventListener("updatefound", () => {
         const nw = reg.installing;
