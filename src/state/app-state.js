@@ -20,6 +20,7 @@ export const appState = {
   qRoundKey: "",
   qRoundSeen: new Set(),
   qBlindPeek: false,
+  qEarRate: 0.7,
   spRunning: false,
   spPaused: false,
   spTimer: null,

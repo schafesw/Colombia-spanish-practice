@@ -235,8 +235,9 @@ export function nQ(){
   renderQuizPromptAndBlind();
   document.querySelector(".qc-label").textContent=appState.qMode==="en-es"?"Translate to Spanish":appState.qMode==="listening"?"Listen and recognize":appState.qMode==="blank"?"Complete the sentence":appState.qMode==="conversation"?(appState.cQ.kind==="reply"?"Choose the natural reply":appState.cQ.kind==="meaning"?"Choose the English meaning":appState.cQ.kind==="listening"?"Listen and recognize":appState.cQ.kind==="tense"?"Choose the matching tense":"Choose the best answer"):appState.qMode==="es-en"?"Translate to English":appState.cQ.kind==="reply"?"Choose the correct reply":appState.cQ.kind==="listening"?"Listen and recognize":appState.cQ.kind==="tense"?"Which tense is it?":appState.cQ.kind==="blank"?"Complete the sentence":"Choose the correct answer";
   if(document.getElementById("page-quiz")?.classList.contains("active")){
-    if(appState.qMode==="listening"||appState.cQ.kind==="listening")speak(appState.cQ.tts,0.7);
-    else if(isBlindEarActive()&&appState.qMode!=="en-es"&&appState.cQ.kind!=="blank")speak(appState.cQ.tts||appState.cQ.es,0.78);
+    const earRate=appState.qEarRate||0.7;
+    if(appState.qMode==="listening"||appState.cQ.kind==="listening")speak(appState.cQ.tts,earRate);
+    else if(isBlindEarActive()&&appState.qMode!=="en-es"&&appState.cQ.kind!=="blank")speak(appState.cQ.tts||appState.cQ.es,earRate);
   }
   const seen=new Set(quizAcceptedAnswers(appState.cQ).map(normalizeQuizText));const wrong=[];
   /* Mixed mode contains several question families.  Do not use a Spanish
@@ -329,19 +330,31 @@ export function toggleQuizBlindEar(){
   if(typeof actions.buildSpeakingGuide==="function")actions.buildSpeakingGuide();
   if(typeof actions.buildGram==="function"&&typeof GRAMMAR!=="undefined")actions.buildGram("presente",GRAMMAR.presente);
 }
+export function toggleQuizSpeed(){
+  appState.qEarRate=(appState.qEarRate&&appState.qEarRate>0.9)?0.7:1.05;
+  const spBtn=document.getElementById("quiz-speed-toggle");
+  if(spBtn){
+    const fast=appState.qEarRate>0.9;
+    spBtn.textContent=fast?"⚡ Speed: 1.05×":"🐢 Speed: 0.7×";
+    spBtn.classList.toggle("active",fast);
+    spBtn.setAttribute("aria-pressed",fast?"true":"false");
+  }
+  quizHear();
+}
 export function quizHear(){
   if(!appState.cQ)return;
-  if(appState.an){speak(spanishAnswer(appState.cQ),0.7);return;} /* after answering: hear the Spanish answer */
-  if(appState.qMode==="dictation"){speak(appState.cQ.tts,0.7);return;}
+  const r=appState.qEarRate||0.7;
+  if(appState.an){speak(spanishAnswer(appState.cQ),r);return;} /* after answering: hear the Spanish answer */
+  if(appState.qMode==="dictation"){speak(appState.cQ.tts,r);return;}
   if(appState.qMode==="en-es")return; /* pre-answer audio in EN→ES would speak the answer */
-  if(appState.cQ.kind==="blank"){speak(appState.cQ.es.replace(/_+/g,","),0.7);return;}
-  speak(appState.cQ.tts,0.7);
+  if(appState.cQ.kind==="blank"){speak(appState.cQ.es.replace(/_+/g,","),r);return;}
+  speak(appState.cQ.tts,r);
 }
 
 
 export function resumeQuizListeningAudio() {
   if (!appState.an && appState.cQ && (appState.qMode === "listening" || appState.cQ.kind === "listening" || appState.qMode === "dictation")) {
-    speak(appState.cQ.tts, 0.7);
+    speak(appState.cQ.tts, appState.qEarRate || 0.7);
   }
 }
 export function openReviewSession() {

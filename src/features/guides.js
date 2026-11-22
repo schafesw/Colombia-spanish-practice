@@ -165,17 +165,78 @@ function appendGramQuickCheck(sec,items){
   draw();
   sec.appendChild(card);
 }
+const TRUCOS_TTS=[
+  "Vaca, boca, vamos, bueno.",
+  "Hablé, comió, fue.",
+  "Voy a comer ahora.",
+  "Soy alto, estoy cansado.",
+  "Ayer fui al mercado.",
+  "Yo hablo, como, tengo.",
+  "Hola, hotel, hacer, huevo.",
+  "Sí quiero. Si llueve, él trae más.",
+  "Ustedes hablan español.",
+  "Estoy hablando contigo."
+];
+const CONTRAST_DRILLS=[
+  {id:"ayer-fui",prompt:"Yesterday I went to the market (finished event):",choices:["Ayer fui al mercado","Ayer iba al mercado"],ans:0,why:"Completed single action at a specific time ('ayer') → Preterite (fui)."},
+  {id:"nino-cali",prompt:"When I was a kid, I used to live in Cali (background / habit):",choices:["Cuando era niño, vivía en Cali","Cuando fui niño, viví en Cali"],ans:0,why:"Age and ongoing childhood setting → Imperfect (era, vivía)."},
+  {id:"mientras-sono",prompt:"While I was cooking, the phone rang (interruption):",choices:["Mientras cocinaba, sonó el teléfono","Mientras cociné, sonaba el teléfono"],ans:0,why:"Background action in progress (cocinaba) interrupted by a sudden event (sonó)."},
+  {id:"llovia-mucho",prompt:"Describing the weather when you stepped outside: 'It was raining'",choices:["Estaba lloviendo / Llovía mucho","Llovió todo el día pasado"],ans:0,why:"Setting the scene or weather in progress → Imperfect (llovía / estaba lloviendo)."},
+  {id:"tuve-tiempo",prompt:"I had time yesterday and finished the errands (bounded event):",choices:["Ayer tuve tiempo","Ayer tenía tiempo siempre"],ans:0,why:"Seen as a bounded, completed fact ('ayer') → Preterite (tuve)."}
+];
+const SUBJUNCTIVE_DRILLS=[
+  {id:"espero-vengas",prompt:"I hope you come to the party: 'Espero que ___ a la fiesta.'",choices:["vengas","vienes","viniste"],ans:0,why:"'Espero que' expresses wish/hope with a subject change → Subjunctive (vengas)."},
+  {id:"quiero-tengas",prompt:"I want you to have a great day: 'Quiero que ___ un buen día.'",choices:["tengas","tienes","tuviste"],ans:0,why:"Wish + 'que' + new subject → present subjunctive drops -o from 'tengo' → tengas."},
+  {id:"ojala-pueda",prompt:"Hopefully it doesn't rain later: 'Ojalá no ___ más tarde.'",choices:["llueva","llueve","llovió"],ans:0,why:"'Ojalá' ALWAYS triggers the subjunctive in Spanish."},
+  {id:"cuando-llegues",prompt:"Call me when you arrive in Bogotá (future event): 'Cuando ___ a Bogotá, llámame.'",choices:["llegues","llegas","llegaste"],ans:0,why:"'Cuando' + an action that hasn't happened yet → Subjunctive (llegues)."},
+  {id:"importante-hables",prompt:"It's important that you speak slowly: 'Es importante que ___ despacio.'",choices:["hables","hablas","hablaste"],ans:0,why:"Impersonal recommendation ('Es importante que…') triggers subjunctive (-AR swaps to -es → hables)."}
+];
+function mountMiniGrammarLab(sec,kicker,bank,srsPrefix){
+  let idx=0,score=0;
+  const box=document.createElement("section");box.className="bridge-trainer-card";box.style.marginTop="12px";
+  const draw=()=>{
+    const q=bank[idx%bank.length];
+    box.innerHTML=`<div class="bridge-head"><div><div class="bridge-title">${kicker} · ${(idx%bank.length)+1}/${bank.length}</div><div class="bridge-sub">${escapeVocabHtml(q.prompt)}</div></div><div class="bridge-score">${score}/${idx}</div></div>`;
+    const opts=document.createElement("div");opts.className="bridge-opts vq-opts";
+    const fb=document.createElement("div");fb.className="bridge-fb";
+    const nxt=document.createElement("button");nxt.type="button";nxt.className="bridge-next";nxt.hidden=true;nxt.textContent="Next →";
+    nxt.onclick=()=>{idx++;draw();};
+    const indexed=q.choices.map((c,i)=>({c,i})).sort(()=>Math.random()-0.5);
+    indexed.forEach(({c,i})=>{
+      const b=document.createElement("button");b.type="button";b.className="bridge-opt";b.textContent=c;
+      b.onclick=()=>{
+        if(!nxt.hidden)return;
+        const ok=i===q.ans;
+        if(ok)score++;
+        b.classList.add(ok?"ok":"no");
+        if(!ok)Array.from(opts.children).forEach(x=>{if(x.textContent===q.choices[q.ans])x.classList.add("ok");});
+        Array.from(opts.children).forEach(x=>x.disabled=true);
+        recordSrs(srsPrefix+q.id,ok);
+        speak(q.choices[q.ans],0.8);
+        fb.textContent=(ok?"✅ ":"❌ ")+q.why;
+        const sc=box.querySelector(".bridge-score");if(sc)sc.textContent=score+"/"+(idx+1);
+        nxt.hidden=false;
+      };
+      opts.appendChild(b);
+    });
+    box.append(opts,fb,nxt);
+  };
+  draw();
+  sec.appendChild(box);
+}
 export function buildGram(id,data){
   const sec=document.getElementById("gs-"+id);sec.innerHTML="";
   if(id==="trucos"){
     const intro=document.createElement("div");intro.className="gram-intro";
     intro.innerHTML=`<div class="gram-intro-title">🧠 Memory Tricks for Colombian Spanish</div>
-      <div class="gram-intro-text">Learn these patterns and you will sound much more natural, much faster.</div>`;
+      <div class="gram-intro-text">Learn these patterns and tap any card to hear the example out loud.</div>`;
     sec.appendChild(intro);
     data.forEach((trick,i)=>{
-      const item=document.createElement("div");item.className="trick-list-item";
+      const item=document.createElement("div");item.className="trick-list-item";item.style.cursor="pointer";
+      const sampleTts=TRUCOS_TTS[i]||trick.main;
       item.innerHTML=`<div class="trick-num">${i+1}</div>
-        <div class="trick-item-text"><div class="trick-item-main">${trick.icon} ${trick.main}</div><div class="trick-item-sub">${trick.sub}</div></div>`;
+        <div class="trick-item-text"><div class="trick-item-main">${trick.icon} ${trick.main} <span class="col-spk">🔊</span></div><div class="trick-item-sub">${trick.sub}</div></div>`;
+      item.onclick=()=>speak(sampleTts,0.78);
       sec.appendChild(item);});return;
   }
   if(id==="pronombres"){buildPronombres(sec);return;}
@@ -208,6 +269,8 @@ export function buildGram(id,data){
   data.examples.forEach(ex=>{const card=document.createElement("div");card.className="example-card";
     card.innerHTML=`<div class="ex-info"><div class="ex-es">${ex.es}</div><div class="ex-en">${ex.en}</div></div><span class="ex-spk">🔊</span>`;
     card.onclick=()=>speak(ex.tts,0.75);sec.appendChild(card);});
+  if(id==="pasado-contraste")mountMiniGrammarLab(sec,"🎞️ Preterite vs. Imperfect",CONTRAST_DRILLS,"contraste|");
+  if(id==="subjuntivo")mountMiniGrammarLab(sec,"🌱 Subjunctive Trigger Lab",SUBJUNCTIVE_DRILLS,"subj|");
   appendGramQuickCheck(sec,data.examples);
 }
 const VOSEO_COMPARISONS=[
