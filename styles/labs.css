@@ -798,3 +798,18 @@
 :root[data-theme="light"] .reading-blind-btn.active{background:#ccfbf1;border-color:#0f766e;color:#0f766e;}
 .reading-lines.reading-blind .reading-line:not(.revealed) .reading-es{filter:blur(6px);opacity:0.65;transition:filter 0.2s ease,opacity 0.2s ease;}
 .reading-card .lesson-start:disabled{opacity:0.55;cursor:not-allowed;filter:grayscale(0.3);}
+
+/* ── v125.0: Verb Blitz, Voseo Lab & Phrase Pack Quiz ───────────────────── */
+.verb-blitz-card{margin:12px 0;}
+.voseo-matrix{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+.voseo-matrix-row{padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.04);display:flex;flex-direction:column;gap:8px;}
+.voseo-main{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;}
+.voseo-en{font-size:0.78rem;color:var(--muted);font-weight:700;}
+.voseo-play-main{border:1px solid var(--teal);background:rgba(45,212,191,0.14);color:var(--text);border-radius:10px;padding:6px 11px;font-size:0.88rem;font-weight:800;cursor:pointer;}
+.voseo-mini-pills{display:flex;flex-wrap:wrap;gap:6px;}
+.voseo-pill{border:1px solid var(--border);background:rgba(255,255,255,0.03);color:var(--muted);border-radius:99px;padding:4px 10px;font-size:0.72rem;font-weight:700;cursor:pointer;}
+.voseo-pill.active{border-color:var(--gold);color:var(--gold);background:rgba(245,196,81,0.12);}
+:root[data-theme="light"] .voseo-matrix-row{background:rgba(20,32,26,0.03);}
+:root[data-theme="light"] .voseo-play-main{background:#ccfbf1;color:#0f766e;}
+:root[data-theme="light"] .voseo-pill{background:rgba(20,32,26,0.04);color:#475569;}
+:root[data-theme="light"] .voseo-pill.active{background:#fef3c7;border-color:#d97706;color:#92400e;}
