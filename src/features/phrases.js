@@ -547,6 +547,24 @@ export function renderFraseSection(idx){
   if(!sec){return;}
   const wrap=document.createElement("div");wrap.className="frase-section";
   const st=document.createElement("div");st.className="frase-title";st.style.cssText=sec.cls||"";st.innerHTML="<span>"+escapeVocabHtml(sec.section)+"</span><small>"+escapeVocabHtml(phraseEnglishTitle(sec.section))+"</small>";wrap.appendChild(st);
+  const listHost=document.createElement("div");listHost.className="frase-cards-host";
+  const quizHost=document.createElement("div");quizHost.className="frase-quiz-host";quizHost.hidden=true;
+  if((sec.items||[]).length>=4){
+    const bar=document.createElement("div");bar.className="vf-mode-bar";bar.style.marginBottom="10px";
+    const mkTab=(lbl,mode,active)=>{
+      const b=document.createElement("button");b.type="button";b.className="vf-mode-btn"+(active?" active":"");b.textContent=lbl;
+      b.onclick=()=>{
+        bar.querySelectorAll(".vf-mode-btn").forEach(x=>x.classList.remove("active"));
+        b.classList.add("active");
+        const isQuiz=mode==="quiz";
+        listHost.hidden=isQuiz;quizHost.hidden=!isQuiz;
+        if(isQuiz)renderFrasePackQuiz(quizHost,sec);
+      };
+      return b;
+    };
+    bar.append(mkTab("📋 Phrase List","list",true),mkTab("🧪 5Q Check","quiz",false));
+    wrap.appendChild(bar);
+  }
   sec.items.forEach(item=>{
     const card=document.createElement("div");card.className="frase-card";
     card.setAttribute("role","button");card.setAttribute("tabindex","0");
@@ -557,10 +575,64 @@ export function renderFraseSection(idx){
     card.onkeydown=e=>{if((e.key==="Enter"||e.key===" ")&&!e.target.closest("button")){e.preventDefault();playFrase();}};
     if(typeof attachStarBtn==="function")attachStarBtn(card,item.es,sec.section||"Frases");
     attachMic(card,item.es);
-    wrap.appendChild(card);
+    listHost.appendChild(card);
   });
+  wrap.append(listHost,quizHost);
   fl.appendChild(wrap);
   rememberFraseLocation({kind:"section",value:idx,title:sec.section,subtitle:phraseEnglishTitle(sec.section)});
+}
+
+function renderFrasePackQuiz(host,sec){
+  const items=(sec.items||[]).filter(it=>it&&it.es&&it.en);
+  if(items.length<2)return;
+  const allPool=FRASES.flatMap(s=>s.items||[]).filter(it=>it&&it.es);
+  const deck=items.slice().sort(()=>Math.random()-0.5).slice(0,Math.min(5,items.length));
+  let qi=0,score=0;
+  const draw=()=>{
+    host.innerHTML="";
+    if(qi>=deck.length){
+      const box=document.createElement("div");box.className="bridge-trainer-card";
+      box.innerHTML=`<div class="bridge-head"><div><div class="bridge-title">🎉 Pack Check Complete</div><div class="bridge-sub">${escapeVocabHtml(sec.section)} · Score ${score}/${deck.length}</div></div></div><div class="bridge-actions"><button type="button" class="lp-nav-btn primary">↻ Quiz 5 More</button></div>`;
+      box.querySelector("button").onclick=()=>renderFrasePackQuiz(host,sec);
+      host.appendChild(box);
+      return;
+    }
+    const q=deck[qi];
+    const opts=[q.es];
+    const secDistractors=items.filter(x=>x.es!==q.es).sort(()=>Math.random()-0.5);
+    for(const d of secDistractors){if(opts.length>=4)break;if(!opts.includes(d.es))opts.push(d.es);}
+    for(const d of allPool.slice().sort(()=>Math.random()-0.5)){if(opts.length>=4)break;if(!opts.includes(d.es))opts.push(d.es);}
+    const card=document.createElement("div");card.className="bridge-trainer-card";
+    card.innerHTML=`<div class="bridge-head"><div><div class="bridge-title">🧪 Phrase Check · ${qi+1}/${deck.length}</div><div class="bridge-sub">🇺🇸 "${escapeVocabHtml(q.en)}"</div></div><div class="bridge-score">${score}/${qi}</div></div>`;
+    const ctrl=document.createElement("div");ctrl.className="bridge-controls";
+    const hear=document.createElement("button");hear.type="button";hear.className="voc-flash-speak";hear.textContent="🔊 Hear Spanish cue";hear.onclick=()=>speak(q.es,0.8);
+    ctrl.appendChild(hear);card.appendChild(ctrl);
+    const grid=document.createElement("div");grid.className="bridge-opts vq-opts";
+    const fb=document.createElement("div");fb.className="vq-fb";
+    const next=document.createElement("button");next.type="button";next.className="bridge-next";next.hidden=true;next.textContent=qi+1<deck.length?"Next →":"Finish →";
+    next.onclick=()=>{qi++;draw();};
+    opts.sort(()=>Math.random()-0.5).forEach(opt=>{
+      const b=document.createElement("button");b.type="button";b.className="bridge-opt";b.textContent=opt;
+      b.onclick=()=>{
+        if(!next.hidden)return;
+        const ok=opt===q.es;
+        if(ok)score++;
+        b.classList.add(ok?"ok":"no");
+        if(!ok)grid.querySelectorAll(".bridge-opt").forEach(x=>{if(x.textContent===q.es)x.classList.add("ok");});
+        grid.querySelectorAll(".bridge-opt").forEach(x=>x.disabled=true);
+        markPractice("phrases",q.es);
+        recordSrs("frq|"+q.es,ok);
+        speak(q.es,0.8);
+        fb.textContent=(ok?"✅ Exacto! ":"❌ Correct: ")+q.es;
+        const sc=card.querySelector(".bridge-score");if(sc)sc.textContent=score+"/"+(qi+1);
+        next.hidden=false;
+      };
+      grid.appendChild(b);
+    });
+    card.append(grid,fb,next);
+    host.appendChild(card);
+  };
+  draw();
 }
 export function returnFromFraseDialogue(){
   const returnToLessons=appState.fraseReturnToLessons;

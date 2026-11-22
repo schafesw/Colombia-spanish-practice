@@ -180,6 +180,7 @@ export function buildGram(id,data){
   }
   if(id==="pronombres"){buildPronombres(sec);return;}
   if(id==="reflexivos"){buildReflexivos(sec);return;}
+  if(id==="voseo"){buildVoseoLab(sec);return;}
   if(id==="presente"){buildVerbVersatilityLab(sec);}
   const intro=document.createElement("div");intro.className="gram-intro";
   const grammarMeta={perfecto:["✅","Present perfect"],condicional:["🙏","Conditional"],"pasado-perfecto":["⏪","Past perfect"],"futuro-perfecto":["⏩","Future perfect"]}[id];
@@ -208,6 +209,98 @@ export function buildGram(id,data){
     card.innerHTML=`<div class="ex-info"><div class="ex-es">${ex.es}</div><div class="ex-en">${ex.en}</div></div><span class="ex-spk">🔊</span>`;
     card.onclick=()=>speak(ex.tts,0.75);sec.appendChild(card);});
   appendGramQuickCheck(sec,data.examples);
+}
+const VOSEO_COMPARISONS=[
+  {en:"How are you?",usted:"¿Usted cómo está?",tu:"¿Tú cómo estás?",vos:"¿Vos cómo estás?"},
+  {en:"Come here!",usted:"¡Venga!",tu:"¡Ven!",vos:"¡Vení!"},
+  {en:"Tell me / What happened?",usted:"Cuénteme",tu:"Cuéntame",vos:"Contame"},
+  {en:"Do you want a coffee?",usted:"¿Quiere un tinto?",tu:"¿Quieres un tinto?",vos:"¿Querés un tinto?"},
+  {en:"Go ahead / Do it!",usted:"Hágale pues",tu:"Hazlo pues",vos:"Hacelo pues"},
+  {en:"Don't worry",usted:"No se preocupe",tu:"No te preocupes",vos:"No te preocupés"}
+];
+const VOSEO_SITUATIONS=[
+  {id:"bogota-taxi",q:"Grabbing an Uber or talking to an adult stranger in Bogotá",choices:["Usted (warm & normal in Bogotá)","Vos (standard in Bogotá)","Tú (only for bosses in Bogotá)"],ans:0,why:"In Bogotá and Boyacá, 'usted' is the everyday warm default — even friends and couples use 'su merced' or 'usted' without sounding stiff."},
+  {id:"sanjuan-friend",q:"Texting a close friend in San Juan del Cesar, La Guajira",choices:["Tú (standard on La Costa)","Vos (Paisa only)","Su merced"],ans:0,why:"On Colombia's Caribbean coast (La Guajira, Barranquilla, Cartagena), 'tú' flows naturally with friends and family."},
+  {id:"medellin-come",q:"A Paisa friend in Medellín calls you over: 'Come here!'",choices:["¡Vení pues! (vos)","¡Venga usted pues!","¡Venís vosotros!"],ans:0,why:"Antioquia and Valle del Cauca drop final -s/stress the ending on vos commands: Vení, Decime, Mirá, Sentate."},
+  {id:"cali-want",q:"Ordering casually with a friend in Cali: 'Do you want empanadas?'",choices:["¿Querés empanadas? (vos)","¿Quiere empanadas tú?","¿Queréis empanadas?"],ans:0,why:"Cali & Medellín use Rioplatense-style stressed present endings for vos: querés, tenés, podés, sabés (never 'queréis')."},
+  {id:"family-abuela",q:"Greeting your Colombian partner's grandmother for the first time",choices:["¿Cómo está usted, señora?","¿Vos qué más?","¿Tú qué haces?"],ans:0,why:"Always use 'usted' with elders, grandparents, and first-time family introductions across every region of Colombia."}
+];
+export function buildVoseoLab(sec){
+  sec.innerHTML="";
+  const intro=document.createElement("div");intro.className="gram-intro";
+  intro.innerHTML=`<div class="gram-intro-title">🇨🇴 Usted vs. Tú vs. Vos in Colombia</div>
+    <div class="gram-intro-text">Colombia uses all three "you" forms depending on city and closeness. Tap a region below to flip real phrases and hear the difference.</div>`;
+  sec.appendChild(intro);
+  let activeReg="usted";
+  const regTabs=[
+    ["usted","🏔️ Bogotá · Usted","Warm everyday default & respect nationwide"],
+    ["tu","🌴 La Costa · Tú","Natural with friends in San Juan, Barranquilla & Cartagena"],
+    ["vos","🌸 Paisa / Cali · Vos","Medellín & Cali everyday stress shift (querés, vení)"]
+  ];
+  const card=document.createElement("section");card.className="bridge-trainer-card";
+  const tabRow=document.createElement("div");tabRow.className="reg-tabs-row";
+  const note=document.createElement("div");note.className="bridge-context";note.style.marginTop="8px";
+  const matrix=document.createElement("div");matrix.className="voseo-matrix";
+  const drawMatrix=()=>{
+    tabRow.innerHTML="";
+    regTabs.forEach(([id,lbl,desc])=>{
+      const b=document.createElement("button");b.type="button";b.className="reg-tab-btn"+(activeReg===id?" active":"");
+      b.textContent=lbl;
+      b.onclick=()=>{activeReg=id;drawMatrix();};
+      tabRow.appendChild(b);
+      if(activeReg===id)note.textContent=desc;
+    });
+    matrix.innerHTML="";
+    VOSEO_COMPARISONS.forEach(item=>{
+      const row=document.createElement("div");row.className="voseo-matrix-row";
+      const mainPhrase=item[activeReg];
+      row.innerHTML=`<div class="voseo-main"><span class="voseo-en">${escapeVocabHtml(item.en)}</span><button type="button" class="voseo-play-main">${escapeVocabHtml(mainPhrase)} 🔊</button></div>
+        <div class="voseo-mini-pills"></div>`;
+      row.querySelector(".voseo-play-main").onclick=()=>{markPractice("phrases",mainPhrase);speak(mainPhrase,0.8);};
+      const pills=row.querySelector(".voseo-mini-pills");
+      [["usted","Ud."],["tu","Tú"],["vos","Vos"]].forEach(([k,shortLbl])=>{
+        const pb=document.createElement("button");pb.type="button";pb.className="voseo-pill"+(k===activeReg?" active":"");
+        pb.textContent=`${shortLbl}: ${item[k]}`;
+        pb.onclick=()=>{markPractice("phrases",item[k]);speak(item[k],0.8);};
+        pills.appendChild(pb);
+      });
+      matrix.appendChild(row);
+    });
+  };
+  drawMatrix();
+  card.append(tabRow,note,matrix);
+  sec.appendChild(card);
+
+  // Situational register check
+  let si=0,sScore=0;
+  const quizCard=document.createElement("section");quizCard.className="bridge-trainer-card";
+  const drawQuiz=()=>{
+    const q=VOSEO_SITUATIONS[si%VOSEO_SITUATIONS.length];
+    quizCard.innerHTML=`<div class="bridge-head"><div><div class="bridge-title">🧭 Which Form Fits? · ${(si%VOSEO_SITUATIONS.length)+1}/${VOSEO_SITUATIONS.length}</div><div class="bridge-sub">${escapeVocabHtml(q.q)}</div></div><div class="bridge-score">${sScore}/${si}</div></div>`;
+    const opts=document.createElement("div");opts.className="bridge-opts vq-opts";
+    const fb=document.createElement("div");fb.className="bridge-fb";
+    const nxt=document.createElement("button");nxt.type="button";nxt.className="bridge-next";nxt.hidden=true;nxt.textContent="Next scenario →";
+    nxt.onclick=()=>{si++;drawQuiz();};
+    q.choices.forEach((c,idx)=>{
+      const b=document.createElement("button");b.type="button";b.className="bridge-opt";b.textContent=c;
+      b.onclick=()=>{
+        if(!nxt.hidden)return;
+        const ok=idx===q.ans;
+        if(ok)sScore++;
+        b.classList.add(ok?"ok":"no");
+        if(!ok)opts.children[q.ans]?.classList.add("ok");
+        Array.from(opts.children).forEach(x=>x.disabled=true);
+        recordSrs("voseo|"+q.id,ok);
+        fb.textContent=(ok?"✅ ":"❌ ")+q.why;
+        const sc=quizCard.querySelector(".bridge-score");if(sc)sc.textContent=sScore+"/"+(si+1);
+        nxt.hidden=false;
+      };
+      opts.appendChild(b);
+    });
+    quizCard.append(opts,fb,nxt);
+  };
+  drawQuiz();
+  sec.appendChild(quizCard);
 }
 export function buildPronombres(sec){
   const intro=document.createElement("div");intro.className="gram-intro";
@@ -772,7 +865,7 @@ export function buildSpeakingGuide(){
 export const GRAM_GROUPS={regiones:{label:"🗺️ Regiones",items:[["estructura","🗺️ Regiones"]]},posters:{label:"🖼️ Posters",items:[["estructura","🖼️ Posters"]]},
   tiempos:{label:"⏱️ Tiempos",items:[["presente","⚡ Presente"],["pasado","⏮️ Pasado"],["pasado-contraste","🎞️ Evento vs. contexto"],["futuro","⏭️ Futuro"],["perfecto","✅ He hecho"],["condicional","🙏 Haría / podría"],["pasado-perfecto","⏪ Había hecho"],["futuro-perfecto","⏩ Habré hecho"]]},
   pronombres:{label:"👤 Pronombres",items:[["pronombres","Lo / La / Le"]]},
-  patrones:{label:"🧩 Patrones",items:[["reflexivos","🔄 Reflexivos"],["subjuntivo","🌱 Subjuntivo"],["trucos","🧠 Trucos"]]},
+  patrones:{label:"🧩 Patrones",items:[["voseo","🇨🇴 Usted · Tú · Vos"],["reflexivos","🔄 Reflexivos"],["subjuntivo","🌱 Subjuntivo"],["trucos","🧠 Trucos"]]},
   estructura:{label:"🧱 Hablar",items:[["estructura","🧱 Estructura"]]}
 };
 let gramGroup="regiones",gramSection="estructura";
@@ -792,7 +885,7 @@ export function showGramGroup(g){
 }
 export function showGram(id){
   gramSection=id;
-  ["presente","pasado","pasado-contraste","futuro","perfecto","condicional","pasado-perfecto","futuro-perfecto","pronombres","reflexivos","subjuntivo","trucos","estructura"].forEach(g=>{
+  ["presente","pasado","pasado-contraste","futuro","perfecto","condicional","pasado-perfecto","futuro-perfecto","pronombres","reflexivos","voseo","subjuntivo","trucos","estructura"].forEach(g=>{
     document.getElementById("gs-"+g).classList.toggle("active",g===id);
   });
   const sub=document.getElementById("gram-sub");
@@ -807,6 +900,7 @@ export function initGuides() {
   ["presente","pasado","pasado-contraste","futuro","perfecto","condicional","pasado-perfecto","futuro-perfecto","subjuntivo","trucos"].forEach(id=>buildGram(id,GRAMMAR[id]));
   buildGram("pronombres");
   buildGram("reflexivos");
+  buildGram("voseo");
   buildSpeakingGuide();
   showGramGroup("regiones");
 }

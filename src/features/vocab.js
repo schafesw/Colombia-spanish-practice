@@ -425,7 +425,7 @@ export function rCol(list){
   });
 }
 
-const NUMBERS_EAR_DRILLS=[
+export const NUMBERS_EAR_DRILLS=[
   {tag:"COP Price",tts:"Eso vale quince mil quinientos pesos",es:"Eso vale quince mil quinientos pesos.",ans:"$15.500",en:"That costs 15,500 COP",dist:["$50.500","$15.050","$5.500"]},
   {tag:"Bogotá Slang",tts:"Son cinco lucas por todo",es:"Son cinco lucas por todo.",ans:"$5.000",en:"5,000 COP (cinco lucas = 5 mil)",dist:["$50.000","$500","$15.000"]},
   {tag:"COP Price",tts:"El menú del día cuesta dieciocho mil pesos",es:"El menú del día cuesta dieciocho mil pesos.",ans:"$18.000",en:"Daily lunch special: 18,000 COP",dist:["$28.000","$80.000","$18.500"]},
@@ -541,6 +541,7 @@ export function showVerbDetail(key,verb){
       <div class="vd-form-card" onclick="speak('${verb.participle.f}',0.8)"><div class="vd-form-label">Participio</div><div class="vd-form-word">${verb.participle.f}</div><div class="vd-form-en">${verb.participle.en} 🔊</div></div>
     </div>`;
   vd.appendChild(hdr);
+  mountVerbBlitzCard(vd,key,verb);
   // Conjugation tables
   const tenseRows=[["⚡ Presente","present","rgba(74,168,160,0.2)","var(--teal)"],["⏮️ Pasado","past","rgba(232,93,117,0.2)","var(--pink)"]];
   if(verb.imperfect)tenseRows.push(["🕰️ Imperfecto","imperfect","rgba(167,139,250,0.2)","var(--purple)"]);
@@ -579,6 +580,61 @@ export function showVerbDetail(key,verb){
     <div style="font-size:0.95rem;font-weight:800;color:var(--text)">${verb.example.es}</div>
     <div style="font-size:0.78rem;color:var(--muted);font-style:italic;margin-top:4px">${verb.example.en} 🔊</div>`;
   ex.onclick=()=>speak(verb.example.es,0.75);vd.appendChild(ex);
+}
+function buildVerbBlitzQuestions(key,verb){
+  const items=[];
+  [["present","⚡ Presente"],["past","⏮️ Pasado"],["imperfect","🕰️ Imperfecto"],["future","⏭️ Futuro"]].forEach(([tk,lbl])=>{
+    (verb[tk]||[]).forEach(r=>{if(r&&r.v&&r.e)items.push({tenseKey:tk,tenseLabel:lbl,pro:r.p,ans:r.v,en:r.e,tts:r.v});});
+  });
+  if(verb.imperative){
+    if(verb.imperative.tu&&verb.imperative.tu.f)items.push({tenseKey:"imp",tenseLabel:"🫵 Imperativo (Tú)",pro:"tú",ans:verb.imperative.tu.f,en:verb.imperative.tu.en,tts:verb.imperative.tu.f});
+    if(verb.imperative.usted&&verb.imperative.usted.f)items.push({tenseKey:"imp",tenseLabel:"🫵 Imperativo (Usted)",pro:"usted",ans:verb.imperative.usted.f,en:verb.imperative.usted.en,tts:verb.imperative.usted.f});
+  }
+  const allForms=Array.from(new Set(items.map(x=>x.ans)));
+  return items.sort(()=>Math.random()-0.5).slice(0,5).map(q=>{
+    const dist=allForms.filter(f=>f!==q.ans).sort(()=>Math.random()-0.5).slice(0,3);
+    return{...q,choices:[q.ans,...dist].sort(()=>Math.random()-0.5)};
+  });
+}
+function mountVerbBlitzCard(vd,key,verb){
+  const deck=buildVerbBlitzQuestions(key,verb);
+  if(deck.length<2)return;
+  let qi=0,score=0;
+  const box=document.createElement("section");box.className="bridge-trainer-card verb-blitz-card";
+  const draw=()=>{
+    if(qi>=deck.length){
+      box.innerHTML=`<div class="bridge-head"><div><div class="bridge-title">🎉 Verb Blitz Complete: ${escapeVocabHtml(key)}</div><div class="bridge-sub">Score ${score}/${deck.length} across tenses & commands</div></div></div><div class="bridge-actions"><button type="button" class="lp-nav-btn primary">↻ New 5Q Blitz</button></div>`;
+      box.querySelector("button").onclick=()=>{deck.splice(0,deck.length,...buildVerbBlitzQuestions(key,verb));qi=0;score=0;draw();};
+      return;
+    }
+    const q=deck[qi];
+    box.innerHTML=`<div class="bridge-head"><div><div class="bridge-title">🎯 Conjugation Blitz · ${qi+1}/${deck.length}</div><div class="bridge-sub">${escapeVocabHtml(q.tenseLabel)} · <strong>${escapeVocabHtml(q.pro)}</strong> — "${escapeVocabHtml(q.en)}"</div></div><div class="bridge-score">${score}/${qi}</div></div>`;
+    const grid=document.createElement("div");grid.className="bridge-opts numbers-ear-opts";
+    const fb=document.createElement("div");fb.className="bridge-fb";
+    const next=document.createElement("button");next.type="button";next.className="bridge-next";next.hidden=true;next.textContent=qi+1<deck.length?"Next →":"Finish →";
+    next.onclick=()=>{qi++;draw();};
+    q.choices.forEach(c=>{
+      const b=document.createElement("button");b.type="button";b.className="bridge-opt";b.textContent=c;
+      b.onclick=()=>{
+        if(!next.hidden)return;
+        const ok=c===q.ans;
+        if(ok)score++;
+        b.classList.add(ok?"ok":"no");
+        if(!ok)grid.querySelectorAll(".bridge-opt").forEach(x=>{if(x.textContent===q.ans)x.classList.add("ok");});
+        grid.querySelectorAll(".bridge-opt").forEach(x=>x.disabled=true);
+        markPractice("vocab",key);
+        recordSrs("verb|"+key+"|"+q.tenseKey+"|"+q.pro,ok);
+        speak(q.tts,0.8);
+        fb.textContent=(ok?"✅ ":"❌ ")+q.pro+" → "+q.ans+" ("+q.en+")";
+        const sc=box.querySelector(".bridge-score");if(sc)sc.textContent=score+"/"+(qi+1);
+        next.hidden=false;
+      };
+      grid.appendChild(b);
+    });
+    box.append(grid,fb,next);
+  };
+  draw();
+  vd.appendChild(box);
 }
 export function openVerbByKey(key){
   const v=VERBS[key];if(!v)return;

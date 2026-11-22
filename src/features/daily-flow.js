@@ -1,9 +1,10 @@
-import { PICTURE_MATCH_BANK, GRINGO_TRAPS, NATURAL_EAR_CLIPS, SPANISH_BRAIN_DRILLS, VC, VERBS, PQ, COLOMBIANISMOS } from "../../data/index.js";
+import { PICTURE_MATCH_BANK, GRINGO_TRAPS, NATURAL_EAR_CLIPS, SPANISH_BRAIN_DRILLS, VC, VERBS, PQ, COLOMBIANISMOS, FRASES } from "../../data/index.js";
 import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml } from "../core/text-utils.js";
 import { markPractice, recordSrs, srsDue, srsStore } from "../core/stores.js";
 import { aQ, RR_BANK } from "../core/quiz-bank.js";
 import { actions, showPage } from "./navigation.js";
+import { NUMBERS_EAR_DRILLS } from "./vocab.js";
 
 var dfCards=[],dfIdx=0,dfPicked=null,dfScore=0,dfStreak=0,dfSessionMode="mix";
 function shuffledCopy(list){return list.slice().sort(()=>Math.random()-0.5);}
@@ -61,7 +62,42 @@ export function buildSrsReviewDeck(){
         while(opts.length<4)opts.push(["El tinto","Con gusto","De una"][opts.length%3]);
         cards.push({kind:"quiz",kicker:"🔁 Due · Vocabulario",prompt:hit.en,tts:hit.tts,ans:hit.word,hint:`${hit.word} — ${hit.en}`,srsKey:key,opts:shuffledCopy(opts)});
       }
-    }else if(key.includes("|")){
+    }else if(key.startsWith("num|")&&Array.isArray(NUMBERS_EAR_DRILLS)){
+      const ans=key.slice(4);
+      const n=NUMBERS_EAR_DRILLS.find(x=>x.ans===ans);
+      if(n){
+        cards.push({kind:"quiz",kicker:`💵 Due · ${n.tag}`,prompt:"🎧 Listen and catch the exact Colombian peso price, address, or time",tts:n.tts,ans:n.ans,hint:`${n.es} (${n.en})`,srsKey:key,opts:shuffledCopy([n.ans,...n.dist])});
+      }
+    }else if(key.startsWith("frq|")&&typeof FRASES!=="undefined"){
+      const targetEs=key.slice(4);
+      const allFr=FRASES.flatMap(s=>s.items||[]).filter(it=>it&&it.es&&it.en);
+      const hit=allFr.find(it=>it.es===targetEs);
+      if(hit){
+        const opts=[hit.es];
+        for(const c of shuffledCopy(allFr)){if(opts.length>=4)break;if(c.es&&!opts.includes(c.es))opts.push(c.es);}
+        cards.push({kind:"quiz",kicker:"💬 Due · Phrase Recall",prompt:hit.en,tts:hit.es,ans:hit.es,hint:`${hit.es} — ${hit.en}`,srsKey:key,opts:shuffledCopy(opts)});
+      }
+    }else if(key.startsWith("verb|")&&typeof VERBS!=="undefined"){
+      const parts=key.split("|");
+      const vKey=parts[1],tenseKey=parts[2],pro=parts[3];
+      const vObj=VERBS[vKey];
+      if(vObj){
+        let hit=null;
+        if(tenseKey==="imp"&&vObj.imperative){
+          const slot=pro==="usted"?vObj.imperative.usted:vObj.imperative.tu;
+          if(slot)hit={ans:slot.f,en:slot.en,lbl:"Imperativo"};
+        }else if(Array.isArray(vObj[tenseKey])){
+          const slot=vObj[tenseKey].find(r=>r.p===pro);
+          if(slot)hit={ans:slot.v,en:slot.e,lbl:tenseKey};
+        }
+        if(hit){
+          const pool=[...vObj.present,...vObj.past,...(vObj.imperfect||[]),...vObj.future].map(r=>r.v).filter(Boolean);
+          const opts=[hit.ans];
+          for(const f of shuffledCopy(pool)){if(opts.length>=4)break;if(!opts.includes(f))opts.push(f);}
+          cards.push({kind:"quiz",kicker:`🎯 Due · Verb (${vKey})`,prompt:`${pro} · ${hit.lbl} — "${hit.en}"`,tts:hit.ans,ans:hit.ans,hint:`${vKey}: ${pro} → ${hit.ans}`,srsKey:key,opts:shuffledCopy(opts)});
+        }
+      }
+    }else if(key.includes("|")&&!/^(?:pm|gt|ne|brain|rr|vf|vq|num|frq|verb|read|voseo)\|/.test(key)){
       const sep=key.indexOf("|");
       const es=key.slice(0,sep),ans=key.slice(sep+1);
       if(es&&ans){
