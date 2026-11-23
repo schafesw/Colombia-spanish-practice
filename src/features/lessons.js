@@ -458,6 +458,44 @@ export function openStageTestOut(stage,stageLessons,bossMode=false){
 }
 
 const WELCOME_DISMISS_KEY="esco-v100-welcome-dismissed";
+function mountTodaySmartWarmup(hero){
+  const picks=[];
+  const seen=new Set();
+  const pushPick=(es,en,tag)=>{
+    if(!es||seen.has(es)||picks.length>=3)return;
+    seen.add(es);picks.push({es,en,tag});
+  };
+  Object.values(speakingErrors||{}).sort((a,b)=>((b&&b.last)||0)-((a&&a.last)||0)).forEach(e=>{if(e&&e.text)pushPick(e.text,e.source||"Recent speaking miss","🎯 Refresh");});
+  const seed=(new Date().getDate()+todayActionCount())%Math.max(1,(COLOMBIANISMOS||[]).length);
+  const cols=Array.isArray(COLOMBIANISMOS)?COLOMBIANISMOS:[];
+  for(let i=0;i<cols.length&&picks.length<3;i++){
+    const c=cols[(seed+i)%cols.length];
+    if(c)pushPick(c.example||c.word,c.en,"🇨🇴 Warmup");
+  }
+  if(!picks.length)return;
+  const fold=document.createElement("details");fold.className="today-warmup-fold";
+  const doneSet=new Set();
+  const sum=document.createElement("summary");
+  const body=document.createElement("div");body.className="today-warmup-body";
+  const syncSum=()=>{sum.innerHTML=`<span>⏱️ <strong>30-Sec Warmup</strong> <small>Listen &amp; say 3 quick lines</small></span><span class="warmup-badge">${doneSet.size}/${picks.length}${doneSet.size>=picks.length?" ✓":""}</span>`;};
+  syncSum();
+  picks.forEach((p,idx)=>{
+    const row=document.createElement("div");row.className="warmup-mini-row";
+    row.innerHTML=`<div class="warmup-mini-copy"><span class="warmup-tag">${escapeVocabHtml(p.tag)}</span><strong>${escapeVocabHtml(p.es)}</strong><small>${escapeVocabHtml(p.en)}</small></div><div class="warmup-mini-acts"></div>`;
+    const acts=row.querySelector(".warmup-mini-acts");
+    const hear=document.createElement("button");hear.type="button";hear.className="hl-mini-btn";hear.textContent="🔊";hear.setAttribute("aria-label","Listen to warmup phrase");
+    hear.onclick=()=>speak(p.es,0.78);
+    const tick=document.createElement("button");tick.type="button";tick.className="hl-mini-btn warmup-done-btn";tick.textContent="✓";tick.setAttribute("aria-label","Mark warmup phrase practiced");
+    tick.onclick=()=>{doneSet.add(idx);row.classList.add("done");tick.classList.add("saved");markPractice("phrases",p.es);syncSum();};
+    acts.append(hear);
+    attachMic(acts,p.es,"phrases");
+    acts.append(tick);
+    body.appendChild(row);
+  });
+  fold.append(sum,body);
+  hero.appendChild(fold);
+}
+
 export function renderLessons(){
   const root=document.getElementById("lesson-list");if(!root)return;
   if(appState.lpLesson){renderLessonStep();return;}
@@ -509,6 +547,7 @@ export function renderLessons(){
   heroCta.innerHTML=`<div class="today-hero-cta-icon">${primaryLesson.icon||"🎓"}</div><div class="today-hero-cta-copy"><span class="today-hero-cta-kicker">${isResuming?`▶️ CONTINUE · STEP ${(resume.step|0)+1}`:(done===0?"🚀 START HERE · LESSON 1":`🎓 NEXT LESSON${focusTag?" · "+focusTag:""}`)}</span><strong>${escapeVocabHtml(primaryLesson.title)}</strong><small>${escapeVocabHtml(primaryLesson.sub)}</small></div><div class="today-hero-cta-badge">${isResuming?"Resume →":"Start →"}</div>`;
   heroCta.onclick=()=>{if(isResuming)openLessonAt(resLesson,resume.step,resume.qi,resume.score);else openLesson(primaryLesson);};
   hero.appendChild(heroCta);const flowBtn=document.createElement("button");flowBtn.type="button";flowBtn.className="daily-flow-cta";flowBtn.innerHTML=`<span class="df-cta-icon">⚡</span><span class="df-cta-copy"><strong>Today’s 5-Min Mixed Flow</strong><small>Due SRS · Pictures · Local Fixes · Street Ear (8 cards)</small></span><span class="df-cta-badge">Mix →</span>`;flowBtn.onclick=()=>{if(typeof actions.openDailyFlowSession==="function")actions.openDailyFlowSession();};hero.appendChild(flowBtn);
+  mountTodaySmartWarmup(hero);
   if(dueHome+missedHome>0){
     const weakBtn=document.createElement("button");weakBtn.type="button";weakBtn.className="starter-sound-btn weak-spots-cta";
     weakBtn.innerHTML=`<span>🔁 <strong>Fix Weak Spots</strong> <small>${missedHome?`${missedHome} missed`:""}${missedHome&&dueHome?" · ":""}${dueHome?`${dueHome} due`:""}</small></span><span>Drill →</span>`;
