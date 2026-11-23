@@ -242,6 +242,7 @@ export function buildGram(id,data){
   if(id==="pronombres"){buildPronombres(sec);return;}
   if(id==="reflexivos"){buildReflexivos(sec);return;}
   if(id==="voseo"){buildVoseoLab(sec);return;}
+  if(id==="muletillas"){buildMuletillasLab(sec);return;}
   if(id==="presente"){buildVerbVersatilityLab(sec);}
   const intro=document.createElement("div");intro.className="gram-intro";
   const grammarMeta={perfecto:["✅","Present perfect"],condicional:["🙏","Conditional"],"pasado-perfecto":["⏪","Past perfect"],"futuro-perfecto":["⏩","Future perfect"]}[id];
@@ -288,6 +289,43 @@ const VOSEO_SITUATIONS=[
   {id:"cali-want",q:"Ordering casually with a friend in Cali: 'Do you want empanadas?'",choices:["¿Querés empanadas? (vos)","¿Quiere empanadas tú?","¿Queréis empanadas?"],ans:0,why:"Cali & Medellín use Rioplatense-style stressed present endings for vos: querés, tenés, podés, sabés (never 'queréis')."},
   {id:"family-abuela",q:"Greeting your Colombian partner's grandmother for the first time",choices:["¿Cómo está usted, señora?","¿Vos qué más?","¿Tú qué haces?"],ans:0,why:"Always use 'usted' with elders, grandparents, and first-time family introductions across every region of Colombia."}
 ];
+const MULETILLAS_BANK=[
+  {w:"Pues",meaning:"well / so / then (softener & flow glue)",ex:"Pues, vamos a ver qué hay en el menú.",en:"Well, let's see what's on the menu."},
+  {w:"O sea",meaning:"I mean / in other words",ex:"O sea, nos vemos a las tres en la tienda.",en:"I mean, we'll meet at three at the shop."},
+  {w:"Es que…",meaning:"it's just that… / the thing is… (polite excuse)",ex:"Es que todavía estoy aprendiendo español.",en:"It's just that I'm still learning Spanish."},
+  {w:"Mejor dicho",meaning:"or rather / put simply",ex:"Hace mucho calor, mejor dicho, ¡qué bochorno!",en:"It's super hot — or rather, what humidity!"},
+  {w:"A ver",meaning:"let's see… (buying 2 seconds while thinking)",ex:"A ver… deme dos pandebonos y un tinto.",en:"Let's see… give me two pandebonos and a black coffee."},
+  {w:"Ni modo",meaning:"oh well / can't help it",ex:"Está lloviendo duro; ni modo, pedimos Uber.",en:"It's raining hard; oh well, let's order an Uber."},
+  {w:"De una",meaning:"for sure / right away / sounds good!",ex:"¿Tomamos un café ahorita? — ¡De una!",en:"Shall we grab a coffee right now? — For sure!"},
+  {w:"Por si las moscas",meaning:"just in case ('in case of flies')",ex:"Lleva sombrilla por si las moscas.",en:"Bring an umbrella just in case."}
+];
+const MULETILLAS_QUIZ=[
+  {id:"flow-a-ver",prompt:"You need 2 seconds to check the bakery case before ordering:",choices:["A ver… deme una almojábana.","Por si las moscas… deme una almojábana.","Ni modo… deme una almojábana."],ans:0,why:"'A ver…' ('let's see…') buys natural thinking time in every Colombian conversation."},
+  {id:"flow-es-que",prompt:"Politely explain why you spoke slowly: 'The thing is I'm still practicing.'",choices:["Es que todavía estoy practicando.","Mejor dicho todavía estoy practicando.","De una todavía estoy practicando."],ans:0,why:"'Es que…' ('it's just that…') softens explanations and polite excuses without sounding blunt."},
+  {id:"flow-o-sea",prompt:"Clarifying what you meant ('I mean, tomorrow morning, not tonight'):",choices:["O sea, mañana por la mañana.","Ni modo, mañana por la mañana.","Pues ya qué, mañana por la mañana."],ans:0,why:"'O sea' means 'I mean / in other words' when rephrasing your point."},
+  {id:"flow-ni-modo",prompt:"The bus just pulled away — shrug and accept it naturally:",choices:["Ni modo, esperamos el siguiente.","De una, esperamos el siguiente.","A ver, esperamos el siguiente."],ans:0,why:"'Ni modo' = 'oh well / nothing we can do about it'."},
+  {id:"flow-moscas",prompt:"Tell a friend to pack a jacket 'just in case' in Bogotá:",choices:["Lleva chaqueta por si las moscas.","Lleva chaqueta o sea.","Lleva chaqueta a ver."],ans:0,why:"'Por si las moscas' is the quintessential Colombian expression for 'just in case'."},
+  {id:"flow-de-una",prompt:"Friend asks '¿Vamos por un tinto?' — answer enthusiastically 'I'm down / for sure!'",choices:["¡De una!","¡Es que!","¡Ni modo!"],ans:0,why:"'¡De una!' means 'right away / count me in / for sure!' across Colombia."}
+];
+export function buildMuletillasLab(sec){
+  sec.innerHTML="";
+  const intro=document.createElement("div");intro.className="gram-intro";
+  intro.innerHTML=`<div class="gram-intro-title">🔗 Muletillas & Conversational Flow</div>
+    <div class="gram-intro-text">Stop translating word-for-word in your head — use the natural Colombian connector words that buy thinking time and make sentences flow.</div>`;
+  sec.appendChild(intro);
+  const grid=document.createElement("div");grid.className="muletillas-grid";
+  MULETILLAS_BANK.forEach(item=>{
+    const c=document.createElement("button");c.type="button";c.className="muletilla-card";
+    c.innerHTML=`<div class="muletilla-top"><strong>${escapeVocabHtml(item.w)}</strong><span>🔊</span></div>
+      <div class="muletilla-mean">${escapeVocabHtml(item.meaning)}</div>
+      <div class="muletilla-ex">💬 ${escapeVocabHtml(item.ex)}</div>
+      <div class="muletilla-en">${escapeVocabHtml(item.en)}</div>`;
+    c.onclick=()=>{markPractice("phrases",item.ex);speak(item.ex,0.78);};
+    grid.appendChild(c);
+  });
+  sec.appendChild(grid);
+  mountMiniGrammarLab(sec,"🔗 Pick the Natural Connector",MULETILLAS_QUIZ,"flow|");
+}
 export function buildVoseoLab(sec){
   sec.innerHTML="";
   const intro=document.createElement("div");intro.className="gram-intro";
@@ -928,7 +966,7 @@ export function buildSpeakingGuide(){
 export const GRAM_GROUPS={regiones:{label:"🗺️ Regiones",items:[["estructura","🗺️ Regiones"]]},posters:{label:"🖼️ Posters",items:[["estructura","🖼️ Posters"]]},
   tiempos:{label:"⏱️ Tiempos",items:[["presente","⚡ Presente"],["pasado","⏮️ Pasado"],["pasado-contraste","🎞️ Evento vs. contexto"],["futuro","⏭️ Futuro"],["perfecto","✅ He hecho"],["condicional","🙏 Haría / podría"],["pasado-perfecto","⏪ Había hecho"],["futuro-perfecto","⏩ Habré hecho"]]},
   pronombres:{label:"👤 Pronombres",items:[["pronombres","Lo / La / Le"]]},
-  patrones:{label:"🧩 Patrones",items:[["voseo","🇨🇴 Usted · Tú · Vos"],["reflexivos","🔄 Reflexivos"],["subjuntivo","🌱 Subjuntivo"],["trucos","🧠 Trucos"]]},
+  patrones:{label:"🧩 Patrones",items:[["voseo","🇨🇴 Usted · Tú · Vos"],["muletillas","🔗 Muletillas & Flow"],["reflexivos","🔄 Reflexivos"],["subjuntivo","🌱 Subjuntivo"],["trucos","🧠 Trucos"]]},
   estructura:{label:"🧱 Hablar",items:[["estructura","🧱 Estructura"]]}
 };
 let gramGroup="regiones",gramSection="estructura";
@@ -948,7 +986,7 @@ export function showGramGroup(g){
 }
 export function showGram(id){
   gramSection=id;
-  ["presente","pasado","pasado-contraste","futuro","perfecto","condicional","pasado-perfecto","futuro-perfecto","pronombres","reflexivos","voseo","subjuntivo","trucos","estructura"].forEach(g=>{
+  ["presente","pasado","pasado-contraste","futuro","perfecto","condicional","pasado-perfecto","futuro-perfecto","pronombres","reflexivos","voseo","muletillas","subjuntivo","trucos","estructura"].forEach(g=>{
     document.getElementById("gs-"+g).classList.toggle("active",g===id);
   });
   const sub=document.getElementById("gram-sub");
@@ -964,6 +1002,7 @@ export function initGuides() {
   buildGram("pronombres");
   buildGram("reflexivos");
   buildGram("voseo");
+  buildGram("muletillas");
   buildSpeakingGuide();
   showGramGroup("regiones");
 }

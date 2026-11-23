@@ -105,7 +105,7 @@ export function buildSrsReviewDeck(){
         for(const d of shuffledCopy(COLOMBIANISMOS)){if(opts.length>=4)break;if(d&&d.word&&!opts.includes(d.word))opts.push(d.word);}
         cards.push({kind:"quiz",kicker:"🇨🇴 Due · Colombianismo",prompt:colHit.en,tts:colHit.example||colHit.tts||colHit.word,ans:colHit.word,hint:`${colHit.word} — ${colHit.example||colHit.usage}`,srsKey:key,opts:shuffledCopy(opts)});
       }
-    }else if(key.includes("|")&&!/^(?:pm|gt|ne|brain|rr|vf|vq|num|frq|verb|read|voseo|col|contraste|subj)\|/.test(key)){
+    }else if(key.includes("|")&&!/^(?:pm|gt|ne|brain|rr|vf|vq|num|frq|verb|read|voseo|col|contraste|subj|flow)\|/.test(key)){
       const sep=key.indexOf("|");
       const es=key.slice(0,sep),ans=key.slice(sep+1);
       if(es&&ans){
