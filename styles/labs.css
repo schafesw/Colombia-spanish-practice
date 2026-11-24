@@ -836,3 +836,46 @@
 :root[data-theme="light"] .muletilla-card,:root[data-theme="light"] .today-warmup-fold,:root[data-theme="light"] .warmup-mini-row{background:rgba(20,32,26,0.03);}
 :root[data-theme="light"] .muletilla-top{color:#0f766e;}
 :root[data-theme="light"] .muletilla-mean{color:#b45309;}
+
+/* ── v129.0: Missing Trainer Controls, Pill Wrapping & Mobile Ergonomics ── */
+.bridge-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.bridge-title{font-size:0.98rem;font-weight:800;color:var(--text);line-height:1.25;}
+.bridge-sub{font-size:0.8rem;color:var(--muted);line-height:1.45;margin-top:3px;}
+.bridge-score{font-size:0.78rem;font-weight:800;padding:4px 10px;border-radius:99px;background:rgba(45,212,191,0.14);color:var(--teal);white-space:nowrap;flex-shrink:0;}
+.bridge-controls{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 10px;}
+.voc-flash-speak{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:7px 14px;border-radius:10px;border:1px solid rgba(45,212,191,0.4);background:rgba(45,212,191,0.12);color:var(--teal);font-size:0.82rem;font-weight:800;cursor:pointer;transition:all 0.15s ease;}
+.voc-flash-speak:hover{background:rgba(45,212,191,0.2);}
+.bridge-opts{display:grid;gap:8px;margin:10px 0;}
+.bridge-opt{display:flex;align-items:center;justify-content:center;min-height:44px;padding:10px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:0.86rem;font-weight:700;line-height:1.3;cursor:pointer;transition:all 0.15s ease;text-align:center;}
+.bridge-opts.vq-opts .bridge-opt{justify-content:flex-start;text-align:left;}
+.bridge-opt:hover:not(:disabled){border-color:rgba(45,212,191,0.55);background:rgba(45,212,191,0.08);}
+.bridge-opt.ok{border-color:var(--teal);background:rgba(74,168,160,0.2);color:var(--teal);}
+.bridge-opt.no{border-color:var(--pink);background:rgba(232,93,117,0.16);color:var(--pink);}
+.bridge-fb{font-size:0.84rem;font-weight:700;line-height:1.45;margin:6px 0;min-height:20px;color:var(--text);}
+.bridge-next{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:9px 18px;border-radius:11px;border:none;background:var(--teal);color:#0b1411;font-size:0.86rem;font-weight:800;cursor:pointer;margin-top:6px;transition:transform 0.12s ease;}
+.bridge-next[hidden]{display:none;}
+.vf-mode-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.vf-mode-btn{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:7px 14px;border-radius:99px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--muted);font-size:0.78rem;font-weight:800;cursor:pointer;transition:all 0.15s ease;}
+.vf-mode-btn.active{border-color:var(--gold);background:rgba(245,196,81,0.16);color:var(--gold);}
+.warmup-back{min-height:36px;padding:6px 12px !important;border-radius:10px;border:1px solid rgba(45,212,191,0.35) !important;background:rgba(45,212,191,0.08) !important;display:inline-flex;align-items:center;gap:4px;}
+:root[data-theme="light"] .bridge-score,:root[data-theme="light"] .voc-flash-speak{background:#ccfbf1;color:#0f766e;border-color:#5eead4;}
+:root[data-theme="light"] .bridge-opt{background:#ffffff;border-color:rgba(20,32,26,0.16);color:#14201a;}
+:root[data-theme="light"] .bridge-opt.ok{background:#ccfbf1;border-color:#0f766e;color:#0f766e;}
+:root[data-theme="light"] .bridge-opt.no{background:#ffe4e6;border-color:#be123c;color:#be123c;}
+:root[data-theme="light"] .vf-mode-btn{background:rgba(20,32,26,0.05);color:#475569;border-color:rgba(20,32,26,0.14);}
+:root[data-theme="light"] .vf-mode-btn.active{background:#fef3c7;border-color:#d97706;color:#92400e;}
+:root[data-theme="light"] .bridge-next{color:#ffffff;background:#0f766e;}
+
+/* Wrap non-compact sub-navigation bars cleanly without expanding single-viewport #page-quiz */
+.gram-tabs,.pm-set-row,.pm-dir-row,.chat-tabs{flex-wrap:wrap !important;overflow-x:visible !important;}
+
+/* Bump compact mobile touch targets (keeping #page-quiz compact single-screen fit intact) */
+@media (max-width:720px){
+  .reg-tab-btn,.voseo-pill,.chat-mini-btn,.special-sound-record,
+  #page-lecciones .mf-chip,.vocab-mode-toggle .mf-chip{
+    min-height:36px;padding-top:6px;padding-bottom:6px;
+  }
+  #page-fonetica .fb{
+    min-width:34px;min-height:34px;width:auto;padding:4px 9px;
+  }
+}
