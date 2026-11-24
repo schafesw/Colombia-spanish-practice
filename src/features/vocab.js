@@ -295,7 +295,8 @@ export function rVocales(list){
     const hdr=document.createElement("div");hdr.className="vocal-hdr";
     hdr.innerHTML=`<div class="vocal-ltr" style="background:${v.bg};color:${v.color}">${v.letter}</div>
       <div class="vocal-hdr-info"><div class="vocal-name">La vocal "${v.letter.toLowerCase()}"</div><div class="vocal-sound">Suena: "${v.sound}"</div></div>
-      <button onclick="speak('${v.letter}',0.7)" style="background:transparent;border:none;font-size:1.3rem;cursor:pointer">🔊</button>`;
+      <button type="button" class="vocal-hdr-spk" style="background:transparent;border:none;font-size:1.3rem;cursor:pointer">🔊</button>`;
+    const hSpk=hdr.querySelector(".vocal-hdr-spk");if(hSpk)hSpk.onclick=()=>speak(v.letter,0.7);
     sec.appendChild(hdr);
     const exs=document.createElement("div");exs.className="vocal-exs";
     v.examples.forEach(ex=>{
@@ -598,9 +599,11 @@ export function showVerbDetail(key,verb){
     <div class="vd-type">${verb.type}</div>
     <div class="vd-en">${verb.en}</div>
     <div class="vd-forms">
-      <div class="vd-form-card" onclick="speak('${verb.gerund.f}',0.8)"><div class="vd-form-label">Gerundio</div><div class="vd-form-word">${verb.gerund.f}</div><div class="vd-form-en">${verb.gerund.en} 🔊</div></div>
-      <div class="vd-form-card" onclick="speak('${verb.participle.f}',0.8)"><div class="vd-form-label">Participio</div><div class="vd-form-word">${verb.participle.f}</div><div class="vd-form-en">${verb.participle.en} 🔊</div></div>
+      <div class="vd-form-card vd-gerund"><div class="vd-form-label">Gerundio</div><div class="vd-form-word">${verb.gerund.f}</div><div class="vd-form-en">${verb.gerund.en} 🔊</div></div>
+      <div class="vd-form-card vd-participle"><div class="vd-form-label">Participio</div><div class="vd-form-word">${verb.participle.f}</div><div class="vd-form-en">${verb.participle.en} 🔊</div></div>
     </div>`;
+  const vGer=hdr.querySelector(".vd-gerund");if(vGer)vGer.onclick=()=>speak(verb.gerund.f,0.8);
+  const vPar=hdr.querySelector(".vd-participle");if(vPar)vPar.onclick=()=>speak(verb.participle.f,0.8);
   vd.appendChild(hdr);
   mountVerbBlitzCard(vd,key,verb);
   // Conjugation tables
@@ -622,9 +625,11 @@ export function showVerbDetail(key,verb){
   const imp=document.createElement("div");imp.className="imperative-box";
   imp.innerHTML=`<div class="imp-title">🫵 Imperativo (Commands)</div>
     <div class="imp-grid">
-      <div class="imp-card" onclick="speak('${verb.imperative.tu.f}',0.75)"><div class="imp-label">Tú (informal)</div><div class="imp-form">${verb.imperative.tu.f}</div><div class="imp-en">${verb.imperative.tu.en} 🔊</div></div>
-      <div class="imp-card" onclick="speak('${verb.imperative.usted.f}',0.75)"><div class="imp-label">Usted (formal)</div><div class="imp-form">${verb.imperative.usted.f}</div><div class="imp-en">${verb.imperative.usted.en} 🔊</div></div>
+      <div class="imp-card imp-tu"><div class="imp-label">Tú (informal)</div><div class="imp-form">${verb.imperative.tu.f}</div><div class="imp-en">${verb.imperative.tu.en} 🔊</div></div>
+      <div class="imp-card imp-usted"><div class="imp-label">Usted (formal)</div><div class="imp-form">${verb.imperative.usted.f}</div><div class="imp-en">${verb.imperative.usted.en} 🔊</div></div>
     </div>`;
+  const impTu=imp.querySelector(".imp-tu");if(impTu)impTu.onclick=()=>speak(verb.imperative.tu.f,0.75);
+  const impUd=imp.querySelector(".imp-usted");if(impUd)impUd.onclick=()=>speak(verb.imperative.usted.f,0.75);
   vd.appendChild(imp);
   // Word family
   const wf=document.createElement("div");wf.className="word-family";

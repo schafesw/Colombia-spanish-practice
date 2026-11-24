@@ -77,3 +77,20 @@ export function showAppToast(message,tone="info"){
   clearTimeout(appToastTimer);
   appToastTimer=setTimeout(()=>{el.hidden=true;},3200);
 }
+export function mountAccentHelperBar(parent,inputEl){
+  if(!parent||!inputEl||typeof document==="undefined")return null;
+  const bar=document.createElement("div");bar.className="accent-helper-bar";bar.setAttribute("aria-label","Insert Spanish accent characters");
+  ["á","é","í","ó","ú","ü","ñ","¿","¡"].forEach(ch=>{
+    const b=document.createElement("button");b.type="button";b.className="accent-char-btn";b.textContent=ch;b.setAttribute("aria-label","Insert "+ch);
+    b.onclick=()=>{
+      const start=inputEl.selectionStart??inputEl.value.length;
+      const end=inputEl.selectionEnd??inputEl.value.length;
+      inputEl.value=inputEl.value.slice(0,start)+ch+inputEl.value.slice(end);
+      inputEl.focus();
+      try{inputEl.setSelectionRange(start+ch.length,start+ch.length);}catch(e){}
+    };
+    bar.appendChild(b);
+  });
+  parent.appendChild(bar);
+  return bar;
+}

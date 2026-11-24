@@ -1,10 +1,12 @@
-import { PICTURE_MATCH_BANK, GRINGO_TRAPS, NATURAL_EAR_CLIPS, SPANISH_BRAIN_DRILLS, VC, VERBS, PQ, COLOMBIANISMOS, FRASES } from "../../data/index.js";
+import { PICTURE_MATCH_BANK, GRINGO_TRAPS, NATURAL_EAR_CLIPS, SPANISH_BRAIN_DRILLS, VC, VERBS, PQ, COLOMBIANISMOS, FRASES, MINIMAL_PAIRS } from "../../data/index.js";
 import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml } from "../core/text-utils.js";
 import { markPractice, recordSrs, srsDue, srsStore } from "../core/stores.js";
 import { aQ, RR_BANK } from "../core/quiz-bank.js";
 import { actions, showPage } from "./navigation.js";
 import { NUMBERS_EAR_DRILLS } from "./vocab.js";
+import { STRESS_ACCENT_PAIRS } from "./phonetics.js";
+import { CONTRAST_DRILLS, SUBJUNCTIVE_DRILLS, VOSEO_SITUATIONS, MULETILLAS_QUIZ } from "./guides.js";
 
 var dfCards=[],dfIdx=0,dfPicked=null,dfScore=0,dfStreak=0,dfSessionMode="mix";
 function shuffledCopy(list){return list.slice().sort(()=>Math.random()-0.5);}
@@ -105,6 +107,27 @@ export function buildSrsReviewDeck(){
         for(const d of shuffledCopy(COLOMBIANISMOS)){if(opts.length>=4)break;if(d&&d.word&&!opts.includes(d.word))opts.push(d.word);}
         cards.push({kind:"quiz",kicker:"🇨🇴 Due · Colombianismo",prompt:colHit.en,tts:colHit.example||colHit.tts||colHit.word,ans:colHit.word,hint:`${colHit.word} — ${colHit.example||colHit.usage}`,srsKey:key,opts:shuffledCopy(opts)});
       }
+    }else if(key.startsWith("phon|")){
+      const target=key.slice(5);
+      const pairs=[...(Array.isArray(MINIMAL_PAIRS)?MINIMAL_PAIRS:[]),...(Array.isArray(STRESS_ACCENT_PAIRS)?STRESS_ACCENT_PAIRS:[])];
+      const hit=pairs.find(pr=>pr&&(pr.a===target||pr.b===target));
+      if(hit){
+        const isA=hit.a===target;
+        const ans=isA?hit.a:hit.b,other=isA?hit.b:hit.a,en=isA?hit.aEn:hit.bEn;
+        cards.push({kind:"quiz",kicker:"👂 Due · Sound & Stress",prompt:`Listen carefully: ${hit.a} vs. ${hit.b}`,tts:ans,ans,hint:`${ans} (${en}) — ${hit.tip}`,srsKey:key,opts:shuffledCopy([ans,other])});
+      }
+    }else if(key.startsWith("voseo|")&&Array.isArray(VOSEO_SITUATIONS)){
+      const v=VOSEO_SITUATIONS.find(x=>x.id===key.slice(6));
+      if(v)cards.push({kind:"quiz",kicker:"🇨🇴 Due · Usted · Tú · Vos",prompt:v.q,tts:v.choices[v.ans],ans:v.choices[v.ans],hint:v.why,srsKey:key,opts:shuffledCopy(v.choices)});
+    }else if(key.startsWith("contraste|")&&Array.isArray(CONTRAST_DRILLS)){
+      const c=CONTRAST_DRILLS.find(x=>x.id===key.slice(10));
+      if(c)cards.push({kind:"quiz",kicker:"🎞️ Due · Preterite vs Imperfect",prompt:c.prompt,tts:c.choices[c.ans],ans:c.choices[c.ans],hint:c.why,srsKey:key,opts:shuffledCopy(c.choices)});
+    }else if(key.startsWith("subj|")&&Array.isArray(SUBJUNCTIVE_DRILLS)){
+      const s=SUBJUNCTIVE_DRILLS.find(x=>x.id===key.slice(5));
+      if(s)cards.push({kind:"quiz",kicker:"🌱 Due · Subjuntivo",prompt:s.prompt,tts:s.choices[s.ans],ans:s.choices[s.ans],hint:s.why,srsKey:key,opts:shuffledCopy(s.choices)});
+    }else if(key.startsWith("flow|")&&Array.isArray(MULETILLAS_QUIZ)){
+      const f=MULETILLAS_QUIZ.find(x=>x.id===key.slice(5));
+      if(f)cards.push({kind:"quiz",kicker:"🔗 Due · Muletillas & Flow",prompt:f.prompt,tts:f.choices[f.ans],ans:f.choices[f.ans],hint:f.why,srsKey:key,opts:shuffledCopy(f.choices)});
     }else if(key.includes("|")&&!/^(?:pm|gt|ne|brain|rr|vf|vq|num|frq|verb|read|voseo|col|contraste|subj|flow|phon)\|/.test(key)){
       const sep=key.indexOf("|");
       const es=key.slice(0,sep),ans=key.slice(sep+1);

@@ -6,7 +6,7 @@ import { appStorage } from "../state/storage.js";
 import { appState } from "../state/app-state.js";
 import { effectiveLevel } from "../state/preferences.js";
 import { speak } from "../audio/voice-engine.js";
-import { escapeVocabHtml, lpEl, scrollAppTop, spanishStressHint, normalizeQuizText, applyQuizFitClasses } from "../core/text-utils.js";
+import { escapeVocabHtml, lpEl, scrollAppTop, spanishStressHint, normalizeQuizText, applyQuizFitClasses, mountAccentHelperBar } from "../core/text-utils.js";
 import {
   markPractice, practiced, lessonProgress, saveLessons, lessonScores, saveLessonScores,
   recordPracticeDay, practiceStreak, recordSrs, recordSpeakingError, clearSpeakingError,
@@ -356,7 +356,8 @@ export function renderLessonStep(){
       blankCheckBtn.onclick=()=>{if(blankInput.value.trim())solveBlank(blankInput.value.trim());};
       blankInput.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();blankCheckBtn.click();}};
       typeRow.append(blankInput,blankCheckBtn);
-      body.append(grid,typeRow,fbMsg);
+      const blankAccentWrap=document.createElement("div");mountAccentHelperBar(blankAccentWrap,blankInput);
+      body.append(grid,typeRow,blankAccentWrap,fbMsg);
     }
   }
   else if(step==="respuesta"){
@@ -403,7 +404,9 @@ export function renderLessonStep(){
       const customBtn=document.createElement("button");customBtn.type="button";customBtn.className="lp-nav-btn";customBtn.textContent="Check my reply";
       customAct.appendChild(customBtn);
       attachMic(customAct,pair.answerEs,"phrases");
-      customWrap.append(customIn,customAct);
+      customWrap.append(customIn);
+      mountAccentHelperBar(customWrap,customIn);
+      customWrap.appendChild(customAct);
       body.appendChild(customWrap);
 
       const models=lpEl("lp-response-models");models.hidden=true;
@@ -592,7 +595,7 @@ export function renderLessonStep(){
         attachMic(feedback,target.es);
       };
       input.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();check.click();}};
-      actions.append(check,hear);box.append(input,actions,feedback);body.appendChild(box);
+      actions.append(check,hear);box.append(input);mountAccentHelperBar(box,input);box.append(actions,feedback);body.appendChild(box);
     }else{body.appendChild(lpEl("lp-hint","No typing prompt is available for this lesson yet."));navBtn("Next →",next,true);}
   }
   else if(step==="estructura"){

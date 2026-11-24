@@ -879,3 +879,15 @@
     min-width:34px;min-height:34px;width:auto;padding:4px 9px;
   }
 }
+
+/* ── v130.0: Spanish Accent Helper Bar & Horizontal Scroll Affordance ────── */
+.accent-helper-bar{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 4px;}
+.accent-char-btn{min-width:32px;min-height:32px;padding:4px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:0.86rem;font-weight:800;cursor:pointer;line-height:1;transition:all 0.12s ease;}
+.accent-char-btn:hover{border-color:var(--teal);background:rgba(45,212,191,0.12);color:var(--teal);}
+:root[data-theme="light"] .accent-char-btn{background:#ffffff;border-color:rgba(20,32,26,0.18);color:#14201a;}
+:root[data-theme="light"] .accent-char-btn:hover{border-color:#0f766e;background:#ccfbf1;color:#0f766e;}
+#page-quiz .quiz-mode-row,#page-quiz .qv102-bar,.cat-wrap{
+  padding-right:18px;
+  -webkit-mask-image:linear-gradient(90deg,#000 0%,#000 calc(100% - 18px),transparent 100%);
+  mask-image:linear-gradient(90deg,#000 0%,#000 calc(100% - 18px),transparent 100%);
+}
