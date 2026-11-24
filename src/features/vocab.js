@@ -747,6 +747,9 @@ export function initVocab() {
     vocabPrev.onclick=()=>{const i=VOCAB_CATS.findIndex(c=>c.id===aC);if(i>0)sCat(VOCAB_CATS[i-1].id);};
     vocabNext.onclick=()=>{const i=VOCAB_CATS.findIndex(c=>c.id===aC);if(i<VOCAB_CATS.length-1)sCat(VOCAB_CATS[i+1].id);};
     vocabHomeBack.onclick=()=>showVocabHome();
+    const scL=document.getElementById("cat-scroll-left"),scR=document.getElementById("cat-scroll-right");
+    if(scL)scL.onclick=()=>cw.scrollBy({left:-220,behavior:"smooth"});
+    if(scR)scR.onclick=()=>cw.scrollBy({left:220,behavior:"smooth"});
   }
   if (vocabSearch) vocabSearch.oninput = () => renderVocabSearch(vocabSearch.value);
   rV();

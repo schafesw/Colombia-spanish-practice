@@ -285,3 +285,111 @@ export function renderReading(reading){
   syncReadingDone();
   done.onclick=()=>{readingProgress[reading.id]=true;saveReadings();markPractice("phrases",reading.title);renderReading(reading);};card.appendChild(done);root.appendChild(card);
 }
+
+export const VOICE_NOTE_SCENES=[
+  {
+    id:"vn-sanjuan-almuerzo",
+    sender:"Primo Carlos · San Juan del Cesar 🪗",
+    title:"Sancocho en casa de la abuela",
+    duration:"0:28",
+    tts:"¡Quiubo primo! Oye, hoy mi mamá va a hacer sancocho de gallina como a la una. Si vienes en mototaxi, dile que te deje en la esquina de la tienda de Don Julio. Trae hielo por si las moscas, que hace un calor tremendo.",
+    lines:[
+      {es:"¡Quiubo primo! Oye, hoy mi mamá va a hacer sancocho de gallina como a la una.",en:"Hey cousin! Listen, today my mom is making chicken sancocho around 1:00."},
+      {es:"Si vienes en mototaxi, dile que te deje en la esquina de la tienda de Don Julio.",en:"If you come by mototaxi, tell them to drop you at the corner of Don Julio's corner store."},
+      {es:"Trae hielo por si las moscas, que hace un calor tremendo.",en:"Bring ice just in case, because it's super hot."}
+    ],
+    questions:[
+      {q:"What is Carlos's mom cooking?",choices:["Sancocho de gallina around 1:00","Ajiaco at 3:00","Bandeja paisa tonight"],answer:"Sancocho de gallina around 1:00"},
+      {q:"Where should the mototaxi drop you?",choices:["Corner of Don Julio's store","Main bus terminal","Plaza Simón Bolívar"],answer:"Corner of Don Julio's store"},
+      {q:"What does he ask you to bring just in case?",choices:["Ice (hielo)","Umbrella","Soda"],answer:"Ice (hielo)"}
+    ]
+  },
+  {
+    id:"vn-bogota-llaves",
+    sender:"Doña Marta · Arrendadora Bogotá 🏔️",
+    title:"Llaves, portería y agua caliente",
+    duration:"0:32",
+    tts:"Buenas tardes Seth, soy Marta del apartamento cuatrocientos dos. Te dejé las llaves con el portero, don Luis. Ojo que para el agua caliente hay que abrir primero la llave izquierda y esperar diez segundos. Cualquier cosa me escribes por WhatsApp.",
+    lines:[
+      {es:"Buenas tardes Seth, soy Marta del apartamento 402.",en:"Good afternoon Seth, it's Marta from apartment 402."},
+      {es:"Te dejé las llaves con el portero, don Luis.",en:"I left the keys with the doorman, Don Luis."},
+      {es:"Ojo que para el agua caliente hay que abrir primero la llave izquierda y esperar diez segundos.",en:"Heads up: for hot water you have to turn on the left tap first and wait 10 seconds."},
+      {es:"Cualquier cosa me escribes por WhatsApp.",en:"Anything at all, message me on WhatsApp."}
+    ],
+    questions:[
+      {q:"Which apartment is it?",choices:["402","204","412"],answer:"402"},
+      {q:"Who has the keys?",choices:["Don Luis at the portería (doorman)","Marta upstairs","A neighbor in 301"],answer:"Don Luis at the portería (doorman)"},
+      {q:"How do you get hot water?",choices:["Left tap first, wait 10 seconds","Right tap all the way","Flip the breaker in the kitchen"],answer:"Left tap first, wait 10 seconds"}
+    ]
+  },
+  {
+    id:"vn-medellin-cafe",
+    sender:"Valeria · Medellín 🌸",
+    title:"Cambio de punto de encuentro",
+    duration:"0:25",
+    tts:"¡Hola! Qué pena contigo, hay un trancón horrible bajando por El Poblado. Mejor nos vemos en el café Pergamino a las cuatro y media en vez de las cuatro. Pídeme un tinto campesino si llegas antes, ya te transfiero por Nequi.",
+    lines:[
+      {es:"¡Hola! Qué pena contigo, hay un trancón horrible bajando por El Poblado.",en:"Hi! So sorry, there's a horrible traffic jam coming down El Poblado."},
+      {es:"Mejor nos vemos en el café Pergamino a las 4:30 en vez de las 4:00.",en:"Better if we meet at Pergamino café at 4:30 instead of 4:00."},
+      {es:"Pídeme un tinto campesino si llegas antes, ya te transfiero por Nequi.",en:"Order me a tinto campesino if you arrive early, I'll send you Nequi right away."}
+    ],
+    questions:[
+      {q:"Why is Valeria running late?",choices:["Heavy traffic jam (trancón) in El Poblado","Rain closed the Metro","She lost her keys"],answer:"Heavy traffic jam (trancón) in El Poblado"},
+      {q:"New meeting time at Pergamino?",choices:["4:30","4:00","5:15"],answer:"4:30"},
+      {q:"What does she ask you to order for her?",choices:["Un tinto campesino (Nequi payback)","A maracuyá juice","Two pandebonos"],answer:"Un tinto campesino (Nequi payback)"}
+    ]
+  }
+];
+
+export function renderVoiceNoteLab(note){
+  if(typeof rrStop==="function")rrStop();
+  const root=document.getElementById("lesson-list");if(!root||!note)return;root.innerHTML="";
+  setLeccionesFocusMode(true);
+  const back=document.createElement("button");back.type="button";back.className="phrase-back";back.innerHTML="<span>‹</span><span>Back to lessons</span>";back.onclick=actions.renderLessons;root.appendChild(back);
+  const card=lpEl("lp-card vn-card");
+  card.appendChild(lpEl("reading-kicker","🎧 NOTA DE VOZ · WHATSAPP LISTENING"));
+  card.appendChild(lpEl("lp-step-title",note.title));
+  card.appendChild(lpEl("reading-intro",`${note.sender} · ${note.duration}`));
+  let rate=0.92;
+  const speedRow=lpEl("reading-speed");speedRow.innerHTML="<span>Speed</span>";
+  [[0.92,"Natural (0.92×)"],[1.05,"Street (1.05×)"],[0.7,"Clear (0.7×)"]].forEach(([r,lbl],idx)=>{
+    const b=document.createElement("button");b.type="button";b.className="reading-speed-btn"+(idx===0?" selected":"");b.textContent=lbl;
+    b.onclick=()=>{rate=r;speedRow.querySelectorAll("button").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");speak(note.tts,rate);};
+    speedRow.appendChild(b);
+  });
+  card.appendChild(speedRow);
+  const play=document.createElement("button");play.type="button";play.className="lp-speak reading-play";play.textContent="▶️ Play Voice Note";play.onclick=()=>speak(note.tts,rate);card.appendChild(play);
+  const transcript=document.createElement("details");transcript.className="reading-translation";transcript.innerHTML="<summary>👀 Show Spanish transcript & English (listen blind first!)</summary><div class='reading-translation-copy'></div>";
+  const tCopy=transcript.querySelector(".reading-translation-copy");
+  note.lines.forEach(l=>{const p=document.createElement("p");p.innerHTML=`<strong>${escapeVocabHtml(l.es)}</strong><br><small>${escapeVocabHtml(l.en)}</small>`;tCopy.appendChild(p);});
+  card.appendChild(transcript);
+
+  const solved=new Set();
+  const done=document.createElement("button");done.type="button";done.className="lesson-start";
+  const syncDone=()=>{
+    const left=note.questions.length-solved.size;
+    done.disabled=left>0&&!readingProgress[note.id];
+    done.textContent=readingProgress[note.id]?"✅ Voice note mastered — listen again":(left>0?`🔒 Answer ${left} detail question${left===1?"":"s"} above to complete`:"✅ Mark Voice Note Complete");
+  };
+  note.questions.forEach((q,qi)=>{
+    const box=lpEl("reading-question");box.appendChild(lpEl("reading-question-text",q.q));
+    const opts=lpEl("reading-question-options");const fb=lpEl("reading-question-feedback","");
+    q.choices.forEach(c=>{
+      const b=document.createElement("button");b.type="button";b.className="reading-choice";b.textContent=c;
+      b.onclick=()=>{
+        opts.querySelectorAll("button").forEach(x=>x.disabled=true);
+        const ok=c===q.answer;
+        b.classList.add(ok?"correct":"wrong");
+        if(!ok)opts.querySelectorAll("button").forEach(x=>{if(x.textContent===q.answer)x.classList.add("reveal");});
+        fb.className="reading-question-feedback "+(ok?"correct":"wrong");
+        fb.textContent=ok?"✅ ¡Oído fino!":"❌ Answer: "+q.answer;
+        solved.add(qi);recordSrs("vn|"+note.id+"|"+qi,ok);syncDone();
+      };
+      opts.appendChild(b);
+    });
+    box.append(opts,fb);card.appendChild(box);
+  });
+  syncDone();
+  done.onclick=()=>{readingProgress[note.id]=true;saveReadings();markPractice("phrases",note.title);renderVoiceNoteLab(note);};
+  card.appendChild(done);root.appendChild(card);
+}
