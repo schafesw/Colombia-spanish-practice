@@ -51,6 +51,7 @@ export function renderPictureMatchDeck(host){
       <button type="button" class="mf-chip${pmDirection==="word2pic"?" active":""}" data-dir="word2pic">📖 Word → Photo</button>
       <button type="button" class="mf-chip${pmDirection==="audio2pic"?" active":""}" data-dir="audio2pic">🔊 Hear → Photo</button>
       <button type="button" class="mf-chip${pmDirection==="pic2word"?" active":""}" data-dir="pic2word">👁️ Photo → Word</button>
+      <button type="button" class="mf-chip${pmDirection==="pic2recall"?" active":""}" data-dir="pic2recall">📸 Recall</button>
     </div>
   </div>
   <div class="pm-prompt-box"></div>
@@ -78,12 +79,31 @@ export function renderPictureMatchDeck(host){
     pBox.innerHTML=`<button type="button" class="lp-nav-btn primary pm-hear-btn">🔊 Tap to Hear Colombian Phrase</button>`
       +(pmPickedId?"":`<div class="pm-prompt-hint">Match what you hear to the photo</div>`);
     pBox.querySelector(".pm-hear-btn").onclick=()=>speak(target.tts,0.82);
+  }else if(pmDirection==="pic2recall"){
+    pBox.innerHTML=`<div class="pm-solo-img-wrap"><img class="pm-solo-img" src="${target.img}" alt="Colombian scene to recall"/></div>`
+      +(pmPickedId?"":`<div class="pm-prompt-hint">Say or recall the Colombian phrase first, then reveal to self-check</div><div class="bridge-actions" style="justify-content:center;margin-top:8px"><button type="button" class="lp-nav-btn primary pm-recall-rev">👀 Reveal Answer</button></div>`);
+    const revB=pBox.querySelector(".pm-recall-rev");
+    if(revB)revB.onclick=()=>{pmPickedId="__revealed__";speak(target.tts,0.8);renderPictureMatchDeck(host);};
   }else{
     pBox.innerHTML=`<div class="pm-solo-img-wrap"><img class="pm-solo-img" src="${target.img}" alt="${escapeVocabHtml(target.en)}"/></div>`
       +(pmPickedId?"":`<div class="pm-prompt-hint">Which Colombian phrase matches this photo?</div>`);
   }
   const grid=box.querySelector(".pm-grid");
   const fb=box.querySelector(".pm-feedback");
+  if(pmDirection==="pic2recall"){
+    grid.hidden=true;
+    if(pmPickedId==="__revealed__"){
+      fb.className="pm-feedback ok";
+      fb.innerHTML=`🇨🇴 <strong>${escapeVocabHtml(target.word)}</strong> — <em>${escapeVocabHtml(target.en)}</em><small>${escapeVocabHtml(target.hint)}</small>
+        <div class="bridge-actions" style="margin-top:8px"><button type="button" class="lp-nav-btn primary pm-grade-ok">✅ Knew it</button><button type="button" class="lp-nav-btn pm-grade-no">🔁 Practice again</button></div>`;
+      fb.querySelector(".pm-grade-ok").onclick=()=>{pmAttempts++;pmScore++;pmStreak++;pmPickedId=target.id;markPractice("vocab",target.tts);if(typeof recordSrs==="function")recordSrs("pm|"+target.id,true);renderPictureMatchDeck(host);};
+      fb.querySelector(".pm-grade-no").onclick=()=>{pmAttempts++;pmStreak=0;pmPickedId="missed";if(typeof recordSrs==="function")recordSrs("pm|"+target.id,false);renderPictureMatchDeck(host);};
+    }else if(pmPickedId){
+      const ok=pmPickedId===target.id;
+      fb.className="pm-feedback "+(ok?"ok":"warn");
+      fb.innerHTML=`${ok?"✅ <strong>Logged!</strong>":"🔁 <strong>Queued for review:</strong>"} <strong>${escapeVocabHtml(target.word)}</strong> — <em>${escapeVocabHtml(target.en)}</em>`;
+    }
+  }else{
   choices.forEach(item=>{
     const btn=document.createElement("button");btn.type="button";
     btn.className="pm-choice-card"+(isPicChoice?" photo-only":" word-only")+(pmPickedId===item.id?(item.id===target.id?" is-right":" is-wrong"):(pmPickedId&&item.id===target.id?" is-right":""));
@@ -118,6 +138,7 @@ export function renderPictureMatchDeck(host){
     const wrongLbl=pmDirection==="audio2pic"?"🔁 <strong>Keep listening:</strong>":"❌ <strong>Not quite — it's:</strong>";
     fb.className="pm-feedback "+(ok?"ok":"warn");
     fb.innerHTML=`${ok?"✅ <strong>¡Exacto!</strong>":wrongLbl} <strong>${escapeVocabHtml(target.word)}</strong> — <em>${escapeVocabHtml(target.en)}</em><small>${escapeVocabHtml(target.hint)}</small>`;
+  }
   }
   const acts=box.querySelector(".pm-actions");
   const nextB=document.createElement("button");nextB.type="button";nextB.className="lp-nav-btn primary";

@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.db
+*.sqlite
+*.sqlite3
+*.zip
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+Thumbs.db
