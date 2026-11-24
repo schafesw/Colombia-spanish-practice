@@ -12,15 +12,15 @@
 <meta name="build-rev" content="dev"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&family=Nunito:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Public+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
-  <link rel="manifest" href="manifest.json?v=130.0"/>
+  <link rel="manifest" href="manifest.json?v=131.0"/>
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png"/>
   <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png"/>
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png"/>
-  <link rel="stylesheet" href="styles/base.css?v=130.0"/>
-  <link rel="stylesheet" href="styles/polish.css?v=130.0"/>
-  <link rel="stylesheet" href="styles/labs.css?v=130.0"/>
-  <link rel="stylesheet" href="styles/shell.css?v=130.0"/>
-  <link rel="stylesheet" href="styles/studio.css?v=130.0"/>
+  <link rel="stylesheet" href="styles/base.css?v=131.0"/>
+  <link rel="stylesheet" href="styles/polish.css?v=131.0"/>
+  <link rel="stylesheet" href="styles/labs.css?v=131.0"/>
+  <link rel="stylesheet" href="styles/shell.css?v=131.0"/>
+  <link rel="stylesheet" href="styles/studio.css?v=131.0"/>
 </head>
 <body>
 <div id="splash" hidden role="status" aria-label="Loading Español Colombia">
@@ -48,6 +48,7 @@
       <span class="studio-search-copy">Buscar</span>
       <kbd class="studio-kbd">⌘K</kbd>
     </button>
+    <span class="topbar-sync-pill" id="topbar-sync-pill" hidden aria-live="polite">☁️ Synced</span>
     <div id="profile-host"></div>
   </div>
 </header>
@@ -210,7 +211,11 @@
         <button class="vocab-nav-btn" id="vocab-next" type="button">Next ›</button>
       </div>
     </div>
-    <div class="cat-wrap" id="cat-wrap"></div>
+    <div class="cat-scroll-shell">
+      <button type="button" class="cat-scroll-arrow" id="cat-scroll-left" aria-label="Scroll categories left">‹</button>
+      <div class="cat-wrap" id="cat-wrap"></div>
+      <button type="button" class="cat-scroll-arrow" id="cat-scroll-right" aria-label="Scroll categories right">›</button>
+    </div>
     <div id="vocab-list"></div>
     <div class="verb-detail" id="verb-detail"></div>
   </div>
@@ -372,6 +377,6 @@
   </div>
 </dialog>
 
-  <script type="module" src="src/main.js?v=130.0"></script>
+  <script type="module" src="src/main.js?v=131.0"></script>
 </body>
 </html>

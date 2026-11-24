@@ -891,3 +891,17 @@
   -webkit-mask-image:linear-gradient(90deg,#000 0%,#000 calc(100% - 18px),transparent 100%);
   mask-image:linear-gradient(90deg,#000 0%,#000 calc(100% - 18px),transparent 100%);
 }
+
+/* ── v131.0: Topbar Sync Pill & Desktop Category Scroll Arrows ───────────── */
+.topbar-sync-pill{font-size:0.68rem;font-weight:800;padding:4px 9px;border-radius:99px;border:1px solid var(--border);background:rgba(45,212,191,0.12);color:var(--teal);white-space:nowrap;}
+.topbar-sync-pill[hidden]{display:none;}
+.topbar-sync-pill.is-syncing{background:rgba(245,196,81,0.14);color:var(--gold);border-color:rgba(245,196,81,0.4);}
+.topbar-sync-pill.is-offline{background:rgba(232,93,117,0.14);color:var(--pink);border-color:rgba(232,93,117,0.4);}
+:root[data-theme="light"] .topbar-sync-pill{background:#ccfbf1;color:#0f766e;border-color:#5eead4;}
+.cat-scroll-shell{display:flex;align-items:center;gap:6px;margin-bottom:16px;}
+.cat-scroll-shell .cat-wrap{margin-bottom:0;flex:1;min-width:0;}
+.cat-scroll-arrow{display:none;flex-shrink:0;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:1.1rem;font-weight:800;line-height:1;cursor:pointer;align-items:center;justify-content:center;}
+@media (hover:hover) and (min-width:721px){
+  .cat-scroll-arrow{display:inline-flex;}
+  .cat-scroll-arrow:hover{border-color:var(--teal);color:var(--teal);}
+}

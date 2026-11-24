@@ -600,6 +600,14 @@ export function initStudioShell() {
     if (openModal) return;
     const tag = e.target && e.target.tagName;
     if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || e.target?.isContentEditable) return;
+    if (e.key === "Enter") {
+      const nextBtn = Array.from(document.querySelectorAll(".page.active .bridge-next:not([hidden])")).find(el => el.offsetParent !== null);
+      if (nextBtn) {
+        e.preventDefault();
+        nextBtn.click();
+        return;
+      }
+    }
     // Preserve 1-4 answer hotkeys on Quiz page; elsewhere 1-6 switch Studio rooms!
     const quizActive = document.getElementById("page-quiz")?.classList.contains("active");
     if (!quizActive && e.key >= "1" && e.key <= "6") {

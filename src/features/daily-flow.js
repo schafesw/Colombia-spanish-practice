@@ -128,7 +128,7 @@ export function buildSrsReviewDeck(){
     }else if(key.startsWith("flow|")&&Array.isArray(MULETILLAS_QUIZ)){
       const f=MULETILLAS_QUIZ.find(x=>x.id===key.slice(5));
       if(f)cards.push({kind:"quiz",kicker:"🔗 Due · Muletillas & Flow",prompt:f.prompt,tts:f.choices[f.ans],ans:f.choices[f.ans],hint:f.why,srsKey:key,opts:shuffledCopy(f.choices)});
-    }else if(key.includes("|")&&!/^(?:pm|gt|ne|brain|rr|vf|vq|num|frq|verb|read|voseo|col|contraste|subj|flow|phon)\|/.test(key)){
+    }else if(key.includes("|")&&!/^(?:pm|gt|ne|brain|rr|vf|vq|num|frq|verb|read|voseo|col|contraste|subj|flow|phon|vn)\|/.test(key)){
       const sep=key.indexOf("|");
       const es=key.slice(0,sep),ans=key.slice(sep+1);
       if(es&&ans){

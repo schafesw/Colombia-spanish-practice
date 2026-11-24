@@ -31,7 +31,7 @@ import {
   rrStop, renderRapida, renderSpeakingErrorJournal, resetRrSession, getRrStats,
 } from "./rapida.js";
 import {
-  renderMission, frameDayNumber, renderFramePractice, renderReading,
+  renderMission, frameDayNumber, renderFramePractice, renderReading, VOICE_NOTE_SCENES, renderVoiceNoteLab,
 } from "./speaking-labs.js";
 
 LESSONS.forEach(lesson=>{
@@ -818,6 +818,13 @@ export function renderLessons(){
   const readingGrid=document.createElement("div");readingGrid.className="reading-home-grid";
   READINGS.forEach(reading=>{const b=document.createElement("button");b.type="button";b.className="reading-home-card";b.innerHTML=`<span class='reading-home-icon'>${readingProgress[reading.id]?"✅":"📖"}</span><span><strong>${reading.title}</strong><small>${reading.level} · ${reading.intro}</small></span><span>›</span>`;b.onclick=()=>renderReading(reading);readingGrid.appendChild(b);});
   readingFold.appendChild(readingGrid);root.appendChild(readingFold);
+
+  const vnFold=document.createElement("details");vnFold.className="starter-more-tools";vnFold.dataset.lessonView="practice";
+  const vnDone=(VOICE_NOTE_SCENES||[]).filter(v=>readingProgress[v.id]).length;
+  vnFold.innerHTML=`<summary><span>🎧 Notas de Voz (Audio Stories)</span><small>${vnDone}/${(VOICE_NOTE_SCENES||[]).length} completed ▾</small></summary>`;
+  const vnGrid=document.createElement("div");vnGrid.className="reading-home-grid";
+  (VOICE_NOTE_SCENES||[]).forEach(vn=>{const b=document.createElement("button");b.type="button";b.className="reading-home-card";b.innerHTML=`<span class='reading-home-icon'>${readingProgress[vn.id]?"✅":"🎧"}</span><span><strong>${vn.title}</strong><small>${vn.sender} · ${vn.duration}</small></span><span>›</span>`;b.onclick=()=>renderVoiceNoteLab(vn);vnGrid.appendChild(b);});
+  vnFold.appendChild(vnGrid);root.appendChild(vnFold);
 
   /* Lessons grouped into a speaking-first progression (shared LESSON_STAGES) */
   const roadmap=lpEl("lesson-roadmap");
