@@ -177,14 +177,14 @@ const TRUCOS_TTS=[
   "Ustedes hablan español.",
   "Estoy hablando contigo."
 ];
-const CONTRAST_DRILLS=[
+export const CONTRAST_DRILLS=[
   {id:"ayer-fui",prompt:"Yesterday I went to the market (finished event):",choices:["Ayer fui al mercado","Ayer iba al mercado"],ans:0,why:"Completed single action at a specific time ('ayer') → Preterite (fui)."},
   {id:"nino-cali",prompt:"When I was a kid, I used to live in Cali (background / habit):",choices:["Cuando era niño, vivía en Cali","Cuando fui niño, viví en Cali"],ans:0,why:"Age and ongoing childhood setting → Imperfect (era, vivía)."},
   {id:"mientras-sono",prompt:"While I was cooking, the phone rang (interruption):",choices:["Mientras cocinaba, sonó el teléfono","Mientras cociné, sonaba el teléfono"],ans:0,why:"Background action in progress (cocinaba) interrupted by a sudden event (sonó)."},
   {id:"llovia-mucho",prompt:"Describing the weather when you stepped outside: 'It was raining'",choices:["Estaba lloviendo / Llovía mucho","Llovió todo el día pasado"],ans:0,why:"Setting the scene or weather in progress → Imperfect (llovía / estaba lloviendo)."},
   {id:"tuve-tiempo",prompt:"I had time yesterday and finished the errands (bounded event):",choices:["Ayer tuve tiempo","Ayer tenía tiempo siempre"],ans:0,why:"Seen as a bounded, completed fact ('ayer') → Preterite (tuve)."}
 ];
-const SUBJUNCTIVE_DRILLS=[
+export const SUBJUNCTIVE_DRILLS=[
   {id:"espero-vengas",prompt:"I hope you come to the party: 'Espero que ___ a la fiesta.'",choices:["vengas","vienes","viniste"],ans:0,why:"'Espero que' expresses wish/hope with a subject change → Subjunctive (vengas)."},
   {id:"quiero-tengas",prompt:"I want you to have a great day: 'Quiero que ___ un buen día.'",choices:["tengas","tienes","tuviste"],ans:0,why:"Wish + 'que' + new subject → present subjunctive drops -o from 'tengo' → tengas."},
   {id:"ojala-pueda",prompt:"Hopefully it doesn't rain later: 'Ojalá no ___ más tarde.'",choices:["llueva","llueve","llovió"],ans:0,why:"'Ojalá' ALWAYS triggers the subjunctive in Spanish."},
@@ -282,7 +282,7 @@ const VOSEO_COMPARISONS=[
   {en:"Go ahead / Do it!",usted:"Hágale pues",tu:"Hazlo pues",vos:"Hacelo pues"},
   {en:"Don't worry",usted:"No se preocupe",tu:"No te preocupes",vos:"No te preocupés"}
 ];
-const VOSEO_SITUATIONS=[
+export const VOSEO_SITUATIONS=[
   {id:"bogota-taxi",q:"Grabbing an Uber or talking to an adult stranger in Bogotá",choices:["Usted (warm & normal in Bogotá)","Vos (standard in Bogotá)","Tú (only for bosses in Bogotá)"],ans:0,why:"In Bogotá and Boyacá, 'usted' is the everyday warm default — even friends and couples use 'su merced' or 'usted' without sounding stiff."},
   {id:"sanjuan-friend",q:"Texting a close friend in San Juan del Cesar, La Guajira",choices:["Tú (standard on La Costa)","Vos (Paisa only)","Su merced"],ans:0,why:"On Colombia's Caribbean coast (La Guajira, Barranquilla, Cartagena), 'tú' flows naturally with friends and family."},
   {id:"medellin-come",q:"A Paisa friend in Medellín calls you over: 'Come here!'",choices:["¡Vení pues! (vos)","¡Venga usted pues!","¡Venís vosotros!"],ans:0,why:"Antioquia and Valle del Cauca drop final -s/stress the ending on vos commands: Vení, Decime, Mirá, Sentate."},
@@ -299,7 +299,7 @@ const MULETILLAS_BANK=[
   {w:"De una",meaning:"for sure / right away / sounds good!",ex:"¿Tomamos un café ahorita? — ¡De una!",en:"Shall we grab a coffee right now? — For sure!"},
   {w:"Por si las moscas",meaning:"just in case ('in case of flies')",ex:"Lleva sombrilla por si las moscas.",en:"Bring an umbrella just in case."}
 ];
-const MULETILLAS_QUIZ=[
+export const MULETILLAS_QUIZ=[
   {id:"flow-a-ver",prompt:"You need 2 seconds to check the bakery case before ordering:",choices:["A ver… deme una almojábana.","Por si las moscas… deme una almojábana.","Ni modo… deme una almojábana."],ans:0,why:"'A ver…' ('let's see…') buys natural thinking time in every Colombian conversation."},
   {id:"flow-es-que",prompt:"Politely explain why you spoke slowly: 'The thing is I'm still practicing.'",choices:["Es que todavía estoy practicando.","Mejor dicho todavía estoy practicando.","De una todavía estoy practicando."],ans:0,why:"'Es que…' ('it's just that…') softens explanations and polite excuses without sounding blunt."},
   {id:"flow-o-sea",prompt:"Clarifying what you meant ('I mean, tomorrow morning, not tonight'):",choices:["O sea, mañana por la mañana.","Ni modo, mañana por la mañana.","Pues ya qué, mañana por la mañana."],ans:0,why:"'O sea' means 'I mean / in other words' when rephrasing your point."},

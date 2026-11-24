@@ -12,15 +12,15 @@
 <meta name="build-rev" content="dev"/>
 <title>Español · Colombia</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&family=Nunito:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Public+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
-  <link rel="manifest" href="manifest.json?v=129.0"/>
+  <link rel="manifest" href="manifest.json?v=130.0"/>
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png"/>
   <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png"/>
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png"/>
-  <link rel="stylesheet" href="styles/base.css?v=129.0"/>
-  <link rel="stylesheet" href="styles/polish.css?v=129.0"/>
-  <link rel="stylesheet" href="styles/labs.css?v=129.0"/>
-  <link rel="stylesheet" href="styles/shell.css?v=129.0"/>
-  <link rel="stylesheet" href="styles/studio.css?v=129.0"/>
+  <link rel="stylesheet" href="styles/base.css?v=130.0"/>
+  <link rel="stylesheet" href="styles/polish.css?v=130.0"/>
+  <link rel="stylesheet" href="styles/labs.css?v=130.0"/>
+  <link rel="stylesheet" href="styles/shell.css?v=130.0"/>
+  <link rel="stylesheet" href="styles/studio.css?v=130.0"/>
 </head>
 <body>
 <div id="splash" hidden role="status" aria-label="Loading Español Colombia">
@@ -60,9 +60,9 @@
     <div class="ph-title ph-accent-teal" tabindex="-1">Fonética</div>
     <div class="ph-sub">Listen, watch tongue placement, and practice Colombian sounds</div></div>
   <div class="phonetic-tabs">
-    <button class="phonetic-tab active" id="pt-letters" onclick="showPhonetic('letters')">🔤 Letras</button>
-    <button class="phonetic-tab" id="pt-syllables" onclick="showPhonetic('syllables')">🔡 Sílabas</button>
-    <button class="phonetic-tab" id="pt-ear" onclick="showPhonetic('ear')">👂 Ear Quiz</button>
+    <button class="phonetic-tab active" id="pt-letters" data-phonetic="letters">🔤 Letras</button>
+    <button class="phonetic-tab" id="pt-syllables" data-phonetic="syllables">🔡 Sílabas</button>
+    <button class="phonetic-tab" id="pt-ear" data-phonetic="ear">👂 Ear Quiz</button>
   </div>
   <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-fonetica"></div></details>
   <section id="phonetic-mouth-studio" class="mouth-studio-host" aria-label="Interactive articulatory mouth diagram"></section>
@@ -94,7 +94,7 @@
       </select>
     </div>
     <section class="phonetic-start-card" id="phonetic-start">
-      <div class="warmup-nav"><button type="button" class="warmup-back" onclick="routineBack()">‹ Back to daily path</button><span>Step 1 of 4</span></div>
+      <div class="warmup-nav"><button type="button" class="warmup-back">‹ Back to daily path</button><span>Step 1 of 4</span></div>
       <div class="phonetic-start-kicker">🎯 START HERE · 3-MINUTE WARM-UP</div>
       <div class="phonetic-start-title">Train your mouth before the hard drills</div>
       <div class="phonetic-start-sub">Listen once, say it twice, then record yourself if you want feedback from your own ear.</div>
@@ -116,7 +116,7 @@
       </details>
       <div class="warmup-finish">
         <div><strong>Finished the warm-up?</strong><span>Return to Lecciones and continue with focused tongue-twister practice.</span></div>
-        <button type="button" class="warmup-continue" onclick="routineFinishWarmup()">Done — continue →</button>
+        <button type="button" class="warmup-continue">Done — continue →</button>
       </div>
     </section>
     <details class="phonetic-fold" id="phonetic-syllable-fold">
@@ -232,12 +232,12 @@
     <div class="ph-sub">Regions · Visual posters · Patterns</div></div>
   <details class="voice-drawer-fold"><summary><span>🔊 Audio voice</span><small>Settings</small></summary><div id="voice-bar-gram"></div></details>
   <div class="gram-groups">
-    <button class="ggroup active" data-g="regiones" onclick="showGramGroup('regiones')">🗺️ Regiones</button>
-    <button class="ggroup" data-g="posters" onclick="showGramGroup('posters')">🖼️ Posters</button>
-    <button class="ggroup" data-g="tiempos" onclick="showGramGroup('tiempos')">⏱️ Tiempos</button>
-    <button class="ggroup" data-g="pronombres" onclick="showGramGroup('pronombres')">👤 Pronombres</button>
-    <button class="ggroup" data-g="patrones" onclick="showGramGroup('patrones')">🧩 Patrones</button>
-    <button class="ggroup" data-g="estructura" onclick="showGramGroup('estructura')">🧱 Hablar</button>
+    <button class="ggroup active" data-g="regiones">🗺️ Regiones</button>
+    <button class="ggroup" data-g="posters">🖼️ Posters</button>
+    <button class="ggroup" data-g="tiempos">⏱️ Tiempos</button>
+    <button class="ggroup" data-g="pronombres">👤 Pronombres</button>
+    <button class="ggroup" data-g="patrones">🧩 Patrones</button>
+    <button class="ggroup" data-g="estructura">🧱 Hablar</button>
   </div>
   <div class="gram-tabs" id="gram-sub"></div>
   <div class="gram-section active" id="gs-presente"></div>
@@ -298,11 +298,11 @@
   <div class="quiz-card">
     <div class="qc-label">Translate to English</div>
     <div class="qc-word" id="qc-word">—</div>
-    <button class="qc-hear" onclick="quizHear()">🔊 Listen</button>
+    <button class="qc-hear" id="quiz-hear-btn">🔊 Listen</button>
     <div class="quiz-blind-row" id="quiz-blind-row">
-      <button type="button" class="blind-ear-chip" id="quiz-blind-toggle" onclick="toggleQuizBlindEar()">🎧 Blind-Ear: OFF</button>
-      <button type="button" class="blind-ear-chip" id="quiz-recall-toggle" onclick="toggleQuizRecallFirst()">🗣️ Recall-First: OFF</button>
-      <button type="button" class="blind-ear-chip" id="quiz-speed-toggle" aria-pressed="false" onclick="toggleQuizSpeed()">🐢 Speed: 0.7×</button>
+      <button type="button" class="blind-ear-chip" id="quiz-blind-toggle">🎧 Blind-Ear: OFF</button>
+      <button type="button" class="blind-ear-chip" id="quiz-recall-toggle">🗣️ Recall-First: OFF</button>
+      <button type="button" class="blind-ear-chip" id="quiz-speed-toggle" aria-pressed="false">🐢 Speed: 0.7×</button>
       <button type="button" class="quiz-blind-peek-btn" id="quiz-blind-peek" hidden>👁️ Peek Spanish</button>
       <span class="quiz-kbd-hint" aria-hidden="true">⌨️ 1–4 pick · R replay · Enter next</span>
     </div>
@@ -315,7 +315,7 @@
   <div class="quiz-reveal" id="quiz-reveal"></div>
   <div class="quiz-recall-gate" id="quiz-recall-gate" hidden></div>
   <div class="quiz-opts" id="quiz-opts"></div>
-  <button class="quiz-next" id="quiz-next" onclick="nQ()">Next →</button>
+  <button class="quiz-next" id="quiz-next">Next →</button>
   <div class="quiz-review-launch" id="quiz-review-launch" hidden></div>
 </div>
 
@@ -323,32 +323,32 @@
 
 <!-- 6-Tab Studio Rail / Mobile Safe-Area Dock -->
 <nav class="tab-bar" aria-label="Salas de estudio">
-  <button class="tab-item" id="tb-fonetica" onclick="navigatePage('fonetica')">
+  <button class="tab-item" id="tb-fonetica" data-page="fonetica">
     <span class="ti" aria-hidden="true">🔤</span>
     <span class="tab-label">Fonética</span>
     <kbd class="rail-kbd" aria-hidden="true">1</kbd>
   </button>
-  <button class="tab-item active" id="tb-lecciones" aria-current="page" onclick="navigatePage('lecciones')">
+  <button class="tab-item active" id="tb-lecciones" aria-current="page" data-page="lecciones">
     <span class="ti" aria-hidden="true">🎓</span>
     <span class="tab-label">Lecciones</span>
     <kbd class="rail-kbd" aria-hidden="true">2</kbd>
   </button>
-  <button class="tab-item" id="tb-vocab" onclick="navigatePage('vocab')">
+  <button class="tab-item" id="tb-vocab" data-page="vocab">
     <span class="ti" aria-hidden="true">📚</span>
     <span class="tab-label">Vocab</span>
     <kbd class="rail-kbd" aria-hidden="true">3</kbd>
   </button>
-  <button class="tab-item tfrases" id="tb-frases" onclick="navigatePage('frases')">
+  <button class="tab-item tfrases" id="tb-frases" data-page="frases">
     <span class="ti" aria-hidden="true">💬</span>
     <span class="tab-label">Frases</span>
     <kbd class="rail-kbd" aria-hidden="true">4</kbd>
   </button>
-  <button class="tab-item tgram" id="tb-gram" onclick="navigatePage('gram')">
+  <button class="tab-item tgram" id="tb-gram" data-page="gram">
     <span class="ti" aria-hidden="true">🇨🇴</span>
     <span class="tab-label">Guías</span>
     <kbd class="rail-kbd" aria-hidden="true">5</kbd>
   </button>
-  <button class="tab-item tquiz" id="tb-quiz" onclick="navigatePage('quiz')">
+  <button class="tab-item tquiz" id="tb-quiz" data-page="quiz">
     <span class="ti" aria-hidden="true">🧪</span>
     <span class="tab-label">Quiz</span>
     <kbd class="rail-kbd" aria-hidden="true">6</kbd>
@@ -372,6 +372,6 @@
   </div>
 </dialog>
 
-  <script type="module" src="src/main.js?v=129.0"></script>
+  <script type="module" src="src/main.js?v=130.0"></script>
 </body>
 </html>

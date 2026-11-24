@@ -6,7 +6,7 @@ import { appStorage } from "../state/storage.js";
 import { appState } from "../state/app-state.js";
 import { userPrefs, saveUserPrefs, effectiveLevel, isBlindEarActive } from "../state/preferences.js";
 import { speak } from "../audio/voice-engine.js";
-import { escapeVocabHtml, normalizeDictation, normalizeQuizText, normalizeQuizPrompt, normalizeQuizAnswer, quizItemKey, applyQuizFitClasses } from "../core/text-utils.js";
+import { escapeVocabHtml, normalizeDictation, normalizeQuizText, normalizeQuizPrompt, normalizeQuizAnswer, quizItemKey, applyQuizFitClasses, mountAccentHelperBar } from "../core/text-utils.js";
 import { qStore, saveQ, srsStore, srsDue, srsNextLabel, recordSrs, recordSpeakingError, clearSpeakingError, markPractice, resetQAndSrs, getStarredPhrases } from "../core/stores.js";
 import { attachMic, openMicPanel } from "../core/speech-mic.js";
 import { aQ, RR_BANK, BLANK_EN, CONVERSATION_QUIZ, FILL_BLANK_QUIZ, storedMissedQuestionCount, spanishAnswer, englishAnswer, quizAcceptedAnswers, quizAnswerMatches } from "../core/quiz-bank.js";
@@ -226,7 +226,7 @@ export function nQ(){
       document.getElementById("quiz-next").style.display="block";
     };
     submit.onclick=finish;input.onkeydown=e=>{if(e.key==="Enter")finish();};
-    box.append(chipBank,input,submit);ow.appendChild(box);if(document.getElementById("page-quiz")?.classList.contains("active")){speak(appState.cQ.tts,0.7);}
+    box.append(chipBank,input);mountAccentHelperBar(box,input);box.appendChild(submit);ow.appendChild(box);if(document.getElementById("page-quiz")?.classList.contains("active")){speak(appState.cQ.tts,0.7);}
     return;
   }
   /* Listening questions must not show the Spanish text — hide it and auto-play */

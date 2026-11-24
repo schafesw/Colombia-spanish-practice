@@ -20,7 +20,8 @@ export function sel(l){
   document.getElementById("detail-card").innerHTML=`<div class="dc" style="border:1px solid ${iv?"rgba(232,93,117,0.25)":"rgba(74,168,160,0.25)"}">
     <div class="dc-big" style="color:${c}">${l}</div><div class="dc-sub">Se llama</div><div class="dc-name">"${i.name}"</div>
     <div class="dc-phon">[${i.phonetic}]</div><div class="dc-badge">${iv?"🔴 Vocal — el alma de cada sílaba":"🔵 Consonante — se combina con vocales"}</div><br/>
-    <button class="spk-btn" style="background:${c}" onclick="speak('${i.tts}',0.65)">🔊 Escuchar otra vez</button></div>`;
+    <button class="spk-btn" style="background:${c}">🔊 Escuchar otra vez</button></div>`;
+  const spk=document.querySelector("#detail-card .spk-btn");if(spk)spk.onclick=()=>speak(i.tts,0.65);
 }
 
 // ── Build Sílabas ─────────────────────────────────────────────────────────────
@@ -33,8 +34,9 @@ export function rC(){
     const ch=con==="Ñ"?"ñ":con.toLowerCase();const g=document.createElement("div");g.className="cg";
     const sub=con==="X"?"X casi siempre va entre vocales — palabras reales":con==="H"?"H muda — suena como la vocal":con==="RR"?"RR fuerte — practica la vibración":"Toca para escuchar";
     const headerTts=con==="RR"?"erre doble":LI[con].tts;
-    g.innerHTML=`<div class="cg-hdr"><button class="cg-badge" onclick="speak('${headerTts}',0.7)">${con}</button>
+    g.innerHTML=`<div class="cg-hdr"><button class="cg-badge">${con}</button>
       <div><div class="cg-title">${con==="X"?"X en palabras reales":con+" + vocal"}</div><div class="cg-sub">${sub}</div></div></div><div class="g5c" id="cg-${con}"></div>`;
+    const badge=g.querySelector(".cg-badge");if(badge)badge.onclick=()=>speak(headerTts,0.7);
     c.appendChild(g);const gr=g.querySelector(".g5c");
     /* X never starts a Spanish syllable — show real words instead of fake X+vowel combos */
     if(con==="X"){
@@ -183,7 +185,7 @@ export function renderTongueTwisters(){
   groups.forEach((group,i)=>{const b=document.createElement("button");b.type="button";b.className="fb twister-filter"+(i===0?" active":"");b.textContent=group;b.onclick=()=>{filters.querySelectorAll(".twister-filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");render(group);};filters.appendChild(b);});
   root.append(tips,filters,list);render("ALL");
 }
-const STRESS_ACCENT_PAIRS=[
+export const STRESS_ACCENT_PAIRS=[
   {a:"hablo",aEn:"I speak (present — HA-blo)",b:"habló",bEn:"he/she spoke (past — ha-BLÓ)",tip:"Final accent -ó shifts stress to the last syllable and turns it into past tense."},
   {a:"papa",aEn:"potato (PA-pa)",b:"papá",bEn:"dad (pa-PÁ)",tip:"Without tilde: potato / Pope. With -á: dad!"},
   {a:"esta",aEn:"this (feminine — ES-ta)",b:"está",bEn:"is / located (es-TÁ)",tip:"Stress on the end makes it the verb estar ('está aquí')."},

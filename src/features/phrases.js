@@ -670,7 +670,9 @@ export function renderFraseDialogue(dialogue,tense){
   fl.appendChild(hdr);
   if(actions.routineToday&&actions.routineToday().step===3){
     const guide=document.createElement("section");guide.className="routine-phrase-guide";
-    guide.innerHTML="<div class='routine-guide-kicker'>🎯 STEP 4 · SPEAKING</div><strong>Practice both sides of the conversation</strong><span>Tap each line to listen. Then cover one side with your hand, say it from memory, and compare. Try the Ahora version first.</span><button type='button' class='routine-next-large' onclick='routineFinishPhrases()'>I practiced both sides — continue →</button><button type='button' class='routine-back-link' onclick='routineBack()'>‹ Back to daily path</button>";
+    guide.innerHTML="<div class='routine-guide-kicker'>🎯 STEP 4 · SPEAKING</div><strong>Practice both sides of the conversation</strong><span>Tap each line to listen. Then cover one side with your hand, say it from memory, and compare. Try the Ahora version first.</span><button type='button' class='routine-next-large'>I practiced both sides — continue →</button><button type='button' class='routine-back-link'>‹ Back to daily path</button>";
+    const gNxt=guide.querySelector(".routine-next-large");if(gNxt)gNxt.onclick=()=>{if(typeof window.routineFinishPhrases==="function")window.routineFinishPhrases();};
+    const gBak=guide.querySelector(".routine-back-link");if(gBak)gBak.onclick=()=>{if(typeof window.routineBack==="function")window.routineBack();};
     fl.appendChild(guide);
   }
   /* Speaking practice: hide one side, say the line out loud, tap to reveal */

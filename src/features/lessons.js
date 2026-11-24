@@ -75,7 +75,12 @@ export function routineOpen(id){
       const list=root&&root.querySelector(".twister-list");
       if(list){appState.routineTwisterSelection.slice().reverse().forEach(item=>{const card=list.querySelector(`[data-twister-id="${item.id}"]`);if(card){card.classList.add("routine-daily-pick");list.prepend(card);}});}
       if(root&&!root.querySelector(".routine-twister-guide")){
-        root.insertAdjacentHTML("afterbegin",`<div class="routine-twister-guide"><div class="routine-guide-kicker">🎯 STEP 2 · TODAY'S FOCUS</div><strong>Train RR and Ñ before speed</strong><span>Today's picks: <b>${labels}</b>. They rotate automatically each day. Practice each one 2–3 times: listen slowly, repeat, say it naturally, then record yourself.</span><div class="routine-twister-sequence"><b>1</b> Listen slowly · <b>2</b> Repeat twice · <b>3</b> Natural speed · <b>4</b> Record and compare</div><div class="routine-guide-actions"><button type="button" class="warmup-back" onclick="routineBack()">‹ Back to daily path</button><button type="button" class="warmup-continue" onclick="routineFinishTwisters()">Done — continue →</button></div></div>`);
+        root.insertAdjacentHTML("afterbegin",`<div class="routine-twister-guide"><div class="routine-guide-kicker">🎯 STEP 2 · TODAY'S FOCUS</div><strong>Train RR and Ñ before speed</strong><span>Today's picks: <b>${labels}</b>. They rotate automatically each day. Practice each one 2–3 times: listen slowly, repeat, say it naturally, then record yourself.</span><div class="routine-twister-sequence"><b>1</b> Listen slowly · <b>2</b> Repeat twice · <b>3</b> Natural speed · <b>4</b> Record and compare</div><div class="routine-guide-actions"><button type="button" class="warmup-back">‹ Back to daily path</button><button type="button" class="warmup-continue">Done — continue →</button></div></div>`);
+        const tg=root.querySelector(".routine-twister-guide");
+        if(tg){
+          const tb=tg.querySelector(".warmup-back");if(tb)tb.onclick=()=>routineBack();
+          const tc=tg.querySelector(".warmup-continue");if(tc)tc.onclick=()=>routineFinishTwisters();
+        }
       }
       const start=document.getElementById("phonetic-twisters");if(start)start.scrollIntoView({behavior:"smooth",block:"start"});
     },60);
@@ -143,7 +148,9 @@ function renderRoutineQuizGuide(){
   if(routineToday().step!==2)return;
   const page=document.getElementById("page-quiz"),anchor=page&&page.querySelector(".quiz-score-bar");if(!page||!anchor)return;
   const guide=document.createElement("section");guide.className="routine-quiz-guide";
-  guide.innerHTML="<div class='routine-guide-kicker'>🎯 STEP 3 · RECALL</div><strong>Practice a few useful answers</strong><span>Answer out loud before tapping. Use the Spanish reveal to repeat the complete sentence.</span><button type='button' class='routine-next-large' onclick='routineFinishReview()'>I practiced — continue to phrases →</button><button type='button' class='routine-back-link' onclick='routineBack()'>‹ Back to daily path</button>";
+  guide.innerHTML="<div class='routine-guide-kicker'>🎯 STEP 3 · RECALL</div><strong>Practice a few useful answers</strong><span>Answer out loud before tapping. Use the Spanish reveal to repeat the complete sentence.</span><button type='button' class='routine-next-large'>I practiced — continue to phrases →</button><button type='button' class='routine-back-link'>‹ Back to daily path</button>";
+  const rNxt=guide.querySelector(".routine-next-large");if(rNxt)rNxt.onclick=()=>routineFinishReview();
+  const rBak=guide.querySelector(".routine-back-link");if(rBak)rBak.onclick=()=>routineBack();
   page.insertBefore(guide,anchor);
 }
 

@@ -123,7 +123,7 @@ function showPwaUpdateBanner() {
   toast.className = "pwa-update-toast";
   toast.setAttribute("role", "status");
   toast.setAttribute("aria-live", "polite");
-  toast.innerHTML = `<span class="pwa-update-copy">🆕 App updated to v129.0</span><button type="button" class="pwa-update-btn">Refresh</button><button type="button" class="pwa-update-dismiss" aria-label="Dismiss update notification">✕</button>`;
+  toast.innerHTML = `<span class="pwa-update-copy">🆕 App updated to v130.0</span><button type="button" class="pwa-update-btn">Refresh</button><button type="button" class="pwa-update-dismiss" aria-label="Dismiss update notification">✕</button>`;
   toast.querySelector(".pwa-update-btn").onclick = () => location.reload();
   toast.querySelector(".pwa-update-dismiss").onclick = () => toast.remove();
   document.body.appendChild(toast);
@@ -133,7 +133,7 @@ function initPwaUpdater() {
   if (!("serviceWorker" in navigator) || !/^https?:$/i.test(location.protocol)) return;
   const registerSw = () => {
     const hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.register("sw.js?v=129.0").then(reg => {
+    navigator.serviceWorker.register("sw.js?v=130.0").then(reg => {
       if (!reg) return;
       reg.addEventListener("updatefound", () => {
         const nw = reg.installing;
@@ -150,12 +150,39 @@ function initPwaUpdater() {
   else window.addEventListener("load", registerSw);
 }
 
+function bindStaticShellHandlers() {
+  document.querySelectorAll(".phonetic-tab[data-phonetic]").forEach(b => {
+    b.onclick = () => { ensurePageInitialized("fonetica"); showPhonetic(b.dataset.phonetic); };
+  });
+  const wb = document.querySelector("#phonetic-start .warmup-back");
+  if (wb) wb.onclick = () => routineBack();
+  const wc = document.querySelector("#phonetic-start .warmup-continue");
+  if (wc) wc.onclick = () => routineFinishWarmup();
+  document.querySelectorAll(".gram-groups .ggroup[data-g]").forEach(b => {
+    b.onclick = () => { ensurePageInitialized("gram"); showGramGroup(b.dataset.g); };
+  });
+  const qh = document.getElementById("quiz-hear-btn");
+  if (qh) qh.onclick = () => { ensurePageInitialized("quiz"); quizHear(); };
+  const qb = document.getElementById("quiz-blind-toggle");
+  if (qb) qb.onclick = () => { ensurePageInitialized("quiz"); toggleQuizBlindEar(); };
+  const qr = document.getElementById("quiz-recall-toggle");
+  if (qr) qr.onclick = () => { ensurePageInitialized("quiz"); toggleQuizRecallFirst(); };
+  const qs = document.getElementById("quiz-speed-toggle");
+  if (qs) qs.onclick = () => { ensurePageInitialized("quiz"); toggleQuizSpeed(); };
+  const qn = document.getElementById("quiz-next");
+  if (qn) qn.onclick = () => { ensurePageInitialized("quiz"); nQ(); };
+  document.querySelectorAll(".tab-bar .tab-item[data-page]").forEach(b => {
+    b.onclick = () => navigatePage(b.dataset.page);
+  });
+}
+
 // Deterministic startup bootstrap
 const splashEl = document.getElementById("splash");
 if (splashEl && !window.__ESCO_SYNC_BOOT) splashEl.remove();
 initTheme();
 buildProfileBar(attachProfileBackupControls);
 initVoiceEngine();
+bindStaticShellHandlers();
 ensurePageInitialized("lecciones");
 initStudioShell();
 initTabSwipe();
