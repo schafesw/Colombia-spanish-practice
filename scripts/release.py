@@ -51,6 +51,16 @@ def run_local_checks():
     subprocess.check_call([sys.executable, str(ROOT / "scripts" / "browser_smoke.py")], cwd=str(ROOT))
 
 
+SENSITIVE_EXTS = {".key", ".pem", ".db", ".sqlite", ".sqlite3", ".pyc", ".zip", ".csv", ".xlsx"}
+
+
+def _is_blocked_secret_or_junk(p: pathlib.Path) -> bool:
+    return (
+        p.name.startswith(".env")
+        and p.name != ".env.example"
+    ) or p.suffix.lower() in SENSITIVE_EXTS or p.name == "compare_imdb.py"
+
+
 def public_repo_files():
     gitlab_only = {
         "api", "portal", "sync.js", "nginx.conf", "Dockerfile", "docker-compose.yml",
@@ -63,6 +73,7 @@ def public_repo_files():
         and "__pycache__" not in p.parts
         and ".pytest_cache" not in p.parts
         and p.name != "AGENTS.md"
+        and not _is_blocked_secret_or_junk(p)
         and p.relative_to(ROOT).parts[0] not in gitlab_only
     )
 
@@ -75,6 +86,7 @@ def gitlab_repo_files():
         and ".git" not in p.parts
         and "__pycache__" not in p.parts
         and ".pytest_cache" not in p.parts
+        and not _is_blocked_secret_or_junk(p)
         and p.relative_to(ROOT).parts[0] not in excluded_top
     )
 

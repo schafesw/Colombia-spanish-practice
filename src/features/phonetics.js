@@ -6,7 +6,7 @@ import {
 import { appState } from "../state/app-state.js";
 import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml } from "../core/text-utils.js";
-import { markPractice } from "../core/stores.js";
+import { markPractice, recordSrs } from "../core/stores.js";
 import { openMicPanel } from "../core/speech-mic.js";
 import { actions } from "./navigation.js";
 
@@ -183,24 +183,41 @@ export function renderTongueTwisters(){
   groups.forEach((group,i)=>{const b=document.createElement("button");b.type="button";b.className="fb twister-filter"+(i===0?" active":"");b.textContent=group;b.onclick=()=>{filters.querySelectorAll(".twister-filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");render(group);};filters.appendChild(b);});
   root.append(tips,filters,list);render("ALL");
 }
+const STRESS_ACCENT_PAIRS=[
+  {a:"hablo",aEn:"I speak (present — HA-blo)",b:"habló",bEn:"he/she spoke (past — ha-BLÓ)",tip:"Final accent -ó shifts stress to the last syllable and turns it into past tense."},
+  {a:"papa",aEn:"potato (PA-pa)",b:"papá",bEn:"dad (pa-PÁ)",tip:"Without tilde: potato / Pope. With -á: dad!"},
+  {a:"esta",aEn:"this (feminine — ES-ta)",b:"está",bEn:"is / located (es-TÁ)",tip:"Stress on the end makes it the verb estar ('está aquí')."},
+  {a:"canto",aEn:"I sing / song (CAN-to)",b:"cantó",bEn:"he/she sang (can-TÓ)",tip:"First-syllable stress = I sing; final stressed -ó = past event."},
+  {a:"llegue",aEn:"arrive (subjunctive — LLE-gue)",b:"llegué",bEn:"I arrived (past — lle-GUÉ)",tip:"Final stressed -é marks 1st-person past ('ayer llegué tarde')."},
+  {a:"paso",aEn:"I pass / step (PA-so)",b:"pasó",bEn:"it happened / passed (pa-SÓ)",tip:"'¿Qué pasó?' stresses the last syllable for past events."},
+  {a:"tomo",aEn:"I take / drink (TO-mo)",b:"tomó",bEn:"he/she took / drank (to-MÓ)",tip:"Tilde at the end marks preterite he/she/usted."},
+  {a:"compro",aEn:"I buy (COM-pro)",b:"compró",bEn:"he/she bought (com-PRÓ)",tip:"Stressing -ó tells the listener the purchase already happened."},
+  {a:"camino",aEn:"road / I walk (ca-MI-no)",b:"caminó",bEn:"he/she walked (ca-mi-NÓ)",tip:"Middle stress = path / I walk; end stress = walked."},
+  {a:"trabajó",aEn:"he/she worked (tra-ba-JÓ)",b:"trabajo",aAlt:true,bEn:"work / I work (tra-BA-jo)",tip:"End stress = worked; middle stress = job / I work."}
+];
 export function renderPhoneticEarQuiz(){
   const root=document.getElementById("phonetic-ear-quiz");
   if(!root||typeof MINIMAL_PAIRS==="undefined"||!MINIMAL_PAIRS.length)return;
-  const bank=[];
-  MINIMAL_PAIRS.forEach(pair=>{
-    [pair.a,pair.b].forEach((word,idx)=>{
-      const other=idx===0?pair.b:pair.a;
-      const en=idx===0?pair.aEn:pair.bEn;
-      const otherEn=idx===0?pair.bEn:pair.aEn;
-      if(word&&other)bank.push({word,other,en,otherEn,tip:pair.tip,pairLabel:`${pair.a} vs. ${pair.b}`});
-    });
+  const makeBank=(list)=>list.flatMap(pair=>{
+    const out=[];
+    if(pair.a&&pair.b){
+      out.push({word:pair.a,other:pair.b,en:pair.aEn,otherEn:pair.bEn,tip:pair.tip,pairLabel:`${pair.a} vs. ${pair.b}`});
+      out.push({word:pair.b,other:pair.a,en:pair.bEn,otherEn:pair.aEn,tip:pair.tip,pairLabel:`${pair.a} vs. ${pair.b}`});
+    }
+    return out;
   });
+  let earMode="pairs";
   let qi=0,score=0,total=0,answered=false;
   const draw=()=>{
+    const bank=earMode==="stress"?makeBank(STRESS_ACCENT_PAIRS):makeBank(MINIMAL_PAIRS);
     const q=bank[qi%bank.length];
     const opts=[{w:q.word,en:q.en},{w:q.other,en:q.otherEn}].sort(()=>Math.random()-0.5);
     answered=false;
     root.innerHTML=`<section class="phonetic-ear-card">
+      <div class="vf-mode-bar" style="margin-bottom:10px">
+        <button type="button" class="vf-mode-btn${earMode==="pairs"?" active":""}" data-ear="pairs">👂 Minimal Pairs</button>
+        <button type="button" class="vf-mode-btn${earMode==="stress"?" active":""}" data-ear="stress">🎯 Stress &amp; Accents</button>
+      </div>
       <div class="bridge-kicker">👂 SOUND CATCHER · EAR TRAINING (${score}/${total})</div>
       <div class="bridge-context">Listen carefully, then pick which Spanish word was spoken: <strong>${escapeVocabHtml(q.pairLabel)}</strong></div>
       <div class="phonetic-ear-controls"><button type="button" class="lp-nav-btn primary phonetic-ear-play">🔊 Play sound</button><button type="button" class="lp-nav-btn phonetic-ear-slow">🐢 Slow</button></div>
@@ -208,6 +225,9 @@ export function renderPhoneticEarQuiz(){
       <div class="bridge-feedback" aria-live="polite"></div>
       <div class="bridge-actions"></div>
     </section>`;
+    root.querySelectorAll("[data-ear]").forEach(mb=>{
+      mb.onclick=()=>{earMode=mb.dataset.ear;qi=0;score=0;total=0;draw();};
+    });
     root.querySelector(".phonetic-ear-play").onclick=()=>speak(q.word,0.72);
     root.querySelector(".phonetic-ear-slow").onclick=()=>speak(q.word,0.52);
     const oWrap=root.querySelector(".phonetic-ear-opts"),fb=root.querySelector(".bridge-feedback"),acts=root.querySelector(".bridge-actions");
@@ -219,6 +239,8 @@ export function renderPhoneticEarQuiz(){
         const ok=o.w===q.word;
         if(ok){score++;b.classList.add("correct");}
         else{b.classList.add("wrong");oWrap.querySelectorAll(".lp-opt").forEach(x=>{if(x.querySelector("strong")?.textContent===q.word)x.classList.add("reveal");});}
+        markPractice("phrases",q.word);
+        recordSrs("phon|"+q.word,ok);
         speak(q.word,0.7);
         fb.textContent=(ok?"✅ ¡Oído fino! ":"❌ Look closely: ")+`${q.word} (${q.en}) — ${q.tip}`;
         const nxt=document.createElement("button");nxt.type="button";nxt.className="lp-nav-btn primary";nxt.textContent="Next sound →";
