@@ -1007,8 +1007,16 @@ export function renderLessons(){
     if(!txt)return;
     try{
       const data=JSON.parse(txt.replace(/^ESCO-BACKUP:/,""));
-      Object.keys(data).forEach(k=>{if(BK_KEYS.includes(k))appStorage.setItem(k,data[k]);});
-      showAppToast("✅ Backup restored — reloading…","ok");
+      if(!data||typeof data!=="object"||Array.isArray(data))throw new Error("Invalid backup shape");
+      let restored=0;
+      Object.keys(data).forEach(k=>{
+        if(BK_KEYS.includes(k)&&typeof data[k]==="string"&&data[k].length<=512000){
+          appStorage.setItem(k,data[k]);
+          restored++;
+        }
+      });
+      if(!restored)throw new Error("No valid backup keys");
+      showAppToast(`✅ Backup restored (${restored} items) — reloading…`,"ok");
       setTimeout(()=>location.reload(),600);
     }catch(e){showAppToast("⚠️ Invalid backup text — use a valid ESCO-BACKUP string.","warn");}
   };

@@ -243,6 +243,7 @@ export function buildGram(id,data){
   if(id==="reflexivos"){buildReflexivos(sec);return;}
   if(id==="voseo"){buildVoseoLab(sec);return;}
   if(id==="muletillas"){buildMuletillasLab(sec);return;}
+  if(id==="falsos"){buildFalsosAmigosLab(sec);return;}
   if(id==="presente"){buildVerbVersatilityLab(sec);}
   const intro=document.createElement("div");intro.className="gram-intro";
   const grammarMeta={perfecto:["✅","Present perfect"],condicional:["🙏","Conditional"],"pasado-perfecto":["⏪","Past perfect"],"futuro-perfecto":["⏩","Future perfect"]}[id];
@@ -325,6 +326,45 @@ export function buildMuletillasLab(sec){
   });
   sec.appendChild(grid);
   mountMiniGrammarLab(sec,"🔗 Pick the Natural Connector",MULETILLAS_QUIZ,"flow|");
+}
+const FALSOS_AMIGOS_BANK=[
+  {w:"Embarazada",trap:"embarrassed ❌",real:"pregnant ✅ (use 'qué pena' or 'avergonzado/a' for embarrassed)",ex:"Qué pena contigo, llegué tarde.",en:"So sorry / embarrassed, I arrived late."},
+  {w:"Éxito",trap:"exit ❌",real:"success / hit ✅ (exit = salida)",ex:"La cena fue un éxito total; ¿dónde queda la salida?",en:"Dinner was a total success; where is the exit?"},
+  {w:"Actualmente",trap:"actually ❌",real:"currently / nowadays ✅ (actually = en realidad / de hecho)",ex:"Actualmente vivo en Bogotá, pero en realidad soy de Texas.",en:"Currently I live in Bogotá, though actually I'm from Texas."},
+  {w:"Soportar",trap:"support ❌",real:"to put up with / tolerate ✅ (support = apoyar)",ex:"Apoyo tu idea, pero no soporto este trancón.",en:"I support your idea, but I can't stand this traffic jam."},
+  {w:"Carpeta",trap:"carpet ❌",real:"folder ✅ (carpet = alfombra / tapete)",ex:"Guarda el pasaporte en la carpeta azul.",en:"Keep the passport in the blue folder."},
+  {w:"Realizar",trap:"realize ❌",real:"to carry out / achieve ✅ (realize = darse cuenta)",ex:"Me di cuenta de que ya realizamos el pago por Nequi.",en:"I realized that we already completed the Nequi payment."},
+  {w:"Constipado",trap:"constipated ❌",real:"stuffed-up / having a cold ✅ (often 'resfriado' or 'con gripa' in Colombia)",ex:"Tengo gripa y estoy un poco congestionado por la lluvia.",en:"I have a cold and I'm a bit congested from the rain."},
+  {w:"Asistir",trap:"assist ❌",real:"to attend ✅ (assist = ayudar / atender)",ex:"Voy a asistir a la reunión y luego te ayudo con las maletas.",en:"I'm going to attend the meeting and then I'll help you with the bags."}
+];
+export const FALSOS_AMIGOS_QUIZ=[
+  {id:"falso-embarazada",prompt:"You accidentally bumped someone's coffee in a café. How do you say 'I'm so embarrassed'?",choices:["Qué pena, qué vergüenza contigo.","Estoy muy embarazado contigo.","Es un éxito contigo."],ans:0,why:"'Embarazada' means pregnant! Use 'qué pena' or 'qué vergüenza' for embarrassed."},
+  {id:"falso-exito",prompt:"Looking for the building exit (NOT a Colombian supermarket called Éxito):",choices:["Disculpe, ¿dónde está la salida?","Disculpe, ¿dónde está el éxito?","Disculpe, ¿dónde está la carpeta?"],ans:0,why:"'Salida' = exit; 'éxito' = success (and also Colombia's big supermarket chain!)."},
+  {id:"falso-actualmente",prompt:"Correcting a gentle misunderstanding ('Actually, I prefer black coffee'):",choices:["En realidad prefiero el tinto sin azúcar.","Actualmente prefiero el tinto sin azúcar.","Realizo prefiero el tinto sin azúcar."],ans:0,why:"'Actualmente' means 'currently / right now'. Use 'en realidad' or 'de hecho' for 'actually'."},
+  {id:"falso-soportar",prompt:"Telling your partner 'I support your decision 100%':",choices:["Apoyo tu decisión al cien por ciento.","Soporto tu decisión al cien por ciento.","Asisto tu decisión al cien por ciento."],ans:0,why:"'Apoyar' = support/back up. 'Soportar' means to endure or tolerate ('no soporto el ruido')."},
+  {id:"falso-carpeta",prompt:"Asking for the rug / carpet at a home store in Medellín:",choices:["Busco un tapete o una alfombra para la sala.","Busco una carpeta para la sala.","Busco una salida para la sala."],ans:0,why:"'Carpeta' is a paper/digital folder. For a rug or carpet, say 'tapete' or 'alfombra'."},
+  {id:"falso-realizar",prompt:"Saying 'I just realized I left my charger at the Airbnb':",choices:["Acabo de darme cuenta de que dejé el cargador.","Acabo de realizar que dejé el cargador.","Acabo de asistir que dejé el cargador."],ans:0,why:"'Darse cuenta' = to realize / notice. 'Realizar' means to carry out or complete a task."},
+  {id:"falso-constipado",prompt:"If you hear someone say 'estoy constipado' in Spanish, what do they normally mean?",choices:["They have a stuffy nose / head cold","They are very embarrassed","They are currently busy"],ans:0,why:"'Constipado' normally means nasal congestion / a head cold (for tummy trouble, use 'estreñido' or 'mal del estómago')."},
+  {id:"falso-asistir",prompt:"Asking a hotel clerk to assist/help you carry your luggage:",choices:["¿Me puede ayudar con las maletas, por favor?","¿Me puede asistir a la cena con las maletas?","¿Me puede soportar las maletas?"],ans:0,why:"'Asistir a' means 'to attend' an event. Use 'ayudar' to ask someone to help/assist you."}
+];
+export function buildFalsosAmigosLab(sec){
+  sec.innerHTML="";
+  const intro=document.createElement("div");intro.className="gram-intro";
+  intro.innerHTML=`<div class="gram-intro-title">⚠️ Falsos Amigos (False Friends)</div>
+    <div class="gram-intro-text">Spanish words that look identical to English — but mean something completely different. Tap any card to hear the safe Colombian phrasing.</div>`;
+  sec.appendChild(intro);
+  const grid=document.createElement("div");grid.className="muletillas-grid";
+  FALSOS_AMIGOS_BANK.forEach(item=>{
+    const c=document.createElement("button");c.type="button";c.className="muletilla-card";
+    c.innerHTML=`<div class="muletilla-top"><strong>${escapeVocabHtml(item.w)}</strong><span>🔊</span></div>
+      <div class="muletilla-mean">Not ${escapeVocabHtml(item.trap)} → ${escapeVocabHtml(item.real)}</div>
+      <div class="muletilla-ex">💬 ${escapeVocabHtml(item.ex)}</div>
+      <div class="muletilla-en">${escapeVocabHtml(item.en)}</div>`;
+    c.onclick=()=>{markPractice("phrases",item.ex);speak(item.ex,0.78);};
+    grid.appendChild(c);
+  });
+  sec.appendChild(grid);
+  mountMiniGrammarLab(sec,"⚠️ Spot the False Friend",FALSOS_AMIGOS_QUIZ,"falso|");
 }
 export function buildVoseoLab(sec){
   sec.innerHTML="";
@@ -966,7 +1006,7 @@ export function buildSpeakingGuide(){
 export const GRAM_GROUPS={regiones:{label:"🗺️ Regiones",items:[["estructura","🗺️ Regiones"]]},posters:{label:"🖼️ Posters",items:[["estructura","🖼️ Posters"]]},
   tiempos:{label:"⏱️ Tiempos",items:[["presente","⚡ Presente"],["pasado","⏮️ Pasado"],["pasado-contraste","🎞️ Evento vs. contexto"],["futuro","⏭️ Futuro"],["perfecto","✅ He hecho"],["condicional","🙏 Haría / podría"],["pasado-perfecto","⏪ Había hecho"],["futuro-perfecto","⏩ Habré hecho"]]},
   pronombres:{label:"👤 Pronombres",items:[["pronombres","Lo / La / Le"]]},
-  patrones:{label:"🧩 Patrones",items:[["voseo","🇨🇴 Usted · Tú · Vos"],["muletillas","🔗 Muletillas & Flow"],["reflexivos","🔄 Reflexivos"],["subjuntivo","🌱 Subjuntivo"],["trucos","🧠 Trucos"]]},
+  patrones:{label:"🧩 Patrones",items:[["voseo","🇨🇴 Usted · Tú · Vos"],["muletillas","🔗 Muletillas & Flow"],["falsos","⚠️ Falsos Amigos"],["reflexivos","🔄 Reflexivos"],["subjuntivo","🌱 Subjuntivo"],["trucos","🧠 Trucos"]]},
   estructura:{label:"🧱 Hablar",items:[["estructura","🧱 Estructura"]]}
 };
 let gramGroup="regiones",gramSection="estructura";
@@ -986,7 +1026,7 @@ export function showGramGroup(g){
 }
 export function showGram(id){
   gramSection=id;
-  ["presente","pasado","pasado-contraste","futuro","perfecto","condicional","pasado-perfecto","futuro-perfecto","pronombres","reflexivos","voseo","muletillas","subjuntivo","trucos","estructura"].forEach(g=>{
+  ["presente","pasado","pasado-contraste","futuro","perfecto","condicional","pasado-perfecto","futuro-perfecto","pronombres","reflexivos","voseo","muletillas","falsos","subjuntivo","trucos","estructura"].forEach(g=>{
     document.getElementById("gs-"+g).classList.toggle("active",g===id);
   });
   const sub=document.getElementById("gram-sub");
@@ -1003,6 +1043,7 @@ export function initGuides() {
   buildGram("reflexivos");
   buildGram("voseo");
   buildGram("muletillas");
+  buildGram("falsos");
   buildSpeakingGuide();
   showGramGroup("regiones");
 }

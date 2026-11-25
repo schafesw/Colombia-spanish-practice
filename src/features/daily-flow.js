@@ -6,7 +6,7 @@ import { aQ, RR_BANK } from "../core/quiz-bank.js";
 import { actions, showPage } from "./navigation.js";
 import { NUMBERS_EAR_DRILLS } from "./vocab.js";
 import { STRESS_ACCENT_PAIRS } from "./phonetics.js";
-import { CONTRAST_DRILLS, SUBJUNCTIVE_DRILLS, VOSEO_SITUATIONS, MULETILLAS_QUIZ } from "./guides.js";
+import { CONTRAST_DRILLS, SUBJUNCTIVE_DRILLS, VOSEO_SITUATIONS, MULETILLAS_QUIZ, FALSOS_AMIGOS_QUIZ } from "./guides.js";
 
 var dfCards=[],dfIdx=0,dfPicked=null,dfScore=0,dfStreak=0,dfSessionMode="mix";
 function shuffledCopy(list){return list.slice().sort(()=>Math.random()-0.5);}
@@ -128,7 +128,10 @@ export function buildSrsReviewDeck(){
     }else if(key.startsWith("flow|")&&Array.isArray(MULETILLAS_QUIZ)){
       const f=MULETILLAS_QUIZ.find(x=>x.id===key.slice(5));
       if(f)cards.push({kind:"quiz",kicker:"🔗 Due · Muletillas & Flow",prompt:f.prompt,tts:f.choices[f.ans],ans:f.choices[f.ans],hint:f.why,srsKey:key,opts:shuffledCopy(f.choices)});
-    }else if(key.includes("|")&&!/^(?:pm|gt|ne|brain|rr|vf|vq|num|frq|verb|read|voseo|col|contraste|subj|flow|phon|vn)\|/.test(key)){
+    }else if(key.startsWith("falso|")&&Array.isArray(FALSOS_AMIGOS_QUIZ)){
+      const fa=FALSOS_AMIGOS_QUIZ.find(x=>x.id===key.slice(6));
+      if(fa)cards.push({kind:"quiz",kicker:"⚠️ Due · Falsos Amigos",prompt:fa.prompt,tts:fa.choices[fa.ans],ans:fa.choices[fa.ans],hint:fa.why,srsKey:key,opts:shuffledCopy(fa.choices)});
+    }else if(key.includes("|")&&!/^(?:pm|gt|ne|brain|rr|vf|vq|num|frq|verb|read|voseo|col|contraste|subj|flow|falso|phon|vn)\|/.test(key)){
       const sep=key.indexOf("|");
       const es=key.slice(0,sep),ans=key.slice(sep+1);
       if(es&&ans){
