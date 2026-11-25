@@ -338,6 +338,91 @@ export const VOICE_NOTE_SCENES=[
       {q:"New meeting time at Pergamino?",choices:["4:30","4:00","5:15"],answer:"4:30"},
       {q:"What does she ask you to order for her?",choices:["Un tinto campesino (Nequi payback)","A maracuyá juice","Two pandebonos"],answer:"Un tinto campesino (Nequi payback)"}
     ]
+  },
+  {
+    id:"vn-dorado-sim",
+    sender:"Andrés · Bogotá (Aeropuerto) ✈️",
+    title:"SIM card y cajero en El Dorado",
+    duration:"0:27",
+    tts:"Cuando salgas de migración en El Dorado, pasa de una al módulo de Claro a mano derecha y pide una SIM prepago con veinte gigas. Para sacar efectivo, usa el cajero de Davivienda o Bancolombia y siempre escoge pagar en pesos colombianos, nunca en dólares.",
+    lines:[
+      {es:"Cuando salgas de migración en El Dorado, pasa de una al módulo de Claro a mano derecha.",en:"When you leave immigration at El Dorado, go straight to the Claro kiosk on the right."},
+      {es:"Pide una SIM prepago con veinte gigas; te la dejan activada ahí mismo.",en:"Ask for a prepaid SIM with 20 GB; they activate it right there on the spot."},
+      {es:"Para sacar efectivo, usa Davivienda o Bancolombia y siempre escoge pesos colombianos, nunca dólares.",en:"To withdraw cash, use Davivienda or Bancolombia and always choose Colombian pesos, never dollars."}
+    ],
+    questions:[
+      {q:"Which direction is the Claro kiosk after immigration?",choices:["On the right (a mano derecha)","Upstairs near departures","Across the parking lot"],answer:"On the right (a mano derecha)"},
+      {q:"How much data does Andrés recommend?",choices:["20 GB (veinte gigas)","5 GB","100 GB"],answer:"20 GB (veinte gigas)"},
+      {q:"Which currency should you choose at the ATM?",choices:["Colombian pesos (never dollars)","US dollars for a locked rate","Euros"],answer:"Colombian pesos (never dollars)"}
+    ]
+  },
+  {
+    id:"vn-taxi-seguridad",
+    sender:"Camila · Bogotá 🚕",
+    title:"Reglas de Uber y 'no dar papaya'",
+    duration:"0:26",
+    tts:"Ojo con el celular en la calle: acá decimos no dar papaya, así que guárdalo antes de abrir la puerta del carro. Si pides Uber o InDrive de noche, siéntate adelante como si fueras amigo del conductor y confirma siempre las tres últimas letras de la placa.",
+    lines:[
+      {es:"Ojo con el celular en la calle: acá decimos no dar papaya, guárdalo antes de bajar.",en:"Watch out with your phone on the street: here we say don't make yourself an easy target, put it away before stepping out."},
+      {es:"Si pides Uber de noche, siéntate en el puesto de adelante para evitar problemas.",en:"If you order an Uber at night, sit in the front seat to avoid hassles."},
+      {es:"Antes de subirte, confirma la placa del carro y pregunta el nombre del conductor.",en:"Before getting in, check the license plate and ask the driver's name."}
+    ],
+    questions:[
+      {q:"What does 'no dar papaya' mean here?",choices:["Don't flash valuables or make yourself an easy target","Never eat papaya before riding","Always tip 30% in cash"],answer:"Don't flash valuables or make yourself an easy target"},
+      {q:"Where does Camila suggest sitting in a night Uber?",choices:["In the front seat (adelante)","Always in the left back seat","In the third row"],answer:"In the front seat (adelante)"},
+      {q:"What should you verify before getting into the car?",choices:["The license plate (la placa) & driver's name","The driver's passport","The trunk capacity"],answer:"The license plate (la placa) & driver's name"}
+    ]
+  },
+  {
+    id:"vn-barberia",
+    sender:"Mateo · Medellín 💈",
+    title:"Cómo pedir corte en la barbería",
+    duration:"0:24",
+    tts:"Parce, si vas a la barbería de la esquina, pregunta por Julián y dile que quieres degradado bajito a los lados con la dos, y arriba solo despuntado con tijera. Si te ofrece barba con toalla caliente, dile de una que sí, vale treinta mil pesos.",
+    lines:[
+      {es:"Si vas a la barbería de la esquina, pregunta por Julián, corta súper bien.",en:"If you go to the corner barbershop, ask for Julián, he cuts super well."},
+      {es:"Dile que quieres degradado bajito a los lados con la dos y arriba despuntado con tijera.",en:"Tell him you want a low fade on the sides with a #2 guard and just a scissor trim on top."},
+      {es:"Si te ofrece perfilada de barba con toalla caliente, dile de una que sí, vale treinta mil.",en:"If he offers a hot-towel beard trim, say yes right away — it's 30,000 COP."}
+    ],
+    questions:[
+      {q:"Who should you ask for at the corner barbershop?",choices:["Julián","Mateo","Don Luis"],answer:"Julián"},
+      {q:"What haircut instructions did Mateo give?",choices:["Low fade with #2 on sides & scissor trim on top","Completely shaved with #0","Bleach highlights"],answer:"Low fade with #2 on sides & scissor trim on top"},
+      {q:"How much is the haircut/beard service mentioned?",choices:["30,000 COP (treinta mil)","15,000 COP","90,000 COP"],answer:"30,000 COP (treinta mil)"}
+    ]
+  },
+  {
+    id:"vn-drogueria",
+    sender:"Dra. Paula · Droguería 💊",
+    title:"Recogiendo fórmula médica",
+    duration:"0:28",
+    tts:"Buenos días, aquí en la droguería ya tenemos listas las pastillas para la alergia y el protector solar. El antihistamínico se toma una sola vez en la noche después de cenar porque da un poquito de sueño, y el recibo quedó a nombre tuyo con cédula o pasaporte.",
+    lines:[
+      {es:"Buenos días, en la droguería ya tenemos listas tus pastillas para la alergia y el bloqueador.",en:"Good morning, at the pharmacy we have your allergy pills and sunscreen ready."},
+      {es:"Toma una sola pastilla en la noche después de cenar porque da un poco de sueño.",en:"Take just one pill at night after dinner because it makes you a bit sleepy."},
+      {es:"Trae tu pasaporte o foto del documento en el celular para reclamar el pedido.",en:"Bring your passport or photo ID on your phone to pick up the order."}
+    ],
+    questions:[
+      {q:"When should you take the allergy pill?",choices:["Once at night after dinner","Twice before breakfast","Every 4 hours with coffee"],answer:"Once at night after dinner"},
+      {q:"Why take it at night?",choices:["It causes a little drowsiness (da un poco de sueño)","The pharmacy closes early","Sunlight ruins the pill"],answer:"It causes a little drowsiness (da un poco de sueño)"},
+      {q:"What should you bring to pick up the order?",choices:["Passport or ID photo on your phone","A signed doctor's stamp in person","Exact change in coins only"],answer:"Passport or ID photo on your phone"}
+    ]
+  },
+  {
+    id:"vn-sanjuan-cena",
+    sender:"Tía Carmen · San Juan del Cesar 🍲",
+    title:"Cena familiar en La Guajira",
+    duration:"0:25",
+    tts:"Mijo, no comas nada por la tarde porque esta noche hice chivo guisado con arroz de coco, patacones y suero costeño fresquito. Llega como a las siete y media y trae gaseosa o hielo de la tienda de Don Rafa que está a media cuadra.",
+    lines:[
+      {es:"Mijo, no comas nada por la tarde porque esta noche hice chivo guisado con arroz de coco.",en:"Dear, don't eat anything this afternoon because tonight I made stewed goat with coconut rice."},
+      {es:"También hay patacones bien tostados y suero costeño fresquito de la finca.",en:"There are also crispy fried green plantains and fresh coastal cultured cream from the farm."},
+      {es:"Llega a las siete y media y pasa por la tienda de Don Rafa por dos bolsas de hielo.",en:"Come by 7:30 and stop at Don Rafa's corner store for two bags of ice."}
+    ],
+    questions:[
+      {q:"Why does Tía Carmen tell you not to eat in the afternoon?",choices:["She cooked stewed goat, coconut rice & patacones for dinner","Everyone is going out to a restaurant at 5","The kitchen is under repair"],answer:"She cooked stewed goat, coconut rice & patacones for dinner"},
+      {q:"What time should you arrive?",choices:["7:30 (siete y media)","6:00","9:15"],answer:"7:30 (siete y media)"},
+      {q:"What should you pick up at Don Rafa's store?",choices:["Two bags of ice (dos bolsas de hielo)","Three avocados","Charcoal for the grill"],answer:"Two bags of ice (dos bolsas de hielo)"}
+    ]
   }
 ];
 
