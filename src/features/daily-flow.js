@@ -1,18 +1,20 @@
-import { PICTURE_MATCH_BANK, GRINGO_TRAPS, NATURAL_EAR_CLIPS, SPANISH_BRAIN_DRILLS, VC, VERBS, PQ, COLOMBIANISMOS, FRASES, MINIMAL_PAIRS } from "../../data/index.js";
+import { PICTURE_MATCH_BANK, GRINGO_TRAPS, NATURAL_EAR_CLIPS, SPANISH_BRAIN_DRILLS, VC, VERBS, PQ, COLOMBIANISMOS, FRASES, MINIMAL_PAIRS, READINGS, STREET_EAR_LINKER, TRAMPAS_COLOMBIANAS } from "../../data/index.js";
 import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml } from "../core/text-utils.js";
-import { markPractice, recordSrs, srsDue, srsStore } from "../core/stores.js";
+import { markPractice, recordSrs, srsDue, srsStore, isQuizSrsKey } from "../core/stores.js";
 import { aQ, RR_BANK } from "../core/quiz-bank.js";
 import { actions, showPage } from "./navigation.js";
-import { NUMBERS_EAR_DRILLS } from "./vocab.js";
+import { NUMBERS_EAR_DRILLS, CHECKOUT_SIM_DRILLS } from "./vocab.js";
 import { STRESS_ACCENT_PAIRS } from "./phonetics.js";
 import { CONTRAST_DRILLS, SUBJUNCTIVE_DRILLS, VOSEO_SITUATIONS, MULETILLAS_QUIZ, FALSOS_AMIGOS_QUIZ } from "./guides.js";
+import { PRONOMBRES_QUIZ } from "./hablar-labs.js";
+import { VOICE_NOTE_SCENES } from "./speaking-labs.js";
 
 var dfCards=[],dfIdx=0,dfPicked=null,dfScore=0,dfStreak=0,dfSessionMode="mix";
 function shuffledCopy(list){return list.slice().sort(()=>Math.random()-0.5);}
 export function buildSrsReviewDeck(){
   if(typeof srsStore!=="object")return[];
-  const dueKeys=Object.keys(srsStore).filter(srsDue).sort((a,b)=>((srsStore[a]&&srsStore[a].due)||0)-((srsStore[b]&&srsStore[b].due)||0));
+  const dueKeys=Object.keys(srsStore).filter(k=>isQuizSrsKey(k)&&srsDue(k)).sort((a,b)=>((srsStore[a]&&srsStore[a].due)||0)-((srsStore[b]&&srsStore[b].due)||0));
   const cards=[];
   const gtLocals=(typeof GRINGO_TRAPS!=="undefined"?GRINGO_TRAPS.map(x=>x.local):[]);
   const rrPool=(typeof RR_BANK!=="undefined"?RR_BANK.filter(r=>r&&r.aEs).map(r=>r.aEs):[]);
@@ -131,7 +133,53 @@ export function buildSrsReviewDeck(){
     }else if(key.startsWith("falso|")&&Array.isArray(FALSOS_AMIGOS_QUIZ)){
       const fa=FALSOS_AMIGOS_QUIZ.find(x=>x.id===key.slice(6));
       if(fa)cards.push({kind:"quiz",kicker:"⚠️ Due · Falsos Amigos",prompt:fa.prompt,tts:fa.choices[fa.ans],ans:fa.choices[fa.ans],hint:fa.why,srsKey:key,opts:shuffledCopy(fa.choices)});
-    }else if(key.includes("|")&&!/^(?:pm|gt|ne|brain|rr|vf|vq|num|frq|verb|read|voseo|col|contraste|subj|flow|falso|phon|vn)\|/.test(key)){
+    }else if(key.startsWith("pro|")&&Array.isArray(PRONOMBRES_QUIZ)){
+      const pr=PRONOMBRES_QUIZ.find(x=>x.id===key.slice(4));
+      if(pr)cards.push({kind:"quiz",kicker:"👤 Due · Pronombres",prompt:pr.prompt,tts:pr.choices[pr.ans],ans:pr.choices[pr.ans],hint:pr.why,srsKey:key,opts:shuffledCopy(pr.choices)});
+    }else if(key.startsWith("vn|")&&Array.isArray(VOICE_NOTE_SCENES)){
+      const [,noteId,qiRaw]=key.split("|");
+      const note=VOICE_NOTE_SCENES.find(n=>n.id===noteId);
+      const qObj=note&&Array.isArray(note.questions)?note.questions[Number(qiRaw)]:null;
+      if(note&&qObj){
+        cards.push({kind:"quiz",kicker:"🎧 Due · Nota de Voz",prompt:`${note.title}: ${qObj.q}`,tts:note.tts,ans:qObj.answer,hint:`${note.sender} — ${note.title}`,srsKey:key,opts:shuffledCopy(qObj.choices)});
+      }
+    }else if(key.startsWith("read|")&&Array.isArray(READINGS)){
+      const [,rId,qiRaw]=key.split("|");
+      const rd=READINGS.find(r=>r.id===rId);
+      const qObj=rd&&Array.isArray(rd.questions)?rd.questions[Number(qiRaw)]:null;
+      if(rd&&qObj){
+        cards.push({kind:"quiz",kicker:"📖 Due · Lectura",prompt:`${rd.title}: ${qObj.q}`,tts:rd.tts||rd.title,ans:qObj.answer,hint:`${rd.title} (${rd.level})`,srsKey:key,opts:shuffledCopy(qObj.choices)});
+      }
+    }else if(key.startsWith("ear|")&&Array.isArray(STREET_EAR_LINKER)){
+      const streetEs=key.slice(4);
+      const item=STREET_EAR_LINKER.find(x=>x.streetEs===streetEs);
+      if(item){
+        const correctLbl=`${item.carefulEs} — ${item.en}`;
+        const opts=[correctLbl];
+        for(const d of shuffledCopy(STREET_EAR_LINKER)){
+          if(opts.length>=3)break;
+          const lbl=`${d.carefulEs} — ${d.en}`;
+          if(!opts.includes(lbl))opts.push(lbl);
+        }
+        cards.push({kind:"ear",kicker:"👂 Due · Street Speed Ear",prompt:item.streetEs,clear:item.carefulEs,tts:item.streetEs,ans:correctLbl,hint:`${item.carefulEs} (${item.en}) — ${item.tip}`,srsKey:key,opts:shuffledCopy(opts)});
+      }
+    }else if(key.startsWith("trampa|")&&Array.isArray(TRAMPAS_COLOMBIANAS)){
+      const trap=key.slice(7);
+      const t=TRAMPAS_COLOMBIANAS.find(x=>x.trap===trap);
+      if(t){
+        cards.push({kind:"quiz",kicker:"🪤 Due · Trampa Colombiana",prompt:`What does "${t.trap}" mean in Colombia? ("${t.es}")`,tts:t.es,ans:t.realMeaning,hint:t.tip,srsKey:key,opts:shuffledCopy([t.realMeaning,t.wrongGuess])});
+      }
+    }else if(key.startsWith("cop|")&&Array.isArray(CHECKOUT_SIM_DRILLS)){
+      const amt=Number(key.slice(4));
+      const cObj=CHECKOUT_SIM_DRILLS.find(x=>x.amount===amt);
+      if(cObj){
+        const fmt=n=>"$"+String(n).replace(/\B(?=(\d{3})+(?!\d))/g,".");
+        const ans=fmt(cObj.amount);
+        const opts=[ans];
+        for(const d of shuffledCopy(CHECKOUT_SIM_DRILLS)){if(opts.length>=4)break;const v=fmt(d.amount);if(!opts.includes(v))opts.push(v);}
+        cards.push({kind:"quiz",kicker:"🧾 Due · Checkout Total",prompt:`${cObj.place}: Listen to the cashier — how much is it?`,tts:cObj.tts,ans,hint:cObj.note,srsKey:key,opts:shuffledCopy(opts)});
+      }
+    }else if(key.includes("|")&&isQuizSrsKey(key)&&!/^(?:pm|gt|ne|brain|rr|vf|vq|num|cop|frq|verb|read|voseo|col|contraste|subj|flow|falso|pro|phon|vn|ear|trampa)\|/.test(key)){
       const sep=key.indexOf("|");
       const es=key.slice(0,sep),ans=key.slice(sep+1);
       if(es&&ans){

@@ -23,7 +23,7 @@ button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none;}
 .tab-bar{position:fixed;bottom:0;left:0;right:0;height:calc(var(--tab-h) + var(--safe-bottom));padding-bottom:var(--safe-bottom);
   background:rgba(8,12,18,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   border-top:1px solid rgba(255,255,255,0.1);display:flex;z-index:999;}
-.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;color:var(--muted);font-size:0.58rem;font-weight:800;transition:all 0.2s;}
+.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;color:var(--muted);font-size:0.58rem;font-weight:800;transition:transform 0.2s,background 0.18s ease;}
 .tab-item .ti{font-size:1.7rem;line-height:1;transition:transform 0.2s;}
 .tab-item.active{color:var(--teal);}.tab-item.active .ti{transform:scale(1.15);}
 .tab-item.tfrases.active{color:var(--pink);}.tab-item.tgram.active{color:var(--purple);}.tab-item.tquiz.active{color:var(--gold);}

@@ -88,9 +88,11 @@ export const SRS_KEY="esco-srs-v1";
 export let srsStore={};
 try{srsStore=JSON.parse(appStorage.getItem(SRS_KEY)||"{}");if(!srsStore||typeof srsStore!=="object")srsStore={};}catch(e){srsStore={};}
 export const SRS_INTERVALS=[1,3,7,14,30];
+const PASSIVE_SRS_RE=/^(?:chat|rp|vg|atlas|regsw)\||^frame:/;
+export function isQuizSrsKey(key){return !!key&&!PASSIVE_SRS_RE.test(key);}
 export function saveSrs(){try{appStorage.setItem(SRS_KEY,JSON.stringify(srsStore));}catch(e){}}
 export function srsDue(key){const card=srsStore[key];return !!card&&(!card.due||card.due<=Date.now());}
-export function srsDueCount(){return Object.keys(srsStore).filter(srsDue).length;}
+export function srsDueCount(){return Object.keys(srsStore).filter(k=>isQuizSrsKey(k)&&srsDue(k)).length;}
 export function recordSrs(key,correct){
   recordPracticeDay();
   const now=Date.now(),today=localDayKey();
