@@ -505,6 +505,101 @@ export const NUMBERS_EAR_DRILLS=[
   {tag:"Time",tts:"Abren a las ocho y quince de la mañana",es:"Abren a las 8:15 AM.",ans:"8:15 AM",en:"They open at 8:15 AM",dist:["8:50 AM","8:45 AM","9:15 AM"]},
   {tag:"Bogotá Slang",tts:"Préstame veinte barras mientras llega la quincena",es:"Préstame veinte barras mientras llega la quincena.",ans:"$20.000",en:"20,000 COP (barras / lucas = mil)",dist:["$200.000","$2.000","$12.000"]}
 ];
+export const CHECKOUT_SIM_DRILLS=[
+  {amount:18500,place:"🥐 Panadería & café",tts:"Son dieciocho mil quinientos pesos por todo, vecino. ¿Con qué paga?",say:"¿Tiene sencillo? Aquí tiene veinte mil.",note:"18,500 COP (~$4.50 USD) — paying with a $20.000 bill leaves $1.500 change."},
+  {amount:38500,place:"🛒 Tienda D1",tts:"En total son treinta y ocho mil quinientos pesos. ¿Necesita bolsa?",say:"Sí, regáleme una bolsa por favor. Pago con Nequi.",note:"38,500 COP (~$9.50 USD) — bags cost ~100–200 COP extra at supermarkets."},
+  {amount:52000,place:"🚕 Taxi desde El Dorado",tts:"Listo jefe, la carrera con el recargo del aeropuerto son cincuenta y dos mil.",say:"Perfecto, muchas gracias. Quédese con los tres mil de devuelta.",note:"52,000 COP (~$13 USD) — airport surcharge is normal in Bogotá."},
+  {amount:67200,place:"💊 Droguería",tts:"Las pastillas y el bloqueador le quedan en sesenta y siete mil doscientos.",say:"¿Puedo pagar con tarjeta a una cuota?",note:"67,200 COP (~$16.50 USD) — always say 'a una cuota' on credit cards!"},
+  {amount:24000,place:"🍽️ Dos corrientazos",tts:"Con los dos jugos en leche fueron veinticuatro mil en total.",say:"Qué rico estuvo todo. Aquí tiene cincuenta mil.",note:"24,000 COP (~$6 USD) for two full Colombian set lunches."},
+  {amount:115000,place:"🍲 Cena familiar",tts:"La cuenta con el servicio voluntario quedó en ciento quince mil pesos.",say:"Incluya el servicio por favor. ¿Me pasa el QR de Nequi?",note:"115,000 COP (~$28 USD) — 'servicio' is the optional 10% restaurant tip."}
+];
+const ADDRESS_SIM_DRILLS=[
+  {addr:"Calle 85 # 12-40",tts:"Lléveme a la Calle ochenta y cinco número doce cuarenta, por favor",en:"Calle 85, building #40 past Carrera 12 (Zona T, Bogotá)",opts:["Calle 85 # 12-40","Carrera 85 # 12-40","Calle 58 # 21-40"]},
+  {addr:"Carrera 15 # 93-18",tts:"Queda en la Carrera quince número noventa y tres dieciocho",en:"Carrera 15, between Calle 93 & 94 (Parque 93, Bogotá)",opts:["Carrera 15 # 93-18","Calle 15 # 93-18","Carrera 50 # 39-18"]},
+  {addr:"Calle 10 # 43E-25",tts:"Nos bajamos en la Calle diez número cuarenta y tres E veinticinco",en:"Calle 10 # 43E-25 (El Poblado, Medellín)",opts:["Calle 10 # 43E-25","Carrera 10 # 43E-25","Calle 10 # 34A-25"]},
+  {addr:"Diagonal 53 # 27-08",tts:"El apartamento está en la Diagonal cincuenta y tres número veintisiete cero ocho",en:"Diagonal 53 # 27-08 (Galerías, Bogotá)",opts:["Diagonal 53 # 27-08","Calle 53 # 27-80","Transversal 35 # 27-08"]}
+];
+function formatCopDisplay(n){
+  const num=Math.max(0,Math.round(Number(n)||0));
+  return "$"+String(num).replace(/\B(?=(\d{3})+(?!\d))/g,".");
+}
+function buildCheckoutSimulator(list){
+  const card=document.createElement("div");card.className="bridge-trainer-card checkout-lab-card";
+  let mode="cop",idx=0,entered=0,done=false,score=0,attempts=0;
+  const draw=()=>{
+    if(mode==="cop"){
+      const q=CHECKOUT_SIM_DRILLS[idx%CHECKOUT_SIM_DRILLS.length];
+      card.innerHTML=`<div class="bridge-head"><div><div class="bridge-title">🧾 ¿Cuánto vale? · Checkout Simulator</div><div class="bridge-sub">${escapeVocabHtml(q.place)} — listen &amp; ring up the exact COP total (${(idx%CHECKOUT_SIM_DRILLS.length)+1}/${CHECKOUT_SIM_DRILLS.length})</div></div><div class="bridge-score">${score}/${attempts}</div></div>
+        <div class="vf-mode-bar" style="margin-bottom:8px"><button type="button" class="vf-mode-btn active" data-cm="cop">💵 Cashier COP</button><button type="button" class="vf-mode-btn" data-cm="addr">🚕 Taxi Address</button></div>
+        <div class="bridge-controls"><button type="button" class="voc-flash-speak cm-play">🔊 Hear Cashier</button><button type="button" class="voc-flash-speak cm-slow">🐢 Slow (0.72×)</button></div>
+        <div class="checkout-display"><span style="font-size:0.78rem;color:var(--muted);font-weight:700">Total Entered</span><strong class="checkout-val">${formatCopDisplay(entered)}</strong></div>
+        <div class="checkout-chips"></div>
+        <div class="bridge-actions"></div>
+        <div class="bridge-fb" style="margin-top:6px"></div>`;
+      card.querySelector('[data-cm="addr"]').onclick=()=>{mode="addr";idx=0;done=false;draw();};
+      card.querySelector(".cm-play").onclick=()=>speak(q.tts,0.92);
+      card.querySelector(".cm-slow").onclick=()=>speak(q.tts,0.72);
+      const chips=card.querySelector(".checkout-chips");
+      [50000,20000,10000,5000,1000,500,200,100].forEach(val=>{
+        const b=document.createElement("button");b.type="button";b.className="checkout-chip";b.textContent="+"+formatCopDisplay(val);b.disabled=done;
+        b.onclick=()=>{if(done)return;entered+=val;card.querySelector(".checkout-val").textContent=formatCopDisplay(entered);};
+        chips.appendChild(b);
+      });
+      const acts=card.querySelector(".bridge-actions");
+      const clr=document.createElement("button");clr.type="button";clr.className="lp-nav-btn";clr.textContent="↺ Clear";clr.disabled=done;
+      clr.onclick=()=>{entered=0;card.querySelector(".checkout-val").textContent=formatCopDisplay(0);};
+      const chk=document.createElement("button");chk.type="button";chk.className="lp-nav-btn primary";chk.textContent="✓ Ring Up Total";chk.disabled=done;
+      const fb=card.querySelector(".bridge-fb");
+      const nxt=document.createElement("button");nxt.type="button";nxt.className="bridge-next";nxt.hidden=!done;nxt.textContent="Next customer →";
+      nxt.onclick=()=>{idx++;entered=0;done=false;draw();};
+      chk.onclick=()=>{
+        if(done)return;
+        done=true;attempts++;
+        const ok=entered===q.amount;
+        if(ok)score++;
+        markPractice("vocab",q.tts);
+        recordSrs("cop|"+q.amount,ok);
+        speak(q.say,0.8);
+        card.querySelector(".bridge-score").textContent=`${score}/${attempts}`;
+        chips.querySelectorAll("button").forEach(b=>b.disabled=true);
+        clr.disabled=true;chk.disabled=true;nxt.hidden=false;
+        fb.innerHTML=(ok?"✅ <strong>¡Exacto!</strong> ":"❌ <strong>Total was "+formatCopDisplay(q.amount)+"</strong> · ")+escapeVocabHtml(q.note)+`<br><small>💬 Reply: “${escapeVocabHtml(q.say)}”</small>`;
+      };
+      acts.append(clr,chk,nxt);
+    }else{
+      const q=ADDRESS_SIM_DRILLS[idx%ADDRESS_SIM_DRILLS.length];
+      card.innerHTML=`<div class="bridge-head"><div><div class="bridge-title">🚕 Taxi Address Coordinates</div><div class="bridge-sub">Listen without reading, then match the written Colombian grid address (${(idx%ADDRESS_SIM_DRILLS.length)+1}/${ADDRESS_SIM_DRILLS.length})</div></div><div class="bridge-score">${score}/${attempts}</div></div>
+        <div class="vf-mode-bar" style="margin-bottom:8px"><button type="button" class="vf-mode-btn" data-cm="cop">💵 Cashier COP</button><button type="button" class="vf-mode-btn active" data-cm="addr">🚕 Taxi Address</button></div>
+        <div class="bridge-controls"><button type="button" class="voc-flash-speak cm-play">🔊 Hear Address</button><button type="button" class="voc-flash-speak cm-slow">🐢 Slow (0.72×)</button></div>
+        <div class="bridge-opts vq-opts"></div>
+        <div class="bridge-fb" style="margin-top:6px"></div>
+        <button type="button" class="bridge-next" hidden>Next address →</button>`;
+      card.querySelector('[data-cm="cop"]').onclick=()=>{mode="cop";idx=0;entered=0;done=false;draw();};
+      card.querySelector(".cm-play").onclick=()=>speak(q.tts,0.9);
+      card.querySelector(".cm-slow").onclick=()=>speak(q.tts,0.72);
+      const opts=card.querySelector(".bridge-opts"),fb=card.querySelector(".bridge-fb"),nxt=card.querySelector(".bridge-next");
+      nxt.onclick=()=>{idx++;done=false;draw();};
+      q.opts.slice().sort(()=>Math.random()-0.5).forEach(opt=>{
+        const b=document.createElement("button");b.type="button";b.className="bridge-opt";b.textContent=opt;
+        b.onclick=()=>{
+          if(!nxt.hidden)return;
+          done=true;attempts++;
+          const ok=opt===q.addr;if(ok)score++;
+          b.classList.add(ok?"ok":"no");
+          if(!ok)Array.from(opts.children).forEach(x=>{if(x.textContent===q.addr)x.classList.add("ok");});
+          Array.from(opts.children).forEach(x=>x.disabled=true);
+          markPractice("vocab",q.tts);
+          card.querySelector(".bridge-score").textContent=`${score}/${attempts}`;
+          fb.textContent=(ok?"✅ ":"❌ ")+q.addr+" — "+q.en;
+          nxt.hidden=false;
+        };
+        opts.appendChild(b);
+      });
+    }
+  };
+  draw();
+  list.appendChild(card);
+}
 
 export function rN(list){
   const ear=document.createElement("div");ear.className="bridge-trainer-card numbers-ear-card";
@@ -544,6 +639,7 @@ export function rN(list){
   };
   drawEar();
   list.appendChild(ear);
+  buildCheckoutSimulator(list);
   const cr=document.createElement("div");cr.className="counting-rules";
   cr.innerHTML=`<div class="cr-title">📖 Reglas para contar</div>
     <div class="cr-row"><div class="cr-ex">31 = treinta y uno</div><div class="cr-rule">30–90: [decena] + y + [unidad]</div></div>

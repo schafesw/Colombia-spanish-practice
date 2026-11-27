@@ -123,7 +123,7 @@ button:active { transform: translateY(1px); }
 .tab-item.tfrases.active,
 .tab-item.tgram.active,
 .tab-item.tquiz.active { color: var(--accent); }
-.tab-item { transition: color .18s ease; }
+.tab-item { transition: background .18s ease; }
 .tab-item .ti { transition: transform .18s ease; }
 .page.active { animation: esco-page .24s ease; }
 @keyframes esco-page { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
@@ -219,7 +219,7 @@ button:active { transform: translateY(1px); }
 }
 
 /* Sun Mode high-contrast overrides for tiles, trays, controls, and pastel chips */
-:root[data-theme="light"] .tab-item { color: #475569; }
+:root[data-theme="light"] .tab-item { color: #334155; }
 :root[data-theme="light"] .tab-item.active { color: #0f766e; }
 :root[data-theme="light"] .tab-item.tfrases.active { color: #be123c; }
 :root[data-theme="light"] .tab-item.tgram.active { color: #6d28d9; }
