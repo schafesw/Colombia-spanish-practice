@@ -526,7 +526,7 @@ button:active { transform: translateY(1px); }
     border-radius: var(--r-m);
     position: relative;
     overflow: hidden;
-    transition: background .18s ease, color .18s ease, transform .18s ease;
+    transition: background .18s ease, transform .18s ease;
   }
   .tab-item::before {
     content: "";
@@ -565,7 +565,7 @@ button:active { transform: translateY(1px); }
 }
 
 @media (hover: hover) and (max-width: 759px) {
-  .tab-item { transition: color .18s ease, background .18s ease; }
+  .tab-item { transition: background .18s ease; }
   .tab-item:hover { background: var(--card-2); }
   .tab-item:hover .ti { transform: scale(1.15); }
 }

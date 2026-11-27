@@ -181,7 +181,7 @@
   font-weight: 800;
   gap: 3px;
   padding: 7px 2px 5px;
-  transition: color 0.15s ease, transform 0.12s ease;
+  transition: transform 0.12s ease;
 }
 .tab-item .ti {
   font-size: 1.32rem;

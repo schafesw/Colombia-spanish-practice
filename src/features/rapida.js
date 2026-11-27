@@ -1,7 +1,7 @@
 import { appStorage } from "../state/storage.js";
 import { speak } from "../audio/voice-engine.js";
 import { escapeVocabHtml, lpEl } from "../core/text-utils.js";
-import { speakingErrors, speakingErrorId, recordSpeakingError, clearSpeakingError } from "../core/stores.js";
+import { speakingErrors, speakingErrorId, recordSpeakingError, clearSpeakingError, getStarredPhrases } from "../core/stores.js";
 import { openMicPanel } from "../core/speech-mic.js";
 import { RR_BANK } from "../core/quiz-bank.js";
 import { actions } from "./navigation.js";
@@ -269,11 +269,19 @@ export function renderSpeakingErrorJournal(root){
       drillBtn.textContent=`🔊 Speak next (${drillIdx+1}/${pool.length}): "${cur.text.slice(0,26)}${cur.text.length>26?"…":""}"`;
     };
     drillBar.appendChild(drillBtn);
+    const starredCount=getStarredPhrases().length;
+    if(starredCount){
+      const quizBtn=document.createElement("button");quizBtn.type="button";quizBtn.className="lp-nav-btn error-journal-quiz-btn";
+      quizBtn.textContent=`🎴 Quiz Starred (${starredCount})`;
+      quizBtn.onclick=()=>{if(typeof actions.openSavedQuiz==="function")actions.openSavedQuiz();};
+      drillBar.appendChild(quizBtn);
+    }
     list.appendChild(drillBar);
   }
   entries.slice(0,12).forEach(item=>{
     const row=document.createElement("div");row.className="error-journal-row";
-    const copy=document.createElement("div");copy.className="error-journal-copy";copy.innerHTML=`<strong>${item.starred?"⭐ ":""}${escapeVocabHtml(item.text)}</strong><small>${escapeVocabHtml(item.source||"practice")}${item.starred?" · pinned":` · ${item.count||1} attempt${(item.count||1)===1?"":"s"}`}</small>`;
+    const enNote=item.en?` · ${item.en}`:"";
+    const copy=document.createElement("div");copy.className="error-journal-copy";copy.innerHTML=`<strong>${item.starred?"⭐ ":""}${escapeVocabHtml(item.text)}</strong><small>${escapeVocabHtml(item.source||"practice")}${item.starred?" · pinned":` · ${item.count||1} attempt${(item.count||1)===1?"":"s"}`}${escapeVocabHtml(enNote)}</small>`;
     copy.style.cursor="pointer";copy.onclick=()=>speak(item.text,0.75);
     const actions=document.createElement("div");actions.className="error-journal-actions";
     const hear=document.createElement("button");hear.type="button";hear.className="error-journal-btn";hear.textContent="🔊";hear.title="Hear sentence";hear.setAttribute("aria-label","Hear sentence");hear.onclick=()=>speak(item.text,0.75);

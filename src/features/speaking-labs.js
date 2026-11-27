@@ -289,6 +289,7 @@ export function renderReading(reading){
 export const VOICE_NOTE_SCENES=[
   {
     id:"vn-sanjuan-almuerzo",
+    region:"guajira",
     sender:"Primo Carlos · San Juan del Cesar 🪗",
     title:"Sancocho en casa de la abuela",
     duration:"0:28",
@@ -306,6 +307,7 @@ export const VOICE_NOTE_SCENES=[
   },
   {
     id:"vn-bogota-llaves",
+    region:"bogota",
     sender:"Doña Marta · Arrendadora Bogotá 🏔️",
     title:"Llaves, portería y agua caliente",
     duration:"0:32",
@@ -324,6 +326,7 @@ export const VOICE_NOTE_SCENES=[
   },
   {
     id:"vn-medellin-cafe",
+    region:"medellin",
     sender:"Valeria · Medellín 🌸",
     title:"Cambio de punto de encuentro",
     duration:"0:25",
@@ -341,6 +344,7 @@ export const VOICE_NOTE_SCENES=[
   },
   {
     id:"vn-dorado-sim",
+    region:"bogota",
     sender:"Andrés · Bogotá (Aeropuerto) ✈️",
     title:"SIM card y cajero en El Dorado",
     duration:"0:27",
@@ -358,6 +362,7 @@ export const VOICE_NOTE_SCENES=[
   },
   {
     id:"vn-taxi-seguridad",
+    region:"bogota",
     sender:"Camila · Bogotá 🚕",
     title:"Reglas de Uber y 'no dar papaya'",
     duration:"0:26",
@@ -375,6 +380,7 @@ export const VOICE_NOTE_SCENES=[
   },
   {
     id:"vn-barberia",
+    region:"medellin",
     sender:"Mateo · Medellín 💈",
     title:"Cómo pedir corte en la barbería",
     duration:"0:24",
@@ -392,6 +398,7 @@ export const VOICE_NOTE_SCENES=[
   },
   {
     id:"vn-drogueria",
+    region:"bogota",
     sender:"Dra. Paula · Droguería 💊",
     title:"Recogiendo fórmula médica",
     duration:"0:28",
@@ -409,6 +416,7 @@ export const VOICE_NOTE_SCENES=[
   },
   {
     id:"vn-sanjuan-cena",
+    region:"guajira",
     sender:"Tía Carmen · San Juan del Cesar 🍲",
     title:"Cena familiar en La Guajira",
     duration:"0:25",
@@ -477,4 +485,26 @@ export function renderVoiceNoteLab(note){
   syncDone();
   done.onclick=()=>{readingProgress[note.id]=true;saveReadings();markPractice("phrases",note.title);renderVoiceNoteLab(note);};
   card.appendChild(done);root.appendChild(card);
+}
+
+export const SURVIVAL_EMERGENCY_BANK=[
+  {tag:"🚨 123 Emergency",es:"¡Ayuda por favor, necesito llamar al ciento veintitrés!",en:"Help please, I need to call 123 (Colombia emergency number)."},
+  {tag:"🛂 Lost Passport / ID",es:"Se me perdió el pasaporte; necesito el número del cuadrante de policía.",en:"I lost my passport; I need the local police precinct number."},
+  {tag:"💊 Medical / Allergy",es:"Soy alérgico a la penicilina. ¿Me puede atender un médico?",en:"I'm allergic to penicillin. Can a doctor see me?"},
+  {tag:"🚕 Taxi / Uber Safety",es:"Déjeme aquí en la esquina por favor; la placa sí coincide.",en:"Let me off here on the corner please; yes, the license plate matches."},
+  {tag:"🏦 Bank / ATM Card",es:"El cajero no me dio efectivo pero me descontaron el retiro.",en:"The ATM didn't give cash but my account was charged."},
+  {tag:"🏢 Building / Portería",es:"Soy huésped del apartamento cuatrocientos dos; ¿me abre la puerta por fa?",en:"I'm a guest in apartment 402; can you open the door please?"}
+];
+
+export function renderSurvivalCard(root){
+  const fold=document.createElement("details");fold.className="starter-more-tools survival-sheet-fold";fold.dataset.lessonView="practice";
+  fold.innerHTML=`<summary><span>🚨 Survival &amp; Emergency Quick Sheet</span><small>${SURVIVAL_EMERGENCY_BANK.length} tap-to-speak lines ▾</small></summary>`;
+  const list=document.createElement("div");list.className="survival-sheet-list";
+  SURVIVAL_EMERGENCY_BANK.forEach(item=>{
+    const row=document.createElement("button");row.type="button";row.className="survival-row";
+    row.innerHTML=`<div class="survival-copy"><span class="survival-tag">${escapeVocabHtml(item.tag)}</span><strong>${escapeVocabHtml(item.es)}</strong><small>${escapeVocabHtml(item.en)}</small></div><span class="survival-spk">🔊</span>`;
+    row.onclick=()=>{markPractice("phrases",item.es);speak(item.es,0.78);};
+    list.appendChild(row);
+  });
+  fold.appendChild(list);root.appendChild(fold);
 }
