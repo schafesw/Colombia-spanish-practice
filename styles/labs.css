@@ -938,3 +938,19 @@
 :root[data-theme="light"] .checkout-val{color:#9a4706;}
 :root[data-theme="light"] .checkout-chip,:root[data-theme="light"] .pro-tile{background:#ffffff;border-color:rgba(20,32,26,0.16);color:#14201a;}
 :root[data-theme="light"] .pro-tile.placed{background:#ccfbf1;border-color:#0f766e;color:#0f766e;}
+
+/* ── v134.0: Notas de Voz Region Chips, Survival Quick Sheet & Saved Quiz Button ── */
+.vn-region-bar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 10px;}
+.survival-sheet-list{display:grid;gap:8px;margin-top:8px;}
+.survival-row{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid rgba(232,93,117,0.32);background:rgba(232,93,117,0.08);cursor:pointer;}
+.survival-copy{display:grid;gap:2px;min-width:0;}
+.survival-tag{font-size:0.7rem;font-weight:800;color:var(--pink);letter-spacing:0.02em;}
+.survival-copy strong{font-size:0.86rem;color:var(--text);}
+.survival-copy small{font-size:0.74rem;color:var(--muted);}
+.survival-spk{flex-shrink:0;font-size:1rem;}
+.error-journal-quiz-btn{border-color:rgba(245,196,81,0.45);background:rgba(245,196,81,0.14);color:var(--gold);}
+:root[data-theme="light"] .survival-row{background:#fff1f2;border-color:#fda4af;}
+:root[data-theme="light"] .survival-tag{color:#be123c;}
+:root[data-theme="light"] .survival-copy strong{color:#14201a;}
+:root[data-theme="light"] .survival-copy small{color:#475569;}
+:root[data-theme="light"] .error-journal-quiz-btn{background:#fef3c7;border-color:#d97706;color:#92400e;}

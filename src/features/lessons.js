@@ -29,7 +29,7 @@ import {
   renderRapida, renderSpeakingErrorJournal, resetRrSession,
 } from "./rapida.js";
 import {
-  renderMission, frameDayNumber, renderFramePractice, renderReading, VOICE_NOTE_SCENES, renderVoiceNoteLab,
+  renderMission, frameDayNumber, renderFramePractice, renderReading, VOICE_NOTE_SCENES, renderVoiceNoteLab, renderSurvivalCard,
 } from "./speaking-labs.js";
 import {
   LESSON_STAGES, FOCUS_LESSON_SETS,
@@ -447,11 +447,32 @@ export function renderLessons(){
   readingFold.appendChild(readingGrid);root.appendChild(readingFold);
 
   const vnFold=document.createElement("details");vnFold.className="starter-more-tools";vnFold.dataset.lessonView="practice";
-  const vnDone=(VOICE_NOTE_SCENES||[]).filter(v=>readingProgress[v.id]).length;
-  vnFold.innerHTML=`<summary><span>🎧 Notas de Voz (Audio Stories)</span><small>${vnDone}/${(VOICE_NOTE_SCENES||[]).length} completed ▾</small></summary>`;
+  const vnAll=VOICE_NOTE_SCENES||[];
+  const vnDone=vnAll.filter(v=>readingProgress[v.id]).length;
+  vnFold.innerHTML=`<summary><span>🎧 Notas de Voz (Audio Stories)</span><small>${vnDone}/${vnAll.length} completed ▾</small></summary>`;
+  let activeVnReg="all";
+  const vnRegBar=document.createElement("div");vnRegBar.className="vn-region-bar";
   const vnGrid=document.createElement("div");vnGrid.className="reading-home-grid";
-  (VOICE_NOTE_SCENES||[]).forEach(vn=>{const b=document.createElement("button");b.type="button";b.className="reading-home-card";b.innerHTML=`<span class='reading-home-icon'>${readingProgress[vn.id]?"✅":"🎧"}</span><span><strong>${vn.title}</strong><small>${vn.sender} · ${vn.duration}</small></span><span>›</span>`;b.onclick=()=>renderVoiceNoteLab(vn);vnGrid.appendChild(b);});
-  vnFold.appendChild(vnGrid);root.appendChild(vnFold);
+  const drawVnList=()=>{
+    vnRegBar.innerHTML="";
+    [["all",`🗺️ Todas (${vnAll.length})`],["bogota","🏔️ Bogotá"],["medellin","🌸 Medellín"],["guajira","🪗 La Guajira"]].forEach(([rid,lbl])=>{
+      const cnt=rid==="all"?vnAll.length:vnAll.filter(v=>v.region===rid).length;
+      const chip=document.createElement("button");chip.type="button";chip.className="mf-chip"+(activeVnReg===rid?" active":"");
+      chip.textContent=rid==="all"?lbl:`${lbl} (${cnt})`;
+      chip.onclick=()=>{activeVnReg=rid;drawVnList();};
+      vnRegBar.appendChild(chip);
+    });
+    vnGrid.innerHTML="";
+    vnAll.filter(v=>activeVnReg==="all"||v.region===activeVnReg).forEach(vn=>{
+      const b=document.createElement("button");b.type="button";b.className="reading-home-card";
+      b.innerHTML=`<span class='reading-home-icon'>${readingProgress[vn.id]?"✅":"🎧"}</span><span><strong>${vn.title}</strong><small>${vn.sender} · ${vn.duration}</small></span><span>›</span>`;
+      b.onclick=()=>renderVoiceNoteLab(vn);
+      vnGrid.appendChild(b);
+    });
+  };
+  drawVnList();
+  vnFold.append(vnRegBar,vnGrid);root.appendChild(vnFold);
+  renderSurvivalCard(root);
 
   /* Lessons grouped into a speaking-first progression (shared LESSON_STAGES) */
   const roadmap=lpEl("lesson-roadmap");

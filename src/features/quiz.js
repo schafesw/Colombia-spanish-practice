@@ -133,6 +133,30 @@ export function clearMissedQuiz(q){
 }
 export function exitMissedQueue(){appState.qMissedOnly=false;appState.qSavedOnly=false;appState.repasoLeft=0;resetQuizRound();syncQuizControls();nQ();}
 export function openMissedQueue(){appState.qBlitzPack=null;appState.qSavedOnly=false;showPage("quiz");appState.qMissedOnly=true;appState.qMode="mixed";appState.qCat="all";appState.qFocus="all";appState.repasoLeft=0;resetQuizRound();syncQuizControls();nQ();}
+export function openSavedQuiz(){appState.qBlitzPack=null;appState.qMissedOnly=false;appState.qSavedOnly=true;appState.qMode="mixed";appState.qCat="all";appState.qFocus="all";appState.repasoLeft=0;showPage("quiz");resetQuizRound();syncQuizControls();renderQuizV102Hub();nQ();}
+export function pickWeakestBlitzPack(){
+  const catScores={};
+  const missedKeys=new Set([
+    ...Object.keys((qStore&&qStore.missed)||{}).filter(k=>Number(qStore.missed[k])>0),
+    ...Object.keys(srsStore||{}).filter(k=>srsStore[k]&&((srsStore[k].lapses||0)>0||srsDue(k))),
+  ]);
+  (typeof aQ!=="undefined"?aQ:[]).forEach(q=>{
+    if(!q||!q.cat)return;
+    const mk=missedQuizKey(q),srsKey=`${q.es}|${q.en||q.answer}`;
+    if(missedKeys.has(mk)||missedKeys.has(srsKey))catScores[q.cat]=(catScores[q.cat]||0)+1;
+  });
+  let best=SITUATION_BLITZ_PACKS[0],bestScore=-1;
+  SITUATION_BLITZ_PACKS.forEach(p=>{
+    const s=(p.cats||[]).reduce((acc,c)=>acc+(catScores[c]||0),0);
+    if(s>bestScore){bestScore=s;best=p;}
+  });
+  return best;
+}
+export function openWeakestBlitz(){
+  appState.qBlitzPack=pickWeakestBlitzPack();
+  appState.qMissedOnly=false;appState.qSavedOnly=false;appState.qMode="mixed";appState.qCat="all";appState.qFocus="all";appState.repasoLeft=10;
+  showPage("quiz");resetQuizRound();syncQuizControls();renderQuizV102Hub();nQ();
+}
 export function nQ(){
   appState.an=false;document.getElementById("quiz-next").style.display="none";const quizFb=document.getElementById("quiz-fb"),quizReveal=document.getElementById("quiz-reveal");quizFb.innerHTML="";if(quizReveal){quizFb.appendChild(quizReveal);quizReveal.innerHTML="";}quizFb.classList.remove("visible");actions.syncMissedQueueLauncher();
   const helpRow=document.getElementById("quiz-help-row"),helpBtn=document.getElementById("quiz-help"),helpText=document.getElementById("quiz-help-text");

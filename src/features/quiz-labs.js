@@ -1,4 +1,4 @@
-import { PICTURE_MATCH_BANK, NATURAL_EAR_CLIPS, GRINGO_TRAPS, SPANISH_BRAIN_DRILLS } from "../../data/index.js";
+import { PICTURE_MATCH_BANK, NATURAL_EAR_CLIPS, GRINGO_TRAPS, SPANISH_BRAIN_DRILLS, COLOMBIANISMOS } from "../../data/index.js";
 import { appStorage } from "../state/storage.js";
 import { appState } from "../state/app-state.js";
 import { speak } from "../audio/voice-engine.js";
@@ -8,6 +8,8 @@ import { attachMic } from "../core/speech-mic.js";
 import { RR_BANK, storedMissedQuestionCount } from "../core/quiz-bank.js";
 import { pmFilteredPool, renderPictureMatchDeck } from "./picture-match.js";
 import { renderSpanishBrainLab } from "./brain-lab.js";
+import { NUMBERS_EAR_DRILLS } from "./vocab.js";
+import { FALSOS_AMIGOS_QUIZ, VOSEO_SITUATIONS } from "./guides.js";
 import { actions } from "./navigation.js";
 
 export function mountNaturalEarLab(parent){
@@ -96,13 +98,30 @@ export function nextSprintQuestion(){
   if(typeof PICTURE_MATCH_BANK!=="undefined")PICTURE_MATCH_BANK.forEach(p=>pool.push({kind:"🖼️ Picture",cue:p.en,tts:p.tts,img:p.img,ans:p.word,pool:PICTURE_MATCH_BANK.map(x=>x.word)}));
   if(typeof GRINGO_TRAPS!=="undefined")GRINGO_TRAPS.forEach(g=>pool.push({kind:"🚫 Local Fix",cue:"Replace \""+g.trap+"\" ("+g.intent+")",tts:g.tts,ans:g.local,pool:GRINGO_TRAPS.map(x=>x.local)}));
   if(typeof RR_BANK!=="undefined"){
-    const rrOk=RR_BANK.filter(r=>r&&r.qEn&&r.aEs).slice(0,24);
+    const rrOk=RR_BANK.filter(r=>r&&r.qEn&&r.aEs).slice(0,32);
     const rrAnsPool=rrOk.map(x=>x.aEs);
     rrOk.forEach(r=>pool.push({kind:"⚡ Reflex",cue:r.qEn,subCue:r.qEs,subTts:r.q||r.qEs,tts:r.aTts||r.aEs,ans:r.aEs,pool:rrAnsPool}));
   }
+  if(typeof COLOMBIANISMOS!=="undefined"){
+    const colWords=COLOMBIANISMOS.filter(c=>c&&c.word).map(c=>c.word);
+    COLOMBIANISMOS.forEach(c=>{if(c&&c.word&&c.en)pool.push({kind:"🇨🇴 Colombianismo",cue:c.en,subCue:c.usage||"",tts:c.example||c.tts||c.word,ans:c.word,pool:colWords});});
+  }
+  if(Array.isArray(NUMBERS_EAR_DRILLS)){
+    NUMBERS_EAR_DRILLS.forEach(n=>pool.push({kind:`💵 ${n.tag}`,cue:n.es,tts:n.tts,ans:n.ans,fixedOpts:[n.ans,...n.dist]}));
+  }
+  if(Array.isArray(FALSOS_AMIGOS_QUIZ)){
+    FALSOS_AMIGOS_QUIZ.forEach(f=>pool.push({kind:"⚠️ Falso Amigo",cue:f.prompt,tts:f.choices[f.ans],ans:f.choices[f.ans],fixedOpts:f.choices}));
+  }
+  if(Array.isArray(VOSEO_SITUATIONS)){
+    VOSEO_SITUATIONS.forEach(v=>pool.push({kind:"🗣️ Usted · Tú · Vos",cue:v.q,tts:v.choices[v.ans],ans:v.choices[v.ans],fixedOpts:v.choices}));
+  }
   const pick=pool[Math.floor(Math.random()*pool.length)]||{kind:"⚡ Reflex",cue:"I'll take a black coffee",tts:"Me regala un tinto",ans:"¿Me regala un tinto?",pool:["¿Me regala un tinto?","Con mucho gusto","A la orden","¡De una!"]};
+  if(Array.isArray(pick.fixedOpts)){
+    pick.opts=pick.fixedOpts.slice().sort(()=>Math.random()-0.5);
+    return pick;
+  }
   const alts=[pick.ans];
-  for(const cand of pick.pool.slice().sort(()=>Math.random()-0.5)){
+  for(const cand of (pick.pool||[]).slice().sort(()=>Math.random()-0.5)){
     if(alts.length>=4)break;
     if(cand&&!alts.includes(cand))alts.push(cand);
   }
@@ -166,6 +185,16 @@ export function renderQuizV102Hub(){
     qV102Tab="off";appState.qSavedOnly=true;actions.resetQuizRound();actions.syncQuizControls();actions.nQ();renderQuizV102Hub();
   };
   bar.appendChild(sBtn);
+  const wBtn=document.createElement("button");wBtn.type="button";
+  wBtn.className="mf-chip qv102-weak-btn"+(qV102Tab==="off"&&appState.qBlitzPack?" active":"");
+  wBtn.textContent="⚡ Weakest Blitz";
+  wBtn.title="Launch a 10-question blitz focused on your weakest situation cluster";
+  wBtn.onclick=()=>{
+    if(appState.spTimer){clearInterval(appState.spTimer);appState.spTimer=null;appState.spRunning=false;}
+    qV102Tab="off";
+    if(typeof actions.openWeakestBlitz==="function")actions.openWeakestBlitz();
+  };
+  bar.appendChild(wBtn);
   host.appendChild(bar);
   if(qV102Tab==="brain"){
     const brSlot=document.createElement("div");brSlot.className="qv102-panel";
@@ -187,7 +216,7 @@ export function renderQuizV102Hub(){
         <div class="quiz-card sprint-intro-card">
           <div class="qc-label">⏱️ 60-Second Colombian Fluency Sprint</div>
           <div class="qc-word sprint-cue-word">Rapid Mixed Blitz</div>
-          <div class="sprint-intro-desc">Mixes Picture Match, Gringo-Trap swaps &amp; Reacción Rápida against the 60s clock.</div>
+          <div class="sprint-intro-desc">Mixes Picture Match, Gringo Traps, Reflexes, Colombianismos, Numbers &amp; False Friends against the 60s clock.</div>
           <button type="button" class="quiz-next sprint-start-btn">▶ Start 60s Sprint</button>
         </div>`;
       spWrap.querySelector(".sprint-start-btn").onclick=()=>{
